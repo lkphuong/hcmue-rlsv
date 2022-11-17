@@ -1,139 +1,130 @@
-import React from "react";
+import React from 'react';
 
-import { Controller, useForm } from "react-hook-form";
+import { Controller, useForm } from 'react-hook-form';
 
-import { useDispatch } from "react-redux";
+import { useDispatch } from 'react-redux';
 
-import { Box, Button, Container, Paper, Stack } from "@mui/material";
+import { Box, Button, Container, Paper, Stack } from '@mui/material';
 
-import { useResolver } from "_hooks/";
+import { useResolver } from '_hooks/';
 
-import { initialValues, validationSchema } from "_modules/auth/form";
+import { initialValues, validationSchema } from '_modules/auth/form';
 
-import { CInput } from "_controls/";
+import { CInput } from '_controls/';
 
-import logo from "_assets/images/logo.png";
+import logo from '_assets/images/logo.png';
 
-import { alert } from "_func/alert";
+import { alert } from '_func/alert';
 
-import { isSuccess } from "_func/";
+import { isSuccess } from '_func/';
 
-import { getProfile, tryLogin } from "_api/auth.api";
+import { login } from '_api/auth.api';
 
-import { actions } from "src/store/slices/auth.slice";
+import { actions } from 'src/store/slices/auth.slice';
 
-import { setAuthToken } from "_axios/";
+import { getProfile } from '_axios/';
 
-import "./index.scss";
+import './index.scss';
 
 export const LoginPage = () => {
-  //#region Data
-  const resolver = useResolver(validationSchema);
+	//#region Data
+	const resolver = useResolver(validationSchema);
 
-  const dispatch = useDispatch();
+	const dispatch = useDispatch();
 
-  const { control, handleSubmit } = useForm({
-    defaultValues: initialValues,
-    mode: "all",
-    resolver,
-  });
-  //#endregion
+	const { control, handleSubmit } = useForm({
+		defaultValues: initialValues,
+		mode: 'all',
+		resolver,
+	});
+	//#endregion
 
-  //#region Event
-  const onSubmit = async (values) => {
-    const res = await tryLogin(values);
+	//#region Event
+	const onSubmit = async (values) => {
+		const res = await login(values);
 
-    if (isSuccess(res)) {
-      const { access_token, refresh_token } = res.data;
+		if (isSuccess(res)) {
+			const { access_token, refresh_token } = res.data;
 
-      localStorage.setItem("access_token", access_token);
-      localStorage.setItem("refresh_token", refresh_token);
+			localStorage.setItem('access_token', access_token);
+			localStorage.setItem('refresh_token', refresh_token);
 
-      dispatch(actions.setToken({ access_token, refresh_token }));
+			dispatch(actions.setToken({ access_token, refresh_token }));
 
-      setAuthToken(access_token);
+			await getProfile(access_token);
 
-      const response = await getProfile();
+			alert.success({ title: 'Đăng nhập thành công!' });
+		} else {
+			alert.fail({ title: 'Đăng nhập không thành công!' });
+		}
+	};
+	//#endregion
 
-      dispatch(actions.setProfile(response.data));
-
-      alert.success({ title: "Đăng nhập thành công!" });
-    } else {
-      alert.fail({ title: "Đăng nhập không thành công!" });
-    }
-  };
-  //#endregion
-
-  //#region Render
-  return (
-    <Box
-      position="absolute"
-      top="50%"
-      left="50%"
-      sx={{ transform: "translate(-50% , -50%)" }}
-    >
-      <Container maxWidth="xl">
-        <Paper className="paper-form">
-          <Stack direction="column">
-            <Box align="center">
-              <img src={logo} alt="" />
-            </Box>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Stack direction="column">
-                <Box my={1}>
-                  <Controller
-                    control={control}
-                    name="username"
-                    render={({
-                      field: { onChange, onBlur, value, name, ref },
-                      fieldState: { error },
-                    }) => (
-                      <CInput
-                        fullWidth
-                        placeholder="Nhập mssv..."
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        value={value}
-                        name={name}
-                        inputRef={ref}
-                        error={!!error}
-                        helperText={error?.message}
-                      />
-                    )}
-                  />
-                </Box>
-                <Box my={1}>
-                  <Controller
-                    control={control}
-                    name="password"
-                    render={({
-                      field: { onChange, onBlur, value, name, ref },
-                      fieldState: { error },
-                    }) => (
-                      <CInput
-                        fullWidth
-                        isPassword
-                        placeholder="Nhập mật khẩu..."
-                        onChange={onChange}
-                        onBlur={onBlur}
-                        value={value}
-                        name={name}
-                        inputRef={ref}
-                        error={!!error}
-                        helperText={error?.message}
-                      />
-                    )}
-                  />
-                </Box>
-                <Button type="submit" sx={{ my: 2, fontSize: 20 }}>
-                  Đăng nhập
-                </Button>
-              </Stack>
-            </form>
-          </Stack>
-        </Paper>
-      </Container>
-    </Box>
-  );
-  //#endregion
+	//#region Render
+	return (
+		<Box position='absolute' top='50%' left='50%' sx={{ transform: 'translate(-50% , -50%)' }}>
+			<Container maxWidth='xl'>
+				<Paper className='paper-form'>
+					<Stack direction='column'>
+						<Box align='center'>
+							<img src={logo} alt='' />
+						</Box>
+						<form onSubmit={handleSubmit(onSubmit)}>
+							<Stack direction='column'>
+								<Box my={1}>
+									<Controller
+										control={control}
+										name='username'
+										render={({
+											field: { onChange, onBlur, value, name, ref },
+											fieldState: { error },
+										}) => (
+											<CInput
+												fullWidth
+												placeholder='Nhập mssv...'
+												onChange={onChange}
+												onBlur={onBlur}
+												value={value}
+												name={name}
+												inputRef={ref}
+												error={!!error}
+												helperText={error?.message}
+											/>
+										)}
+									/>
+								</Box>
+								<Box my={1}>
+									<Controller
+										control={control}
+										name='password'
+										render={({
+											field: { onChange, onBlur, value, name, ref },
+											fieldState: { error },
+										}) => (
+											<CInput
+												fullWidth
+												isPassword
+												placeholder='Nhập mật khẩu...'
+												onChange={onChange}
+												onBlur={onBlur}
+												value={value}
+												name={name}
+												inputRef={ref}
+												error={!!error}
+												helperText={error?.message}
+											/>
+										)}
+									/>
+								</Box>
+								<Button type='submit' sx={{ my: 2, fontSize: 20 }}>
+									Đăng nhập
+								</Button>
+							</Stack>
+						</form>
+					</Stack>
+				</Paper>
+			</Container>
+		</Box>
+	);
+	//#endregion
 };

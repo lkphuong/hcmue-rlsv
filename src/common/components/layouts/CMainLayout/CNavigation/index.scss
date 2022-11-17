@@ -1,0 +1,26 @@
+.MuiList-root.desktop-nav {
+	display: flex;
+	flex-direction: row;
+	padding: 0;
+
+	.MuiListItem-root {
+		padding: 0;
+		width: unset;
+		&:first-child {
+			a {
+				padding-left: 0;
+			}
+		}
+
+		.nav-item {
+			width: 100%;
+			padding: 10px;
+			font-weight: 500;
+		}
+
+		.tab-actived {
+			font-weight: 600;
+			text-decoration: underline;
+		}
+	}
+}

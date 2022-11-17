@@ -1,13 +1,23 @@
 *,
 html,
 body {
-  margin: 0;
-  padding: 0;
-  font-family: "Inter", sans-serif;
+	margin: 0;
+	padding: 0;
+	font-family: 'Inter', sans-serif;
+}
+
+a,
+li {
+	color: unset;
+	text-decoration: none;
+}
+
+ul {
+	list-style: none;
 }
 
 .App {
-  position: relative;
-  min-height: 100vh;
-  min-width: 100vw;
+	position: relative;
+	min-height: 100vh;
+	min-width: 100vw;
 }

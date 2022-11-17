@@ -1,19 +1,31 @@
-import React from "react";
+import React from 'react';
 
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from 'react-router-dom';
 
-import { useSelector } from "react-redux";
+import { useSelector } from 'react-redux';
 
-import { ROUTES } from "_constants/routes";
+import { Container } from '@mui/material';
 
-import "./index.scss";
+import { ROUTES } from '_constants/routes';
+
+import { CHeader } from './CHeader';
+
+import './index.scss';
 
 export const CMainLayout = () => {
-  const profile = useSelector((state) => state.auth.profile);
+	const isLogined = useSelector((state) => state.auth.isLogined);
 
-  return profile ? (
-    <div>CMainLayout</div>
-  ) : (
-    <Navigate to={ROUTES.LOGIN} replace={true} />
-  );
+	return isLogined ? (
+		<>
+			<CHeader />
+
+			<main>
+				<Container maxWidth='xl'>
+					<Outlet />
+				</Container>
+			</main>
+		</>
+	) : (
+		<Navigate to={ROUTES.LOGIN} replace={true} />
+	);
 };

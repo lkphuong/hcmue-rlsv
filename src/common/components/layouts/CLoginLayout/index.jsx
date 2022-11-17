@@ -9,7 +9,11 @@ import { ROUTES } from "_constants/routes";
 import { LoginPage } from "_modules/auth/pages";
 
 export const CLoginLayout = () => {
-  const profile = useSelector((state) => state.auth.profile);
+  const isLogined = useSelector((state) => state.auth.isLogined);
 
-  return profile ? <Navigate to={ROUTES.HOME} replace={true} /> : <LoginPage />;
+  return isLogined ? (
+    <Navigate to={ROUTES.HOME} replace={true} />
+  ) : (
+    <LoginPage />
+  );
 };

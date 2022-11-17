@@ -20,6 +20,7 @@
       "_modules/*": ["src/modules/*"],
       "_routes/*": ["src/routes/*"],
       "_utils/*": ["src/utils/*"],
+      "_theme/*": ["src/theme/*"],
       "src/*": ["src/*"]
     }
   },

@@ -1,1 +1,2 @@
-export * from "./CInput";
+export * from './CInput';
+export * from './CPagination';

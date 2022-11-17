@@ -1,2 +1,2 @@
-export * from "./CLoginLayout";
-export * from "./CMainLayout";
+export * from './CLoginLayout';
+export * from './CMainLayout';

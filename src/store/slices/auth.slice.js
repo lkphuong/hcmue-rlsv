@@ -32,7 +32,7 @@ const persistConfig = {
   key: "auth",
   version: 1,
   storage,
-  whitelist: ["access_token", "refresh_token"],
+  whitelist: ["access_token", "refresh_token", "isLogined"],
 };
 
 export default persistReducer(persistConfig, authSlice.reducer);

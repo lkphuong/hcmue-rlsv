@@ -1,63 +1,56 @@
-import React, { useEffect } from "react";
+import React, { Suspense, useEffect } from 'react';
 
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from 'react-redux';
 
-import { ThemeProvider } from "@mui/material";
+import { ThemeProvider } from '@mui/material';
 
-import { browserRouter } from "_routes/routes";
+import { browserRouter } from '_routes/routes';
 
-import theme from "_theme";
+import theme from '_theme';
 
-import { setAuthToken } from "_axios/";
+import { getProfile, tryLogout } from '_axios/';
 
-import { actions } from "src/store/slices/auth.slice";
+import { SuspenseLoading } from '_others/';
 
-import { getProfile } from "_api/auth.api";
-
-import "_styles/index.scss";
-import { isSuccess } from "_func/";
+import '_styles/index.scss';
 
 const router = createBrowserRouter(browserRouter);
 
 function App() {
-  //#region Data
-  const dispatch = useDispatch();
+	//#region Data
+	const token = localStorage.getItem('access_token');
 
-  const token = localStorage.getItem("access_token");
+	const { isLogined } = useSelector((state) => state.auth.isLogined);
+	//#endregion
 
-  const { isLogined } = useSelector((state) => state.auth.isLogined);
-  //#endregion
+	useEffect(() => {
+		const init = async () => {
+			try {
+				if (token) {
+					await getProfile(token);
+				} else {
+					await tryLogout();
+				}
+			} catch (error) {
+				console.log(error);
+			}
+		};
 
-  useEffect(() => {
-    const init = async () => {
-      try {
-        if (token) {
-          await setAuthToken(token);
+		!isLogined && init();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isLogined]);
 
-          const res = await getProfile();
-
-          if (isSuccess(res)) dispatch(actions.setProfile(res.data));
-        } else {
-          console.log("Logout");
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    !isLogined && init();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isLogined]);
-
-  return (
-    <ThemeProvider theme={theme}>
-      <div className="App">
-        <RouterProvider router={router} />
-      </div>
-    </ThemeProvider>
-  );
+	return (
+		<ThemeProvider theme={theme}>
+			<Suspense fallback={<SuspenseLoading />}>
+				<div className='App'>
+					<RouterProvider router={router} />
+				</div>
+			</Suspense>
+		</ThemeProvider>
+	);
 }
 
 export default App;

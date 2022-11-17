@@ -5,6 +5,7 @@ import { mysqlFactory } from './factories/mysql.factory';
 import { mongoFactory } from './factories/mongo.factory';
 
 import { DepartmentModule } from './modules/department/department.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 import { LogModule } from './modules/log/log.module';
 import { SharedModule } from './modules/shared/shared.module';
@@ -24,6 +25,6 @@ export const modules = [
     useFactory: mongoFactory,
   }),
   LogModule,
-
+  AuthModule,
   DepartmentModule,
 ];

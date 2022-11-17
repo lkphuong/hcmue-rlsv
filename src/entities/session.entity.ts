@@ -31,6 +31,20 @@ export class SessionEntity extends RootEntity {
   fullname: string;
 
   @Column('varchar', {
+    name: 'class_id',
+    nullable: false,
+    length: 24,
+  })
+  class: string;
+
+  @Column('varchar', {
+    name: 'department_id',
+    nullable: false,
+    length: 24,
+  })
+  department: string;
+
+  @Column('varchar', {
     name: 'refresh_token',
     nullable: true,
     default: 0,

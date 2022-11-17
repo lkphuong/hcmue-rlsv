@@ -1,5 +1,7 @@
 import { ValidationArguments } from 'class-validator';
 
+import { Types } from 'mongoose';
+
 import * as moment from 'moment';
 
 import { HttpPagingResponse } from '../interfaces/http-paging-response.interface';
@@ -23,6 +25,10 @@ export const convertString2Int = (raw: string) => {
 
 export const convertString2Boolean = (raw: string) => {
   return raw === 'true' || raw === '1';
+};
+
+export const convertObjectId2String = (raw: Types.ObjectId) => {
+  return raw.toString();
 };
 
 export const generateRedisKeyFromUrl = (url: string, payload: any) => {

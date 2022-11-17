@@ -5,8 +5,14 @@ export type UserDocument = User & Document;
 
 @Schema({ collection: 'user' })
 export class User {
+  @Prop({ name: '_id', type: Types.ObjectId })
+  _id: Types.ObjectId;
+
   @Prop({ name: 'classId', type: Types.ObjectId, ref: 'class' })
   classId: Types.ObjectId;
+
+  @Prop({ name: 'departmentId', type: Types.ObjectId, ref: 'department' })
+  departmentId: Types.ObjectId;
 
   @Prop({ name: 'majorId', type: Types.ObjectId, ref: 'major' })
   majorId: Types.ObjectId;

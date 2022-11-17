@@ -1,10 +1,4 @@
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { BaseEntity, Column, Entity } from 'typeorm';
 
 @Entity()
 export class RootEntity extends BaseEntity {
@@ -13,61 +7,57 @@ export class RootEntity extends BaseEntity {
     nullable: false,
     default: 1,
   })
-  active: boolean;
+  active?: boolean = true;
 
-  @Column('bigint', {
+  @Column('varchar', {
     name: 'created_by',
     nullable: false,
-    default: 0,
-    select: true,
+    default: 'system',
+    length: 24,
   })
-  created_by: number;
+  created_by: string;
 
-  @CreateDateColumn({
+  @Column({
     name: 'created_at',
     nullable: false,
     default: () => 'getdate()',
-    select: true,
   })
   created_at: Date;
 
-  @Column('bigint', {
+  @Column('varchar', {
     name: 'updated_by',
-    nullable: false,
-    default: 0,
-    select: true,
+    nullable: true,
+    default: 'system',
+    length: 24,
   })
-  updated_by?: number;
+  updated_by?: string;
 
-  @UpdateDateColumn({
+  @Column({
     name: 'updated_at',
     nullable: true,
     default: () => 'getdate()',
-    select: true,
   })
   updated_at?: Date;
 
-  @Column('bigint', {
+  @Column('varchar', {
     name: 'deleted_by',
-    nullable: false,
-    default: 0,
-    select: true,
+    nullable: true,
+    default: 'system',
+    length: 24,
   })
-  deleted_by?: number;
+  deleted_by?: string;
 
-  @UpdateDateColumn({
+  @Column({
     name: 'deleted_at',
     nullable: true,
     default: () => 'getdate()',
-    select: true,
   })
   deleted_at?: Date;
 
   @Column('bit', {
-    name: 'deleted',
+    name: 'delete_flag',
     nullable: true,
     default: 0,
-    select: false,
   })
-  delete_flag?: boolean = false;
+  deleted?: boolean = false;
 }

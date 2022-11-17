@@ -8,7 +8,7 @@ export class Class {
   @Prop({ name: 'name' })
   name: string;
 
-  @Prop({ name: 'departmentId', type: Types.ObjectId, ref: 'Department' })
+  @Prop({ name: 'departmentId', type: Types.ObjectId, ref: 'department' })
   departmentId: Types.ObjectId;
 }
 

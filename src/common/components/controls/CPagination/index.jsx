@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 
 import classNames from 'classnames';
 
@@ -8,7 +8,7 @@ import { number, func } from 'prop-types';
 
 import './index.scss';
 
-export const CPagination = ({ page, pages, onChange }) => {
+export const CPagination = memo(({ page, pages, onChange }) => {
 	return (
 		<Pagination
 			className={classNames('c-pagination')}
@@ -19,7 +19,9 @@ export const CPagination = ({ page, pages, onChange }) => {
 			variant='outlined'
 		/>
 	);
-};
+});
+
+CPagination.displayName = CPagination;
 
 CPagination.propTypes = {
 	page: number,

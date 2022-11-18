@@ -2,7 +2,11 @@ import { ROUTES } from '_constants/routes';
 
 import { CLoginLayout, CMainLayout } from '_layouts/';
 
-import { SemestersPage, SemesterDetail } from '_modules/home/pages';
+import {
+	SemestersPage as MySemesters,
+	SemesterDetail as MyDetailSemester,
+} from '_modules/home/pages';
+import { SemestersPage as ClassSemesters } from '_modules/class/pages';
 
 import { CErrorPage } from '_others';
 
@@ -16,17 +20,17 @@ export const browserRouter = [
 				index: true,
 				path: ROUTES.MY_SCORE,
 				errorElement: <CErrorPage />,
-				element: <SemestersPage />,
+				element: <MySemesters />,
 			},
 			{
 				path: ROUTES.MY_SCORE_DETAIL,
 				errorElement: <CErrorPage />,
-				element: <SemesterDetail />,
+				element: <MyDetailSemester />,
 			},
 			{
 				path: ROUTES.CLASS_SCORE,
 				errorElement: <CErrorPage />,
-				element: <div>điểm của lớp</div>,
+				element: <ClassSemesters />,
 			},
 			{ path: ROUTES.LIST, errorElement: <CErrorPage />, element: <div>dsách phiếu</div> },
 			{

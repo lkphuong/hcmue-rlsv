@@ -6,9 +6,9 @@ import { logout, profile } from '_api/auth.api';
 
 import { isSuccess } from '_func/';
 
-import { store } from 'src/store';
+import { store } from '_store';
 
-import { actions } from 'src/store/slices/auth.slice';
+import { actions } from '_slices/auth.slice';
 
 const apiInstance = axios.create({
 	// baseURL: process.env.REACT_APP_API_URL,

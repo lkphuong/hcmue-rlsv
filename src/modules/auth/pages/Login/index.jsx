@@ -20,7 +20,7 @@ import { isSuccess } from '_func/';
 
 import { login } from '_api/auth.api';
 
-import { actions } from 'src/store/slices/auth.slice';
+import { actions } from '_slices/auth.slice';
 
 import { getProfile } from '_axios/';
 

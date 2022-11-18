@@ -1,28 +1,30 @@
 {
-  "compilerOptions": {
-    "experimentalDecorators": true,
-    "baseUrl": ".",
-    "paths": {
-      "_api/*": ["src/api/*"],
-      "_controls/*": ["src/common/components/controls/*"],
-      "_layouts/*": ["src/common/components/layouts/*"],
-      "_others/*": ["src/common/components/others/*"],
-      "_styles/*": ["src/common/assets/styles/*"],
-      "_assets/*": ["src/common/assets/*"],
-      "_components/*": ["src/common/components/*"],
-      "_constants/*": ["src/common/constants/*"],
-      "_models/*": ["src/common/models/*"],
-      "_axios/*": ["src/utils/axios/*"],
-      "_func/*": ["src/utils/func/*"],
-      "_hooks/*": ["src/utils/hooks/*"],
-      "_config/*": ["src/config/*"],
-      "_common/*": ["src/common/*"],
-      "_modules/*": ["src/modules/*"],
-      "_routes/*": ["src/routes/*"],
-      "_utils/*": ["src/utils/*"],
-      "_theme/*": ["src/theme/*"],
-      "src/*": ["src/*"]
-    }
-  },
-  "exclude": ["node_modules", ".next"]
+	"compilerOptions": {
+		"experimentalDecorators": true,
+		"baseUrl": ".",
+		"paths": {
+			"_api/*": ["src/api/*"],
+			"_controls/*": ["src/common/components/controls/*"],
+			"_layouts/*": ["src/common/components/layouts/*"],
+			"_others/*": ["src/common/components/others/*"],
+			"_styles/*": ["src/common/assets/styles/*"],
+			"_assets/*": ["src/common/assets/*"],
+			"_components/*": ["src/common/components/*"],
+			"_constants/*": ["src/common/constants/*"],
+			"_models/*": ["src/common/models/*"],
+			"_axios/*": ["src/utils/axios/*"],
+			"_func/*": ["src/utils/func/*"],
+			"_hooks/*": ["src/utils/hooks/*"],
+			"_slices/*": ["src/store/slices/*"],
+			"_store/*": ["src/store/*"],
+			"_config/*": ["src/config/*"],
+			"_common/*": ["src/common/*"],
+			"_modules/*": ["src/modules/*"],
+			"_routes/*": ["src/routes/*"],
+			"_utils/*": ["src/utils/*"],
+			"_theme/*": ["src/theme/*"],
+			"src/*": ["src/*"]
+		}
+	},
+	"exclude": ["node_modules", ".next"]
 }

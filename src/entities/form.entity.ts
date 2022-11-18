@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { RootEntity } from './root.entity';
 import { EvaluationEntity } from './evaluation.entity';
@@ -17,14 +10,21 @@ export class FormEntity extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => FormEntity, (parent) => parent.forms)
-  @JoinColumn([
-    {
-      name: 'parent_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  parent: FormEntity;
+  @Column('varchar', {
+    name: 'ref',
+    nullable: false,
+    unique: true,
+    length: 50,
+  })
+  ref: string;
+
+  @Column('varchar', {
+    name: 'parent_id',
+    nullable: true,
+    default: null,
+    length: 50,
+  })
+  parent_id: string;
 
   @Column('varchar', {
     name: 'version',
@@ -84,12 +84,6 @@ export class FormEntity extends RootEntity {
   })
   required?: boolean = false;
 
-  @OneToMany(() => FormEntity, (form) => form.forms)
-  forms: FormEntity[];
-
-  @OneToMany(() => EvaluationEntity, (evalua_parnet) => evalua_parnet.parent) //from form.parent_id -> evaluation.parent_id
-  evaluation_parent: EvaluationEntity[];
-
-  @OneToMany(() => EvaluationEntity, (evalua_parnet) => evalua_parnet.parent) //from form.id -> evaluation.form_id
+  @OneToMany(() => EvaluationEntity, (evalua_parnet) => evalua_parnet.form) //from form.id -> evaluation.form_id
   evaluation_form: EvaluationEntity[];
 }

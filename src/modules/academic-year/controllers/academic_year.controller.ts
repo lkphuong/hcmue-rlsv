@@ -10,14 +10,16 @@ import {
 
 import { Request } from 'express';
 
-import { Department } from '../../../schemas/department.schema';
+import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { AcademicYearResponse } from '../interfaces/academic_year_response.interface';
 
 import { LogService } from '../../log/services/log.service';
-import { DepartmentService } from '../services/department.service';
+
+import { AcademicYearService } from '../services/academic_year.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 
-import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { generateData2Array } from '../transform';
 
 import { Levels } from '../../../constants/enums/level.enum';
 
@@ -27,41 +29,37 @@ import {
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 
-@Controller('departments')
-export class DepartmentController {
+@Controller('academic-years')
+export class AcademicYearController {
   constructor(
-    private readonly _departmentService: DepartmentService,
+    private readonly _academicYearService: AcademicYearService,
     private _logger: LogService,
-  ) {
-    // Due to transient scope, DepartmentController has its own unique instance of LogService,
-    // so setting context here will not affect other instances in other services
-    this._logger.setContext(DepartmentController.name);
-  }
+  ) {}
 
   /**
-   * @Method GET
-   * @url /api/departments
+   * @method GET
+   * @url /api/academic-years/
    * @access private
-   * @description danh sách department từ youth
-   * @return
-   * @page department
+   * @description hiển thị danh sách niên khóa
+   * @return HttpResponse<SemesterEntity[]> | null | HttpException
+   * @page
    */
   @Get()
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async getDepartments(
+  async getAcademicYears(
     @Req() req: Request,
-  ): Promise<HttpResponse<Department[]> | null> {
+  ): Promise<HttpResponse<AcademicYearResponse[]> | null | HttpException> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url);
+      console.log(req.method + ' - ' + req.url + ' - ' + null);
 
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
-      const departments = await this._departmentService.getAllDepartments();
+      const academic_years = await this._academicYearService.getAcademicYears();
 
-      if (departments && departments.length > 0) {
+      if (academic_years && academic_years.length > 0) {
         return {
-          data: departments,
+          data: generateData2Array(academic_years),
           errorCode: 0,
           message: null,
           errors: null,
@@ -72,7 +70,7 @@ export class DepartmentController {
           DATABASE_EXIT_CODE.NO_CONTENT,
           req.method,
           req.url,
-          ErrorMessage.DEPARTMENTS_NO_CONTENT,
+          ErrorMessage.ACADEMIC_YEARS_NO_CONTENT,
           HttpStatus.NOT_FOUND,
         );
         //#endregion

@@ -17,14 +17,21 @@ export class EvaluationEntity extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => FormEntity, (parent) => parent.evaluation_parent)
-  @JoinColumn([
-    {
-      name: 'parent_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  parent: FormEntity;
+  @Column('varchar', {
+    name: 'ref',
+    nullable: false,
+    unique: true,
+    length: 50,
+  })
+  ref: string;
+
+  @Column('varchar', {
+    name: 'parent_id',
+    nullable: true,
+    default: null,
+    length: 50,
+  })
+  parent_id: string;
 
   @ManyToOne(() => FormEntity, (parent) => parent.evaluation_form)
   @JoinColumn([

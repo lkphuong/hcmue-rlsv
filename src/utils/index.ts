@@ -1,26 +1,33 @@
+import { MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { ValidationArguments } from 'class-validator';
 
 import { Types } from 'mongoose';
 
 import * as moment from 'moment';
 
+import { VerifyTokenMiddleware } from '../modules/auth/middlewares/auth.middleware';
+
 import { HttpPagingResponse } from '../interfaces/http-paging-response.interface';
 import { HttpResponse } from '../interfaces/http-response.interface';
 
-import { ConfigurationService } from '../modules/shared/services/configuration/configuration.service';
-import { LogService } from '../modules/log/services/log.service';
-import { Levels } from '../constants/enums/level.enum';
+import { APP_PREFIX } from '../constants';
 
-import { Configuration } from '../modules/shared/constants/configuration.enum';
-
-import { APP_PREFIX, UPLOAD_DEST } from '../constants';
+export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
+  consumer
+    .apply(VerifyTokenMiddleware)
+    .exclude(
+      { path: '/api/auth/login', method: RequestMethod.POST },
+      { path: '/api/auth/renew-token', method: RequestMethod.POST },
+    )
+    .forRoutes({ path: '*', method: RequestMethod.ALL });
+};
 
 export const convertString2Date = (raw: string) => {
   return moment.utc(raw).toDate();
 };
 
-export const convertString2Int = (raw: string) => {
-  return parseInt(raw);
+export const convertString2Float = (raw: string) => {
+  return parseFloat(raw);
 };
 
 export const convertString2Boolean = (raw: string) => {
@@ -29,6 +36,10 @@ export const convertString2Boolean = (raw: string) => {
 
 export const convertObjectId2String = (raw: Types.ObjectId) => {
   return raw.toString();
+};
+
+export const convertString2ObjectId = (raw: string) => {
+  return new Types.ObjectId(raw);
 };
 
 export const generateRedisKeyFromUrl = (url: string, payload: any) => {

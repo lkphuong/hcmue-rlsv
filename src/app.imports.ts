@@ -1,19 +1,30 @@
+import { JwtModule } from '@nestjs/jwt';
+
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 
 import { mysqlFactory } from './factories/mysql.factory';
 import { mongoFactory } from './factories/mongo.factory';
 
-import { DepartmentModule } from './modules/department/department.module';
-import { AuthModule } from './modules/auth/auth.module';
-
 import { LogModule } from './modules/log/log.module';
 import { SharedModule } from './modules/shared/shared.module';
 
+import { AuthModule } from './modules/auth/auth.module';
+import { ClassModuel } from './modules/class/class.module';
+import { SemesterModule } from './modules/semester/semester.module';
+import { AcademicYearModule } from './modules/academic-year/academic_year.module';
+
 import { ConfigurationService } from './modules/shared/services/configuration/configuration.service';
+
+import { jwtFactory } from './factories/jwt.factory';
 
 export const modules = [
   SharedModule,
+  JwtModule.registerAsync({
+    imports: [SharedModule],
+    inject: [ConfigurationService],
+    useFactory: jwtFactory,
+  }),
   TypeOrmModule.forRootAsync({
     imports: [SharedModule],
     inject: [ConfigurationService],
@@ -24,7 +35,10 @@ export const modules = [
     inject: [ConfigurationService],
     useFactory: mongoFactory,
   }),
+
   LogModule,
+  AcademicYearModule,
   AuthModule,
-  DepartmentModule,
+  ClassModuel,
+  SemesterModule,
 ];

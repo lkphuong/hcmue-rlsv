@@ -1,9 +1,15 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { modules } from './app.imports';
+
+import { applyMiddlewares } from './utils';
 
 @Module({
   imports: modules,
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    applyMiddlewares(consumer);
+  }
+}

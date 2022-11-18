@@ -12,6 +12,7 @@ import { EvaluationEntity } from './evaluation.entity';
 import { SheetSignatures } from './sheet_signatures.entity';
 import { SemesterEntity } from './semester.entity';
 import { AcademicYearEntity } from './academic_year.entity';
+import { LevelEntity } from './level.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -66,12 +67,14 @@ export class SheetEntity extends RootEntity {
   })
   k: string;
 
-  @Column('tinyint', {
-    name: 'level', //0.Không xếp loại, 1. Kém, 2. Yếu, 3. Trung bình, 4. Khá, 5. Tốt, 6. Xuất sắc, default: 0
-    nullable: false,
-    default: 0,
-  })
-  level: number;
+  @ManyToOne(() => LevelEntity, (level) => level.sheets)
+  @JoinColumn([
+    {
+      name: 'level_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  level: LevelEntity;
 
   @Column('tinyint', {
     name: 'level', //0. Chưa đánh giá, 1.Chờ lớp xét duyệt,2 Lớp quá hạn 3.Chờ khoa xét duyệt, 4. Khoa quá hạn, 5. Hoàn thành , default: 0

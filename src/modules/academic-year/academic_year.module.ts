@@ -1,11 +1,10 @@
 import { Module } from '@nestjs/common';
-
 import {
   controllers,
   exporteds,
   modules,
   providers,
-} from './department.imports';
+} from './academic_year.imports';
 
 @Module({
   imports: modules,
@@ -13,4 +12,4 @@ import {
   providers: providers,
   exports: exporteds,
 })
-export class DepartmentModule {}
+export class AcademicYearModule {}

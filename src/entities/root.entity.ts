@@ -4,8 +4,9 @@ import { BaseEntity, Column, Entity } from 'typeorm';
 export class RootEntity extends BaseEntity {
   @Column('bit', {
     name: 'active',
-    nullable: false,
+    nullable: true,
     default: 1,
+    select: true,
   })
   active?: boolean = true;
 
@@ -29,6 +30,7 @@ export class RootEntity extends BaseEntity {
     nullable: true,
     default: 'system',
     length: 24,
+    select: false,
   })
   updated_by?: string;
 
@@ -36,6 +38,7 @@ export class RootEntity extends BaseEntity {
     name: 'updated_at',
     nullable: true,
     default: () => 'getdate()',
+    select: false,
   })
   updated_at?: Date;
 
@@ -44,6 +47,7 @@ export class RootEntity extends BaseEntity {
     nullable: true,
     default: 'system',
     length: 24,
+    select: false,
   })
   deleted_by?: string;
 
@@ -51,6 +55,7 @@ export class RootEntity extends BaseEntity {
     name: 'deleted_at',
     nullable: true,
     default: () => 'getdate()',
+    select: false,
   })
   deleted_at?: Date;
 
@@ -58,6 +63,7 @@ export class RootEntity extends BaseEntity {
     name: 'delete_flag',
     nullable: true,
     default: 0,
+    select: false,
   })
   deleted?: boolean = false;
 }

@@ -6,9 +6,8 @@ export class RootEntity extends BaseEntity {
     name: 'active',
     nullable: true,
     default: 1,
-    select: true,
   })
-  active?: boolean = true;
+  active: boolean;
 
   @Column('varchar', {
     name: 'created_by',

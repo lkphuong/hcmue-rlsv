@@ -77,18 +77,32 @@ export class SheetEntity extends RootEntity {
   level: LevelEntity;
 
   @Column('tinyint', {
-    name: 'level', //0. Chưa đánh giá, 1.Chờ lớp xét duyệt,2 Lớp quá hạn 3.Chờ khoa xét duyệt, 4. Khoa quá hạn, 5. Hoàn thành , default: 0
+    name: 'status', //0. Chưa đánh giá, 1.Chờ lớp xét duyệt,2 Lớp quá hạn 3.Chờ khoa xét duyệt, 4. Khoa quá hạn, 5. Hoàn thành , default: 0
     nullable: false,
     default: 0,
   })
   status: number;
 
-  @Column('float', {
-    name: 'mark',
+  @Column('int', {
+    name: 'sum_of_personal_marks',
     nullable: true,
-    default: null,
+    default: 0,
   })
-  mark: number;
+  sum_of_personal_marks: number;
+
+  @Column('int', {
+    name: 'sum_of_class_marks',
+    nullable: true,
+    default: 0,
+  })
+  sum_of_class_marks: number;
+
+  @Column('int', {
+    name: 'sum_of_department_marks',
+    nullable: true,
+    default: 0,
+  })
+  sum_of_department_marks: number;
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.sheet)
   evaluations: EvaluationEntity[];

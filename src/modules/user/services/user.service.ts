@@ -7,50 +7,48 @@ import { LogService } from '../../log/services/log.service';
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
 
-import { ClassDocument, Class } from '../../../schemas/class.schema';
+import { UserDocument, User } from '../../../schemas/user.schema';
 
 import { convertString2ObjectId } from 'src/utils';
+
 @Injectable()
-export class ClassService {
+export class UserService {
   constructor(
-    @InjectModel(Class.name)
-    private readonly _classModel: Model<ClassDocument>,
+    @InjectModel(User.name) private readonly _userModule: Model<UserDocument>,
     private _logger: LogService,
   ) {}
 
-  async getClassesByDepartmentId(
-    department_id: string,
-  ): Promise<Class[] | null> {
+  async getUserByInput(id: string, input: string): Promise<User | null> {
     try {
-      const classes = await this._classModel.find({
-        departmentId: convertString2ObjectId(department_id),
+      const user = await this._userModule.findOne({
+        $or: [{ username: { $regex: input } }, { fullname: { $regex: input } }],
+        $and: [{ _id: convertString2ObjectId(id) }],
       });
 
-      return classes || null;
+      return user || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'ClassService.getClassesByDepartmentId()',
+        'UserService.getUserByInput()',
         e,
       );
       return null;
     }
   }
 
-  async getClassById(id: string, department_id: string): Promise<Class | null> {
+  async getUserById(id: string): Promise<User | null> {
     try {
-      const result = await this._classModel.findOne({
+      const user = await this._userModule.findOne({
         _id: convertString2ObjectId(id),
-        departmentId: convertString2ObjectId(department_id),
       });
 
-      return result || null;
+      return user || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'ClassService.getClassById()',
+        'UserService.getUserById()',
         e,
       );
       return null;

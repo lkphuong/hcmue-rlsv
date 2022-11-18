@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Model } from 'mongoose';
+import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { SessionEntity } from '../../../entities/session.entity';
 import { RoleUserEntity } from '../../../entities/role_users.entity';
@@ -11,7 +12,6 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
-import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 @Injectable()
 export class AuthService {

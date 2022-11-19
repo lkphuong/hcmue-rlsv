@@ -17,6 +17,7 @@
 			"_hooks/*": ["src/utils/hooks/*"],
 			"_slices/*": ["src/store/slices/*"],
 			"_store/*": ["src/store/*"],
+			"_contexts/*": ["src/contexts/*"],
 			"_config/*": ["src/config/*"],
 			"_common/*": ["src/common/*"],
 			"_modules/*": ["src/modules/*"],

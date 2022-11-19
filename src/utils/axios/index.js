@@ -9,6 +9,7 @@ import { isSuccess } from '_func/';
 import { store } from '_store';
 
 import { actions } from '_slices/auth.slice';
+import { updateAbility } from '_func/permissions';
 
 const apiInstance = axios.create({
 	// baseURL: process.env.REACT_APP_API_URL,
@@ -69,7 +70,11 @@ export const getProfile = async (token) => {
 
 		const res = await profile();
 
-		if (isSuccess(res)) store.dispatch(actions.setProfile(res.data));
+		// Test roleId
+		const roleId = 3;
+		updateAbility(roleId);
+
+		if (isSuccess(res)) store.dispatch(actions.setProfile({ ...res.data, role_id: roleId }));
 
 		return res;
 	} catch (error) {

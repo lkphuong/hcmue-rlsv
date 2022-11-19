@@ -10,5 +10,9 @@ export const ROUTES = {
 
 	LIST: '/list',
 
+	FORM: '/admin/forms',
+
+	NOTE: '/admin/notes',
+
 	STATISTIC: '/statistic',
 };

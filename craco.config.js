@@ -20,6 +20,7 @@ module.exports = {
 			_hooks: _dir('utils/hooks'),
 			_slices: _dir('store/slices'),
 			_store: _dir('store'),
+			_contexts: _dir('contexts'),
 			_config: _dir('config'),
 			_common: _dir('common'),
 			_modules: _dir('modules'),

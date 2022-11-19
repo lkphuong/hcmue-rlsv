@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -6,13 +6,17 @@ import { useSelector } from 'react-redux';
 
 import { ThemeProvider } from '@mui/material';
 
-import { browserRouter } from '_routes/routes';
+import { AbilityContext, AdminContext } from '_contexts';
 
-import theme from '_theme';
+import ability from '_config/casl_ability';
+
+import { browserRouter } from '_routes/routes';
 
 import { getProfile, tryLogout } from '_axios/';
 
 import { SuspenseLoading } from '_others/';
+
+import theme from '_theme';
 
 import '_styles/index.scss';
 
@@ -20,6 +24,8 @@ const router = createBrowserRouter(browserRouter);
 
 function App() {
 	//#region Data
+	const [adminContext, setAdminContext] = useState('');
+
 	const token = localStorage.getItem('access_token');
 
 	const { isLogined } = useSelector((state) => state.auth.isLogined);
@@ -45,9 +51,13 @@ function App() {
 	return (
 		<ThemeProvider theme={theme}>
 			<Suspense fallback={<SuspenseLoading />}>
-				<div className='App'>
-					<RouterProvider router={router} />
-				</div>
+				<AbilityContext.Provider value={ability}>
+					<AdminContext.Provider value={[adminContext, setAdminContext]}>
+						<div className='App'>
+							<RouterProvider router={router} />
+						</div>
+					</AdminContext.Provider>
+				</AbilityContext.Provider>
 			</Suspense>
 		</ThemeProvider>
 	);

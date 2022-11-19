@@ -11,6 +11,8 @@ export const ROUTES = {
 	LIST: '/list',
 
 	FORM: '/admin/forms',
+	FORM_CREATE: '/admin/forms/create',
+	FORM_UPDATE: '/admin/forms/update/:form_id',
 
 	NOTE: '/admin/notes',
 

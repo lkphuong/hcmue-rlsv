@@ -6,7 +6,7 @@
 	.MuiListItem-root {
 		padding: 0;
 		width: unset;
-		&:first-child {
+		&:first-of-type {
 			a {
 				padding-left: 0;
 			}

@@ -2,15 +2,18 @@ import { ROUTES } from '_constants/routes';
 
 import { CLoginLayout, CMainLayout } from '_layouts/';
 
+import { CErrorPage } from '_others';
+
+import { CPermission } from '_controls';
+
+import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
+
 import {
 	SemestersPage as MySemesters,
 	SemesterDetail as MyDetailSemester,
 } from '_modules/home/pages';
 import { SemestersPage as ClassSemesters } from '_modules/class/pages';
-
-import { CErrorPage } from '_others';
-import { CPermission } from '_controls/CPermission';
-import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
+import { FormCreatePage, FormUpdatePage, ListFormsPage } from '_modules/form/pages';
 
 export const browserRouter = [
 	{
@@ -60,7 +63,25 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
-						<div>quản lý biểu mẫu</div>
+						<ListFormsPage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.FORM_CREATE,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
+						<FormCreatePage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.FORM_UPDATE,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
+						<FormUpdatePage />
 					</CPermission>
 				),
 			},

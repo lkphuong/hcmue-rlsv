@@ -16,3 +16,22 @@ export const STATUS = [
 	{ id: 4, value: 4, name: 'Khoa quá hạn duyệt' },
 	{ id: 5, value: 5, name: 'Hoàn thành' },
 ];
+
+export const FORM_STATUS = [
+	{ id: 0, value: 0, name: 'Nháp' },
+	{ id: 1, value: 1, name: 'Phát hành' },
+];
+
+export const HOCKY = [
+	{ id: 1, name: 'Học kỳ I' },
+	{ id: 2, name: 'Học kỳ II' },
+	{ id: 3, name: 'Học kỳ III' },
+	{ id: 4, name: 'Học kỳ hè' },
+];
+
+export const NIENKHOA = [
+	{ id: 1, name: '2021-2022' },
+	{ id: 2, name: '2022-2023' },
+	{ id: 3, name: '2020-2021' },
+	{ id: 4, name: '2023-2024' },
+];

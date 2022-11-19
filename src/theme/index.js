@@ -111,7 +111,7 @@ const theme = createTheme({
 		MuiTableCell: {
 			styleOverrides: {
 				root: {
-					'&:first-child': {
+					'&:first-of-type': {
 						borderLeft: 0,
 					},
 				},

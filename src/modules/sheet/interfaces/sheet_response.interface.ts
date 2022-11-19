@@ -13,6 +13,10 @@ export interface AcademicResponse {
   name: string;
 }
 
+export interface DepartmentResponse {
+  id: string;
+  name: string;
+}
 export interface LevelResponse {
   id: number;
   name: string;
@@ -26,7 +30,12 @@ export interface ClassResponse {
 export interface UserResponse {
   id: string;
   fullname: string;
-  mssv: string;
+  std_code: string;
+}
+
+export interface KResponse {
+  id: string;
+  name: string;
 }
 
 export interface SheetUsersResponse {
@@ -48,4 +57,33 @@ export interface SheetClassResponse {
   sum_of_department_marks: number;
   level: LevelResponse;
   status: number;
+}
+
+export interface EvaluationResponse {
+  id: number;
+  control: number;
+  content: string;
+  category: number;
+  from_mark: number;
+  to_mark: number;
+  unit: string;
+  children: boolean;
+  personal_mark_level: number;
+  class_mark_level: number;
+  department_mark_level: number;
+}
+
+export interface SheetDetailResponse {
+  id: number;
+  department: DepartmentResponse;
+  class: ClassResponse;
+  user: UserResponse;
+  semester: SemesterResponse;
+  academic: AcademicResponse;
+  k: KResponse;
+  level: LevelResponse;
+  status: number;
+  sum_of_personal_marks: number;
+  sum_of_class_marks: number;
+  sum_of_department_marks: number;
 }

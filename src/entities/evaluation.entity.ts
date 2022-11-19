@@ -49,7 +49,7 @@ export class EvaluationEntity extends RootEntity {
       referencedColumnName: 'id',
     },
   ])
-  sheet: FormEntity;
+  sheet: SheetEntity;
 
   @Column('float', {
     name: 'personal_mark_level',

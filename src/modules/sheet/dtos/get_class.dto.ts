@@ -6,24 +6,24 @@ import { generateValidationMessage } from '../../../utils';
 
 import { MinValidator } from '../../../validators/min.validator';
 
-export class GetSheetByClass {
+export class GetClassDto {
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [semester_id].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),
   })
   @MinValidator(0, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [semester_id] tối thiểu bằng 0.'),
+      generateValidationMessage(arg, 'Giá trị [học kì] tối thiểu bằng 0.'),
   })
   semester_id: number;
 
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [academic_id].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [niên khóa].'),
   })
   @MinValidator(0, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [academic_id] tối thiểu bằng 0.'),
+      generateValidationMessage(arg, 'Giá trị [niên khóa] tối thiểu bằng 0.'),
   })
   academic_id: number;
 
@@ -33,11 +33,11 @@ export class GetSheetByClass {
   )
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [input].'),
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
-  @LengthValidator(1, 255, {
+  @LengthValidator(1, 24, {
     message: (arg) =>
-      generateValidationMessage(arg, '[Input] độ dài tối đa 255 kí tự.'),
+      generateValidationMessage(arg, '[Khoa] độ dài tối đa 24 kí tự.'),
   })
-  input: string;
+  class_id: string;
 }

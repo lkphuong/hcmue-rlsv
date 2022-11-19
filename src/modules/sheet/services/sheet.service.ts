@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { LogService } from '../../log/services/log.service';
 
@@ -14,14 +14,11 @@ export class SheetService {
   constructor(
     @InjectRepository(SheetEntity)
     private readonly _sheetRepository: Repository<SheetEntity>,
+    private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
-  async getSheetByUserIdPaging(
-    offet: number,
-    length: number,
-    user_id: string,
-  ): Promise<SheetEntity[] | null> {
+  async getSheetsByUserId(user_id: string): Promise<SheetEntity[] | null> {
     try {
       const conditions = await this._sheetRepository
         .createQueryBuilder('sheet')
@@ -36,8 +33,6 @@ export class SheetService {
 
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')
-        .skip(offet)
-        .take(length)
         .getMany();
 
       return sheets || null;
@@ -52,30 +47,7 @@ export class SheetService {
     }
   }
 
-  async countSheetByUserId(user_id: string): Promise<number> {
-    try {
-      const conditions = this._sheetRepository
-        .createQueryBuilder('sheet')
-        .select('COUNT(DISTINCT sheet.id)', 'count')
-        .where('sheet.user_id = :user_id', { user_id });
-
-      const { count } = await conditions.getRawOne();
-
-      return count;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'SheetService.countSheetByUserId()',
-        e,
-      );
-      return null;
-    }
-  }
-
   async getSheetPaging(
-    offset: number,
-    length: number,
     semester_id: number,
     academic_id: number,
     class_id?: number,
@@ -96,7 +68,9 @@ export class SheetService {
         conditions.andWhere('sheet.class_id = :class_id', { class_id });
       }
 
-      const sheets = await conditions.skip(offset).take(length).getMany();
+      const sheets = await conditions
+        .orderBy('sheet.created_at', 'DESC')
+        .getMany();
 
       return sheets || null;
     } catch (e) {
@@ -110,36 +84,44 @@ export class SheetService {
     }
   }
 
-  async countSheet(
-    semester_id: number,
-    academic_id: number,
-    class_id?: number,
-  ): Promise<number> {
+  async getSheetById(id: number): Promise<SheetEntity | null> {
     try {
       const conditions = this._sheetRepository
         .createQueryBuilder('sheet')
-        .innerJoin('sheet.semester', 'semester')
-        .innerJoin('sheet.academic_year', 'academic_year')
-        .innerJoin('sheet.level', 'level')
-        .select('COUNT(DISTINCT sheet.id)', 'count')
-        .where('sheet.deleted = :deleted', { deleted: false })
-        .andWhere('level.deleted = :deleted', { deleted: false })
-        .andWhere('academic_year.deleted = :deleted', { deleted: false })
-        .andWhere('semester.id = :semester_id', { semester_id })
-        .andWhere('academic_year.id = :academic_id', { academic_id });
+        .where('sheet.id = :id', { id })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
 
-      if (class_id && class_id !== 0) {
-        conditions.andWhere('sheet.class_id = :class_id', { class_id });
-      }
+      const sheet = await conditions.getOne();
 
-      const { count } = await conditions.getRawOne();
-
-      return count;
+      return sheet || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'SheetService.countSheet()',
+        'SheetService.getSheetById()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async update(
+    sheet: SheetEntity,
+    manager: EntityManager,
+  ): Promise<SheetEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      sheet = await manager.save(sheet);
+
+      return sheet || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'SheetService.update()',
         e,
       );
       return null;

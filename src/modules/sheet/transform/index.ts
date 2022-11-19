@@ -1,15 +1,22 @@
 import { UserService } from '../../user/services/user.service';
+import { ClassService } from '../../class/services/class.service';
+import { DepartmentService } from '../../department/services/department.service';
+import { KService } from '../../k/services/k.service';
+
+import { convertObjectId2String } from 'src/utils';
 
 import { User } from '../../../schemas/user.schema';
+import { Class } from 'src/schemas/class.schema';
 
 import {
+  ClassResponse,
   SheetClassResponse,
   SheetUsersResponse,
+  SheetDetailResponse,
 } from '../interfaces/sheet_response.interface';
 
 import { SheetEntity } from '../../../entities/sheet.entity';
-
-import { convertObjectId2String } from 'src/utils';
+import { AcademicYearEntity } from 'src/entities/academic_year.entity';
 
 export const generateSheets2SheetUsuer = (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -56,14 +63,13 @@ export const generateSheets2Class = async (
       } else {
         result = await user_service.getUserById(sheet.user_id);
       }
-      console.log('result: ', result);
       if (result) {
         const item: SheetClassResponse = {
           id: sheet.id,
           user: {
             id: convertObjectId2String(result._id),
             fullname: result.fullname,
-            mssv: result.username,
+            std_code: result.username,
           },
           level: {
             id: sheet.level.id,
@@ -79,6 +85,120 @@ export const generateSheets2Class = async (
     }
 
     return payload;
+  }
+
+  return null;
+};
+
+export const generateAcademicYearClass2Array = async (
+  department_id: string,
+  class_id: string,
+  academic_year: AcademicYearEntity | null,
+  class_service: ClassService,
+) => {
+  if (
+    academic_year.academic_year_classes &&
+    academic_year.academic_year_classes.length > 0
+  ) {
+    const payload: ClassResponse[] = [];
+    const academic_year_classes = academic_year.academic_year_classes;
+
+    console.log('class_id: ', class_id);
+
+    for (const academic_year_classe of academic_year_classes) {
+      let item: ClassResponse = null;
+      let result: Class = null;
+      if (class_id) {
+        result = await class_service.getClassById(class_id, department_id);
+        if (result) {
+          item = {
+            id: convertObjectId2String(result._id),
+            name: result.name,
+          };
+          payload.push(item);
+          return payload;
+        }
+      } else {
+        result = await class_service.getClassById(
+          academic_year_classe.class_id,
+          department_id,
+        );
+        if (result) {
+          item = {
+            id: convertObjectId2String(result._id),
+            name: result.name,
+          };
+          payload.push(item);
+        }
+      }
+    }
+
+    return payload;
+  }
+
+  return null;
+};
+
+export const generateData2Object = async (
+  sheet: SheetEntity | null,
+  department_service: DepartmentService,
+  class_service: ClassService,
+  user_service: UserService,
+  k_service: KService,
+) => {
+  if (sheet) {
+    const department = await department_service.getDepartmentById(
+      sheet.department_id,
+    );
+    const user = await user_service.getUserById(sheet.user_id);
+
+    const result_class = await class_service.getClassById(
+      sheet.class_id,
+      sheet.department_id,
+    );
+
+    const k = await k_service.getKById(sheet.k);
+
+    if (department && user && result_class && k) {
+      const payload: SheetDetailResponse = {
+        id: sheet.id,
+        department: {
+          id: convertObjectId2String(department._id),
+          name: department.name,
+        },
+        class: {
+          id: convertObjectId2String(result_class._id),
+          name: result_class.name,
+        },
+        user: {
+          id: convertObjectId2String(user._id),
+          fullname: user.fullname,
+          std_code: user.username,
+        },
+        semester: {
+          id: sheet.semester.id,
+          name: sheet.semester.name,
+        },
+        academic: {
+          id: sheet.semester.id,
+          name: sheet.academic_year.name,
+        },
+        k: {
+          id: convertObjectId2String(k._id),
+          name: k.name,
+        },
+        level: {
+          id: sheet.level.id,
+          name: sheet.level.name,
+        },
+        status: sheet.status,
+        sum_of_personal_marks: sheet.sum_of_personal_marks,
+        sum_of_class_marks: sheet.sum_of_class_marks,
+        sum_of_department_marks: sheet.sum_of_department_marks,
+      };
+
+      return payload;
+    }
   }
 
   return null;

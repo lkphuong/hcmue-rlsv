@@ -5,6 +5,13 @@ import { SheetEntity } from '../../entities/sheet.entity';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 import { UserModule } from '../user/user.module';
+import { AcademicYearModule } from '../academic-year/academic_year.module';
+import { ClassModuel } from '../class/class.module';
+import { KModule } from '../k/k.module';
+import { DepartmentModule } from '../department/department.module';
+import { EvaluationModule } from '../evaluation/evaluation.module';
+import { LevelModule } from '../level/level.module';
+import { FormModule } from '../form/form.module';
 
 import { SheetController } from './controllers/sheet.controller';
 
@@ -15,6 +22,13 @@ export const modules = [
   TypeOrmModule.forFeature([SheetEntity]),
   LogModule,
   UserModule,
+  AcademicYearModule,
+  ClassModuel,
+  FormModule,
+  KModule,
+  DepartmentModule,
+  EvaluationModule,
+  LevelModule,
 ];
 
 export const controllers = [SheetController];

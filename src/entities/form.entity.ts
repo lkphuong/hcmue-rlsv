@@ -48,6 +48,12 @@ export class FormEntity extends RootEntity {
   })
   control: number;
 
+  @Column('text', {
+    name: 'content',
+    nullable: false,
+  })
+  content: string;
+
   @Column('float', {
     name: 'from_mark',
     nullable: true,

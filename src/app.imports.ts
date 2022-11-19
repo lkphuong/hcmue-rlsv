@@ -13,6 +13,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ClassModuel } from './modules/class/class.module';
 import { SemesterModule } from './modules/semester/semester.module';
 import { AcademicYearModule } from './modules/academic-year/academic_year.module';
+import { EvaluationModule } from './modules/evaluation/evaluation.module';
+import { LevelModule } from './modules/level/level.module';
 import { SheetModule } from './modules/sheet/sheet.module';
 import { UserModule } from './modules/user/user.module';
 
@@ -42,7 +44,9 @@ export const modules = [
   AcademicYearModule,
   AuthModule,
   ClassModuel,
+  LevelModule,
   SemesterModule,
   SheetModule,
   UserModule,
+  EvaluationModule,
 ];

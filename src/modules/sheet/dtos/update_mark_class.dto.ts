@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsNotEmpty, ValidateNested } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -19,7 +19,6 @@ class DataDtos {
   })
   form_id: number;
 
-  @IsOptional()
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [tiêu chí đánh giá].'),
@@ -31,26 +30,36 @@ class DataDtos {
         'Giá trị [tiêu chí đánh giá] tối thiểu bằng 0.',
       ),
   })
-  evaluation_id?: number = 0;
+  evaluation_id: number;
 
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Bạn vui lòng nhập [personal_mark_level].',
-      ),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
   })
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [personal_mark_level] tối thiểu bằng 0.',
+        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
       ),
   })
   personal_mark_level: number;
+
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
+      ),
+  })
+  class_mark_level: number;
 }
 
-export class UpdateMarkStudent {
+export class UpdateMarkClass {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [vai trò].'),

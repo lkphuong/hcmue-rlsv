@@ -2,12 +2,12 @@ import { BaseEntity, Column, Entity } from 'typeorm';
 
 @Entity()
 export class RootEntity extends BaseEntity {
-  @Column('bit', {
+  @Column('boolean', {
     name: 'active',
     nullable: true,
     default: 1,
   })
-  active: boolean;
+  active?: boolean = true;
 
   @Column('varchar', {
     name: 'created_by',

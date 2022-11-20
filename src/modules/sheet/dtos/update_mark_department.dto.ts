@@ -35,22 +35,45 @@ class DataDtos {
 
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Bạn vui lòng nhập [personal_mark_level].',
-      ),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
   })
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [personal_mark_level] tối thiểu bằng 0.',
+        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
       ),
   })
   personal_mark_level: number;
+
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
+      ),
+  })
+  class_mark_level: number;
+
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
+      ),
+  })
+  department_mark_level: number;
 }
 
-export class UpdateMarkStudent {
+export class UpdateMarkDepartment {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [vai trò].'),

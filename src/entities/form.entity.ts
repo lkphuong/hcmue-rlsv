@@ -81,7 +81,7 @@ export class FormEntity extends RootEntity {
     nullable: true,
     default: null,
   })
-  unit: number;
+  unit: string;
 
   @Column('boolean', {
     name: 'required',

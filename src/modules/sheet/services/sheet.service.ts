@@ -88,6 +88,8 @@ export class SheetService {
     try {
       const conditions = this._sheetRepository
         .createQueryBuilder('sheet')
+        .innerJoinAndSelect('sheet.semester', 'semester')
+        .innerJoinAndSelect('sheet.academic_year', 'academic_year')
         .where('sheet.id = :id', { id })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
 

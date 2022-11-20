@@ -64,6 +64,31 @@ export class EvaluationService {
     }
   }
 
+  async getEvaluationBySheetId(
+    sheet_id: number,
+  ): Promise<EvaluationEntity[] | null> {
+    try {
+      const conditions = this._evaluationService
+        .createQueryBuilder('evaluation')
+        .innerJoinAndSelect('evaluation.form', 'form')
+        .where('evaluation.sheet_id = :sheet_id', { sheet_id })
+        .andWhere('evaluation.parent_id IS NULL')
+        .andWhere('evaluation.deleted = :deleted', { deleted: false });
+
+      const evaluations = await conditions.getMany();
+
+      return evaluations || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'EvaluationService.getEvaluationBySheetId()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async bulkAdd(
     evaluation: EvaluationEntity[],
     manager?: EntityManager,
@@ -103,6 +128,32 @@ export class EvaluationService {
         Levels.ERROR,
         Methods.UPDATE,
         'EvaluationService.bulkUpdate()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async multiApprove(
+    sheet_ids: number[],
+    manager?: EntityManager,
+  ): Promise<boolean> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.query(
+        `CALL multi_approve (${sheet_ids.toString()})`,
+      );
+      console.log('result: ', results);
+
+      return results.affectedRows > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'EvaluationService.multiApprove()',
         e,
       );
       return null;

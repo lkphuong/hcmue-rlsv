@@ -60,10 +60,12 @@ export interface SheetClassResponse {
 }
 
 export interface EvaluationResponse {
-  id: number;
+  form_id: number;
+  evaluation_id?: number;
+  parent_id?: string;
   control: number;
   content: string;
-  category: number;
+  category?: number;
   from_mark: number;
   to_mark: number;
   unit: string;
@@ -86,4 +88,17 @@ export interface SheetDetailResponse {
   sum_of_personal_marks: number;
   sum_of_class_marks: number;
   sum_of_department_marks: number;
+  evaluations: EvaluationResponse[];
+}
+
+export interface MultiApproveResponse {
+  sheet_ids: number[];
+  success: boolean;
+}
+
+export interface SheetEvaluationResponse {
+  id: number;
+  semester: SemesterResponse;
+  academic: AcademicResponse;
+  evaluations: EvaluationResponse[];
 }

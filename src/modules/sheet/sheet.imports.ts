@@ -5,6 +5,7 @@ import { SheetEntity } from '../../entities/sheet.entity';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 import { UserModule } from '../user/user.module';
+import { ApprovalModule } from '../approval/approval.module';
 import { AcademicYearModule } from '../academic-year/academic_year.module';
 import { ClassModuel } from '../class/class.module';
 import { KModule } from '../k/k.module';
@@ -23,6 +24,7 @@ export const modules = [
   LogModule,
   UserModule,
   AcademicYearModule,
+  ApprovalModule,
   ClassModuel,
   FormModule,
   KModule,

@@ -2,21 +2,27 @@ import { UserService } from '../../user/services/user.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
+import { FormService } from '../../form/services/form.service';
+import { EvaluationService } from 'src/modules/evaluation/services/evaluation.service';
 
-import { convertObjectId2String } from 'src/utils';
+import { convertObjectId2String } from '../../../utils';
 
 import { User } from '../../../schemas/user.schema';
-import { Class } from 'src/schemas/class.schema';
+import { Class } from '../../../schemas/class.schema';
 
 import {
   ClassResponse,
   SheetClassResponse,
   SheetUsersResponse,
   SheetDetailResponse,
+  EvaluationResponse,
+  SheetEvaluationResponse,
 } from '../interfaces/sheet_response.interface';
 
 import { SheetEntity } from '../../../entities/sheet.entity';
-import { AcademicYearEntity } from 'src/entities/academic_year.entity';
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { FormEntity } from '../../../entities/form.entity';
 
 export const generateSheets2SheetUsuer = (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -160,6 +166,7 @@ export const generateData2Object = async (
     const k = await k_service.getKById(sheet.k);
 
     if (department && user && result_class && k) {
+      const evaluations: EvaluationResponse[] = [];
       const payload: SheetDetailResponse = {
         id: sheet.id,
         department: {
@@ -195,11 +202,126 @@ export const generateData2Object = async (
         sum_of_personal_marks: sheet.sum_of_personal_marks,
         sum_of_class_marks: sheet.sum_of_class_marks,
         sum_of_department_marks: sheet.sum_of_department_marks,
+        evaluations: evaluations,
       };
 
       return payload;
     }
   }
 
+  return null;
+};
+
+export const generateDetailSheet2Object = async (
+  sheet: SheetEntity,
+  evaluations: EvaluationEntity[] | null,
+  forms: FormEntity[] | null,
+  evaluation_service: EvaluationService,
+  form_service: FormService,
+) => {
+  if (sheet) {
+    const payload: SheetEvaluationResponse = {
+      id: sheet.id,
+      academic: {
+        id: sheet.academic_year.id,
+        name: sheet.academic_year.name,
+      },
+      semester: {
+        id: sheet.semester.id,
+        name: sheet.semester.name,
+      },
+      evaluations: [],
+    };
+
+    if (evaluations) {
+      for await (const evaluation of evaluations) {
+        const item: EvaluationResponse = {
+          form_id: evaluation.form.id,
+          evaluation_id: evaluation.id,
+          parent_id: evaluation.ref,
+          control: evaluation.form.control,
+          content: evaluation.form.content,
+          category: evaluation.form.category,
+          from_mark: evaluation.form.from_mark,
+          to_mark: evaluation.form.to_mark,
+          unit: evaluation.form.unit,
+          children: false,
+          personal_mark_level: evaluation.personal_mark_level,
+          class_mark_level: evaluation.class_mark_level,
+          department_mark_level: evaluation.department_mark_level,
+        };
+
+        const children = await evaluation_service.getEvaluationByParentId(
+          evaluation.ref,
+        );
+        if (children && children.length > 0) {
+          item.children = true;
+        }
+
+        payload.evaluations.push(item);
+      }
+    } else {
+      for await (const form of forms) {
+        const item: EvaluationResponse = {
+          form_id: form.id,
+          evaluation_id: 0,
+          parent_id: form.ref,
+          control: form.control,
+          content: form.content,
+          category: form.category,
+          from_mark: form.from_mark,
+          to_mark: form.to_mark,
+          unit: form.unit,
+          children: false,
+          personal_mark_level: 0,
+          class_mark_level: 0,
+          department_mark_level: 0,
+        };
+
+        const children = await form_service.getFormByParentId(form.ref);
+        if (children && children.length > 0) {
+          item.children = true;
+        }
+
+        payload.evaluations.push(item);
+      }
+    }
+
+    return payload;
+  }
+  return null;
+};
+
+export const generateChildren2Array = async (
+  forms: FormEntity[] | null,
+  form_service: FormService,
+) => {
+  if (forms && forms.length > 0) {
+    const payload: EvaluationResponse[] = [];
+    for (const form of forms) {
+      const item: EvaluationResponse = {
+        form_id: form.id,
+        evaluation_id: form.evaluation_form[0].id ?? 0,
+        parent_id: form.ref,
+        control: form.control,
+        content: form.content,
+        from_mark: form.from_mark,
+        to_mark: form.to_mark,
+        unit: form.unit,
+        children: false,
+        personal_mark_level: form.evaluation_form[0].personal_mark_level ?? 0,
+        class_mark_level: form.evaluation_form[0].class_mark_level ?? 0,
+        department_mark_level:
+          form.evaluation_form[0].department_mark_level ?? 0,
+        category: form.category,
+      };
+
+      const children = await form_service.getFormByParentId(form.ref);
+      if (children && children.length > 0) item.children = true;
+
+      payload.push(item);
+    }
+    return payload;
+  }
   return null;
 };

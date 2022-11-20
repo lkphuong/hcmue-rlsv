@@ -9,21 +9,21 @@ import { MinValidator } from '../../../validators/min.validator';
 export class GetSheetByClass {
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [semester_id].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),
   })
-  @MinValidator(0, {
+  @MinValidator(1, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [semester_id] tối thiểu bằng 0.'),
+      generateValidationMessage(arg, 'Giá trị [học kì] tối thiểu bằng 1.'),
   })
   semester_id: number;
 
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [academic_id].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [niên khóa].'),
   })
-  @MinValidator(0, {
+  @MinValidator(1, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [academic_id] tối thiểu bằng 0.'),
+      generateValidationMessage(arg, 'Giá trị [niên khóa] tối thiểu bằng 1.'),
   })
   academic_id: number;
 

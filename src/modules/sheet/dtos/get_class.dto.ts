@@ -37,7 +37,7 @@ export class GetClassDto {
   })
   @LengthValidator(1, 24, {
     message: (arg) =>
-      generateValidationMessage(arg, '[Khoa] độ dài tối đa 24 kí tự.'),
+      generateValidationMessage(arg, '[Lớp] độ dài tối đa 24 kí tự.'),
   })
   class_id: string;
 }

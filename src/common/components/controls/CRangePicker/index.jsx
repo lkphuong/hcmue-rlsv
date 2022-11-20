@@ -1,20 +1,32 @@
 import React, { memo } from 'react';
 
-import RangePicker from 'react-range-picker';
+import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import { CalendarMonth } from '@mui/icons-material';
 
-import { string, func } from 'prop-types';
+import { func, array } from 'prop-types';
 
-export const CRangePicker = memo(({ placeholderText, values, onChange }) => {
-	return <RangePicker placeholderText={placeholderText} onDateSelected={onChange} />;
+import './index.scss';
+
+export const CRangePicker = memo(({ values, onChange }) => {
+	return (
+		<DateRangePicker
+			className='c-rangepicker'
+			locale='vi-VI'
+			onChange={onChange}
+			value={values}
+			calendarIcon={<CalendarMonth />}
+			dayPlaceholder='DD'
+			monthPlaceholder='MM'
+			yearPlaceholder='YYYY'
+		/>
+	);
 });
 
 CRangePicker.displayName = CRangePicker;
 
 CRangePicker.propTypes = {
-	placeholderText: string,
+	values: array,
 	onChange: func,
 };
 
-CRangePicker.defaultProps = {
-	placeholderText: 'Ngày bắt đầu - Ngày kết thúc',
-};
+CRangePicker.defaultProps = {};

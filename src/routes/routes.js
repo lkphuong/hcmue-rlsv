@@ -22,7 +22,6 @@ export const browserRouter = [
 		element: <CMainLayout />,
 		children: [
 			{
-				index: true,
 				path: ROUTES.MY_SCORE,
 				errorElement: <CErrorPage />,
 				element: (

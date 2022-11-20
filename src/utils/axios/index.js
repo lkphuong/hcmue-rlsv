@@ -13,9 +13,9 @@ import { updateAbility } from '_func/permissions';
 
 const apiInstance = axios.create({
 	// baseURL: process.env.REACT_APP_API_URL,
-	baseURL: 'http://192.168.1.25:5031/api/',
+	// baseURL: 'http://192.168.1.25:5031/api/',
 	// baseURL: 'http://hcmue-ctcthssv.vtcode.vn:9093/api/',
-	// baseURL: 'http://192.168.1.25:5099/api/',
+	baseURL: 'http://192.168.1.25:5099/api/',
 	timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 
@@ -40,6 +40,7 @@ apiInstance.interceptors.response.use(
 		if (error?.response?.status === 401) {
 			store.dispatch(actions.setProfile(null));
 			store.dispatch(actions.setToken(null));
+			tryLogout();
 		}
 
 		if (error?.response?.status === 403) {
@@ -72,11 +73,15 @@ export const getProfile = async (token) => {
 
 		const res = await profile();
 
-		// Test roleId
-		const roleId = 3;
-		updateAbility(roleId);
+		if (isSuccess(res)) {
+			const role_id = res?.data?.role;
 
-		if (isSuccess(res)) store.dispatch(actions.setProfile({ ...res.data, role_id: roleId }));
+			// Test roleId
+			// const role_id = 0;
+
+			updateAbility(role_id);
+			store.dispatch(actions.setProfile({ ...res.data, role_id }));
+		}
 
 		return res;
 	} catch (error) {

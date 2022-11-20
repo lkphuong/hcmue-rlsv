@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Box, Typography } from '@mui/material';
 
@@ -8,16 +8,22 @@ import { DATA_BY_ID as DATA } from '_modules/home/mocks';
 
 import { Form } from '_modules/home/components';
 
+import { getSheetById } from '_api/sheets.api';
+
 const SemesterDetail = () => {
 	//#region Data
 	const { semester_id } = useParams();
+
+	const [data, setData] = useState(null);
 	//#endregion
 
 	//#region Event
 	const getForm = useCallback(async () => {
-		// const res = await getData(semester_id);
-		// console.log(res);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+		try {
+			const res = await getSheetById(semester_id);
+		} catch (error) {
+			// console.log(error);
+		}
 	}, [semester_id]);
 	//#endregion
 

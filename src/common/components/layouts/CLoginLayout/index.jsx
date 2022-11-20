@@ -25,7 +25,7 @@ export const CLoginLayout = () => {
 			case 2:
 				return ROUTES.LIST;
 			default:
-				return ROUTES.HOME;
+				return ROUTES.MY_SCORE;
 		}
 	}, [profile]);
 

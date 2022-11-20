@@ -88,7 +88,7 @@ const theme = createTheme({
 						'& .MuiTableCell-root': {
 							borderBottom: BORDER_TABLE + '!important',
 							fontWeight: 600,
-							backgroundColor: 'rgb(0 248 21 / 20%)',
+							backgroundColor: '#daf9f0',
 						},
 					},
 				},

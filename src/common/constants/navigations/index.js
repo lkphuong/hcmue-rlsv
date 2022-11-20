@@ -2,7 +2,7 @@ import { ENTITY_KEY } from '_config/permissions';
 
 export const NAVIGATIONS = [
 	{
-		path: '/',
+		path: '/my-score',
 		name: 'Điểm rèn luyện của tôi',
 		entity: ENTITY_KEY.DASHBOARD.key,
 	},

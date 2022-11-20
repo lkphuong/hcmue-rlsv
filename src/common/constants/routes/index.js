@@ -3,8 +3,8 @@ export const ROUTES = {
 
 	HOME: '/',
 
-	MY_SCORE: '/',
-	MY_SCORE_DETAIL: ':semester_id',
+	MY_SCORE: '/my-score',
+	MY_SCORE_DETAIL: '/my-score/:semester_id',
 
 	CLASS_SCORE: '/class-score',
 

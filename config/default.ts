@@ -8,6 +8,7 @@ export default {
 
   MONGODB_URL:
     'mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product',
+
   MONGODB_HOST: '103.154.176.80',
   MONGODB_PORT: 27072,
   MONGODB_USERNAME: 'adminYouth',

@@ -1,0 +1,51 @@
+version: '3.1'
+services:
+  hcmue:
+    # container_name: loyalty-service
+    image: hoanglong1011/hcmue:1.1
+    environment:
+      - NODE_ENV=development
+      - MYSQL_HOST=103.154.176.80
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE_NAME=hcmue_rlsv
+      - MYSQL_USERNAME=uat
+      - MYSQL_PASSWORD=Uatvtcode@2022
+
+      - MONGODB_URL=mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product
+
+      - MONGODB_HOST=103.154.176.80
+      - MONGODB_PORT=27072
+      - MONGODB_USERNAME=adminYouth
+      - MONGODB_PASSWORD=adminYouth2022
+      - MOGODB_DATABASE_NAME=youth-app-product
+    ports:
+      - "5033:3000"
+    networks:
+      - net-hcmue
+    volumes:
+      - ./logs:/opt/app/logs
+      - ./static:/opt/app/static
+    restart: 'always'
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      rollback_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: pause
+        order: stop-first
+      update_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: rollback
+        order: stop-first
+
+networks:
+  net-hcmue:
+    driver: bridge

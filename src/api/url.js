@@ -7,5 +7,7 @@ export const AUTH = {
 
 export const SHEETS = {
 	GET_BY_ID: '/sheets',
-	STUDENT_GET_BY_USER_ID: '/sheets/student',
+	SHEETS_GET_BY_STUDENT_ID: '/sheets/student',
+	SHEETS_GET_BY_CLASS_ID: '/sheets/class',
+	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/student',
 };

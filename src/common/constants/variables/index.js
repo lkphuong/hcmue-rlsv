@@ -1,3 +1,5 @@
+export const TYPE_NUMBER = /^[0-9-]+$/;
+
 export const LEVEL = [
 	{ id: 0, value: 0, name: 'Không xếp loại' },
 	{ id: 1, value: 1, name: 'Kém' },

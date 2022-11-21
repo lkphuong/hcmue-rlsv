@@ -7,5 +7,13 @@ export const getSheetById = async (id) => {
 };
 
 export const getStudentSheets = async (id) => {
-	return await get(`${SHEETS.STUDENT_GET_BY_USER_ID}/${id}`);
+	return await get(`${SHEETS.SHEETS_GET_BY_STUDENT_ID}/${id}`);
+};
+
+export const getClassSheets = async (id, params = { semester_id: 0, academic_id: 0 }) => {
+	return await get(`${SHEETS.SHEETS_GET_BY_CLASS_ID}/${id}`, params);
+};
+
+export const getDepartmentSheets = async (id, params = { semester_id: 0, academic_id: 0 }) => {
+	return await get(`${SHEETS.SHEETS_GET_BY_DEPARTMENT_ID}/${id}`, params);
 };

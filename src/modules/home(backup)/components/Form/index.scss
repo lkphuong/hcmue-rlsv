@@ -1,8 +1,8 @@
 .MuiGrid-root.grid-fake-table {
-	> .MuiGrid-item {
+	.MuiGrid-item {
 		&:not(.MuiGrid-grid-xs-12) {
+			padding: 10px;
+			border: 1px solid black;
 		}
-		padding: 10px;
-		border: 1px solid black;
 	}
 }

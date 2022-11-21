@@ -1,84 +1,86 @@
-import React from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import { Box, Grid } from '@mui/material';
+import { Grid, Paper } from '@mui/material';
+
+import { isSuccess } from '_func/';
+
+import { HEADERS } from '_modules/home/mocks';
 
 import Evaluation from './Evaluation';
 
 import './index.scss';
 
-//#region FAKE DATA
-const EVALUATIONS = [
-	{
-		id: 1,
-		content: 'Đánh giá về ý thức tham gia học tập',
-		to_mark: 20,
-		children: true,
-	},
-	{
-		id: 2,
-		content: 'Đánh giá về ý thức chấp hành nội quy, quy chế, quy định trong trường',
-		to_mark: 25,
-		children: true,
-	},
-	{
-		id: 3,
-		content:
-			'Đánh giá về ý thức tham gia các hoạt động chính trị, xã hội, văn hóa, văn nghệ, thể thao, phòng chống tội phạm và các tệ nạn xã hội',
-		children: true,
-	},
-	{
-		id: 4,
-		content: 'Đánh giá về ý thức công dân trong quan hệ cộng đồng',
-		to_mark: 25,
-		children: true,
-	},
-	{
-		id: 5,
-		content:
-			'Đánh giá về ý thức và kết quả tham gia công tác phụ trách lớp, các đoàn thể, tổ chức trong trường; đạt thành tích xuất sắc trong học tập, rèn luyện',
-		to_mark: 10,
-		children: true,
-	},
-];
-//#endregion
+export const Form = ({ formId }) => {
+	// //#region Data
+	// const [headers, setHeaders] = useState([]);
+	// //#endregion
 
-export const Form = ({ data }) => {
+	// //#region Event
+	// const getHeaders = useCallback(async () => {
+	// 	if (!formId) return;
+	// 	try {
+	// 		const res = await getHeaders(formId);
+
+	// 		if (isSuccess(res)) setHeaders(res.data);
+	// 	} catch (error) {
+	// 		throw error;
+	// 	}
+	// }, [formId]);
+	// //#endregion
+
+	// useEffect(() => {
+	// 	getHeaders();
+	// }, [getHeaders]);
+
+	//#region Render
 	return (
-		<Box>
-			<Grid container borderRadius={1} overflow='hidden'>
+		<Paper>
+			<Grid
+				container
+				borderRadius={1}
+				overflow='hidden'
+				sx={{ boxShadow: '0px 2px 2px 1px rgb(0 0 0 / 20%)' }}
+			>
 				<Grid
 					item
 					xl={1}
 					textAlign='center'
-					sx={{ backgroundColor: '#28AEF7', fontWeight: 600, py: 1.3 }}
+					sx={{ backgroundColor: '#b9bec0', fontWeight: 600, py: 1.3 }}
 				>
 					Mục
 				</Grid>
-				<Grid item xl={7} sx={{ backgroundColor: '#28AEF7', fontWeight: 600, py: 1.3 }}>
-					Nội dung đánh giá
-				</Grid>
 				<Grid
 					item
-					xl={2}
-					textAlign='center'
-					sx={{ backgroundColor: '#28AEF7', fontWeight: 600, py: 1.3 }}
+					xl={11}
+					sx={{ backgroundColor: '#b9bec0', fontWeight: 600, py: 1.3, px: '10px' }}
 				>
-					Khung điểm
-				</Grid>
-				<Grid
-					item
-					xl={2}
-					textAlign='center'
-					sx={{ backgroundColor: '#28AEF7', fontWeight: 600, py: 1.3 }}
-				>
-					Sinh viên đánh giá
+					<Grid container spacing={1}>
+						<Grid item xs={6.4}>
+							Nội dung đánh giá
+						</Grid>
+						<Grid item xs={2} textAlign='center'>
+							Khung điểm
+						</Grid>
+						<Grid item xs={1.2} textAlign='center'>
+							Sinh viên
+						</Grid>
+						<Grid item xs={1.2} textAlign='center'>
+							Lớp
+						</Grid>
+						<Grid item xs={1.2} textAlign='center'>
+							Khoa
+						</Grid>
+					</Grid>
 				</Grid>
 			</Grid>
 
-			<Grid container mt={1.5} alignItems='center' className='grid-fake-table'>
-				{EVALUATIONS.length > 0 &&
-					EVALUATIONS.map((e, i) => <Evaluation key={i} data={e} index={i + 1} />)}
+			<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
+				{HEADERS.length > 0 &&
+					HEADERS.map((e, i) => (
+						<Evaluation key={i} headerId={'header_id'} data={e} index={i + 1} />
+					))}
 			</Grid>
-		</Box>
+		</Paper>
 	);
+	//#endregion
 };

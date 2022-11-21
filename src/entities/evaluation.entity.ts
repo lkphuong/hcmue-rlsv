@@ -3,10 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { EvaluationItemEntity } from './evaluation_items.entity';
+import { ItemEntity } from './item.entity';
+import { OptionEntity } from './option.entity';
 
 import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
@@ -26,6 +26,24 @@ export class EvaluationEntity extends RootEntity {
     },
   ])
   sheet: SheetEntity;
+
+  @ManyToOne(() => ItemEntity, (item) => item.evaluations)
+  @JoinColumn([
+    {
+      name: 'item_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  item: ItemEntity;
+
+  @ManyToOne(() => OptionEntity, (option) => option.evaluations)
+  @JoinColumn([
+    {
+      name: 'option_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  option: OptionEntity;
 
   @Column('float', {
     name: 'personal_mark_level',
@@ -47,10 +65,4 @@ export class EvaluationEntity extends RootEntity {
     default: null,
   })
   department_mark_level: number;
-
-  @OneToMany(
-    () => EvaluationItemEntity,
-    (evaluation_entity) => evaluation_entity.evaluation,
-  )
-  evaluation_items: EvaluationItemEntity[];
 }

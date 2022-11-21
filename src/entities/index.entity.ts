@@ -11,7 +11,6 @@ import { SheetEntity } from './sheet.entity';
 import { SheetSignatures } from './sheet_signatures.entity';
 import { SignatureEntity } from './signature.entity';
 import { AcademicYearClassesEntity } from './academic_year_classes.entity';
-import { EvaluationItemEntity } from './evaluation_items.entity';
 import { HeaderEntity } from './header.entity';
 import { ItemEntity } from './item.entity';
 import { OptionEntity } from './option.entity';
@@ -31,7 +30,6 @@ const entities = [
   SheetSignatures,
   SignatureEntity,
   LevelEntity,
-  EvaluationItemEntity,
   HeaderEntity,
   ItemEntity,
   OptionEntity,

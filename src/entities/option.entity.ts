@@ -9,7 +9,7 @@ import {
 
 import { RootEntity } from './root.entity';
 import { ItemEntity } from './item.entity';
-import { EvaluationItemEntity } from './evaluation_items.entity';
+import { EvaluationEntity } from './evaluation.entity';
 
 @Entity('options')
 export class OptionEntity extends RootEntity {
@@ -47,9 +47,6 @@ export class OptionEntity extends RootEntity {
   })
   to_mark: number;
 
-  @OneToMany(
-    () => EvaluationItemEntity,
-    (evaluation_item) => evaluation_item.option,
-  )
-  evaluation_items: EvaluationItemEntity[];
+  @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.option)
+  evaluations: EvaluationEntity[];
 }

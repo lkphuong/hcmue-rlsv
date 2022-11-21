@@ -1,26 +1,27 @@
 import { HttpException } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
-import { Request } from 'express';
+import e, { Request } from 'express';
 
 import { sprintf } from 'src/utils';
 // import { generateUpdateSuccessResponse } from '../utils';
 
 import { SheetEntity } from '../../../entities/sheet.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
-import { EvaluationItemEntity } from '../../../entities/evaluation_items.entity';
 
 import { UnknownException } from '../../../exceptions/UnknownException';
 import { HandlerException } from 'src/exceptions/HandlerException';
 
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
 import { FormService } from '../../form/services/form.service';
-import { LevelService } from 'src/modules/level/services/level.service';
+import { LevelService } from '../../level/services/level.service';
 import { UserService } from '../../user/services/user.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
 import { SheetService } from '../services/sheet.service';
-import { ApprovalService } from 'src/modules/approval/services/approval.service';
+import { ApprovalService } from '../../approval/services/approval.service';
+import { ItemService } from '../../item/services/item.service';
+import { OptionService } from '../../option/services/option.service';
 
 import { UpdateMarkStudent } from '../dtos/update_mark_student.dto';
 import { UpdateMarkClass } from '../dtos/update_mark_class.dto';
@@ -42,7 +43,7 @@ import {
 } from 'src/constants/enums/error-code.enum';
 import { StatusSheet } from '../constants/status.enum';
 import { ErrorMessage } from '../constants/errors.enum';
-import { ItemService } from 'src/modules/item/services/item.service';
+import { OptionEntity } from 'src/entities/option.entity';
 
 // export const updateEvaluationPersonal = async (
 //   sheet_id: number,
@@ -410,58 +411,19 @@ import { ItemService } from 'src/modules/item/services/item.service';
 //   }
 // };
 
-// export const updateEvaluationItemStudent = async (
-//   sheet_id: number,
-//   user_id: string,
-//   params: UpdateMarkStudent,
-//   evaluation: EvaluationEntity,
-//   item_service: ItemService,
-//   evaluation_service: EvaluationService,
-//   form_service: FormService,
-//   query_runner: QueryRunner,
-//   req: Request,
-// ) => {
-//   let evaluation_items: EvaluationItemEntity[] = [];
-
-//   const { data } = params;
-//   const evaluations = await evaluation_service.getEvaluationBySheetId(sheet_id);
-
-//   if (evaluations && evaluations.length > 0) {
-//     //#region Update evaluation
-//     for (const i of data) {
-//       //#region Get Item
-//       const item = await item_service.getItemById(i.item_id);
-//       if (item) {
-//       } else {
-//         //#region throw HandlerException
-//         return new UnknownException(
-//           i.item_id,
-//           DATABASE_EXIT_CODE.UNKNOW_VALUE,
-//           req.method,
-//           req.url,
-//           sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, i.item_id),
-//         );
-//         //#endregion
-//       }
-//       //#endregion
-//     }
-//     //#endregion
-//   } else {
-//     //#region Add evaluation
-//     //#endregion
-//   }
-
-//   //#region loop of data
-//   for await (const item of data) {
-//   }
-//   //#endregion
-
-//   //#region Update evaluation
-//   evaluations = await query_runner.manager.save(evaluations);
-//   //#endregion
-
-//   return evaluations;
-// };
+export const updateEvaluationItemStudent = async (
+  sheet_id: number,
+  user_id: string,
+  params: UpdateMarkStudent,
+  item_service: ItemService,
+  option_service: OptionService,
+  evaluation_service: EvaluationService,
+  form_service: FormService,
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  return 1;
+};
 
 // export const updateMarkClass = async (
 //   user_id: string,

@@ -12,7 +12,7 @@ export class GetClassDto {
   )
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [Khoa].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [khoa].'),
   })
   @LengthValidator(1, 24, {
     message: (arg) =>
@@ -22,14 +22,11 @@ export class GetClassDto {
 
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [academic_year_id].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [niên khóa].'),
   })
   @MinValidator(0, {
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [academic_year_id] tối thiểu bằng 0.',
-      ),
+      generateValidationMessage(arg, 'Giá trị [niên khóa] tối thiểu bằng 0.'),
   })
   academic_year_id: number;
 }

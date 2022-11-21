@@ -7,6 +7,7 @@ import { convertString2Date, sprintf } from 'src/utils';
 
 import { ApprovalService } from '../../approval/services/approval.service';
 import { LevelService } from '../../level/services/level.service';
+import { SheetService } from '../services/sheet.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from 'src/exceptions/UnknownException';
@@ -151,4 +152,13 @@ export const validateApprovalTime = async (
   }
 
   return null;
+};
+
+export const validateApprove = async (
+  status: number,
+  sheet_ids: number[],
+  sheet_service: SheetService,
+  req: Request,
+) => {
+  const sheets = await sheet_service.countSheetByStatus(status, sheet_ids);
 };

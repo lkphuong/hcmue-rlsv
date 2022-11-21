@@ -741,6 +741,7 @@ export const generateUpdateClassMark = async (
   //#region Update sheet
   sheet.sum_of_personal_marks = sum_of_personal_marks;
   sheet.sum_of_class_marks = sum_of_class_marks;
+  sheet.status = StatusSheet.WAITING_DEPARTMENT;
   sheet.level = level;
   sheet.updated_at = new Date();
   sheet.updated_by = user_id;
@@ -797,6 +798,7 @@ export const generateUpdateDepartmentMark = async (
   sheet.sum_of_personal_marks = sum_of_personal_marks;
   sheet.sum_of_class_marks = sum_of_class_marks;
   sheet.sum_of_department_marks = sum_of_department_marks;
+  sheet.status = StatusSheet.SUCCESS;
   sheet.level = level;
   sheet.updated_at = new Date();
   sheet.updated_by = user_id;

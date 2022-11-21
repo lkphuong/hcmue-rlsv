@@ -60,6 +60,7 @@ import {
   SheetUsersResponse,
   MultiApproveResponse,
   SheetEvaluationResponse,
+  EvaluationResponse,
 } from '../interfaces/sheet_response.interface';
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
@@ -259,7 +260,7 @@ export class SheetController {
   async getChildrenEvaluation(
     @Param() params: GetChildrenEvaluationDto,
     @Req() req: Request,
-  ) {
+  ): Promise<HttpResponse<EvaluationResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -290,7 +291,6 @@ export class SheetController {
           this._formService,
           req,
         );
-        console.log('children: ', result);
 
         return result;
       } else {
@@ -325,7 +325,7 @@ export class SheetController {
    * @url /api/sheets/student/:user_id
    * @access private
    * @description Get danh sách phiếu đánh giá cá nhân
-   * @return  HttpPagingResponse<SheetUsersResponse> | HttpException
+   * @return  HttpResponse<SheetClassResponse> | HttpException
    */
   @Post('class/:class_id')
   @HttpCode(HttpStatus.OK)
@@ -625,6 +625,70 @@ export class SheetController {
 
   /**
    * @method PUT
+   * @url /api/department/approval
+   * @access private
+   * @description Khoa cập nhật kết quả cho nhiều sinh viên
+   * @return HttpResponse<MultiApproveResponse> | HttpException
+   * @page sheets
+   */
+  @Put('department/multi-approval')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async multiApprove(
+    @Body() params: MultiApproveDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<MultiApproveResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify(params),
+      );
+
+      //#region Get params
+      const { role_id, sheet_ids } = params;
+      //#endregion
+
+      const { role } = req.user as JwtPayload;
+      //#region  Validate role
+      const valid = await validateRole(role_id, role, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      const success = await this._evaluationService.multiApprove(sheet_ids);
+      if (success) {
+        return generateMultiApproveSuccessResponse(sheet_ids, success);
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_MULTI_APPROVAL_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
    * @url /api/class/:id
    * @access private
    * @description Khoa cập nhật kết quả phiếu rèn luyện
@@ -678,70 +742,6 @@ export class SheetController {
 
       if (sheet instanceof HttpException) throw sheet;
       else return sheet;
-    } catch (err) {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) throw err;
-      else {
-        throw new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-      }
-    }
-  }
-
-  /**
-   * @method PUT
-   * @url /api/department/approval
-   * @access private
-   * @description Khoa cập nhật kết quả cho nhiều sinh viên
-   * @return HttpResponse<>
-   * @page sheets
-   */
-  @Put('department/multi-approval')
-  //@UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async multiApprove(
-    @Body() params: MultiApproveDto,
-    @Req() req: Request,
-  ): Promise<HttpResponse<MultiApproveResponse> | HttpException> {
-    try {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
-
-      this._logger.writeLog(
-        Levels.LOG,
-        req.method,
-        req.url,
-        JSON.stringify(params),
-      );
-
-      //#region Get params
-      const { role_id, sheet_ids } = params;
-      //#endregion
-
-      const { role } = req.user as JwtPayload;
-      //#region  Validate role
-      const valid = await validateRole(role_id, role, req);
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
-
-      const success = await this._evaluationService.multiApprove(sheet_ids);
-      if (success) {
-        return generateMultiApproveSuccessResponse(sheet_ids, success);
-      } else {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_MULTI_APPROVAL_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-        //#endregion
-      }
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

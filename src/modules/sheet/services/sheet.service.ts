@@ -107,6 +107,31 @@ export class SheetService {
     }
   }
 
+  async countSheetByStatus(
+    status: number,
+    sheet_ids: number[],
+  ): Promise<number> {
+    try {
+      const conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .where('sheet.status = :status', { status })
+        .andWhere('sheet.id IN (:...sheet_ids)', { sheet_ids })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      const { count } = await conditions.getRawOne();
+
+      return count;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.countSheetByStatus()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async update(
     sheet: SheetEntity,
     manager: EntityManager,

@@ -10,7 +10,7 @@ import {
 import { RootEntity } from './root.entity';
 import { TitleEntity } from './title.entity';
 import { OptionEntity } from './option.entity';
-import { EvaluationItemEntity } from './evaluation_items.entity';
+import { EvaluationEntity } from './evaluation.entity';
 
 @Entity('items')
 export class ItemEntity extends RootEntity {
@@ -80,9 +80,6 @@ export class ItemEntity extends RootEntity {
   @OneToMany(() => OptionEntity, (option) => option.item)
   options: OptionEntity[];
 
-  @OneToMany(
-    () => EvaluationItemEntity,
-    (evaluation_item) => evaluation_item.item,
-  )
-  evaluation_items: EvaluationItemEntity[];
+  @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.item)
+  evaluations: EvaluationEntity[];
 }

@@ -15,7 +15,7 @@ import { SemesterModule } from './modules/semester/semester.module';
 import { AcademicYearModule } from './modules/academic-year/academic_year.module';
 import { EvaluationModule } from './modules/evaluation/evaluation.module';
 import { LevelModule } from './modules/level/level.module';
-//import { SheetModule } from './modules/sheet/sheet.module';
+import { SheetModule } from './modules/sheet/sheet.module';
 import { UserModule } from './modules/user/user.module';
 
 import { ConfigurationService } from './modules/shared/services/configuration/configuration.service';
@@ -48,7 +48,7 @@ export const modules = [
   ClassModuel,
   LevelModule,
   SemesterModule,
-  //SheetModule,
+  SheetModule,
   UserModule,
   EvaluationModule,
   HeaderModule,

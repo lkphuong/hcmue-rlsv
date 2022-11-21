@@ -154,11 +154,11 @@ export const validateApprovalTime = async (
   return null;
 };
 
-export const validateApprove = async (
-  status: number,
-  sheet_ids: number[],
-  sheet_service: SheetService,
-  req: Request,
-) => {
-  const sheets = await sheet_service.countSheetByStatus(status, sheet_ids);
-};
+// export const validateApprove = async (
+//   status: number,
+//   sheet_ids: number[],
+//   sheet_service: SheetService,
+//   req: Request,
+// ) => {
+//   const sheets = await sheet_service.countSheetByStatus(status, sheet_ids);
+// };

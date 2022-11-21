@@ -70,10 +70,8 @@ export class EvaluationService {
     try {
       const conditions = this._evaluationService
         .createQueryBuilder('evaluation')
-        .innerJoinAndSelect('evaluation.form', 'form')
         .where('evaluation.sheet_id = :sheet_id', { sheet_id })
-        .andWhere('evaluation.parent_id IS NULL')
-        .andWhere('evaluation.deleted = :deleted', { deleted: false });
+        .andWhere('evaluation.deleted = :deleted ', { deleted: false });
 
       const evaluations = await conditions.getMany();
 

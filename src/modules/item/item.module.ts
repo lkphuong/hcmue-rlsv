@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
-import { controllers, exporteds, modules, providers } from './sheet.imports';
+
+import { controllers, exporteds, modules, providers } from './item.imports';
 
 @Module({
   imports: modules,
@@ -7,4 +8,4 @@ import { controllers, exporteds, modules, providers } from './sheet.imports';
   providers: providers,
   exports: exporteds,
 })
-export class SheetModule {}
+export class ItemModule {}

@@ -1,59 +1,56 @@
-// import { Request } from 'express';
+import { Request } from 'express';
 
-// import { returnObjects } from 'src/utils';
+import { returnObjects } from 'src/utils';
 
-// import { SheetEntity } from '../../../entities/sheet.entity';
+import { SheetEntity } from '../../../entities/sheet.entity';
 
-// import { UserService } from '../../user/services/user.service';
-// import { ClassService } from '../../class/services/class.service';
-// import { DepartmentService } from '../../department/services/department.service';
-// import { KService } from '../../k/services/k.service';
-// import { EvaluationService } from '../../evaluation/services/evaluation.service';
-// import { FormService } from '../../form/services/form.service';
+import { UserService } from '../../user/services/user.service';
+import { ClassService } from '../../class/services/class.service';
+import { DepartmentService } from '../../department/services/department.service';
+import { KService } from '../../k/services/k.service';
+import { EvaluationService } from '../../evaluation/services/evaluation.service';
+import { FormService } from '../../form/services/form.service';
 
-// import { MultiApproveResponse } from '../interfaces/sheet_response.interface';
+import { MultiApproveResponse } from '../interfaces/sheet_response.interface';
 
-// import {
-//   generateSheets2SheetUsuer,
-//   generateSheets2Class,
-//   generateData2Object,
-//   generateDetailSheet2Object,
-//   generateChildren2Array,
-// } from '../transform/index';
-// import { QueryRunner } from 'typeorm';
-// import { FormEntity } from 'src/entities/form.entity';
-// import { EvaluationEntity } from 'src/entities/evaluation.entity';
+import {
+  generateSheets2Class,
+  generateSheets2SheetUsuer,
+} from '../transform/index';
+import { QueryRunner } from 'typeorm';
+import { FormEntity } from 'src/entities/form.entity';
+import { EvaluationEntity } from 'src/entities/evaluation.entity';
 
-// export const generateResponseSheetUser = async (
-//   sheets: SheetEntity[],
-//   req: Request,
-// ) => {
-//   console.log('----------------------------------------------------------');
-//   console.log(req.method + ' - ' + req.url);
+export const generateResponseSheetUser = async (
+  sheets: SheetEntity[],
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
 
-//   // Transform SheetEntity class to
-//   const payload = generateSheets2SheetUsuer(sheets);
+  // Transform SheetEntity class to
+  const payload = generateSheets2SheetUsuer(sheets);
 
-//   // Returns data
-//   return returnObjects(payload);
-// };
+  // Returns data
+  return returnObjects(payload);
+};
 
-// export const generateResponseSheetClass = async (
-//   input: string,
-//   sheets: SheetEntity[],
-//   user_service: UserService,
-//   req: Request,
-// ) => {
-//   console.log('----------------------------------------------------------');
-//   console.log(req.method + ' - ' + req.url);
-//   console.log('data: ', sheets);
+export const generateResponseSheetClass = async (
+  input: string,
+  sheets: SheetEntity[],
+  user_service: UserService,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', sheets);
 
-//   // Transform SheetEntity class to
-//   const payload = await generateSheets2Class(sheets, user_service, input);
+  // Transform SheetEntity class to
+  const payload = await generateSheets2Class(sheets, user_service, input);
 
-//   // Returns data
-//   return returnObjects(payload);
-// };
+  // Returns data
+  return returnObjects(payload);
+};
 
 // export const generateUpdateSuccessResponse = async (
 //   sheet: SheetEntity,

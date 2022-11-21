@@ -1,5 +1,5 @@
 import { Type } from 'class-transformer';
-import { IsNotEmpty, ValidateNested } from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -8,29 +8,33 @@ import { MinValidator } from '../../../validators/min.validator';
 class DataDtos {
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [tiêu chí đánh giá].'),
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [nội dung chấm điểm].'),
   })
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [tiêu chí đánh giá] tối thiểu bằng 0.',
+        'Giá trị [nội dung chấm điểm] tối thiểu bằng 0.',
       ),
   })
-  form_id: number;
+  item_id: number;
 
+  @IsOptional()
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [tiêu chí đánh giá].'),
+      generateValidationMessage(
+        arg,
+        'Bạn vui lòng nhập [tùy chọn nội dung chấm điểm].',
+      ),
   })
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [tiêu chí đánh giá] tối thiểu bằng 0.',
+        'Giá trị [tùy chọn nội dung chấm điểm] tối thiểu bằng 0.',
       ),
   })
-  evaluation_id: number;
+  option_id: number;
 
   @IsNotEmpty({
     message: (arg) =>

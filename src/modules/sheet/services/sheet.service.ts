@@ -90,6 +90,12 @@ export class SheetService {
         .createQueryBuilder('sheet')
         .innerJoinAndSelect('sheet.semester', 'semester')
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
+        .innerJoinAndSelect('sheet.level', 'level')
+        .leftJoinAndSelect(
+          'sheet.evaluations',
+          'evaluations',
+          'sheet.id = evaluations.sheet_id AND evaluations.deleted = 0',
+        )
         .where('sheet.id = :id', { id })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
 

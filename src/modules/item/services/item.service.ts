@@ -37,4 +37,40 @@ export class ItemService {
       return null;
     }
   }
+
+  async getItemByTitileId(
+    title_id: number,
+    sheet_id: number,
+  ): Promise<ItemEntity | null> {
+    try {
+      const conditions = this._itemRepository
+        .createQueryBuilder('item')
+        .leftJoinAndSelect(
+          'item.options',
+          'options',
+          'options.item_id = item.id AND options.deleted = :deleted',
+          { deleted: false },
+        )
+        .leftJoinAndSelect(
+          'item.evaluations',
+          'evaluations',
+          'evaluations.item_id = item.id AND evaluation.deleted = :deleted AND evaluations.sheet_id = :sheet_id',
+          { deleted: false, sheet_id },
+        )
+        .where('item.title_id = :title_id', { title_id })
+        .andWhere('item.deleted = :deleted', { deleted: false });
+
+      const item = await conditions.getOne();
+
+      return item || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ItemService.getItemByTitileId()',
+        e,
+      );
+      return null;
+    }
+  }
 }

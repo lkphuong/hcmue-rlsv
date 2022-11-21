@@ -8,30 +8,33 @@ import { MinValidator } from '../../../validators/min.validator';
 class DataDtos {
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [tiêu chí đánh giá].'),
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [nội dung chấm điểm].'),
   })
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [tiêu chí đánh giá] tối thiểu bằng 0.',
+        'Giá trị [nội dung chấm điểm] tối thiểu bằng 0.',
       ),
   })
-  form_id: number;
+  item_id: number;
 
   @IsOptional()
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [tiêu chí đánh giá].'),
+      generateValidationMessage(
+        arg,
+        'Bạn vui lòng nhập [tùy chọn nội dung chấm điểm].',
+      ),
   })
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [tiêu chí đánh giá] tối thiểu bằng 0.',
+        'Giá trị [tùy chọn nội dung chấm điểm] tối thiểu bằng 0.',
       ),
   })
-  evaluation_id?: number = 0;
+  option_id: number;
 
   @IsNotEmpty({
     message: (arg) =>
@@ -73,7 +76,7 @@ class DataDtos {
   department_mark_level: number;
 }
 
-export class UpdateMarkDepartment {
+export class DepartmentUpdateMarkDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [vai trò].'),

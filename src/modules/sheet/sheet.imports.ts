@@ -13,6 +13,9 @@ import { DepartmentModule } from '../department/department.module';
 import { EvaluationModule } from '../evaluation/evaluation.module';
 import { LevelModule } from '../level/level.module';
 import { FormModule } from '../form/form.module';
+import { ItemModule } from '../item/item.module';
+import { TitleModule } from '../title/title.modules';
+import { OptionModule } from '../option/option.module';
 
 import { SheetController } from './controllers/sheet.controller';
 
@@ -30,6 +33,9 @@ export const modules = [
   KModule,
   DepartmentModule,
   EvaluationModule,
+  ItemModule,
+  TitleModule,
+  OptionModule,
   LevelModule,
 ];
 

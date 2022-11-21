@@ -63,7 +63,7 @@ class DataDtos {
   class_mark_level: number;
 }
 
-export class UpdateMarkClass {
+export class ClassUpdateMarkDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [vai trò].'),

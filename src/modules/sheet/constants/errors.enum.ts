@@ -8,6 +8,8 @@ export enum ErrorMessage {
 
   EVALUATION_NOT_FOUND_ERROR = 'Giá trị biểu mẫu không tồn tại (id: %s).',
 
+  ITEM_NOT_FOUND_ERROR = 'Nội dung chấm điểm không tồn tại (id: %s)',
+
   FORBIDDEN_ERROR = 'Bạn không có quyền thực hiện.',
 
   SINGLE_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] tối đa là [%s].',

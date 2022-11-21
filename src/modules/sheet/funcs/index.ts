@@ -1,46 +1,48 @@
-// import { HttpException } from '@nestjs/common';
-// import { DataSource, QueryRunner } from 'typeorm';
-// import { Request } from 'express';
+import { HttpException } from '@nestjs/common';
+import { DataSource, QueryRunner } from 'typeorm';
+import { Request } from 'express';
 
-// import { sprintf } from 'src/utils';
+import { sprintf } from 'src/utils';
 // import { generateUpdateSuccessResponse } from '../utils';
 
-// import { SheetEntity } from '../../../entities/sheet.entity';
-// import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { SheetEntity } from '../../../entities/sheet.entity';
+import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { EvaluationItemEntity } from '../../../entities/evaluation_items.entity';
 
-// import { UnknownException } from '../../../exceptions/UnknownException';
-// import { HandlerException } from 'src/exceptions/HandlerException';
+import { UnknownException } from '../../../exceptions/UnknownException';
+import { HandlerException } from 'src/exceptions/HandlerException';
 
-// import { EvaluationService } from '../../evaluation/services/evaluation.service';
-// import { FormService } from '../../form/services/form.service';
-// import { LevelService } from 'src/modules/level/services/level.service';
-// import { UserService } from '../../user/services/user.service';
-// import { ClassService } from '../../class/services/class.service';
-// import { DepartmentService } from '../../department/services/department.service';
-// import { KService } from '../../k/services/k.service';
-// import { SheetService } from '../services/sheet.service';
-// import { ApprovalService } from 'src/modules/approval/services/approval.service';
+import { EvaluationService } from '../../evaluation/services/evaluation.service';
+import { FormService } from '../../form/services/form.service';
+import { LevelService } from 'src/modules/level/services/level.service';
+import { UserService } from '../../user/services/user.service';
+import { ClassService } from '../../class/services/class.service';
+import { DepartmentService } from '../../department/services/department.service';
+import { KService } from '../../k/services/k.service';
+import { SheetService } from '../services/sheet.service';
+import { ApprovalService } from 'src/modules/approval/services/approval.service';
 
-// import { UpdateMarkStudent } from '../dtos/update_mark_student.dto';
-// import { UpdateMarkClass } from '../dtos/update_mark_class.dto';
-// import { UpdateMarkDepartment } from '../dtos/update_mark_department.dto';
+import { UpdateMarkStudent } from '../dtos/update_mark_student.dto';
+import { UpdateMarkClass } from '../dtos/update_mark_class.dto';
+import { UpdateMarkDepartment } from '../dtos/update_mark_department.dto';
 
-// import { HttpResponse } from 'src/interfaces/http-response.interface';
-// import { SheetDetailResponse } from '../interfaces/sheet_response.interface';
+import { HttpResponse } from 'src/interfaces/http-response.interface';
+import { SheetDetailResponse } from '../interfaces/sheet_response.interface';
 
-// import {
-//   validateApprovalTime,
-//   validateMark,
-//   validateMarkLevel,
-//   validateRole,
-// } from '../validations';
+import {
+  validateApprovalTime,
+  validateMark,
+  validateMarkLevel,
+  validateRole,
+} from '../validations';
 
-// import {
-//   DATABASE_EXIT_CODE,
-//   SERVER_EXIT_CODE,
-// } from 'src/constants/enums/error-code.enum';
-// import { StatusSheet } from '../constants/status.enum';
-// import { ErrorMessage } from '../constants/errors.enum';
+import {
+  DATABASE_EXIT_CODE,
+  SERVER_EXIT_CODE,
+} from 'src/constants/enums/error-code.enum';
+import { StatusSheet } from '../constants/status.enum';
+import { ErrorMessage } from '../constants/errors.enum';
+import { ItemService } from 'src/modules/item/services/item.service';
 
 // export const updateEvaluationPersonal = async (
 //   sheet_id: number,
@@ -408,81 +410,49 @@
 //   }
 // };
 
-// export const updateMarkStudent = async (
+// export const updateEvaluationItemStudent = async (
+//   sheet_id: number,
 //   user_id: string,
 //   params: UpdateMarkStudent,
-//   sheet: SheetEntity,
+//   evaluation: EvaluationEntity,
+//   item_service: ItemService,
 //   evaluation_service: EvaluationService,
 //   form_service: FormService,
 //   query_runner: QueryRunner,
 //   req: Request,
 // ) => {
-//   let evaluations: EvaluationEntity[] = [];
+//   let evaluation_items: EvaluationItemEntity[] = [];
 
 //   const { data } = params;
+//   const evaluations = await evaluation_service.getEvaluationBySheetId(sheet_id);
+
+//   if (evaluations && evaluations.length > 0) {
+//     //#region Update evaluation
+//     for (const i of data) {
+//       //#region Get Item
+//       const item = await item_service.getItemById(i.item_id);
+//       if (item) {
+//       } else {
+//         //#region throw HandlerException
+//         return new UnknownException(
+//           i.item_id,
+//           DATABASE_EXIT_CODE.UNKNOW_VALUE,
+//           req.method,
+//           req.url,
+//           sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, i.item_id),
+//         );
+//         //#endregion
+//       }
+//       //#endregion
+//     }
+//     //#endregion
+//   } else {
+//     //#region Add evaluation
+//     //#endregion
+//   }
+
 //   //#region loop of data
 //   for await (const item of data) {
-//     const form = await form_service.getFormById(item.form_id);
-//     if (form) {
-//       //#region Validation mark
-//       const valid_mark = validateMark(
-//         item.personal_mark_level,
-//         form.from_mark,
-//         form.to_mark,
-//         req,
-//       );
-//       if (valid_mark instanceof HttpException) return valid_mark;
-//       //#endregion
-
-//       if (item.evaluation_id && item.evaluation_id !== 0) {
-//         //#region Update evaluation
-//         const evaluation = await evaluation_service.getEvaluationById(
-//           item.evaluation_id,
-//         );
-
-//         if (evaluation) {
-//           evaluation.personal_mark_level = item.personal_mark_level;
-//           evaluation.updated_at = new Date();
-//           evaluation.updated_by = user_id;
-
-//           evaluations.push(evaluation);
-//         } else {
-//           //#region throw HandlerException
-//           return new UnknownException(
-//             item.evaluation_id,
-//             DATABASE_EXIT_CODE.UNKNOW_VALUE,
-//             req.method,
-//             req.url,
-//             sprintf(
-//               ErrorMessage.EVALUATION_NOT_FOUND_ERROR,
-//               item.evaluation_id,
-//             ),
-//           );
-//           //#endregion
-//         }
-//         //#endregion
-//       } else {
-//         const evaluation = new EvaluationEntity();
-//         evaluation.ref = form.ref;
-//         evaluation.parent_id = form.parent_id;
-//         evaluation.form = form;
-//         evaluation.sheet = sheet;
-//         evaluation.personal_mark_level = item.personal_mark_level;
-//         evaluation.created_at = new Date();
-//         evaluation.created_by = 'system';
-
-//         evaluations.push(evaluation);
-//       }
-//     } else {
-//       //#region throw HandlerException
-//       return new UnknownException(
-//         item.form_id,
-//         DATABASE_EXIT_CODE.UNKNOW_VALUE,
-//         req.method,
-//         req.url,
-//         sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, item.form_id),
-//       );
-//     }
 //   }
 //   //#endregion
 
@@ -667,41 +637,41 @@
 //   return evaluations;
 // };
 
-// export const generateUpdatePersonalMark = async (
-//   user_id: string,
-//   params: UpdateMarkStudent,
-//   sheet: SheetEntity,
-//   sheet_service: SheetService,
-//   level_service: LevelService,
-//   query_runner: QueryRunner,
-//   req: Request,
-// ) => {
-//   const { data } = params;
+export const generateUpdatePersonalMark = async (
+  user_id: string,
+  params: UpdateMarkStudent,
+  sheet: SheetEntity,
+  sheet_service: SheetService,
+  level_service: LevelService,
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  const { data } = params;
 
-//   let sum_of_personal_marks = 0;
-//   for (const item of data) {
-//     sum_of_personal_marks += item.personal_mark_level;
-//   }
+  let sum_of_personal_marks = 0;
+  for (const item of data) {
+    sum_of_personal_marks += item.personal_mark_level;
+  }
 
-//   //#region Validate mark
-//   const level = await validateMarkLevel(
-//     sum_of_personal_marks,
-//     level_service,
-//     req,
-//   );
-//   if (level instanceof HttpException) throw level;
-//   //#endregion
+  //#region Validate mark
+  const level = await validateMarkLevel(
+    sum_of_personal_marks,
+    level_service,
+    req,
+  );
+  if (level instanceof HttpException) throw level;
+  //#endregion
 
-//   sheet.sum_of_personal_marks = sum_of_personal_marks;
-//   sheet.status = StatusSheet.WAITING_CLAS;
-//   sheet.level = level;
-//   sheet.updated_at = new Date();
-//   sheet.updated_by = user_id;
+  sheet.sum_of_personal_marks = sum_of_personal_marks;
+  sheet.status = StatusSheet.WAITING_CLAS;
+  sheet.level = level;
+  sheet.updated_at = new Date();
+  sheet.updated_by = user_id;
 
-//   sheet = await sheet_service.update(sheet, query_runner.manager);
+  sheet = await sheet_service.update(sheet, query_runner.manager);
 
-//   return sheet;
-// };
+  return sheet;
+};
 
 // export const generateUpdateClassMark = async (
 //   user_id: string,

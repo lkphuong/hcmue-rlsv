@@ -1,149 +1,149 @@
-// import { UserService } from '../../user/services/user.service';
-// import { ClassService } from '../../class/services/class.service';
-// import { DepartmentService } from '../../department/services/department.service';
-// import { KService } from '../../k/services/k.service';
-// import { FormService } from '../../form/services/form.service';
-// import { EvaluationService } from 'src/modules/evaluation/services/evaluation.service';
+import { UserService } from '../../user/services/user.service';
+import { ClassService } from '../../class/services/class.service';
+import { DepartmentService } from '../../department/services/department.service';
+import { KService } from '../../k/services/k.service';
+import { FormService } from '../../form/services/form.service';
+import { EvaluationService } from 'src/modules/evaluation/services/evaluation.service';
 
-// import { convertObjectId2String } from '../../../utils';
+import { convertObjectId2String } from '../../../utils';
 
-// import { User } from '../../../schemas/user.schema';
-// import { Class } from '../../../schemas/class.schema';
+import { User } from '../../../schemas/user.schema';
+import { Class } from '../../../schemas/class.schema';
 
-// import {
-//   ClassResponse,
-//   SheetClassResponse,
-//   SheetUsersResponse,
-//   SheetDetailResponse,
-//   EvaluationResponse,
-//   SheetEvaluationResponse,
-// } from '../interfaces/sheet_response.interface';
+import {
+  ClassResponse,
+  SheetClassResponse,
+  SheetUsersResponse,
+  SheetDetailResponse,
+  EvaluationResponse,
+  SheetEvaluationResponse,
+} from '../interfaces/sheet_response.interface';
 
-// import { SheetEntity } from '../../../entities/sheet.entity';
-// import { AcademicYearEntity } from '../../../entities/academic_year.entity';
-// import { EvaluationEntity } from '../../../entities/evaluation.entity';
-// import { FormEntity } from '../../../entities/form.entity';
+import { SheetEntity } from '../../../entities/sheet.entity';
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { FormEntity } from '../../../entities/form.entity';
 
-// export const generateSheets2SheetUsuer = (sheets: SheetEntity[] | null) => {
-//   if (sheets && sheets.length > 0) {
-//     const payload: SheetUsersResponse[] = [];
-//     for (const sheet of sheets) {
-//       const item: SheetUsersResponse = {
-//         id: sheet.id,
-//         semester: {
-//           id: sheet.semester.id,
-//           name: sheet.semester.name,
-//         },
-//         academic: {
-//           id: sheet.academic_year.id,
-//           name: sheet.academic_year.name,
-//         },
-//         level: {
-//           id: sheet.level.id,
-//           name: sheet.level.name,
-//         },
-//         sum_of_personal_marks: sheet.sum_of_personal_marks,
-//         sum_of_class_marks: sheet.sum_of_class_marks,
-//         sum_of_department_marks: sheet.sum_of_department_marks,
-//         status: sheet.status,
-//       };
-//       payload.push(item);
-//     }
-//     return payload;
-//   }
+export const generateSheets2SheetUsuer = (sheets: SheetEntity[] | null) => {
+  if (sheets && sheets.length > 0) {
+    const payload: SheetUsersResponse[] = [];
+    for (const sheet of sheets) {
+      const item: SheetUsersResponse = {
+        id: sheet.id,
+        semester: {
+          id: sheet.semester.id,
+          name: sheet.semester.name,
+        },
+        academic: {
+          id: sheet.academic_year.id,
+          name: sheet.academic_year.name,
+        },
+        level: {
+          id: sheet.level.id,
+          name: sheet.level.name,
+        },
+        sum_of_personal_marks: sheet.sum_of_personal_marks,
+        sum_of_class_marks: sheet.sum_of_class_marks,
+        sum_of_department_marks: sheet.sum_of_department_marks,
+        status: sheet.status,
+      };
+      payload.push(item);
+    }
+    return payload;
+  }
 
-//   return null;
-// };
+  return null;
+};
 
-// export const generateSheets2Class = async (
-//   sheets: SheetEntity[] | null,
-//   user_service: UserService,
-//   input?: string,
-// ) => {
-//   if (sheets && sheets.length > 0) {
-//     const payload: SheetClassResponse[] = [];
-//     for (const sheet of sheets) {
-//       let result: User = null;
-//       if (input) {
-//         result = await user_service.getUserByInput(sheet.user_id, input);
-//       } else {
-//         result = await user_service.getUserById(sheet.user_id);
-//       }
-//       if (result) {
-//         const item: SheetClassResponse = {
-//           id: sheet.id,
-//           user: {
-//             id: convertObjectId2String(result._id),
-//             fullname: result.fullname,
-//             std_code: result.username,
-//           },
-//           level: {
-//             id: sheet.level.id,
-//             name: sheet.level.name,
-//           },
-//           sum_of_personal_marks: sheet.sum_of_personal_marks,
-//           sum_of_department_marks: sheet.sum_of_class_marks,
-//           sum_of_class_marks: sheet.sum_of_department_marks,
-//           status: sheet.status,
-//         };
-//         payload.push(item);
-//       }
-//     }
+export const generateSheets2Class = async (
+  sheets: SheetEntity[] | null,
+  user_service: UserService,
+  input?: string,
+) => {
+  if (sheets && sheets.length > 0) {
+    const payload: SheetClassResponse[] = [];
+    for (const sheet of sheets) {
+      let result: User = null;
+      if (input) {
+        result = await user_service.getUserByInput(sheet.user_id, input);
+      } else {
+        result = await user_service.getUserById(sheet.user_id);
+      }
+      if (result) {
+        const item: SheetClassResponse = {
+          id: sheet.id,
+          user: {
+            id: convertObjectId2String(result._id),
+            fullname: result.fullname,
+            std_code: result.username,
+          },
+          level: {
+            id: sheet.level.id,
+            name: sheet.level.name,
+          },
+          sum_of_personal_marks: sheet.sum_of_personal_marks,
+          sum_of_department_marks: sheet.sum_of_class_marks,
+          sum_of_class_marks: sheet.sum_of_department_marks,
+          status: sheet.status,
+        };
+        payload.push(item);
+      }
+    }
 
-//     return payload;
-//   }
+    return payload;
+  }
 
-//   return null;
-// };
+  return null;
+};
 
-// export const generateAcademicYearClass2Array = async (
-//   department_id: string,
-//   class_id: string,
-//   academic_year: AcademicYearEntity | null,
-//   class_service: ClassService,
-// ) => {
-//   if (
-//     academic_year.academic_year_classes &&
-//     academic_year.academic_year_classes.length > 0
-//   ) {
-//     const payload: ClassResponse[] = [];
-//     const academic_year_classes = academic_year.academic_year_classes;
+export const generateAcademicYearClass2Array = async (
+  department_id: string,
+  class_id: string,
+  academic_year: AcademicYearEntity | null,
+  class_service: ClassService,
+) => {
+  if (
+    academic_year.academic_year_classes &&
+    academic_year.academic_year_classes.length > 0
+  ) {
+    const payload: ClassResponse[] = [];
+    const academic_year_classes = academic_year.academic_year_classes;
 
-//     console.log('class_id: ', class_id);
+    console.log('class_id: ', class_id);
 
-//     for (const academic_year_classe of academic_year_classes) {
-//       let item: ClassResponse = null;
-//       let result: Class = null;
-//       if (class_id) {
-//         result = await class_service.getClassById(class_id, department_id);
-//         if (result) {
-//           item = {
-//             id: convertObjectId2String(result._id),
-//             name: result.name,
-//           };
-//           payload.push(item);
-//           return payload;
-//         }
-//       } else {
-//         result = await class_service.getClassById(
-//           academic_year_classe.class_id,
-//           department_id,
-//         );
-//         if (result) {
-//           item = {
-//             id: convertObjectId2String(result._id),
-//             name: result.name,
-//           };
-//           payload.push(item);
-//         }
-//       }
-//     }
+    for (const academic_year_classe of academic_year_classes) {
+      let item: ClassResponse = null;
+      let result: Class = null;
+      if (class_id) {
+        result = await class_service.getClassById(class_id, department_id);
+        if (result) {
+          item = {
+            id: convertObjectId2String(result._id),
+            name: result.name,
+          };
+          payload.push(item);
+          return payload;
+        }
+      } else {
+        result = await class_service.getClassById(
+          academic_year_classe.class_id,
+          department_id,
+        );
+        if (result) {
+          item = {
+            id: convertObjectId2String(result._id),
+            name: result.name,
+          };
+          payload.push(item);
+        }
+      }
+    }
 
-//     return payload;
-//   }
+    return payload;
+  }
 
-//   return null;
-// };
+  return null;
+};
 
 // export const generateData2Object = async (
 //   sheet: SheetEntity | null,

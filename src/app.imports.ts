@@ -21,6 +21,8 @@ import { UserModule } from './modules/user/user.module';
 import { ConfigurationService } from './modules/shared/services/configuration/configuration.service';
 
 import { jwtFactory } from './factories/jwt.factory';
+import { HeaderModule } from './modules/header/header.modules';
+import { TitleModule } from './modules/title/title.modules';
 
 export const modules = [
   SharedModule,
@@ -49,4 +51,6 @@ export const modules = [
   //SheetModule,
   UserModule,
   EvaluationModule,
+  HeaderModule,
+  TitleModule,
 ];

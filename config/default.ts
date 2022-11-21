@@ -2,7 +2,7 @@ export default {
   MYSQL_TYPE: 'mysql',
   MYSQL_HOST: '103.154.176.80',
   MYSQL_PORT: 3306,
-  MYSQL_DATABASE_NAME: 'hcmue_rlsv',
+  MYSQL_DATABASE_NAME: 'hcmue_rlsv_v1',
   MYSQL_USERNAME: 'uat',
   MYSQL_PASSWORD: 'Uatvtcode@2022',
 

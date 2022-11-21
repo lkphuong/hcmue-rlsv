@@ -1,7 +1,16 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { RootEntity } from './root.entity';
-import { EvaluationEntity } from './evaluation.entity';
+import { SemesterEntity } from './semester.entity';
+import { AcademicYearEntity } from './academic_year.entity';
+import { HeaderEntity } from './header.entity';
 
 @Entity('forms')
 export class FormEntity extends RootEntity {
@@ -10,86 +19,60 @@ export class FormEntity extends RootEntity {
   })
   id: number;
 
-  @Column('varchar', {
-    name: 'ref',
-    nullable: false,
-    unique: true,
-    length: 50,
-  })
-  ref: string;
+  @ManyToOne(() => AcademicYearEntity, (academic_year) => academic_year)
+  @JoinColumn([
+    {
+      name: 'academic_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  academic_year: AcademicYearEntity;
 
-  @Column('varchar', {
-    name: 'parent_id',
-    nullable: true,
-    default: null,
-    length: 50,
-  })
-  parent_id: string;
+  @ManyToOne(() => SemesterEntity, (semester) => semester)
+  @JoinColumn([
+    {
+      name: 'semester_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  semester: SemesterEntity;
 
-  @Column('varchar', {
-    name: 'version',
-    nullable: false,
-    length: 50,
-  })
-  version: string;
-
-  @Column('varchar', {
-    name: 'original',
-    nullable: true,
-    default: null,
-    length: 50,
-  })
-  original: string;
-
-  @Column('tinyint', {
-    name: 'control',
-    nullable: true,
-    default: null,
-  })
-  control: number;
-
-  @Column('text', {
-    name: 'content',
+  @Column('datetime', {
+    name: 'student_start',
     nullable: false,
   })
-  content: string;
+  student_start: Date;
 
-  @Column('float', {
-    name: 'from_mark',
-    nullable: true,
-    default: null,
+  @Column('datetime', {
+    name: 'student_end',
+    nullable: false,
   })
-  from_mark: number;
+  student_end: Date;
 
-  @Column('float', {
-    name: 'to_mark',
-    nullable: true,
-    default: null,
+  @Column('datetime', {
+    name: 'class_start',
+    nullable: false,
   })
-  to_mark: number;
+  class_start: Date;
 
-  @Column('tinyint', {
-    //0 single number, 1 range value
-    name: 'category',
-    default: null,
-    nullable: true,
+  @Column('datetime', {
+    name: 'class_end',
+    nullable: false,
   })
-  category: number;
+  class_end: Date;
 
-  @Column('varchar', {
-    name: 'unit',
-    nullable: true,
-    default: null,
+  @Column('datetime', {
+    name: 'department_start',
+    nullable: false,
   })
-  unit: string;
+  department_start: Date;
 
-  @Column('boolean', {
-    name: 'required',
-    nullable: true,
-    default: true,
+  @Column('datetime', {
+    name: 'department_end',
+    nullable: false,
   })
-  required?: boolean = false;
+  department_end: Date;
 
-  @OneToMany(() => EvaluationEntity, (evalua_parnet) => evalua_parnet.form) //from form.id -> evaluation.form_id
-  evaluation_form: EvaluationEntity[];
+  @OneToMany(() => HeaderEntity, (header) => header.form)
+  headers: HeaderEntity[];
 }

@@ -3,11 +3,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { EvaluationItemEntity } from './evaluation_items.entity';
 
 import { RootEntity } from './root.entity';
-import { FormEntity } from './form.entity';
 import { SheetEntity } from './sheet.entity';
 
 @Entity('evaluations')
@@ -16,31 +17,6 @@ export class EvaluationEntity extends RootEntity {
     type: 'bigint',
   })
   id: number;
-
-  @Column('varchar', {
-    name: 'ref',
-    nullable: false,
-    unique: true,
-    length: 50,
-  })
-  ref: string;
-
-  @Column('varchar', {
-    name: 'parent_id',
-    nullable: true,
-    default: null,
-    length: 50,
-  })
-  parent_id: string;
-
-  @ManyToOne(() => FormEntity, (parent) => parent.evaluation_form)
-  @JoinColumn([
-    {
-      name: 'form_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  form: FormEntity;
 
   @ManyToOne(() => SheetEntity, (sheet) => sheet.evaluations)
   @JoinColumn([
@@ -71,4 +47,10 @@ export class EvaluationEntity extends RootEntity {
     default: null,
   })
   department_mark_level: number;
+
+  @OneToMany(
+    () => EvaluationItemEntity,
+    (evaluation_entity) => evaluation_entity.evaluation,
+  )
+  evaluation_items: EvaluationItemEntity[];
 }

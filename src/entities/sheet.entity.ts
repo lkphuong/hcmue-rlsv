@@ -13,6 +13,7 @@ import { SheetSignatures } from './sheet_signatures.entity';
 import { SemesterEntity } from './semester.entity';
 import { AcademicYearEntity } from './academic_year.entity';
 import { LevelEntity } from './level.entity';
+import { FormEntity } from './form.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -59,6 +60,15 @@ export class SheetEntity extends RootEntity {
     },
   ])
   academic_year: AcademicYearEntity;
+
+  @ManyToOne(() => FormEntity, (form) => form.sheets)
+  @JoinColumn([
+    {
+      name: 'form_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  form: FormEntity;
 
   @Column('varchar', {
     name: 'k',

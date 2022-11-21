@@ -18,31 +18,6 @@ export class EvaluationService {
     private _logger: LogService,
   ) {}
 
-  async getEvaluationByParentId(
-    parent_id: string,
-  ): Promise<EvaluationEntity[] | null> {
-    try {
-      const conditions = this._evaluationService
-        .createQueryBuilder('evaluation')
-        .innerJoinAndSelect('evaluation.form', 'from')
-        .where('evaluation.parent_id = :parent_id', { parent_id })
-        .andWhere('evaluation.deleted = :deleted', { deleted: false })
-        .andWhere('form.deleted = :deleted', { deleted: false });
-
-      const evaluation = await conditions.getMany();
-
-      return evaluation || null;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'EvaluationService.getEvaluationByParentId()',
-        e,
-      );
-      return null;
-    }
-  }
-
   async getEvaluationById(id: number): Promise<EvaluationEntity | null> {
     try {
       const conditions = this._evaluationService
@@ -66,16 +41,18 @@ export class EvaluationService {
 
   async getEvaluationBySheetId(
     sheet_id: number,
-  ): Promise<EvaluationEntity[] | null> {
+    item_id: number,
+  ): Promise<EvaluationEntity | null> {
     try {
       const conditions = this._evaluationService
         .createQueryBuilder('evaluation')
         .where('evaluation.sheet_id = :sheet_id', { sheet_id })
+        .andWhere('evaluation.item_id = :item_id', { item_id })
         .andWhere('evaluation.deleted = :deleted ', { deleted: false });
 
-      const evaluations = await conditions.getMany();
+      const evaluation = await conditions.getOne();
 
-      return evaluations || null;
+      return evaluation || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

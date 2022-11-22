@@ -50,7 +50,7 @@ class DataDtos {
   personal_mark_level: number;
 }
 
-export class UpdateMarkStudent {
+export class StudentUpdateMarkDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [vai trò].'),

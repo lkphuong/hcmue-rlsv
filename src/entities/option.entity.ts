@@ -50,6 +50,7 @@ export class OptionEntity extends RootEntity {
   @Column('varchar', {
     name: 'unit',
     nullable: true,
+    length: 50,
     default: null,
   })
   unit: string;

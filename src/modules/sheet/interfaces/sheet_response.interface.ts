@@ -38,6 +38,16 @@ export interface KResponse {
   name: string;
 }
 
+export interface HeaderResponse {
+  id: number;
+  name: string;
+}
+
+export interface ItemResponse {
+  id: number;
+  content: string;
+}
+
 export interface SheetUsersResponse {
   id: number;
   semester: SemesterResponse;
@@ -88,7 +98,7 @@ export interface SheetDetailResponse {
   sum_of_personal_marks: number;
   sum_of_class_marks: number;
   sum_of_department_marks: number;
-  evaluations: EvaluationResponse[];
+  headers: HeaderResponse[];
 }
 
 export interface MultiApproveResponse {
@@ -101,4 +111,13 @@ export interface SheetEvaluationResponse {
   semester: SemesterResponse;
   academic: AcademicResponse;
   evaluations: EvaluationResponse[];
+}
+
+export interface ItemDetailResponse {
+  id: number;
+  item: ItemResponse;
+  option?: ItemResponse[];
+  personal_mark_level: number;
+  class_mark_level: number;
+  department_mark_level: number;
 }

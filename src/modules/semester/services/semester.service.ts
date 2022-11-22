@@ -38,4 +38,24 @@ export class SemesterService {
       return null;
     }
   }
+  async getSemesterById(semester_id: number): Promise<SemesterEntity | null> {
+    try {
+      const conditions = this._semesterRepository
+        .createQueryBuilder('semester')
+        .where('semester.id = :semester_id', { semester_id })
+        .andWhere('semester.deleted = :deleted', { deleted: false });
+
+      const semester = await conditions.getOne();
+
+      return semester || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SemesterService.getSemesterByid()',
+        e,
+      );
+      return null;
+    }
+  }
 }

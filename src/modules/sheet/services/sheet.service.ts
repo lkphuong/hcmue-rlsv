@@ -91,10 +91,12 @@ export class SheetService {
         .innerJoinAndSelect('sheet.semester', 'semester')
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
         .innerJoinAndSelect('sheet.level', 'level')
+        .innerJoinAndSelect('sheet.form', 'form')
         .leftJoinAndSelect(
-          'sheet.evaluations',
-          'evaluations',
-          'sheet.id = evaluations.sheet_id AND evaluations.deleted = 0',
+          'form.headers',
+          'headers',
+          'headers.form_id = form.id AND headers.deleted = :deleted',
+          { deleted: false },
         )
         .where('sheet.id = :id', { id })
         .andWhere('sheet.deleted = :deleted', { deleted: false });

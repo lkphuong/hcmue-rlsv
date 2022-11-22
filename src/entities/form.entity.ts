@@ -11,6 +11,7 @@ import { RootEntity } from './root.entity';
 import { SemesterEntity } from './semester.entity';
 import { AcademicYearEntity } from './academic_year.entity';
 import { HeaderEntity } from './header.entity';
+import { SheetEntity } from './sheet.entity';
 
 @Entity('forms')
 export class FormEntity extends RootEntity {
@@ -75,4 +76,7 @@ export class FormEntity extends RootEntity {
 
   @OneToMany(() => HeaderEntity, (header) => header.form)
   headers: HeaderEntity[];
+
+  @OneToMany(() => SheetEntity, (sheet) => sheet.form)
+  sheets: SheetEntity[];
 }

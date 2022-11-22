@@ -14,14 +14,14 @@ import { Methods } from '../../../constants/enums/method.enum';
 export class HeaderService {
   constructor(
     @InjectRepository(HeaderEntity)
-    private readonly _headerService: Repository<HeaderEntity>,
+    private readonly _headerRepository: Repository<HeaderEntity>,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
   async getHeadersByFormId(id: number): Promise<HeaderEntity[] | null> {
     try {
-      const conditions = this._headerService
+      const conditions = this._headerRepository
         .createQueryBuilder('header')
         .where('header.form_id = :id', { id });
 
@@ -41,9 +41,9 @@ export class HeaderService {
 
   async getHeaderById(id: number): Promise<HeaderEntity | null> {
     try {
-      const conditions = this._headerService
+      const conditions = this._headerRepository
         .createQueryBuilder('header')
-        .where('header.id = :id', { id })
+        .where('heaer.id = :id', { id })
         .andWhere('header.deleted = :deleted', { deleted: false });
 
       const header = await conditions.getOne();
@@ -59,6 +59,7 @@ export class HeaderService {
       return null;
     }
   }
+
 
   async add(
     header: HeaderEntity,

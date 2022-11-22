@@ -16,13 +16,29 @@ import { HandlerException } from 'src/exceptions/HandlerException';
 import { HttpResponse } from 'src/interfaces/http-response.interface';
 import { AcademicYearService } from 'src/modules/academic-year/services/academic_year.service';
 import { JwtPayload } from 'src/modules/auth/interfaces/payloads/jwt-payload.interface';
-import { FormService } from 'src/modules/form/services/form.service';
+import { HeaderService } from 'src/modules/header/services/header.service';
+import { ItemService } from 'src/modules/item/services/item.service';
 import { LogService } from 'src/modules/log/services/log.service';
+import { OptionService } from 'src/modules/option/services/option.service';
 import { SemesterService } from 'src/modules/semester/services/semester.service';
+import { TitleService } from 'src/modules/title/services/title.service';
 import { DataSource } from 'typeorm';
 import { CreateFormDto } from '../dtos/add_form.dto';
-import { createForm, updateForm } from '../funcs';
-import { CreateFormResponse } from '../interfaces/form_response.interface';
+import { CreateItemDto } from '../dtos/add_item.dto';
+import { CreateTitleDto } from '../dtos/add_title.dto';
+import {
+  createForm,
+  createItem,
+  createTile,
+  updateForm,
+  updateItem,
+  updateTitle,
+} from '../funcs';
+import {
+  BaseResponse,
+  CreateFormResponse,
+  ItemResponse,
+} from '../interfaces/form_response.interface';
 import { FormmService } from '../service/service.service';
 import { validateFormId } from '../validations';
 
@@ -32,6 +48,10 @@ export class FormController {
     private readonly _formService: FormmService,
     private readonly _academicYearService: AcademicYearService,
     private readonly _semesterService: SemesterService,
+    private readonly _headerService: HeaderService,
+    private readonly _titleService: TitleService,
+    private readonly _itemServicve: ItemService,
+    private readonly _optionService: OptionService,
     private readonly _dataSource: DataSource,
     private readonly _logger: LogService,
   ) {
@@ -97,6 +117,125 @@ export class FormController {
   }
 
   /**
+   * @method POST
+   * @url /api/forms/titles
+   * @access private
+   * @description Tạo mới tiêu chí đánh giá
+   * @return HttpResponse<BaseResponse> | HttpException
+   * @page forms
+   */
+  @Post('titles')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async createTitle(
+    @Body() params: CreateTitleDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<BaseResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      const { user_id } = req.user as JwtPayload;
+
+      const result = await createTile(
+        user_id,
+        params,
+        this._headerService,
+        this._titleService,
+        this._dataSource,
+        req,
+      );
+
+      if (result instanceof HttpException) throw result;
+
+      return result;
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url /api/forms/titles
+   * @access private
+   * @description Tạo mới tiêu chí đánh giá
+   * @return HttpResponse<ItemResponse> | HttpException
+   * @page forms
+   */
+  @Post('items')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async createItem(
+    @Body() params: CreateItemDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<ItemResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      const { user_id } = req.user as JwtPayload;
+
+      const result = await createItem(
+        user_id,
+        params,
+        this._titleService,
+        this._dataSource,
+        req,
+      );
+
+      if (result instanceof HttpException) throw result;
+
+      return result;
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
    * @method PUT
    * @url /api/forms/:id
    * @access private
@@ -110,7 +249,7 @@ export class FormController {
     @Param('id') id: number,
     @Body() params: CreateFormDto,
     @Req() req: Request,
-  ): Promise<any> {
+  ): Promise<HttpResponse<CreateFormResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -145,6 +284,139 @@ export class FormController {
         this._dataSource,
         req,
       );
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
+   * @url /api/forms/titles/:id
+   * @access private
+   * @description Cập nhật tiêu chí đánh giá
+   * @return HttpResponse<BaseResponse> | HttpException
+   * @page forms
+   */
+  @Put('titles/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async updateTitle(
+    @Param('id') id: number,
+    @Body() params: CreateTitleDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<BaseResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      //#region Validation
+      const valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      const { user_id } = req.user as JwtPayload;
+
+      const result = await updateTitle(
+        id,
+        user_id,
+        params,
+        this._headerService,
+        this._titleService,
+        this._dataSource,
+        req,
+      );
+
+      if (result instanceof HttpException) throw result;
+      return result;
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
+   * @url /api/forms/titles/:id
+   * @access private
+   * @description Cập nhật nội dung đánh giá
+   * @return HttpResponse<ItemResponse> | HttpException
+   * @page forms
+   */
+  @Put('items/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async updateItem(
+    @Param('id') id: number,
+    @Body() params: CreateItemDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<ItemResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      //#region Validation
+      const valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      const { user_id } = req.user as JwtPayload;
+
+      const result = await updateItem(
+        user_id,
+        id,
+        params,
+        this._titleService,
+        this._itemServicve,
+        this._optionService,
+        this._dataSource,
+        req,
+      );
+
+      if (result instanceof HttpException) throw result;
+      return result;
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

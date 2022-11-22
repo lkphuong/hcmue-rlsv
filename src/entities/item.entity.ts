@@ -35,6 +35,13 @@ export class ItemEntity extends RootEntity {
   })
   control: number;
 
+  @Column('boolean', {
+    name: 'multiple',
+    nullable: true,
+    default: true,
+  })
+  multiple?: boolean = false;
+
   @Column('text', {
     name: 'content',
     nullable: false,
@@ -66,6 +73,7 @@ export class ItemEntity extends RootEntity {
   @Column('varchar', {
     name: 'unit',
     nullable: true,
+    length: 50,
     default: null,
   })
   unit: string;

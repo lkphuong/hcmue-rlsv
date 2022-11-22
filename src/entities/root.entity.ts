@@ -58,7 +58,7 @@ export class RootEntity extends BaseEntity {
   })
   deleted_at?: Date;
 
-  @Column('bit', {
+  @Column('boolean', {
     name: 'delete_flag',
     nullable: true,
     default: 0,

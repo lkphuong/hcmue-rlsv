@@ -15,6 +15,27 @@ export class FormmService {
     private readonly _logger: LogService,
   ) {}
 
+  async getFormById(id: number): Promise<FormEntity | null> {
+    try {
+      const conditions = this._formRepository
+        .createQueryBuilder('form')
+        .where('form.id = :id', { id })
+        .andWhere('form.deleted = :deleted', { deleted: false });
+
+      const form = await conditions.getOne();
+
+      return form || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FormmService.getFormById()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async update(id: number, manager?: EntityManager): Promise<boolean> {
     try {
       if (!manager) {

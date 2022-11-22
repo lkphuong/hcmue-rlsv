@@ -37,4 +37,27 @@ export class ItemService {
       return null;
     }
   }
+
+  async getItemsByTitleId(id: number): Promise<ItemEntity[] | null> {
+    try {
+      const conditions = this._itemRepository
+        .createQueryBuilder('item')
+        .leftJoinAndSelect('item.options', 'option')
+        .where('item.title_id = :id', { id })
+        .andWhere('item.deleted = :deleted', { deleted: false })
+        .andWhere('option.deleted = :deleted', { deleted: false });
+
+      const items = await conditions.getMany();
+
+      return items || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ItemService.getItemsByTitleId()',
+        e,
+      );
+      return null;
+    }
+  }
 }

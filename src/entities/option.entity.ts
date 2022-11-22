@@ -47,6 +47,13 @@ export class OptionEntity extends RootEntity {
   })
   to_mark: number;
 
+  @Column('varchar', {
+    name: 'unit',
+    nullable: true,
+    default: null,
+  })
+  unit: string;
+
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.option)
   evaluations: EvaluationEntity[];
 }

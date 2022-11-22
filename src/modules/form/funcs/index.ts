@@ -37,6 +37,9 @@ export const updateHeader = async (
 
   let header: HeaderEntity | HttpException | null = null;
   try {
+    // Start transaction
+    await query_runner.startTransaction();
+
     //#region Validate title
     header = await header_service.getHeaderById(id);
     if (header) {
@@ -51,13 +54,13 @@ export const updateHeader = async (
         //#endregion
 
         //#region Update header
-        header = await header_service.update(header);
+        header = await header_service.update(header, query_runner.manager);
         //#endregion
 
         return await generateSuccessResponse(header, query_runner, req);
       } else {
         //#region Throw exception
-        return new UnknownException(
+        throw new UnknownException(
           form_id,
           DATABASE_EXIT_CODE.UNKNOW_VALUE,
           req.method,
@@ -119,6 +122,8 @@ export const addHeader = async (
   await query_runner.connect();
 
   try {
+    // Start transaction
+    await query_runner.startTransaction();
     //#region Validate form_id
     const form = await form_service.getFormById(form_id);
     if (form) {
@@ -135,13 +140,13 @@ export const addHeader = async (
       //#endregion
 
       //#region Update header
-      header = await header_service.add(header);
+      header = await header_service.add(header, query_runner.manager);
       //#endregion
 
       return await generateSuccessResponse(header, query_runner, req);
     } else {
       //#region Throw exception
-      return new UnknownException(
+      throw new UnknownException(
         form_id,
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
@@ -152,14 +157,15 @@ export const addHeader = async (
     }
     //#endregion
     //#endregion
-  } catch (e) {
+  } catch (err) {
+    console.log(err);
     // Rollback transaction
     await query_runner.rollbackTransaction();
 
     console.log('--------------------------------------------------------');
-    console.log(req.method + ' - ' + req.url + ': ' + e.message);
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
-    if (e instanceof HttpException) return e;
+    if (err instanceof HttpException) return err;
     else {
       return new HandlerException(
         SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,

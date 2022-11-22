@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  Post,
   Put,
   Req,
   UsePipes,
@@ -391,7 +392,7 @@ export class FormController {
    * @return HttpResponse<HeaderResponse> | null | HttpException
    * @page
    */
-  @Put('/headers')
+  @Post('/headers')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async addHeaders(

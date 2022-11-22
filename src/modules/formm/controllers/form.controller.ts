@@ -10,19 +10,21 @@ import {
   Param,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { SERVER_EXIT_CODE } from 'src/constants/enums/error-code.enum';
-import { Levels } from 'src/constants/enums/level.enum';
+import { DataSource } from 'typeorm';
+
 import { HandlerException } from 'src/exceptions/HandlerException';
+
 import { HttpResponse } from 'src/interfaces/http-response.interface';
-import { AcademicYearService } from 'src/modules/academic-year/services/academic_year.service';
 import { JwtPayload } from 'src/modules/auth/interfaces/payloads/jwt-payload.interface';
+
+import { AcademicYearService } from 'src/modules/academic-year/services/academic_year.service';
 import { HeaderService } from 'src/modules/header/services/header.service';
 import { ItemService } from 'src/modules/item/services/item.service';
 import { LogService } from 'src/modules/log/services/log.service';
 import { OptionService } from 'src/modules/option/services/option.service';
 import { SemesterService } from 'src/modules/semester/services/semester.service';
 import { TitleService } from 'src/modules/title/services/title.service';
-import { DataSource } from 'typeorm';
+
 import { CreateFormDto } from '../dtos/add_form.dto';
 import { CreateItemDto } from '../dtos/add_item.dto';
 import { CreateTitleDto } from '../dtos/add_title.dto';
@@ -41,6 +43,9 @@ import {
 } from '../interfaces/form_response.interface';
 import { FormmService } from '../service/service.service';
 import { validateFormId } from '../validations';
+
+import { SERVER_EXIT_CODE } from 'src/constants/enums/error-code.enum';
+import { Levels } from 'src/constants/enums/level.enum';
 
 @Controller('forms')
 export class FormController {
@@ -221,6 +226,7 @@ export class FormController {
 
       return result;
     } catch (err) {
+      console.log(err);
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
@@ -243,7 +249,7 @@ export class FormController {
    * @return HttpResponse<CreateFormResponse> | HttpException
    * @page forms
    */
-  @Put('id')
+  @Put(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateForm(
     @Param('id') id: number,

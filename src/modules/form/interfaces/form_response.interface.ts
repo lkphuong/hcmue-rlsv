@@ -11,3 +11,22 @@ export interface FormResponse {
   unit: number;
   required: boolean;
 }
+
+export interface BaseResponse {
+  id: number;
+  name: string;
+}
+
+export interface TimeResponse {
+  start: Date;
+  end: Date;
+}
+
+export interface FormInfoResponse {
+  id: number;
+  academic?: BaseResponse;
+  semester?: BaseResponse;
+  student?: TimeResponse;
+  class?: TimeResponse;
+  department?: TimeResponse;
+}

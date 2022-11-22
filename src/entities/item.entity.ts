@@ -79,6 +79,13 @@ export class ItemEntity extends RootEntity {
   unit: string;
 
   @Column('boolean', {
+    name: 'multiple',
+    nullable: true,
+    default: true,
+  })
+  multiple?: boolean = false;
+
+  @Column('boolean', {
     name: 'required',
     nullable: true,
     default: true,

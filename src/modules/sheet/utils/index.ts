@@ -125,7 +125,7 @@ export const generateDetailSheet = async (
   return returnObjects(payload);
 };
 
-export const generateDataTitle2Object = (item: ItemEntity, req: Request) => {
+export const generateDataTitle2Object = (item: ItemEntity[], req: Request) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', item);

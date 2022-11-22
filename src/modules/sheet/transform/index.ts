@@ -201,7 +201,7 @@ export const generateData2Object = async (
       };
 
       if (sheet?.form?.headers && sheet?.form?.headers.length > 0) {
-        for (const header of headers) {
+        for (const header of sheet.form.headers) {
           const item: HeaderResponse = {
             id: header.id,
             name: header.name,
@@ -216,24 +216,28 @@ export const generateData2Object = async (
   return null;
 };
 
-export const generateDetailTile2Object = (item: ItemEntity) => {
-  if (item) {
-    const payload: ItemDetailResponse = {
-      id: item.id,
-      item: {
+export const generateDetailTile2Object = (items: ItemEntity[] | null) => {
+  if (items) {
+    const payload: ItemDetailResponse[] = [];
+    for (const item of items) {
+      const tmp: ItemDetailResponse = {
         id: item.id,
-        content: item.content,
-      },
-      option: [],
-      personal_mark_level: item.evaluations[0].personal_mark_level,
-      class_mark_level: item.evaluations[0].class_mark_level,
-      department_mark_level: item.evaluations[0].department_mark_level,
-    };
-    for (const i of item.options) {
-      payload.option.push({
-        id: i.id,
-        content: i.content,
-      });
+        item: {
+          id: item.id,
+          content: item.content,
+        },
+        option: [],
+        personal_mark_level: item.evaluations[0].personal_mark_level,
+        class_mark_level: item.evaluations[0].class_mark_level,
+        department_mark_level: item.evaluations[0].department_mark_level,
+      };
+      for (const i of item.options) {
+        tmp.option.push({
+          id: i.id,
+          content: i.content,
+        });
+      }
+      payload.push(tmp);
     }
 
     return payload;

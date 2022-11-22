@@ -1,6 +1,6 @@
 export enum RoleCode {
-  STUDENT = 1,
-  CLASS = 2,
-  DEPARTMENT = 3,
-  ADMIN = 4,
+  STUDENT = 0,
+  CLASS = 1,
+  DEPARTMENT = 2,
+  ADMIN = 3,
 }

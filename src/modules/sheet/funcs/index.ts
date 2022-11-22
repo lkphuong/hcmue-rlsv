@@ -3,7 +3,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
 import { sprintf } from 'src/utils';
-// import { generateUpdateSuccessResponse } from '../utils';
+import { generateUpdateSuccessResponse } from '../utils';
 
 import { SheetEntity } from '../../../entities/sheet.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
@@ -18,7 +18,6 @@ import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
 import { SheetService } from '../services/sheet.service';
-import { ApprovalService } from '../../approval/services/approval.service';
 import { ItemService } from '../../item/services/item.service';
 import { OptionService } from '../../option/services/option.service';
 
@@ -31,6 +30,7 @@ import { SheetDetailResponse } from '../interfaces/sheet_response.interface';
 
 import {
   validateApprovalTime,
+  validateMark,
   validateMarkLevel,
   validateRole,
 } from '../validations';
@@ -42,14 +42,12 @@ import {
 import { StatusSheet } from '../constants/status.enum';
 import { ErrorMessage } from '../constants/errors.enum';
 import { OptionEntity } from 'src/entities/option.entity';
-import { generateUpdateSuccessResponse } from '../utils';
 
 export const updateEvaluationPersonal = async (
   sheet_id: number,
   role: number,
   user_id: string,
   params: StudentUpdateMarkDto,
-  approval_service: ApprovalService,
   sheet_service: SheetService,
   item_service: ItemService,
   option_service: OptionService,
@@ -73,17 +71,6 @@ export const updateEvaluationPersonal = async (
   if (vali_role instanceof HttpException) throw vali_role;
   //#endregion
 
-  //#region Validate approval
-  const vali_approval = await validateApprovalTime(
-    sheet_id,
-    role,
-    approval_service,
-    req,
-  );
-  if (vali_approval instanceof HttpException) throw vali_approval;
-  //#endregion
-  //#endregion
-
   const sheet = await sheet_service.getSheetById(sheet_id);
   if (sheet) {
     // Make the QueryRunner
@@ -95,6 +82,15 @@ export const updateEvaluationPersonal = async (
     try {
       // Start transaction
       await query_runner.startTransaction();
+
+      // //#region Validate approval
+      const vali_approval = await validateApprovalTime(
+        sheet.form,
+        role_id,
+        req,
+      );
+      if (vali_approval instanceof HttpException) throw vali_approval;
+      // //#endregion
 
       //#region Update sheet
       const result = await generatePersonalUpdateMark(
@@ -178,7 +174,6 @@ export const updateEvaluationClass = async (
   role: number,
   user_id: string,
   params: ClassUpdateMarkDto,
-  approval_service: ApprovalService,
   sheet_service: SheetService,
   item_service: ItemService,
   option_service: OptionService,
@@ -201,19 +196,15 @@ export const updateEvaluationClass = async (
   if (vali_role instanceof HttpException) throw vali_role;
   //#endregion
 
-  //#region Validate approval
-  const vali_approval = await validateApprovalTime(
-    sheet_id,
-    role,
-    approval_service,
-    req,
-  );
-  if (vali_approval instanceof HttpException) throw vali_approval;
-  //#endregion
   //#endregion
 
   const sheet = await sheet_service.getSheetById(sheet_id);
   if (sheet) {
+    //#region Validate approval
+    const vali_approval = await validateApprovalTime(sheet.form, role_id, req);
+    if (vali_approval instanceof HttpException) throw vali_approval;
+    //#endregion
+
     // Make the QueryRunner
     const query_runner = data_source.createQueryRunner();
 
@@ -302,7 +293,6 @@ export const updateEvaluationDepartment = async (
   role: number,
   user_id: string,
   params: DepartmentUpdateMarkDto,
-  approval_service: ApprovalService,
   sheet_service: SheetService,
   item_service: ItemService,
   option_service: OptionService,
@@ -324,20 +314,15 @@ export const updateEvaluationDepartment = async (
   const vali_role = validateRole(role_id, role, req);
   if (vali_role instanceof HttpException) throw vali_role;
   //#endregion
-
-  //#region Validate approval
-  const vali_approval = await validateApprovalTime(
-    sheet_id,
-    role,
-    approval_service,
-    req,
-  );
-  if (vali_approval instanceof HttpException) throw vali_approval;
-  //#endregion
   //#endregion
 
   const sheet = await sheet_service.getSheetById(sheet_id);
   if (sheet) {
+    //#region Validate approval
+    const vali_approval = await validateApprovalTime(sheet.form, role_id, req);
+    if (vali_approval instanceof HttpException) throw vali_approval;
+    //#endregion
+
     // Make the QueryRunner
     const query_runner = data_source.createQueryRunner();
 
@@ -438,10 +423,37 @@ export const studentUpdateMark = async (
   for (const i of data) {
     const item = await item_service.getItemById(i.item_id);
     if (item) {
-      let option: OptionEntity = null;
+      let option: OptionEntity = null,
+        valid_mark: HttpException | null = null;
       if (i.option_id) {
         option = await option_service.getOptionById(i.option_id);
+
+        //#region Validate Mark
+        //#region  Validate Mark Student
+        valid_mark = validateMark(
+          i.personal_mark_level,
+          option.from_mark,
+          option.to_mark,
+          req,
+        );
+
+        if (valid_mark instanceof HttpException) return valid_mark;
+        //#endregion
+        //#endregion
       }
+
+      //#region Validate Mark
+      //#region  Validate Mark Student
+      valid_mark = validateMark(
+        i.personal_mark_level,
+        item.from_mark,
+        item.to_mark,
+        req,
+      );
+
+      if (valid_mark instanceof HttpException) return valid_mark;
+      //#endregion
+      //#endregion
 
       const evaluation = await evaluation_service.getEvaluationBySheetId(
         sheet_id,
@@ -509,10 +521,57 @@ export const classUpdateMark = async (
   for (const i of data) {
     const item = await item_service.getItemById(i.item_id);
     if (item) {
-      let option: OptionEntity = null;
+      let option: OptionEntity = null,
+        valid_mark: HttpException | null = null;
       if (i.option_id) {
         option = await option_service.getOptionById(i.option_id);
+
+        //#region Validate Mark
+        //#region  Validate Mark Student
+        valid_mark = validateMark(
+          i.personal_mark_level,
+          option.from_mark,
+          option.to_mark,
+          req,
+        );
+
+        if (valid_mark instanceof HttpException) return valid_mark;
+        //#endregion
+
+        //#region Validate Mark Class
+        valid_mark = validateMark(
+          i.class_mark_level,
+          option.from_mark,
+          option.to_mark,
+          req,
+        );
+        if (valid_mark instanceof HttpException) return valid_mark;
+        //#endregion
+        //#endregion
       }
+
+      //#region Validate Mark
+      //#region  Validate Mark Student
+      valid_mark = validateMark(
+        i.personal_mark_level,
+        item.from_mark,
+        item.to_mark,
+        req,
+      );
+
+      if (valid_mark instanceof HttpException) return valid_mark;
+      //#endregion
+
+      //#region Validate Mark Class
+      valid_mark = validateMark(
+        i.class_mark_level,
+        item.from_mark,
+        item.to_mark,
+        req,
+      );
+      if (valid_mark instanceof HttpException) return valid_mark;
+      //#endregion
+      //#endregion
 
       const evaluation = await evaluation_service.getEvaluationBySheetId(
         sheet_id,
@@ -582,10 +641,77 @@ export const departmentUpdateMark = async (
   for (const i of data) {
     const item = await item_service.getItemById(i.item_id);
     if (item) {
-      let option: OptionEntity = null;
+      let option: OptionEntity = null,
+        valid_mark: HttpException | null = null;
       if (i.option_id) {
         option = await option_service.getOptionById(i.option_id);
+
+        //#region Validate Mark
+        //#region  Validate Mark Student
+        valid_mark = validateMark(
+          i.personal_mark_level,
+          option.from_mark,
+          option.to_mark,
+          req,
+        );
+
+        if (valid_mark instanceof HttpException) return valid_mark;
+        //#endregion
+
+        //#region Validate Mark Class
+        valid_mark = validateMark(
+          i.class_mark_level,
+          option.from_mark,
+          option.to_mark,
+          req,
+        );
+        if (valid_mark instanceof HttpException) return valid_mark;
+        //#endregion
+
+        //#region Validate Mark Department
+        valid_mark = validateMark(
+          i.department_mark_level,
+          option.from_mark,
+          option.to_mark,
+          req,
+        );
+        if (valid_mark instanceof HttpException) return valid_mark;
+        //#endregion
+        //#endregion
       }
+
+      //#region Validate Mark
+      //#region  Validate Mark Student
+      valid_mark = validateMark(
+        i.personal_mark_level,
+        option.from_mark,
+        option.to_mark,
+        req,
+      );
+
+      if (valid_mark instanceof HttpException) return valid_mark;
+      //#endregion
+
+      //#region Validate Mark Class
+      valid_mark = validateMark(
+        i.class_mark_level,
+        option.from_mark,
+        option.to_mark,
+        req,
+      );
+      if (valid_mark instanceof HttpException) return valid_mark;
+      //#endregion
+
+      //#region Validate Mark Department
+      valid_mark = validateMark(
+        i.department_mark_level,
+        option.from_mark,
+        option.to_mark,
+        req,
+      );
+      if (valid_mark instanceof HttpException) return valid_mark;
+      //#endregion
+      //#endregion
 
       const evaluation = await evaluation_service.getEvaluationBySheetId(
         sheet_id,
@@ -665,7 +791,7 @@ export const generatePersonalUpdateMark = async (
   //#endregion
 
   sheet.sum_of_personal_marks = sum_of_personal_marks;
-  sheet.status = StatusSheet.WAITING_CLAS;
+  sheet.status = StatusSheet.WAITING_CLASS;
   sheet.level = level;
   sheet.updated_at = new Date();
   sheet.updated_by = user_id;

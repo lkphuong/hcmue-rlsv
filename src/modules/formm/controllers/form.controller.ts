@@ -14,16 +14,16 @@ import { DataSource } from 'typeorm';
 
 import { HandlerException } from 'src/exceptions/HandlerException';
 
-import { HttpResponse } from 'src/interfaces/http-response.interface';
-import { JwtPayload } from 'src/modules/auth/interfaces/payloads/jwt-payload.interface';
+import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { JwtPayload } from '../../../modules/auth/interfaces/payloads/jwt-payload.interface';
 
-import { AcademicYearService } from 'src/modules/academic-year/services/academic_year.service';
-import { HeaderService } from 'src/modules/header/services/header.service';
-import { ItemService } from 'src/modules/item/services/item.service';
-import { LogService } from 'src/modules/log/services/log.service';
-import { OptionService } from 'src/modules/option/services/option.service';
-import { SemesterService } from 'src/modules/semester/services/semester.service';
-import { TitleService } from 'src/modules/title/services/title.service';
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
+import { HeaderService } from '../../header/services/header.service';
+import { ItemService } from '../../item/services/item.service';
+import { LogService } from '../../log/services/log.service';
+import { OptionService } from '../../option/services/option.service';
+import { SemesterService } from '../../semester/services/semester.service';
+import { TitleService } from '../../title/services/title.service';
 
 import { CreateFormDto } from '../dtos/add_form.dto';
 import { CreateItemDto } from '../dtos/add_item.dto';

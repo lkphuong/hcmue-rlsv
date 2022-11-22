@@ -52,6 +52,7 @@ import { DepartmentUpdateMarkDto } from '../dtos/update_mark_department.dto';
 import { GetSheetByClass } from '../dtos/get_sheet_by_class.dto';
 import { GetClassDto } from '../dtos/get_class.dto';
 import { MultiApproveDto } from '../dtos/multi_approve.dto';
+import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
 
 import {
   ClassResponse,
@@ -76,9 +77,6 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import {} from '../utils';
-import {} from '../transform';
-import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
 
 @Controller('sheets')
 export class SheetController {
@@ -247,7 +245,7 @@ export class SheetController {
   async getDetailTitle(
     @Param() params: GetDetailTitleDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<ItemDetailResponse> | HttpException> {
+  ): Promise<HttpResponse<ItemDetailResponse[]> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -426,7 +424,6 @@ export class SheetController {
       const academic_year =
         await this._academicYearService.getAcademicYearClassesById(academic_id);
 
-      console.log(academic_year);
       if (academic_year) {
         if (
           academic_year.academic_year_classes &&
@@ -513,7 +510,6 @@ export class SheetController {
         role,
         user_id,
         params,
-        this._approvalService,
         this._sheetService,
         this._itemService,
         this._optionService,
@@ -584,7 +580,6 @@ export class SheetController {
         role,
         user_id,
         params,
-        this._approvalService,
         this._sheetService,
         this._itemService,
         this._optionService,
@@ -719,7 +714,6 @@ export class SheetController {
         role,
         user_id,
         params,
-        this._approvalService,
         this._sheetService,
         this._itemService,
         this._optionService,

@@ -42,17 +42,12 @@ export class ItemService {
     try {
       const conditions = this._itemRepository
         .createQueryBuilder('item')
-        .leftJoinAndSelect(
-          'item.options',
-          'option',
-          'option.deleted = 0 OR option.deleted IS NULL',
-        )
+        .leftJoinAndSelect('item.options', 'option')
         .where('item.title_id = :id', { id })
-        .andWhere('item.deleted = :deleted', { deleted: false });
+        .andWhere('item.deleted = :deleted', { deleted: false })
+        .andWhere('option.deleted = :deleted', { deleted: false });
 
       const items = await conditions.getMany();
-
-      console.log(items);
 
       return items || null;
     } catch (e) {
@@ -69,26 +64,26 @@ export class ItemService {
   async getItemByTitileAndSheetId(
     title_id: number,
     sheet_id: number,
-  ): Promise<ItemEntity | null> {
+  ): Promise<ItemEntity[] | null> {
     try {
       const conditions = this._itemRepository
         .createQueryBuilder('item')
         .leftJoinAndSelect(
           'item.options',
-          'options',
-          'options.item_id = item.id AND options.deleted = :deleted',
+          'option',
+          'option.item_id = item.id AND option.deleted = :deleted',
           { deleted: false },
         )
         .leftJoinAndSelect(
           'item.evaluations',
-          'evaluations',
-          'evaluations.item_id = item.id AND evaluation.deleted = :deleted AND evaluations.sheet_id = :sheet_id',
-          { deleted: false, sheet_id },
+          'evaluation',
+          'evaluation.item_id = item.id AND evaluation.deleted = false',
         )
-        .where('item.title_id = :title_id', { title_id })
-        .andWhere('item.deleted = :deleted', { deleted: false });
+        .where('item.title = :title_id', { title_id })
+        .andWhere('item.deleted = :deleted', { deleted: false })
+        .andWhere('evaluation.sheet_id = :sheet_id', { sheet_id });
 
-      const item = await conditions.getOne();
+      const item = await conditions.getMany();
 
       return item || null;
     } catch (e) {

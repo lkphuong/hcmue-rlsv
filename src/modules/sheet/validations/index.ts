@@ -5,9 +5,7 @@ import { Request } from 'express';
 
 import { convertString2Date, sprintf } from 'src/utils';
 
-import { ApprovalService } from '../../approval/services/approval.service';
 import { LevelService } from '../../level/services/level.service';
-import { SheetService } from '../services/sheet.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from 'src/exceptions/UnknownException';
@@ -18,6 +16,7 @@ import {
 import { ErrorMessage } from '../constants/errors.enum';
 
 import { RoleCode } from '../../../constants/enums/role_enum';
+import { FormEntity } from 'src/entities/form.entity';
 
 export const validateDepartmentId = (id: string, req: Request) => {
   if (isEmpty(id)) {
@@ -61,7 +60,7 @@ export const validateMark = (
   to_mark: number,
   req: Request,
 ) => {
-  if (from_mark && to_mark) {
+  if (from_mark != null && to_mark != null) {
     if (mark > to_mark || mark < from_mark) {
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_FORMAT,
@@ -71,7 +70,7 @@ export const validateMark = (
         HttpStatus.BAD_REQUEST,
       );
     }
-  } else if (from_mark && from_mark < mark) {
+  } else if (from_mark != null && from_mark < mark) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,
@@ -120,18 +119,15 @@ export const validateRole = (role1: number, role2: number, req: Request) => {
 };
 
 export const validateApprovalTime = async (
-  sheet_id: number,
+  form: FormEntity,
   role: number,
-  approval_service: ApprovalService,
   req: Request,
 ) => {
-  const approval = await approval_service.getApprovalBySheet(sheet_id, role);
-
-  if (approval) {
-    const current = new Date();
+  const current = new Date();
+  if (role === RoleCode.STUDENT) {
     if (
-      current < convertString2Date(approval.start_at.toString()) ||
-      current > convertString2Date(approval.end_at.toString())
+      current < convertString2Date(form.student_start.toString()) ||
+      current > convertString2Date(form.student_end.toString())
     ) {
       return new HandlerException(
         VALIDATION_EXIT_CODE.NO_MATCHING,
@@ -141,24 +137,33 @@ export const validateApprovalTime = async (
         HttpStatus.BAD_REQUEST,
       );
     }
-  } else {
-    return new HandlerException(
-      DATABASE_EXIT_CODE.NO_CONTENT,
-      req.method,
-      req.url,
-      ErrorMessage.SHEET_NOT_APPROVAL_CONFIG_ERROR,
-      HttpStatus.BAD_REQUEST,
-    );
+  } else if (role === RoleCode.CLASS) {
+    if (
+      current < convertString2Date(form.class_start.toString()) ||
+      current > convertString2Date(form.class_end.toString())
+    ) {
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.NO_MATCHING,
+        req.method,
+        req.url,
+        ErrorMessage.PAST_APPROVAL_TIME_ERROR,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+  } else if (role == RoleCode.DEPARTMENT) {
+    if (
+      current < convertString2Date(form.department_start.toString()) ||
+      current > convertString2Date(form.department_end.toString())
+    ) {
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.NO_MATCHING,
+        req.method,
+        req.url,
+        ErrorMessage.PAST_APPROVAL_TIME_ERROR,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 
   return null;
 };
-
-// export const validateApprove = async (
-//   status: number,
-//   sheet_ids: number[],
-//   sheet_service: SheetService,
-//   req: Request,
-// ) => {
-//   const sheets = await sheet_service.countSheetByStatus(status, sheet_ids);
-// };

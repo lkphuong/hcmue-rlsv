@@ -17,6 +17,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 
 import { ErrorMessage } from '../constants/errors.enum';
+import { TitleService } from 'src/modules/title/services/title.service';
 
 export const validateTime = (start: string, end: string, req: Request) => {
   if (new Date(start) > new Date(end)) {
@@ -115,4 +116,27 @@ export const validateHeader = async (
   }
 
   return header;
+};
+
+export const valiadteTitle = async (
+  title_id: number,
+  title_service: TitleService,
+  req: Request,
+) => {
+  const title = await title_service.getTitleById(title_id);
+
+  if (!title) {
+    //#region throw HandlerException
+    return new UnknownException(
+      title_id,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.TITLE_NOT_FOUND_ERROR, title_id),
+      HttpStatus.NOT_FOUND,
+    );
+    //#endregion
+  }
+
+  return title;
 };

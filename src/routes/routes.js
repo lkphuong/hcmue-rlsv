@@ -14,6 +14,8 @@ import { ClassPage, ClassDetailPage } from '_modules/class/pages';
 
 import { FormCreatePage, FormUpdatePage, ListFormsPage } from '_modules/form/pages';
 
+import { ListPage, StudentListPage } from '_modules/list/pages';
+
 export const browserRouter = [
 	{
 		path: ROUTES.HOME,
@@ -61,7 +63,25 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.SHEET.key}>
-						<div>dsách phiếu</div>
+						<ListPage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.LIST_DETAIL_CLASS,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.SHEET.key}>
+						<StudentListPage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.LIST_DETAIL_STUDENT,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.SHEET.key}>
+						<div>thông tin phiếu của sinh viên</div>
 					</CPermission>
 				),
 			},

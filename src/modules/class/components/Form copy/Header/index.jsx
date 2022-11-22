@@ -1,15 +1,13 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useState } from 'react';
 
 import { Collapse, Grid, IconButton, Stack, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
-import { isSuccess } from '_func/';
-
 import { TITLES } from '_modules/home/mocks';
 
-import SubEvaluation from './SubEvaluation';
+import Title from './Title';
 
-const Evaluation = memo(({ headerId, data, index }) => {
+const Header = memo(({ headerId, data, index }) => {
 	// //#region Data
 	const [open, setOpen] = useState(false);
 
@@ -59,7 +57,7 @@ const Evaluation = memo(({ headerId, data, index }) => {
 
 				<Collapse in={open} timeout='auto'>
 					{TITLES.length > 0 &&
-						TITLES.map((e, i) => <SubEvaluation key={i} data={e} index={i + 1} />)}
+						TITLES.map((e, i) => <Title key={i} data={e} index={i + 1} />)}
 				</Collapse>
 			</Grid>
 		</>
@@ -67,6 +65,6 @@ const Evaluation = memo(({ headerId, data, index }) => {
 	//#endregion
 });
 
-Evaluation.displayName = Evaluation;
+Header.displayName = Header;
 
-export default Evaluation;
+export default Header;

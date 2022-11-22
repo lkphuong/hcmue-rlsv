@@ -42,7 +42,7 @@ const SemestersPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		if (user_id) getList('5c35bbec260f27312f28b906');
+		if (user_id) getList(user_id);
 	}, [getList, user_id]);
 
 	//#region Render

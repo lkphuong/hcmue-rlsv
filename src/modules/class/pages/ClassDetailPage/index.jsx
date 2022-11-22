@@ -1,23 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React from 'react';
 
 import { Box, Typography } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
 
-import { FORM_BY_ID as FORM } from '_modules/home/mocks';
+import { FORM_BY_ID as FORM } from '_modules/class/mocks';
 
-import { Form } from '_modules/home/components';
-
-import { getSheetById } from '_api/sheets.api';
+import { Form } from '_modules/class/components';
 
 const ClassDetailPage = () => {
 	//#region Data
 	const { semester_id } = useParams();
 
 	// const [data, setData] = useState(null);
-	// //#endregion
+	//#endregion
 
-	// //#region Event
+	//#region Event
 	// const getForm = useCallback(async () => {
 	// 	if (!semester_id) return;
 	// 	try {
@@ -26,7 +24,7 @@ const ClassDetailPage = () => {
 	// 		// console.log(error);
 	// 	}
 	// }, [semester_id]);
-	// //#endregion
+	//#endregion
 
 	// useEffect(() => {
 	// 	getForm();
@@ -36,24 +34,14 @@ const ClassDetailPage = () => {
 	return (
 		<Box>
 			<Typography
-				borderRadius={2}
-				p={2}
-				fontWeight={500}
-				fontSize={18}
-				sx={{ backgroundColor: 'rgba(0 0 0 / 5%)' }}
-			>
-				Danh sách điểm rèn luyện của tôi
-			</Typography>
-
-			<Typography
 				borderRadius={1}
 				p={2}
 				mt={2}
-				fontWeight={500}
-				fontSize={16}
+				fontWeight={700}
+				fontSize={20}
 				sx={{ backgroundColor: 'rgba(0 0 0 / 15%)' }}
 			>
-				{`${FORM.semester.name} - Niên khóa ${FORM.academic.name}`}
+				{`${FORM.user.fullname} - Niên khóa ${FORM.user.std_code}`}
 			</Typography>
 
 			<Box mt={1}>

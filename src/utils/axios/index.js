@@ -13,9 +13,9 @@ import { updateAbility } from '_func/permissions';
 
 const apiInstance = axios.create({
 	// baseURL: process.env.REACT_APP_API_URL,
-	// baseURL: 'http://192.168.1.25:5031/api/',
+	baseURL: 'http://192.168.1.110:3000/api/',
 	// baseURL: 'http://hcmue-ctcthssv.vtcode.vn:9093/api/',
-	baseURL: 'http://192.168.1.25:5099/api/',
+	// baseURL: 'http://192.168.1.25:5099/api/',
 	timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 
@@ -36,11 +36,16 @@ apiInstance.interceptors.response.use(
 		if (error?.constructor?.name === 'Cancel') {
 			return error?.message ?? 'Cancel';
 		}
+		// if (error?.message === 'canceled') return;
 
 		if (error?.response?.status === 401) {
 			store.dispatch(actions.setProfile(null));
 			store.dispatch(actions.setToken(null));
-			tryLogout();
+
+			window.localStorage.removeItem('access_token');
+			window.localStorage.removeItem('refresh_token');
+
+			return <Navigate to='/login' replace={true} />;
 		}
 
 		if (error?.response?.status === 403) {
@@ -53,8 +58,8 @@ apiInstance.interceptors.response.use(
 		}
 
 		return Promise.reject({
-			...error.response.data,
-			status: error.response.status,
+			...error.response?.data,
+			status: error.response?.status,
 		});
 	}
 );
@@ -74,10 +79,10 @@ export const getProfile = async (token) => {
 		const res = await profile();
 
 		if (isSuccess(res)) {
-			// const role_id = res?.data?.role;
+			const role_id = res?.data?.role;
 
 			// Test roleId
-			const role_id = 1;
+			// const role_id = 2;
 
 			updateAbility(role_id);
 			store.dispatch(actions.setProfile({ ...res.data, role_id }));

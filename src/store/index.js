@@ -4,11 +4,13 @@ import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 
 
 import authReducer from './slices/auth.slice';
 import markReducer from './slices/mark.slice';
+import optionsReducer from './slices/options.slice';
 
 export const store = configureStore({
 	reducer: {
 		auth: authReducer,
 		mark: markReducer,
+		options: optionsReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({

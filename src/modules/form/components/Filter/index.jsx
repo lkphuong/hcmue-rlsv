@@ -46,7 +46,7 @@ const Filter = () => {
 					<Grid item xs={12} xl={4}>
 						<Box p={2}>
 							<Stack>
-								<Typography>Niên khóa</Typography>
+								<Typography>Trạng thái phiếu</Typography>
 								<CAutocomplete
 									options={NIENKHOA}
 									display='name'

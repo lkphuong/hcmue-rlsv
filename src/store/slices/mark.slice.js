@@ -18,6 +18,9 @@ export const markSlice = createSlice({
 
 			state.marks = updatedValues;
 		},
+		clearMarks: (state) => {
+			state.marks = [];
+		},
 	},
 });
 

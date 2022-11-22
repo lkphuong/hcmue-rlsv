@@ -68,4 +68,25 @@ export class AcademicYearService {
       return null;
     }
   }
+
+  async getAcademicYearById(id: number): Promise<AcademicYearEntity> {
+    try {
+      const conditions = this._academicYearRepository
+        .createQueryBuilder('academic_year')
+        .where('academic_year.id = :id', { id })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false });
+
+      const academic_year = await conditions.getOne();
+
+      return academic_year || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AcademicYearService.getAcademicYearById()',
+        e,
+      );
+      return null;
+    }
+  }
 }

@@ -14,13 +14,13 @@ import { Methods } from '../../../constants/enums/method.enum';
 export class HeaderService {
   constructor(
     @InjectRepository(HeaderEntity)
-    private readonly _headerService: Repository<HeaderEntity>,
+    private readonly _headerRepository: Repository<HeaderEntity>,
     private _logger: LogService,
   ) {}
 
   async getHeadersByFormId(id: number): Promise<HeaderEntity[] | null> {
     try {
-      const conditions = this._headerService
+      const conditions = this._headerRepository
         .createQueryBuilder('header')
         .where('header.form_id = :id', { id });
 
@@ -32,6 +32,27 @@ export class HeaderService {
         Levels.ERROR,
         Methods.SELECT,
         'HeaderService.getHeadersByFormId()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getHeaderById(id: number): Promise<HeaderEntity | null> {
+    try {
+      const conditions = this._headerRepository
+        .createQueryBuilder('header')
+        .where('heaer.id = :id', { id })
+        .andWhere('header.deleted = :deleted', { deleted: false });
+
+      const header = await conditions.getOne();
+
+      return header || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'HeaderService.getHeaderById()',
         e,
       );
       return null;

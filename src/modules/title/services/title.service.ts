@@ -21,7 +21,8 @@ export class TitleService {
     try {
       const conditions = this._titleService
         .createQueryBuilder('title')
-        .where('title.header_id = :id', { id });
+        .where('title.header_id = :id', { id })
+        .andWhere('title.deleted = :deleted', { deleted: false });
 
       const titles = await conditions.getMany();
 

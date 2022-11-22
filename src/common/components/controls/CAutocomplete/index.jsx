@@ -1,10 +1,10 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
 import classNames from 'classnames';
 
-import { string, any, array, func, bool } from 'prop-types';
+import { string, any, func, bool, arrayOf, object } from 'prop-types';
 
 export const CAutocomplete = memo(
 	({
@@ -13,15 +13,56 @@ export const CAutocomplete = memo(
 		placeholder,
 		options,
 		value,
-		inputValue,
 		onChange,
 		onInputChange,
 		multiple,
 		renderOption,
 		display,
+		valueGet,
 		// getOptionLabel,
 		...props
 	}) => {
+		//#region Data
+		const [inputValue, setInputValue] = useState('');
+
+		const currentValue = useMemo(() => {
+			if (multiple) {
+				if (!options || !value) return null;
+			} else if (!options || !value?.toString()) return null;
+
+			if (multiple)
+				return (
+					value?.map((id) =>
+						options.find((option) => option?.id?.toString() === id?.toString())
+					) ?? null
+				);
+
+			return (
+				options.find((option) =>
+					value[valueGet]
+						? option[valueGet]?.toString() === value[valueGet]?.toString()
+						: option[valueGet]?.toString() === value?.toString()
+				) ?? null
+			);
+		}, [multiple, options, value, valueGet]);
+		//#endregion
+
+		//#region Event
+		const handleInputChange = (e, v) => setInputValue(onInputChange(v));
+
+		const onValueChange = (event, value) => {
+			if (multiple) {
+				onChange(value.map(({ inputValue, ..._value }) => _value));
+			} else {
+				if (value && value.inputValue) return onChange({ [display]: value[display] });
+				else if (typeof value === 'object') return onChange(value);
+
+				return onChange(value);
+			}
+		};
+		//#endregion
+
+		//#region Other
 		const getOptionLabel = (option) => {
 			if (typeof option === 'string') return option;
 
@@ -29,6 +70,7 @@ export const CAutocomplete = memo(
 
 			return option?.[display];
 		};
+		//#endregion
 
 		return (
 			<Autocomplete
@@ -36,10 +78,10 @@ export const CAutocomplete = memo(
 				name={name}
 				multiple={multiple}
 				className={classNames('c-autocomplete')}
-				value={value}
-				onChange={onChange}
+				value={currentValue}
+				onChange={onValueChange}
 				inputValue={inputValue}
-				onInputChange={onInputChange}
+				onInputChange={handleInputChange}
 				options={options}
 				renderInput={(params) => <TextField placeholder={placeholder} {...params} />}
 				renderOption={renderOption}
@@ -57,15 +99,17 @@ CAutocomplete.propTypes = {
 	name: string,
 	placeholder: string,
 	value: any,
-	options: array.isRequired,
-	inputValue: string,
+	display: string.isRequired,
+	options: arrayOf(object).isRequired,
 	onChange: func,
 	onInputChange: func,
 	multiple: bool,
 	renderOption: func,
-	getOptionLabel: func,
+	valueGet: string,
 };
 
 CAutocomplete.defaultProps = {
-	option: [],
+	onInputChange: (v) => v,
+	options: [],
+	valueGet: 'id',
 };

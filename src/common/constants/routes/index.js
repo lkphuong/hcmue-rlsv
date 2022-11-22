@@ -7,6 +7,7 @@ export const ROUTES = {
 	MY_SCORE_DETAIL: '/my-score/:semester_id',
 
 	CLASS_SCORE: '/class-score',
+	CLASS_SCORE_DETAIL: '/class-score/:sheet_id',
 
 	LIST: '/list',
 

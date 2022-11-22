@@ -1,3 +1,4 @@
-import SemestersPage from './Semesters';
+import ClassPage from './ClassPage';
+import ClassDetailPage from './ClassDetailPage';
 
-export { SemestersPage };
+export { ClassPage, ClassDetailPage };

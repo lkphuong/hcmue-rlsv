@@ -1,24 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete, CInput } from '_controls/';
+import { HOCKY, NIENKHOA } from '_modules/class/mocks';
 
-const HOCKY = [
-	{ id: 1, name: 'Học kỳ I' },
-	{ id: 2, name: 'Học kỳ II' },
-	{ id: 3, name: 'Học kỳ III' },
-	{ id: 4, name: 'Học kỳ hè' },
-];
+const Filter = ({ filter, onChangeFilter }) => {
+	//#region Data
+	const [input, setInput] = useState('');
+	//#endregion
 
-const NIENKHOA = [
-	{ id: 1, name: '2021-2022' },
-	{ id: 2, name: '2022-2023' },
-	{ id: 3, name: '2020-2021' },
-	{ id: 4, name: '2023-2024' },
-];
+	//#region Event
+	const handleChangeFilter = (key) => (value) =>
+		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
 
-const Filter = () => {
+	const handleChangeInput = (event) => setInput(event.target.value);
+
+	const handleSearch = () => onChangeFilter((prev) => ({ ...prev, input }));
+	//#endregion
+
+	//#region Render
 	return (
 		<>
 			<Container maxWidth='md'>
@@ -29,6 +30,9 @@ const Filter = () => {
 								<Stack>
 									<Typography>Học kỳ</Typography>
 									<CAutocomplete
+										disableClearable
+										value={filter.semester_id}
+										onChange={handleChangeFilter('semester_id')}
 										options={HOCKY}
 										display='name'
 										renderOption={(props, option) => (
@@ -45,6 +49,9 @@ const Filter = () => {
 								<Stack>
 									<Typography>Niên khóa</Typography>
 									<CAutocomplete
+										disableClearable
+										value={filter.academic_id}
+										onChange={handleChangeFilter('academic_id')}
 										options={NIENKHOA}
 										display='name'
 										renderOption={(props, option) => (
@@ -62,14 +69,22 @@ const Filter = () => {
 
 			<Grid container mb={1} spacing={1} alignItems='center'>
 				<Grid item>
-					<CInput placeholder='Nhập Tên hoặc MSSV' isSearch />
+					<CInput
+						value={input}
+						onChange={handleChangeInput}
+						placeholder='Nhập Tên hoặc MSSV'
+						isSearch
+					/>
 				</Grid>
 				<Grid item>
-					<Button variant='contained'>Tìm kiếm</Button>
+					<Button variant='contained' onClick={handleSearch}>
+						Tìm kiếm
+					</Button>
 				</Grid>
 			</Grid>
 		</>
 	);
+	//#endregion
 };
 
 export default Filter;

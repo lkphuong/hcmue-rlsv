@@ -8,11 +8,10 @@ import { CPermission } from '_controls';
 
 import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
 
-import {
-	SemestersPage as MySemesters,
-	SemesterDetail as MyDetailSemester,
-} from '_modules/home/pages';
-import { SemestersPage as ClassSemesters } from '_modules/class/pages';
+import { StudentPage, StudentDetailPage } from '_modules/home/pages';
+
+import { ClassPage, ClassDetailPage } from '_modules/class/pages';
+
 import { FormCreatePage, FormUpdatePage, ListFormsPage } from '_modules/form/pages';
 
 export const browserRouter = [
@@ -26,7 +25,7 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DASHBOARD.key}>
-						<MySemesters />
+						<StudentPage />
 					</CPermission>
 				),
 			},
@@ -35,7 +34,7 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DASHBOARD.key}>
-						<MyDetailSemester />
+						<StudentDetailPage />
 					</CPermission>
 				),
 			},
@@ -44,7 +43,16 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS_SCORE.key}>
-						<ClassSemesters />
+						<ClassPage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.CLASS_SCORE_DETAIL,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS_SCORE.key}>
+						<ClassDetailPage />
 					</CPermission>
 				),
 			},

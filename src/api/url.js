@@ -11,3 +11,13 @@ export const SHEETS = {
 	SHEETS_GET_BY_CLASS_ID: '/sheets/class',
 	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/student',
 };
+
+export const FORMS = {
+	GET_HEADERS_BY_FORM_ID: '/forms/headers',
+	GET_TITLES_BY_HEADER_ID: '/forms/titles',
+	GET_ITEMS_BY_TITLE_ID: '/forms/items',
+};
+
+export const CLASSES = {
+	GET_CLASSES: '/classes/all',
+};

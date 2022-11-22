@@ -87,8 +87,7 @@ const theme = createTheme({
 					'& .MuiTableRow-root': {
 						'& .MuiTableCell-root': {
 							borderBottom: BORDER_TABLE + '!important',
-							fontWeight: 600,
-							backgroundColor: '#daf9f0',
+							fontWeight: 700,
 						},
 					},
 				},

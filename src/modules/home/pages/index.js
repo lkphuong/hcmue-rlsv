@@ -1,4 +1,4 @@
-import SemestersPage from './Semesters';
-import SemesterDetail from './Detail';
+import StudentPage from './StudentPage';
+import StudentDetailPage from './StudentDetailPage';
 
-export { SemestersPage, SemesterDetail };
+export { StudentPage, StudentDetailPage };

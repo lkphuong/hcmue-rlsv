@@ -39,6 +39,27 @@ export class OptionService {
     }
   }
 
+  async getOptionByItemId(item_id: number): Promise<OptionEntity[] | null> {
+    try {
+      const conditions = this._optionRepository
+        .createQueryBuilder('option')
+        .innerJoin('option.item', 'item')
+        .where('item.id = :item_id', { item_id });
+
+      const options = await conditions.getMany();
+
+      return options || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'OptionService.getOptionByItemId()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async bulkUnlinkByItemId(
     item_id: number,
     user_id: string,
@@ -51,7 +72,7 @@ export class OptionService {
 
       const results = await manager.update(
         OptionEntity,
-        { item_id: item_id },
+        { item: item_id },
         { deleted: true, deleted_at: new Date(), deleted_by: user_id },
       );
 

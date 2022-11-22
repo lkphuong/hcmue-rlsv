@@ -43,7 +43,7 @@ export class HeaderService {
     try {
       const conditions = this._headerRepository
         .createQueryBuilder('header')
-        .where('heaer.id = :id', { id })
+        .where('header.id = :id', { id })
         .andWhere('header.deleted = :deleted', { deleted: false });
 
       const header = await conditions.getOne();
@@ -59,7 +59,6 @@ export class HeaderService {
       return null;
     }
   }
-
 
   async add(
     header: HeaderEntity,

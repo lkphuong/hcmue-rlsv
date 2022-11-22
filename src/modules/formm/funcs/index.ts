@@ -375,16 +375,18 @@ export const createItem = async (
     //#endregion
 
     if (item) {
-      const option = await createItemOption(
-        user_id,
-        params,
-        item,
-        query_runner,
-      );
+      if (params.options && params.options.length > 0) {
+        const option = await createItemOption(
+          user_id,
+          params,
+          item,
+          query_runner,
+        );
 
-      if (option) item.options = option;
-      else {
-        throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+        if (option) item.options = option;
+        else {
+          throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+        }
       }
 
       //#region Update Item relation
@@ -457,27 +459,38 @@ export const updateItem = async (
       // Start transaction
       await query_runner.startTransaction();
 
-      //#region Delete Option
-      const success = await option_service.bulkUnlinkByItemId(item_id, user_id);
-      if (!success)
-        throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+      //#region Get Option
+      const options = await option_service.getOptionByItemId(item_id);
       //#endregion
 
+      if (options && options.length > 0) {
+        //#region Delete Option
+        const success = await option_service.bulkUnlinkByItemId(
+          item_id,
+          user_id,
+          query_runner.manager,
+        );
+        if (!success)
+          throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+        //#endregion
+      }
       //#region Create Item
       let item = await generateCreateItem(user_id, params, title, query_runner);
       //#endregion
 
       if (item) {
-        const option = await createItemOption(
-          user_id,
-          params,
-          item,
-          query_runner,
-        );
+        if (params.options && params.options.length > 0) {
+          const option = await createItemOption(
+            user_id,
+            params,
+            item,
+            query_runner,
+          );
 
-        if (option) item.options = option;
-        else {
-          throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+          if (option) item.options = option;
+          else {
+            throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+          }
         }
 
         //#region Update Item relation
@@ -565,8 +578,13 @@ export const generateCreateItem = async (
   item.required = required;
   item.created_at = new Date();
   item.updated_by = user_id;
+  item.deleted = false;
+
+  console.log('item: ', item);
 
   item = await query_runner.manager.save(item);
+
+  console.log('item 1: ', item);
 
   return item;
 };

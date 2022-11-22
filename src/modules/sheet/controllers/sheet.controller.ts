@@ -269,7 +269,10 @@ export class SheetController {
       const { id, title_id } = params;
       //#endregion
 
-      const title = await this._itemService.getItemByTitileId(title_id, id);
+      const title = await this._itemService.getItemByTitileAndSheetId(
+        title_id,
+        id,
+      );
 
       if (title) {
         return generateDataTitle2Object(title, req);

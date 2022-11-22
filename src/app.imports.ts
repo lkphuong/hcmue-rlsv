@@ -23,6 +23,8 @@ import { ConfigurationService } from './modules/shared/services/configuration/co
 
 import { jwtFactory } from './factories/jwt.factory';
 import { FormModule } from './modules/form/form.module';
+import { TitleModule } from './modules/title/title.modules';
+import { HeaderModule } from './modules/header/header.modules';
 
 export const modules = [
   SharedModule,

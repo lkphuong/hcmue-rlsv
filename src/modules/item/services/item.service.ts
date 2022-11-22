@@ -42,12 +42,17 @@ export class ItemService {
     try {
       const conditions = this._itemRepository
         .createQueryBuilder('item')
-        .leftJoinAndSelect('item.options', 'option')
+        .leftJoinAndSelect(
+          'item.options',
+          'option',
+          'option.deleted = 0 OR option.deleted IS NULL',
+        )
         .where('item.title_id = :id', { id })
-        .andWhere('item.deleted = :deleted', { deleted: false })
-        .andWhere('option.deleted = :deleted', { deleted: false });
+        .andWhere('item.deleted = :deleted', { deleted: false });
 
       const items = await conditions.getMany();
+
+      console.log(items);
 
       return items || null;
     } catch (e) {
@@ -60,7 +65,6 @@ export class ItemService {
       return null;
     }
   }
-
 
   async getItemByTitileAndSheetId(
     title_id: number,

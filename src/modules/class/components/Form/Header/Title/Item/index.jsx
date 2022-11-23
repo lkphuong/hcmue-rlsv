@@ -69,6 +69,7 @@ const Item = memo(({ data, marks }) => {
 		dispatch(actions.updateMarks(markObj));
 	};
 	//#endregion
+	console.log(currentMark);
 
 	//#region Render
 	return (

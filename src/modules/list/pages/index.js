@@ -1,4 +1,5 @@
 import ListPage from './ListPage';
 import StudentListPage from './StudentListPage';
+import ListDetailPage from './ListDetailPage';
 
-export { ListPage, StudentListPage };
+export { ListPage, StudentListPage, ListDetailPage };

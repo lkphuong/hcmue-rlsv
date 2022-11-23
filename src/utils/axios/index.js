@@ -13,9 +13,9 @@ import { updateAbility } from '_func/permissions';
 
 const apiInstance = axios.create({
 	// baseURL: process.env.REACT_APP_API_URL,
-	// baseURL: 'http://192.168.1.110:3000/api/',
+	baseURL: 'http://192.168.1.110:3000/api/',
 	// baseURL: 'http://hcmue-ctcthssv.vtcode.vn:9093/api/',
-	baseURL: 'http://192.168.1.25:5099/api/',
+	// baseURL: 'http://192.168.1.25:5099/api/',
 	timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 

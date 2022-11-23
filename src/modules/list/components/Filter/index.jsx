@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete, CInput } from '_controls/';
-import { HOCKY, NIENKHOA } from '_modules/class/mocks';
 
-const Filter = ({ filter, onChangeFilter }) => {
+const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
 	//#region Data
 	const [input, setInput] = useState('');
 	//#endregion
@@ -25,15 +24,15 @@ const Filter = ({ filter, onChangeFilter }) => {
 			<Container maxWidth='md'>
 				<Box my={1} border='1px solid black'>
 					<Grid container>
-						<Grid item xs={12} xl={6}>
+						<Grid item xs={12} xl={4}>
 							<Box p={2}>
 								<Stack>
-									<Typography>Học kỳ</Typography>
+									<Typography>Lớp</Typography>
 									<CAutocomplete
 										disableClearable
 										value={filter.semester_id}
 										onChange={handleChangeFilter('semester_id')}
-										options={HOCKY}
+										options={semesters}
 										display='name'
 										renderOption={(props, option) => (
 											<Box component='li' key={option.id} {...props}>
@@ -44,7 +43,26 @@ const Filter = ({ filter, onChangeFilter }) => {
 								</Stack>
 							</Box>
 						</Grid>
-						<Grid item xs={12} xl={6}>
+						<Grid item xs={12} xl={4}>
+							<Box p={2}>
+								<Stack>
+									<Typography>Học kỳ</Typography>
+									<CAutocomplete
+										disableClearable
+										value={filter.semester_id}
+										onChange={handleChangeFilter('semester_id')}
+										options={semesters}
+										display='name'
+										renderOption={(props, option) => (
+											<Box component='li' key={option.id} {...props}>
+												{option.name}
+											</Box>
+										)}
+									/>
+								</Stack>
+							</Box>
+						</Grid>
+						<Grid item xs={12} xl={4}>
 							<Box p={2}>
 								<Stack>
 									<Typography>Niên khóa</Typography>
@@ -52,7 +70,7 @@ const Filter = ({ filter, onChangeFilter }) => {
 										disableClearable
 										value={filter.academic_id}
 										onChange={handleChangeFilter('academic_id')}
-										options={NIENKHOA}
+										options={academic_years}
 										display='name'
 										renderOption={(props, option) => (
 											<Box component='li' key={option.id} {...props}>

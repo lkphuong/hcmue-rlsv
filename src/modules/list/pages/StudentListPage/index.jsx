@@ -3,8 +3,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Box, Typography } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
-
-import { STUDENTS, HOCKY, NIENKHOA } from '_modules/class/mocks';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { Filter, ListStudents } from '_modules/list/components';
 
@@ -12,14 +11,16 @@ import { getClassSheets } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
 
-const semesterId = HOCKY[0].id;
-const academicId = NIENKHOA[0].id;
-
 const StudentListPage = () => {
 	//#region Data
+	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
+
 	const [data, setData] = useState([]);
 
-	const [body, setBody] = useState({ semester_id: semesterId, academic_id: academicId });
+	const [body, setBody] = useState({
+		semester_id: semesters[0]?.id,
+		academic_id: academic_years[0].id,
+	});
 
 	const { class_id } = useParams();
 	//#endregion
@@ -43,19 +44,25 @@ const StudentListPage = () => {
 
 	return (
 		<Box mt={1}>
-			<Filter filter={body} onChangeFilter={setBody} />
+			<Filter
+				filter={body}
+				onChangeFilter={setBody}
+				semesters={semesters}
+				academic_years={academic_years}
+			/>
 
 			<Typography
 				borderRadius={2}
 				p={2}
+				mb={1}
 				fontWeight={500}
 				fontSize={18}
 				sx={{ backgroundColor: 'rgba(0 0 0 / 5%)' }}
 			>
-				Danh sách điểm rèn luyện của lớp
+				Lớp CNTT
 			</Typography>
 
-			<ListStudents data={STUDENTS} />
+			<ListStudents data={data} />
 		</Box>
 	);
 };

@@ -23,13 +23,7 @@ const ListSemester = ({ data }) => {
 	//#region Render
 	return (
 		<Box>
-			<TableContainer
-				sx={{
-					maxHeight: 600,
-					boxShadow: '0 1px 5px 0px rgb(0 0 0 / 20%)',
-					borderRadius: '10px',
-				}}
-			>
+			<TableContainer className='c-table'>
 				<Table stickyHeader>
 					<TableHead>
 						<TableRow>

@@ -11,7 +11,7 @@ import { getClassSheets } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
 
-import { Filter, ListSemester } from '_modules/class/components';
+import { Filter, ListStudents } from '_modules/class/components';
 
 const ClassPage = () => {
 	//#region Data
@@ -65,7 +65,7 @@ const ClassPage = () => {
 					academic_years={academic_years}
 				/>
 
-				<ListSemester data={data} />
+				<ListStudents data={data} />
 			</Box>
 		</Box>
 	);

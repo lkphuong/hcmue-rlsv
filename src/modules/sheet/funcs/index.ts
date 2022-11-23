@@ -348,6 +348,7 @@ export const updateEvaluationDepartment = async (
 
       let success: EvaluationEntity[] | HttpException | null = null;
       //#region Update Mark
+      console.log('departmentUpdateMark ');
       success = await departmentUpdateMark(
         sheet_id,
         user_id,
@@ -639,8 +640,8 @@ export const departmentUpdateMark = async (
       //#region Validate Mark Department
       valid_mark = validateMark(
         i.department_mark_level,
-        option.from_mark,
-        option.to_mark,
+        item.from_mark,
+        item.to_mark,
         req,
       );
       if (valid_mark instanceof HttpException) return valid_mark;

@@ -203,7 +203,6 @@ export class SheetController {
       //#region Get sheets
       const sheets = await this._sheetService.getSheetsByUserId(user_id);
       //#endregion
-
       if (sheets && sheets.length > 0) {
         return generateResponseSheetUser(sheets, req);
       } else {

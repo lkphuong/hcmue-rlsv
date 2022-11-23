@@ -124,6 +124,7 @@ export const generateAcademicYearClass2Array = async (
           academic_year_classe.class_id,
           department_id,
         );
+
         if (result) {
           item = {
             id: convertObjectId2String(result._id),

@@ -5,6 +5,8 @@ import { NextFunction, Request, Response } from 'express';
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
+import { JwtPayload } from '../interfaces/payloads/jwt-payload.interface';
+
 import { AuthService } from '../services/auth.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
@@ -52,7 +54,18 @@ export class VerifyTokenMiddleware implements NestMiddleware {
               );
             }
 
-            req.user = decoded;
+            req.user = decoded as JwtPayload;
+
+            const auth = await this._authService.contains(decoded.username);
+
+            if (!auth.access_token) {
+              throw new ExpiredTokenException(
+                access_token,
+                1003,
+                req.method,
+                req.url,
+              );
+            }
             //#endregion
             next();
           } else {

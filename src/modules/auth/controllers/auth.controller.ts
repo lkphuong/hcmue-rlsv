@@ -142,12 +142,17 @@ export class AuthController {
               result.fullname,
               convertObjectId2String(result.classId),
               convertObjectId2String(result.departmentId),
+              access_token,
               refresh_token,
               new Date(),
               true,
             );
           } else {
-            session = await this._authService.renew(refresh_token, session);
+            session = await this._authService.renew(
+              access_token,
+              refresh_token,
+              session,
+            );
           }
 
           //#region Generate response
@@ -345,6 +350,7 @@ export class AuthController {
 
             //#region Update session with new tokens
             session = await this._authService.renew(
+              renew_access_token,
               renew_refresh_token,
               session,
             );

@@ -150,6 +150,7 @@ export class AuthService {
     fullname: string,
     class_id: string,
     department_id: string,
+    access_token: string,
     refresh_token: string,
     login_time: Date,
     active: boolean,
@@ -166,6 +167,7 @@ export class AuthService {
       session.fullname = fullname;
       session.class = class_id;
       session.department = department_id;
+      session.access_token = access_token;
       session.refresh_token = refresh_token;
       session.login_time = login_time;
       session.active = active;
@@ -189,6 +191,7 @@ export class AuthService {
   }
 
   async renew(
+    access_token: string,
     refresh_token: string,
     session: SessionEntity,
     manager?: EntityManager,
@@ -198,6 +201,7 @@ export class AuthService {
         manager = this._dataSource.manager;
       }
 
+      session.access_token = access_token;
       session.refresh_token = refresh_token;
       session.updated_at = new Date();
       session.updated_by = 'system';
@@ -226,6 +230,7 @@ export class AuthService {
         manager = this._dataSource.manager;
       }
 
+      session.access_token = null;
       session.expired_time = expired_time;
       session.logout_time = logout_time;
       session.updated_at = new Date();

@@ -25,6 +25,7 @@ const router = createBrowserRouter(browserRouter);
 function App() {
 	//#region Data
 	const [adminContext, setAdminContext] = useState('');
+	const [isLoading, setLoading] = useState(true);
 
 	const token = localStorage.getItem('access_token');
 
@@ -41,12 +42,16 @@ function App() {
 				}
 			} catch (error) {
 				console.log(error);
+			} finally {
+				setLoading(false);
 			}
 		};
 
 		!isLogined && init();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isLogined]);
+
+	if (isLoading) return <SuspenseLoading />;
 
 	return (
 		<ThemeProvider theme={theme}>

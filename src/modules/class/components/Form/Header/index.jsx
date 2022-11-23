@@ -25,6 +25,7 @@ const Header = memo(({ data, index, sheetId }) => {
 
 	const getTitles = useCallback(async () => {
 		if (!data?.id) return navigate(-1);
+
 		try {
 			const res = await getTitlesByHeaderId(data.id);
 

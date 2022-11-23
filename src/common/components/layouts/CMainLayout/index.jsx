@@ -28,18 +28,27 @@ export const CMainLayout = () => {
 			try {
 				const res = await getAcademicYears();
 
-				if (isSuccess(res)) dispatch(actions.setAcademicYears(res.data));
+				if (isSuccess(res)) {
+					const _arr = res.data.map((e) => ({ ...e, id: parseInt(e.id) }));
+
+					dispatch(actions.setAcademicYears(_arr));
+				}
 
 				const _res = await getSemesters();
 
-				if (isSuccess(_res)) dispatch(actions.setSemesters(_res.data));
+				if (isSuccess(_res)) {
+					const __arr = _res.data.map((e) => ({ ...e, id: parseInt(e.id) }));
+
+					dispatch(actions.setSemesters(__arr));
+				}
 			} catch (error) {
 				throw error;
 			}
 		};
 
 		getOptions();
-	}, [dispatch]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return isLogined ? (
 		<>

@@ -27,6 +27,9 @@ const theme = createTheme({
 					'& .MuiOutlinedInput-root': {
 						'& .MuiOutlinedInput-input': {
 							padding: '9px 14px',
+							"&[type='number']": {
+								textAlign: 'center',
+							},
 						},
 					},
 				},

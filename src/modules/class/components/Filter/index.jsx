@@ -3,9 +3,8 @@ import React, { useState } from 'react';
 import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete, CInput } from '_controls/';
-import { HOCKY, NIENKHOA } from '_modules/class/mocks';
 
-const Filter = ({ filter, onChangeFilter }) => {
+const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
 	//#region Data
 	const [input, setInput] = useState('');
 	//#endregion
@@ -33,7 +32,7 @@ const Filter = ({ filter, onChangeFilter }) => {
 										disableClearable
 										value={filter.semester_id}
 										onChange={handleChangeFilter('semester_id')}
-										options={HOCKY}
+										options={semesters}
 										display='name'
 										renderOption={(props, option) => (
 											<Box component='li' key={option.id} {...props}>
@@ -52,7 +51,7 @@ const Filter = ({ filter, onChangeFilter }) => {
 										disableClearable
 										value={filter.academic_id}
 										onChange={handleChangeFilter('academic_id')}
-										options={NIENKHOA}
+										options={academic_years}
 										display='name'
 										renderOption={(props, option) => (
 											<Box component='li' key={option.id} {...props}>

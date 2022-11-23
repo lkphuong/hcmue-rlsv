@@ -9,19 +9,14 @@ import { ListClasses } from '_modules/list/components';
 
 import { isSuccess } from '_func/';
 
-import { getClasses } from '_api/classes.api';
-
-const CLASSES = [
-	{ id: 1, name: 'CNTT.A' },
-	{ id: 2, name: 'CNTT.B' },
-	{ id: 3, name: 'CNTT.C' },
-];
+import { getDepartmentSheets } from '_api/sheets.api';
 
 const ListPage = () => {
 	//#region Data
 	const [classes, setClasses] = useState([]);
 
 	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	//#endregion
 
@@ -30,17 +25,17 @@ const ListPage = () => {
 		if (!department_id) return;
 		try {
 			const body = {
-				department_id,
-				academic_year_id: academic_years[0]?.id,
+				semester_id: semesters[0]?.id,
+				academic_id: academic_years[0]?.id,
 			};
 
-			const res = await getClasses(department_id, body);
+			const res = await getDepartmentSheets(department_id, body);
 
 			if (isSuccess(res)) setClasses(res.data);
 		} catch (error) {
 			throw error;
 		}
-	}, [department_id, academic_years]);
+	}, [department_id, semesters, academic_years]);
 	//#endregion
 
 	useEffect(() => {
@@ -53,7 +48,7 @@ const ListPage = () => {
 			<Box mt={1}>
 				<div>filter</div>
 
-				<ListClasses data={CLASSES} />
+				<ListClasses data={classes} />
 			</Box>
 		</Box>
 	);

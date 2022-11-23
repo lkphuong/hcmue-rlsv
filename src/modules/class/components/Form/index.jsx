@@ -1,20 +1,25 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Button, Grid, Paper } from '@mui/material';
 
-import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 import { getHeadersByFormId } from '_api/form.api';
+
+import { isSuccess } from '_func/';
+
+import { ROUTES } from '_constants/routes';
+
+import { updateClassSheets } from '_api/sheets.api';
+
+import { actions } from '_slices/mark.slice';
 
 import Header from './Header';
 
 import './index.scss';
-import { updateStudentSheets } from '_api/sheets.api';
-import { alert } from '_func/alert';
-import { ROUTES } from '_constants/routes';
 
 const Form = ({ data }) => {
 	//#region Data
@@ -24,11 +29,14 @@ const Form = ({ data }) => {
 	const [headers, setHeaders] = useState([]);
 
 	const navigate = useNavigate();
-	// //#endregion
+
+	const dispatch = useDispatch();
+	//#endregion
 
 	//#region Event
 	const getHeaders = useCallback(async () => {
 		if (!data?.id) return navigate(-1);
+
 		try {
 			const res = await getHeadersByFormId(data.id);
 
@@ -52,12 +60,14 @@ const Form = ({ data }) => {
 				data: _data,
 			};
 
-			const res = await updateStudentSheets(data.id, body);
+			const res = await updateClassSheets(data.id, body);
 
 			if (isSuccess(res)) {
+				dispatch(actions.clearMarks());
+
 				alert.success({ title: 'Cập nhật điểm thành công!' });
 
-				navigate(ROUTES.MY_SCORE, { replace: true });
+				navigate(ROUTES.CLASS_SCORE, { replace: true });
 			} else {
 				alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
 			}

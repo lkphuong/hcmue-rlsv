@@ -6,8 +6,6 @@ import { Box, Typography } from '@mui/material';
 
 import { ListSemester } from '_modules/home/components';
 
-import { CPagination } from '_controls/';
-
 import { getStudentSheets } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
@@ -17,8 +15,6 @@ const SemestersPage = () => {
 	const [data, setData] = useState([]);
 
 	const { user_id } = useSelector((state) => state.auth.profile, shallowEqual);
-
-	const [paginate, setPaginate] = useState({ page: 1, pages: 1 });
 	//#endregion
 
 	//#region Event
@@ -26,19 +22,11 @@ const SemestersPage = () => {
 		try {
 			const res = await getStudentSheets(id);
 
-			if (isSuccess(res)) {
-				setData(res?.data);
-
-				if (res.data.length > 0) {
-					setPaginate({ page: 1, pages: Math.ceil(res.data.length / 10) });
-				}
-			}
+			if (isSuccess(res)) setData(res?.data);
 		} catch (error) {
 			console.log(error);
 		}
 	}, []);
-
-	const handleChangePage = (e, v) => setPaginate({ ...paginate, page: v });
 	//#endregion
 
 	useEffect(() => {
@@ -60,12 +48,6 @@ const SemestersPage = () => {
 
 			<Box mt={1}>
 				<ListSemester data={data} />
-
-				<CPagination
-					page={paginate.page}
-					pages={paginate.pages}
-					onChange={handleChangePage}
-				/>
 			</Box>
 		</Box>
 	);

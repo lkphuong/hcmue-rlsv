@@ -22,6 +22,14 @@ export const getClassSheets = async (id, params = { semester_id: 0, academic_id:
 	return await post(`${SHEETS.SHEETS_GET_BY_CLASS_ID}/${id}`, params);
 };
 
+export const updateClassSheets = async (id, body = { role_id: 0, data: [] }) => {
+	return await put(`${SHEETS.UPDATE_CLASS_SHEET}/${id}`, body);
+};
+
 export const getDepartmentSheets = async (id, params = { semester_id: 0, academic_id: 0 }) => {
 	return await post(`${SHEETS.SHEETS_GET_BY_DEPARTMENT_ID}/${id}`, params);
+};
+
+export const updateDepartmentSheets = async (id, body = { role_id: 0, data: [] }) => {
+	return await put(`${SHEETS.UPDATE_DEPARTMENT_SHEET}/${id}`, body);
 };

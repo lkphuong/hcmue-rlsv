@@ -11,7 +11,9 @@ export const SHEETS = {
 	SHEETS_GET_BY_STUDENT_ID: '/sheets/student',
 	UPDATE_STUDENT_SHEET: '/sheets/student',
 	SHEETS_GET_BY_CLASS_ID: '/sheets/class',
-	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/student',
+	UPDATE_CLASS_SHEET: '/sheets/class',
+	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/department',
+	UPDATE_DEPARTMENT_SHEET: '/sheets/department',
 };
 
 export const FORMS = {

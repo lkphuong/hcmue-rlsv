@@ -36,7 +36,9 @@ const ListSemester = ({ data }) => {
 							<TableCell align='center'>STT</TableCell>
 							<TableCell align='center'>Họ và tên</TableCell>
 							<TableCell align='center'>Mã số sinh viên</TableCell>
-							<TableCell align='center'>Tổng điểm</TableCell>
+							<TableCell align='center'>Điểm SV chấm</TableCell>
+							<TableCell align='center'>Điểm lớp chấm</TableCell>
+							<TableCell align='center'>Điểm khoa chấm</TableCell>
 							<TableCell align='center'>Xếp loại</TableCell>
 							<TableCell align='center'>Trạng thái</TableCell>
 						</TableRow>

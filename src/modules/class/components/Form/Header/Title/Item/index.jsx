@@ -19,13 +19,37 @@ const Item = memo(({ data, marks }) => {
 
 	const dispatch = useDispatch();
 
+	const currentMark = useMemo(() => {
+		if (!marks?.length)
+			return {
+				personal_mark_level: 0,
+				class_mark_level: 0,
+				department_mark_level: 0,
+			};
+
+		// eslint-disable-next-line eqeqeq
+		const foundItem = marks.find((e) => e.item.id == data.id);
+
+		if (!foundItem)
+			return {
+				personal_mark_level: 0,
+				class_mark_level: 0,
+				department_mark_level: 0,
+			};
+
+		return {
+			personal_mark_level: foundItem.personal_mark_level,
+			class_mark_level: foundItem.class_mark_level,
+			department_mark_level: foundItem.department_mark_level,
+		};
+	}, [data?.id, marks]);
 	//#endregion
 
 	//#region Event
 	const onCheck = (item_id, mark) => (e) => {
 		const markObj = {
 			item_id,
-			personal_mark_level: e.target.checked ? mark : 0,
+			class_mark_level: e.target.checked ? mark : 0,
 		};
 
 		dispatch(actions.updateMarks(markObj));
@@ -39,7 +63,7 @@ const Item = memo(({ data, marks }) => {
 
 		const markObj = {
 			item_id,
-			personal_mark_level: Number(e.target.value),
+			class_mark_level: Number(e.target.value),
 		};
 
 		dispatch(actions.updateMarks(markObj));
@@ -74,6 +98,7 @@ const Item = memo(({ data, marks }) => {
 						<Checkbox
 							disabled={roleId !== 0}
 							onChange={onCheck(data.id, data.from_mark)}
+							checked={currentMark.personal_mark_level > 0}
 						/>
 					</Grid>
 					<Grid item xs={1.2} textAlign='center'>
@@ -86,6 +111,7 @@ const Item = memo(({ data, marks }) => {
 						<Checkbox
 							disabled={roleId !== 2}
 							onChange={onCheck(data.id, data.from_mark)}
+							checked={currentMark.department_mark_level > 0}
 						/>
 					</Grid>
 				</>
@@ -101,6 +127,7 @@ const Item = memo(({ data, marks }) => {
 								max: data?.to_mark,
 							}}
 							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
+							value={currentMark.personal_mark_level}
 						/>
 					</Grid>
 					<Grid item xs={1.2} textAlign='center'>
@@ -125,6 +152,7 @@ const Item = memo(({ data, marks }) => {
 								max: data?.to_mark,
 							}}
 							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
+							value={currentMark.department_mark_level}
 						/>
 					</Grid>
 				</>

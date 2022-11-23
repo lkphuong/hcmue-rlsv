@@ -11,20 +11,20 @@ import { getClassSheets } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
 
-import { HOCKY, NIENKHOA } from '_modules/class/mocks';
-
 import { Filter, ListSemester } from '_modules/class/components';
-
-const semesterId = HOCKY[0].id;
-const academicId = NIENKHOA[0].id;
 
 const ClassPage = () => {
 	//#region Data
+	const { class_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
+
 	const [data, setData] = useState([]);
 
-	const [body, setBody] = useState({ semester_id: semesterId, academic_id: academicId });
+	const [body, setBody] = useState({
+		semester_id: semesters[0].id,
+		academic_id: academic_years[0].id,
+	});
 
-	const { class_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	//#endregion
 
 	//#region Event
@@ -58,9 +58,14 @@ const ClassPage = () => {
 			</Typography>
 
 			<Box mt={1}>
-				<Filter filter={body} onChangeFilter={setBody} />
+				<Filter
+					filter={body}
+					onChangeFilter={setBody}
+					semesters={semesters}
+					academic_years={academic_years}
+				/>
 
-				<ListSemester data={STUDENTS} />
+				<ListSemester data={data} />
 			</Box>
 		</Box>
 	);

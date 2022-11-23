@@ -79,8 +79,8 @@ export const generateSheets2Class = async (
             name: sheet.level.name,
           },
           sum_of_personal_marks: sheet.sum_of_personal_marks,
-          sum_of_department_marks: sheet.sum_of_class_marks,
-          sum_of_class_marks: sheet.sum_of_department_marks,
+          sum_of_department_marks: sheet.sum_of_department_marks,
+          sum_of_class_marks: sheet.sum_of_class_marks,
           status: sheet.status,
         };
         payload.push(item);

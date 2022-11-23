@@ -429,6 +429,7 @@ export class SheetController {
           academic_year.academic_year_classes &&
           academic_year.academic_year_classes.length > 0
         ) {
+          console.log('aca: ', academic_year);
           const classes = await generateAcademicYearClass2Array(
             department_id,
             class_id,

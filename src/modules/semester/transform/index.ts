@@ -13,6 +13,7 @@ export const generateData2Array = (semesters: SemesterEntity[] | null) => {
 
       payload.push(item);
     }
+    console.log('payload: ', payload);
     return payload;
   }
   return null;

@@ -60,7 +60,7 @@ export const validateMark = (
   to_mark: number,
   req: Request,
 ) => {
-  if (from_mark != null && to_mark != null) {
+  if (from_mark != 0 && to_mark != 0) {
     if (mark > to_mark || mark < from_mark) {
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_FORMAT,
@@ -70,7 +70,7 @@ export const validateMark = (
         HttpStatus.BAD_REQUEST,
       );
     }
-  } else if (from_mark != null && from_mark < mark) {
+  } else if (from_mark != 0 && from_mark < mark) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,

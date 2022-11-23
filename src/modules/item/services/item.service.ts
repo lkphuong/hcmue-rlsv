@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 import { ItemEntity } from '../../../entities/item.entity';
 
@@ -45,7 +45,15 @@ export class ItemService {
         .leftJoinAndSelect('item.options', 'option')
         .where('item.title_id = :id', { id })
         .andWhere('item.deleted = :deleted', { deleted: false })
-        .andWhere('option.deleted = :deleted', { deleted: false });
+        // .andWhere('option.deleted = :deleted OR option.deleted IS NULL', {
+        //   deleted: false,
+        // });
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('option.deleted = :deleted', { deleted: false });
+            qb.orWhere('option.deleted IS NULL');
+          }),
+        );
 
       const items = await conditions.getMany();
 

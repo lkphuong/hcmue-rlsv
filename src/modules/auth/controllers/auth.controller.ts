@@ -111,6 +111,7 @@ export class AuthController {
           const role_user = await this._authService.getRoleUser(
             convertObjectId2String(result._id),
           );
+
           //#endregion
 
           //#region Generate access_token
@@ -119,7 +120,7 @@ export class AuthController {
             this._configurationService,
             convertObjectId2String(result._id),
             result.username,
-            role_user?.role?.id ?? 0,
+            role_user?.role?.code ?? 0,
           );
           //#endregion
 

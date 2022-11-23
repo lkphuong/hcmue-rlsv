@@ -10,6 +10,13 @@ export class RoleEntity extends RootEntity {
   })
   id: number;
 
+  @Column('tinyint', {
+    name: 'code',
+    nullable: false,
+    default: 1,
+  })
+  code: number;
+
   @Column('varchar', {
     name: 'name',
     nullable: false,

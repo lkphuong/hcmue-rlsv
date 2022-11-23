@@ -26,7 +26,7 @@ export class CreateTitleDto {
   })
   @LengthValidator(1, 500, {
     message: (arg) =>
-      generateValidationMessage(arg, '[Lớp] độ dài tối đa 500 kí tự.'),
+      generateValidationMessage(arg, '[Tiêu chí] độ dài tối đa 500 kí tự.'),
   })
   name: string;
 }

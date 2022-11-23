@@ -2,6 +2,7 @@ import { Transform, Type } from 'class-transformer';
 import {
   isEmpty,
   IsNotEmpty,
+  isNumber,
   IsOptional,
   ValidateIf,
   ValidateNested,
@@ -13,6 +14,7 @@ import { MinValidator } from '../../../validators/min.validator';
 import { LengthValidator } from '../../../validators/length.validator';
 import { BetweenValidator } from '../../../validators/between.validator';
 import { IsBooleanValidator } from 'src/validators/boolean.validator';
+import { IsNumberValidator } from 'src/validators/number.validator';
 
 class OptionDto {
   @Transform((params) =>
@@ -24,35 +26,31 @@ class OptionDto {
   })
   @LengthValidator(1, 500, {
     message: (arg) =>
-      generateValidationMessage(arg, '[Lớp] độ dài tối đa 500 kí tự.'),
+      generateValidationMessage(arg, '[Tiêu chí] độ dài tối đa 500 kí tự.'),
   })
   content: string;
 
   @IsOptional()
+  @Transform((params) => parseFloat(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm tối thiểu].'),
   })
-  @MinValidator(-10, {
+  @IsNumberValidator({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [điểm tối thiếu] tối thiểu bằng -10.',
-      ),
+      generateValidationMessage(arg, 'Giá trị [điểm tối thiểu] phải là số.'),
   })
   from_mark: number;
 
   @IsOptional()
+  @Transform((params) => parseFloat(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm tối đa].'),
   })
-  @MinValidator(-10, {
+  @IsNumberValidator({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [điểm tối đa] tối thiểu bằng -10.',
-      ),
+      generateValidationMessage(arg, 'Giá trị [điểm tối đa] phải là số.'),
   })
   to_mark: number;
 
@@ -93,7 +91,7 @@ export class CreateItemDto {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [input] tối thiểu bằng Checkbox hoặc Select.',
+        'Giá trị [input] là Checkbox hoặc Select.',
       ),
   })
   control: number;
@@ -124,31 +122,33 @@ export class CreateItemDto {
   content: string;
 
   @IsOptional()
-  @Transform((params) => parseFloat(params.value) ?? true)
-  @ValidateIf((_object, value) => !isEmpty(value))
-  @MinValidator(-10, {
+  @Transform((params) => parseFloat(params.value) ?? 0)
+  @ValidateIf((_object, value) => !isNumber(value))
+  @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [điểm tối thiếu] tối thiểu bằng -10.',
-      ),
+      generateValidationMessage(arg, 'Giá trị [điểm tối thiểu] không hợp lệ].'),
+  })
+  @IsNumberValidator({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [điểm tối thiểu] phải là số.'),
   })
   from_mark?: number = 0;
 
   @IsOptional()
-  @Transform((params) => parseFloat(params.value) ?? true)
-  @ValidateIf((_object, value) => !isEmpty(value))
-  @MinValidator(-10, {
+  @Transform((params) => parseFloat(params.value) ?? 0)
+  @ValidateIf((_object, value) => !isNumber(value))
+  @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [điểm tối đa] tối thiểu bằng -10.',
-      ),
+      generateValidationMessage(arg, 'Giá trị [điểm tối đa] không hợp lệ].'),
+  })
+  @IsNumberValidator({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [điểm tối đa] phải là số.'),
   })
   to_mark?: number = 0;
 
   @IsOptional()
-  @Transform((params) => parseFloat(params.value) ?? true)
+  @Transform((params) => parseFloat(params.value) ?? 0)
   @ValidateIf((_object, value) => !isEmpty(value))
   @BetweenValidator(0, 1, {
     message: (arg) =>

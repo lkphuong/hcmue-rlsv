@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsNumberValidator } from 'src/validators/number.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -36,41 +37,50 @@ class DataDtos {
   })
   option_id: number;
 
-  @IsNotEmpty({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
-  })
-  @MinValidator(0, {
-    message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
-      ),
-  })
-  personal_mark_level: number;
+  // @IsNotEmpty({
+  //   message: (arg) =>
+  //     generateValidationMessage(
+  //       arg,
+  //       'Bạn vui lòng nhập [điểm đánh giá của sinh viên].',
+  //     ),
+  // })
+  // @IsNumberValidator({
+  //   message: (arg) =>
+  //     generateValidationMessage(
+  //       arg,
+  //       'Giá trị [điểm đánh giá của sinh viên] phải là số.',
+  //     ),
+  // })
+  // personal_mark_level: number;
+
+  // @IsNotEmpty({
+  //   message: (arg) =>
+  //     generateValidationMessage(
+  //       arg,
+  //       'Bạn vui lòng nhập [điểm đánh giá của lớp].',
+  //     ),
+  // })
+  // @IsNumberValidator({
+  //   message: (arg) =>
+  //     generateValidationMessage(
+  //       arg,
+  //       'Giá trị [điểm đánh giá của lớp] phải là số.',
+  //     ),
+  // })
+  // class_mark_level: number;
 
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
-  })
-  @MinValidator(0, {
-    message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
+        'Bạn vui lòng nhập [điểm đánh giá của khoa].',
       ),
   })
-  class_mark_level: number;
-
-  @IsNotEmpty({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm đánh giá].'),
-  })
-  @MinValidator(0, {
+  @IsNumberValidator({
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [điểm đánh giá] tối thiểu bằng 0.',
+        'Giá trị [điểm đánh giá khoa] phải là số.',
       ),
   })
   department_mark_level: number;

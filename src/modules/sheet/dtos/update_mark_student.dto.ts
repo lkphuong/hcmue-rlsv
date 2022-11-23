@@ -1,5 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsNumberValidator } from 'src/validators/number.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -37,14 +38,14 @@ class DataDtos {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Bạn vui lòng nhập [personal_mark_level].',
+        'Bạn vui lòng nhập [điểm đánh giá của sinh viên].',
       ),
   })
-  @MinValidator(0, {
+  @IsNumberValidator({
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [personal_mark_level] tối thiểu bằng 0.',
+        'Giá trị [điểm đánh giá của sinh viên] phải là số.',
       ),
   })
   personal_mark_level: number;

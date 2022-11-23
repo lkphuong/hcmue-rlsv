@@ -527,17 +527,6 @@ export const classUpdateMark = async (
         option = await option_service.getOptionById(i.option_id);
 
         //#region Validate Mark
-        //#region  Validate Mark Student
-        valid_mark = validateMark(
-          i.personal_mark_level,
-          option.from_mark,
-          option.to_mark,
-          req,
-        );
-
-        if (valid_mark instanceof HttpException) return valid_mark;
-        //#endregion
-
         //#region Validate Mark Class
         valid_mark = validateMark(
           i.class_mark_level,
@@ -551,17 +540,6 @@ export const classUpdateMark = async (
       }
 
       //#region Validate Mark
-      //#region  Validate Mark Student
-      valid_mark = validateMark(
-        i.personal_mark_level,
-        item.from_mark,
-        item.to_mark,
-        req,
-      );
-
-      if (valid_mark instanceof HttpException) return valid_mark;
-      //#endregion
-
       //#region Validate Mark Class
       valid_mark = validateMark(
         i.class_mark_level,
@@ -583,7 +561,6 @@ export const classUpdateMark = async (
         evaluation.sheet = sheet;
         evaluation.item = item;
         evaluation.option = option ?? null;
-        evaluation.personal_mark_level = i.personal_mark_level;
         evaluation.class_mark_level = i.class_mark_level;
         evaluation.updated_at = new Date();
         evaluation.updated_by = user_id;
@@ -596,7 +573,6 @@ export const classUpdateMark = async (
         evaluation.sheet = sheet;
         evaluation.item = item;
         evaluation.option = option;
-        evaluation.personal_mark_level = i.personal_mark_level;
         evaluation.class_mark_level = i.class_mark_level;
         evaluation.created_at = new Date();
         evaluation.created_by = user_id;
@@ -647,27 +623,6 @@ export const departmentUpdateMark = async (
         option = await option_service.getOptionById(i.option_id);
 
         //#region Validate Mark
-        //#region  Validate Mark Student
-        valid_mark = validateMark(
-          i.personal_mark_level,
-          option.from_mark,
-          option.to_mark,
-          req,
-        );
-
-        if (valid_mark instanceof HttpException) return valid_mark;
-        //#endregion
-
-        //#region Validate Mark Class
-        valid_mark = validateMark(
-          i.class_mark_level,
-          option.from_mark,
-          option.to_mark,
-          req,
-        );
-        if (valid_mark instanceof HttpException) return valid_mark;
-        //#endregion
-
         //#region Validate Mark Department
         valid_mark = validateMark(
           i.department_mark_level,
@@ -681,27 +636,6 @@ export const departmentUpdateMark = async (
       }
 
       //#region Validate Mark
-      //#region  Validate Mark Student
-      valid_mark = validateMark(
-        i.personal_mark_level,
-        option.from_mark,
-        option.to_mark,
-        req,
-      );
-
-      if (valid_mark instanceof HttpException) return valid_mark;
-      //#endregion
-
-      //#region Validate Mark Class
-      valid_mark = validateMark(
-        i.class_mark_level,
-        option.from_mark,
-        option.to_mark,
-        req,
-      );
-      if (valid_mark instanceof HttpException) return valid_mark;
-      //#endregion
-
       //#region Validate Mark Department
       valid_mark = validateMark(
         i.department_mark_level,
@@ -723,8 +657,6 @@ export const departmentUpdateMark = async (
         evaluation.sheet = sheet;
         evaluation.item = item;
         evaluation.option = option ?? null;
-        evaluation.personal_mark_level = i.personal_mark_level;
-        evaluation.class_mark_level = i.class_mark_level;
         evaluation.department_mark_level = i.department_mark_level;
         evaluation.updated_at = new Date();
         evaluation.updated_by = user_id;
@@ -737,8 +669,6 @@ export const departmentUpdateMark = async (
         evaluation.sheet = sheet;
         evaluation.item = item;
         evaluation.option = option;
-        evaluation.personal_mark_level = i.personal_mark_level;
-        evaluation.class_mark_level = i.class_mark_level;
         evaluation.department_mark_level = i.department_mark_level;
         evaluation.created_at = new Date();
         evaluation.created_by = user_id;
@@ -812,32 +742,21 @@ export const generateClassUpdateMark = async (
 ) => {
   const { data } = params;
 
-  let sum_of_personal_marks = 0,
-    sum_of_class_marks = 0;
+  let sum_of_class_marks = 0;
 
   for (const item of data) {
     sum_of_class_marks += item.class_mark_level;
-    sum_of_personal_marks += item.personal_mark_level;
   }
 
   //#region Validation mark
-  //#region Validate personal mark
-  let level = await validateMarkLevel(
-    sum_of_personal_marks,
-    level_service,
-    req,
-  );
-  if (level instanceof HttpException) throw level;
-  //#endregion
-
   //#region Validate class mark
-  level = await validateMarkLevel(sum_of_class_marks, level_service, req);
+  const level = await validateMarkLevel(sum_of_class_marks, level_service, req);
   if (level instanceof HttpException) throw level;
   //#endregion
   //#endregion
 
   //#region Update sheet
-  sheet.sum_of_personal_marks = sum_of_personal_marks;
+
   sheet.sum_of_class_marks = sum_of_class_marks;
   sheet.status = StatusSheet.WAITING_DEPARTMENT;
   sheet.level = level;
@@ -861,40 +780,24 @@ export const generateUpdateDepartmentMark = async (
 ) => {
   const { data } = params;
 
-  let sum_of_personal_marks = 0,
-    sum_of_class_marks = 0,
-    sum_of_department_marks = 0;
+  let sum_of_department_marks = 0;
 
   for (const item of data) {
-    sum_of_class_marks += item.class_mark_level;
-    sum_of_personal_marks += item.personal_mark_level;
     sum_of_department_marks += item.department_mark_level;
   }
 
   //#region Validation mark
-  //#region Validate personal mark
-  let level = await validateMarkLevel(
-    sum_of_personal_marks,
+  //#region Validate department mark
+  const level = await validateMarkLevel(
+    sum_of_department_marks,
     level_service,
     req,
   );
   if (level instanceof HttpException) throw level;
   //#endregion
-
-  //#region Validate class mark
-  level = await validateMarkLevel(sum_of_class_marks, level_service, req);
-  if (level instanceof HttpException) throw level;
-  //#endregion
-
-  //#region Validate department mark
-  level = await validateMarkLevel(sum_of_department_marks, level_service, req);
-  if (level instanceof HttpException) throw level;
-  //#endregion
   //#endregion
 
   //#region Update sheet
-  sheet.sum_of_personal_marks = sum_of_personal_marks;
-  sheet.sum_of_class_marks = sum_of_class_marks;
   sheet.sum_of_department_marks = sum_of_department_marks;
   sheet.status = StatusSheet.SUCCESS;
   sheet.level = level;

@@ -19,11 +19,11 @@ export class GetDetailTitleDto {
   @Transform((params) => (params.value ? parseInt(params.value) : params.value))
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [title_id].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [hạng mục].'),
   })
   @MinValidator(1, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [title_id] tối thiểu bằng 1.'),
+      generateValidationMessage(arg, 'Giá trị [hạng mục] tối thiểu bằng 1.'),
   })
   title_id: number;
 }

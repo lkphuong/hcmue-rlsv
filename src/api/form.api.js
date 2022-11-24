@@ -1,6 +1,14 @@
-import { get } from '_axios/request';
+import { get, post } from '_axios/request';
 
 import { FORMS } from './url';
+
+export const getForms = async () => {
+	return await get(FORMS.GET_FORMS);
+};
+
+export const createForm = async (body = {}) => {
+	return await post(FORMS.CREATE_FORM, body);
+};
 
 export const getHeadersByFormId = async (id) => {
 	return await get(`${FORMS.GET_HEADERS_BY_FORM_ID}/${id}`);

@@ -36,7 +36,7 @@ const ListPage = () => {
 		} catch (error) {
 			throw error;
 		}
-	}, [body, department_id, semesters, academic_years]);
+	}, [body, department_id]);
 	//#endregion
 
 	useEffect(() => {

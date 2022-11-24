@@ -1,81 +1,38 @@
-import React, { useState } from 'react';
-
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Box, Button, Typography } from '@mui/material';
 
-import { Filter, ListForms } from '_modules/form/components';
+import { CreateModal, Filter, ListForms } from '_modules/form/components';
 
-import { CPagination } from '_controls/';
-import { ROUTES } from '_constants/routes';
+import { getForms } from '_api/form.api';
+import { isSuccess } from '_func/';
 
 const ListFormsPage = () => {
 	//#region Data
-	const data = [
-		{
-			id: 1,
-			semester: {
-				id: 1,
-				name: 'II',
-			},
-			acedemic: {
-				id: 1,
-				name: '2021-2022',
-			},
-			created_date: '2022-01-01',
-			created_by: 'Admin 1',
-			status: 0,
-		},
-		{
-			id: 2,
-			semester: {
-				id: 1,
-				name: 'II',
-			},
-			acedemic: {
-				id: 1,
-				name: '2021-2022',
-			},
-			created_date: '2022-01-01',
-			created_by: 'Admin 1',
-			status: 0,
-		},
-		{
-			id: 3,
-			semester: {
-				id: 1,
-				name: 'II',
-			},
-			acedemic: {
-				id: 1,
-				name: '2021-2022',
-			},
-			created_date: '2022-01-01',
-			created_by: 'Admin 1',
-			status: 0,
-		},
-		{
-			id: 4,
-			semester: {
-				id: 1,
-				name: 'I',
-			},
-			acedemic: {
-				id: 1,
-				name: '2020-2021',
-			},
-			created_date: '2020-01-17',
-			created_by: 'Admin 1',
-			status: 1,
-		},
-	];
+	const [data, setData] = useState([]);
 
-	const [params, setParams] = useState({ page: 1, pages: 10 });
+	const modalRef = useRef();
 	//#endregion
 
 	//#region Event
-	const handleChangePage = (e, v) => setParams({ ...params, page: v });
+	const getData = useCallback(async () => {
+		try {
+			const res = await getForms();
+
+			if (isSuccess(res)) setData(res.data);
+		} catch (error) {
+			throw error;
+		}
+	}, []);
+
+	const toggleCreateModal = () => {
+		modalRef.current.open();
+	};
 	//#endregion
+
+	useEffect(() => {
+		getData();
+	}, [getData]);
 
 	//#region Render
 	return (
@@ -94,15 +51,15 @@ const ListFormsPage = () => {
 				<Filter />
 
 				<Box textAlign='right' my={2}>
-					<Link to={ROUTES.FORM_CREATE}>
-						<Button variant='contained'>Thêm mới</Button>
-					</Link>
+					<Button variant='contained' onClick={toggleCreateModal}>
+						Thêm mới
+					</Button>
 				</Box>
 
-				<ListForms data={data} />
-
-				<CPagination page={params.page} pages={params.pages} onChange={handleChangePage} />
+				<ListForms data={[]} />
 			</Box>
+
+			<CreateModal ref={modalRef} />
 		</Box>
 	);
 	//#endregion

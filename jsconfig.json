@@ -4,9 +4,9 @@
 		"baseUrl": ".",
 		"paths": {
 			"_api/*": ["src/api/*"],
-			"_controls/*": ["src/common/components/controls/*"],
-			"_layouts/*": ["src/common/components/layouts/*"],
-			"_others/*": ["src/common/components/others/*"],
+			"_controls/*": ["src/common/components/controls/index.js"],
+			"_layouts/*": ["src/common/components/layouts/index.js"],
+			"_others/*": ["src/common/components/others/index.js"],
 			"_styles/*": ["src/common/assets/styles/*"],
 			"_assets/*": ["src/common/assets/*"],
 			"_components/*": ["src/common/components/*"],

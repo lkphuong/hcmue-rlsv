@@ -17,9 +17,19 @@ export const SHEETS = {
 };
 
 export const FORMS = {
-	GET_HEADERS_BY_FORM_ID: '/forms/headers',
-	GET_TITLES_BY_HEADER_ID: '/forms/titles',
 	GET_ITEMS_BY_TITLE_ID: '/forms/items',
+	GET_FORMS: '/forms',
+	CREATE_FORM: '/forms',
+	UPDATE_FORM: '/forms',
+	GET_FORM_BY_ID: '/forms',
+
+	CREATE_HEADER: '/forms/headers',
+	GET_HEADERS_BY_FORM_ID: '/forms/headers',
+	UPDATE_HEADER: '/forms/headers',
+
+	CREATE_TITLE: '/forms/titles',
+	GET_TITLES_BY_HEADER_ID: '/forms/titles',
+	UPDATE_TITLE: '/forms/titles',
 };
 
 export const CLASSES = {

@@ -12,41 +12,6 @@ import { getSheetById } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
 
-// function useBlocker(blocker, when = true) {
-// 	const { navigator } = React.useContext(NavigationContext);
-
-// 	React.useEffect(() => {
-// 		if (!when) return;
-
-//     navigator.block()
-
-// 		const unblock = navigator.block((tx) => {
-// 			const autoUnblockingTx = {
-// 				...tx,
-// 				retry() {
-// 					unblock();
-// 					tx.retry();
-// 				},
-// 			};
-
-// 			blocker(autoUnblockingTx);
-// 		});
-
-// 		return unblock;
-// 	}, [navigator, blocker, when]);
-// }
-
-// function usePrompt(message, when = true) {
-// 	const blocker = React.useCallback(
-// 		(tx) => {
-// 			if (window.confirm(message)) tx.retry();
-// 		},
-// 		[message]
-// 	);
-
-// 	useBlocker(blocker, when);
-// }
-
 const ClassDetailPage = () => {
 	//#region Data
 	const { sheet_id } = useParams();
@@ -85,7 +50,7 @@ const ClassDetailPage = () => {
 				{`${FORM.user.fullname} - Niên khóa ${FORM.user.std_code}`}
 			</Typography>
 
-			<Box mt={1}>{data && <Form data={data} />}</Box>
+			<Box mt={1}>{data && <Form data={data} status={data?.status} />}</Box>
 		</Box>
 	);
 	//#endregion

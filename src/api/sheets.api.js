@@ -10,6 +10,10 @@ export const getMarks = async (id, title_id) => {
 	return await get(`${SHEETS.GET_MARK}/${id}/items/${title_id}`);
 };
 
+export const getItemsMarks = async (sheet_id) => {
+	return await get(`${SHEETS.GET_ITEMS_MARK}/${sheet_id}`);
+};
+
 export const getStudentSheets = async (id) => {
 	return await get(`${SHEETS.SHEETS_GET_BY_STUDENT_ID}/${id}`);
 };

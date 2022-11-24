@@ -8,6 +8,7 @@ export const AUTH = {
 export const SHEETS = {
 	GET_BY_ID: '/sheets',
 	GET_MARK: '/sheets', //  /sheets/:id/items/:title_id
+	GET_ITEMS_MARK: '/sheets/items',
 	SHEETS_GET_BY_STUDENT_ID: '/sheets/student',
 	UPDATE_STUDENT_SHEET: '/sheets/student',
 	SHEETS_GET_BY_CLASS_ID: '/sheets/class',

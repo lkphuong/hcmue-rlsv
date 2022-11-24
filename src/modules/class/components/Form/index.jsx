@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, createContext } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ import { isSuccess } from '_func/';
 
 import { ROUTES } from '_constants/routes';
 
-import { updateClassSheets } from '_api/sheets.api';
+import { getItemsMarks, updateClassSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
 
@@ -21,8 +21,12 @@ import Header from './Header';
 
 import './index.scss';
 
-const Form = ({ data }) => {
+export const MarksContext = createContext();
+
+const Form = ({ data, status }) => {
 	//#region Data
+	const [itemsMark, setItemsMark] = useState([]);
+
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
 
@@ -40,11 +44,23 @@ const Form = ({ data }) => {
 		try {
 			const res = await getHeadersByFormId(data.id);
 
-			if (isSuccess(res)) setHeaders(res.data);
+			if (isSuccess(res)) {
+				setHeaders(res.data);
+			}
 		} catch (error) {
 			throw error;
 		}
 	}, [data?.id, navigate]);
+
+	const getMarks = useCallback(async () => {
+		try {
+			const res = await getItemsMarks(data.id);
+
+			if (isSuccess(res)) setItemsMark(res.data);
+		} catch (error) {
+			throw error;
+		}
+	}, [data?.id]);
 
 	const handleUpdate = async () => {
 		try {
@@ -79,7 +95,8 @@ const Form = ({ data }) => {
 
 	useEffect(() => {
 		getHeaders();
-	}, [getHeaders]);
+		getMarks();
+	}, [getHeaders, getMarks]);
 
 	//#region Render
 	return (
@@ -123,12 +140,14 @@ const Form = ({ data }) => {
 				</Grid>
 			</Grid>
 
-			<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
-				{headers.length > 0 &&
-					headers.map((e, i) => (
-						<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
-					))}
-			</Grid>
+			<MarksContext.Provider value={{ itemsMark, status }}>
+				<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
+					{headers.length > 0 &&
+						headers.map((e, i) => (
+							<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
+						))}
+				</Grid>
+			</MarksContext.Provider>
 
 			<Button variant='contained' onClick={handleUpdate}>
 				Cập nhật

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useContext } from 'react';
 
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
@@ -8,8 +8,12 @@ import { CInput } from '_controls/';
 
 import { actions } from '_slices/mark.slice';
 
-const Item = memo(({ data, marks }) => {
+import { MarksContext } from '../../..';
+
+const Item = memo(({ data }) => {
 	//#region Data
+	const { status, itemsMark } = useContext(MarksContext);
+
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const roleId = useMemo(() => {
@@ -20,7 +24,7 @@ const Item = memo(({ data, marks }) => {
 	const dispatch = useDispatch();
 
 	const currentMark = useMemo(() => {
-		if (!marks?.length)
+		if (!itemsMark?.length)
 			return {
 				personal_mark_level: 0,
 				class_mark_level: 0,
@@ -28,7 +32,7 @@ const Item = memo(({ data, marks }) => {
 			};
 
 		// eslint-disable-next-line eqeqeq
-		const foundItem = marks.find((e) => e.item.id == data.id);
+		const foundItem = itemsMark.find((e) => e.item.id?.toString() === data.id?.toString());
 
 		if (!foundItem)
 			return {
@@ -42,7 +46,8 @@ const Item = memo(({ data, marks }) => {
 			class_mark_level: foundItem.class_mark_level,
 			department_mark_level: foundItem.department_mark_level,
 		};
-	}, [data?.id, marks]);
+	}, [data?.id, itemsMark]);
+
 	//#endregion
 
 	//#region Event
@@ -69,7 +74,6 @@ const Item = memo(({ data, marks }) => {
 		dispatch(actions.updateMarks(markObj));
 	};
 	//#endregion
-	console.log(currentMark);
 
 	//#region Render
 	return (
@@ -128,7 +132,6 @@ const Item = memo(({ data, marks }) => {
 								max: data?.to_mark,
 							}}
 							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-							value={currentMark.personal_mark_level}
 						/>
 					</Grid>
 					<Grid item xs={1.2} textAlign='center'>
@@ -153,7 +156,6 @@ const Item = memo(({ data, marks }) => {
 								max: data?.to_mark,
 							}}
 							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-							value={currentMark.department_mark_level}
 						/>
 					</Grid>
 				</>

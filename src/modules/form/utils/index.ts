@@ -1,19 +1,68 @@
-import * as uuid from 'uuid';
+import { HttpStatus } from '@nestjs/common';
+import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
-import { FormResponse } from '../interfaces/form_response.interface';
 
 import { HeaderEntity } from '../../../entities/header.entity';
-
-import { generateForms2Array, generateHeaders2Array } from '../transform';
 import { ItemEntity } from '../../../entities/item.entity';
-
-import { generateItems2Array } from '../transform';
-
 import { TitleEntity } from '../../../entities/title.entity';
-
-import { generateTitles2Array } from '../transform';
 import { FormEntity } from 'src/entities/form.entity';
-import { QueryRunner } from 'typeorm';
+
+import { HandlerException } from 'src/exceptions/HandlerException';
+
+import {
+  generateForm2Object,
+  generateItem2Object,
+  generateTitle2Object,
+  generateHeader2Object,
+  generateForms2Array,
+  generateHeaders2Array,
+  generateItems2Array,
+  generateTitles2Array,
+} from '../transform';
+
+import { ErrorMessage } from '../constants/errors.enum';
+import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+
+export const generateResponseForms = async (
+  forms: FormEntity[],
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', forms);
+
+  // Transform FormEntity[] class to FormInfoResponse[] class
+  const payload = await generateForms2Array(forms);
+
+  // Returns objects
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
+
+export const generateResponseForm = async (
+  form: FormEntity,
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', form);
+
+  const payload = generateForm2Object(form);
+
+  if (query_runner) await query_runner.commitTransaction();
+
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
 
 export const generateResponseHeaders = async (
   headers: HeaderEntity[],
@@ -27,6 +76,28 @@ export const generateResponseHeaders = async (
   const payload = await generateHeaders2Array(headers);
 
   // Returns objects
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
+
+export const generateResponseHeader = async (
+  header: HeaderEntity,
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', header);
+
+  const payload = await generateHeader2Object(header);
+
+  // Commit transaction
+  if (query_runner) await query_runner.commitTransaction();
+  // Return object
   return {
     data: payload,
     errorCode: 0,
@@ -55,6 +126,25 @@ export const generateResponseItems = async (
   };
 };
 
+export const generateResponseItem = async (
+  item: ItemEntity,
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', item);
+
+  const payload = await generateItem2Object(item);
+  if (query_runner) await query_runner.commitTransaction();
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
+
 export const generateResponseTitles = async (
   titles: TitleEntity[],
   req: Request,
@@ -75,18 +165,17 @@ export const generateResponseTitles = async (
   };
 };
 
-export const generateResponseForms = async (
-  forms: FormEntity[],
+export const generateResponseTitle = async (
+  title: TitleEntity,
+  query_runner: QueryRunner,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', forms);
+  console.log('data: ', title);
 
-  // Transform FormEntity[] class to FormInfoResponse[] class
-  const payload = await generateForms2Array(forms);
-
-  // Returns objects
+  const payload = generateTitle2Object(title);
+  if (query_runner) await query_runner.commitTransaction();
   return {
     data: payload,
     errorCode: 0,
@@ -95,62 +184,12 @@ export const generateResponseForms = async (
   };
 };
 
-export const generateResponseForm = async (form: FormEntity, req: Request) => {
-  console.log('----------------------------------------------------------');
-  console.log(req.method + ' - ' + req.url);
-  console.log('data: ', form);
-
-  // Returns objects
-  return {
-    data: {
-      id: form.id,
-      academic: {
-        id: form.academic_year.id,
-        name: form.academic_year.name,
-      },
-      semester: {
-        id: form.semester.id,
-        name: form.semester.name,
-      },
-      student: {
-        start: form.student_start,
-        end: form.student_end,
-      },
-      class: {
-        start: form.class_start,
-        end: form.class_end,
-      },
-      department: {
-        start: form.department_start,
-        end: form.department_end,
-      },
-    },
-    errorCode: 0,
-    message: null,
-    errors: null,
-  };
-};
-
-export const generateSuccessResponse = async (
-  header: HeaderEntity,
-  query_runner: QueryRunner,
-  req: Request,
-) => {
-  console.log('----------------------------------------------------------');
-  console.log(req.method + ' - ' + req.url);
-  console.log('header: ', header);
-
-  // Commit transaction
-  if (query_runner) await query_runner.commitTransaction();
-
-  // Return object
-  return {
-    data: {
-      id: header.id,
-      name: header.name,
-    },
-    errorCode: 0,
-    message: null,
-    errors: null,
-  };
+export const generateFailedResponse = (req: Request, message?: string) => {
+  return new HandlerException(
+    SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+    req.method,
+    req.url,
+    message ?? ErrorMessage.OPERATOR_FORM_ERROR,
+    HttpStatus.EXPECTATION_FAILED,
+  );
 };

@@ -1,24 +1,25 @@
+import { User } from '../../../schemas/user.schema';
+import { Class } from '../../../schemas/class.schema';
+
+import { ItemEntity } from '../../../entities/item.entity';
+import { SheetEntity } from '../../../entities/sheet.entity';
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import { EvaluationEntity } from '../../../entities/evaluation.entity';
+
+import { convertObjectId2String } from '../../../utils';
+
 import { UserService } from '../../user/services/user.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
 
-import { convertObjectId2String } from '../../../utils';
-
-import { User } from '../../../schemas/user.schema';
-import { Class } from '../../../schemas/class.schema';
-
-import { ItemEntity } from 'src/entities/item.entity';
-import { SheetEntity } from '../../../entities/sheet.entity';
-import { AcademicYearEntity } from '../../../entities/academic_year.entity';
-
 import {
-  ClassResponse,
   SheetClassResponse,
   SheetUsersResponse,
   SheetDetailResponse,
-  HeaderResponse,
   ItemDetailResponse,
+  EvaluationDetailResponse,
+  BaseResponse,
 } from '../interfaces/sheet_response.interface';
 
 export const generateSheets2SheetUsuer = (sheets: SheetEntity[] | null) => {
@@ -103,11 +104,11 @@ export const generateAcademicYearClass2Array = async (
     academic_year.academic_year_classes &&
     academic_year.academic_year_classes.length > 0
   ) {
-    const payload: ClassResponse[] = [];
+    const payload: BaseResponse[] = [];
     const academic_year_classes = academic_year.academic_year_classes;
 
     for (const academic_year_classe of academic_year_classes) {
-      let item: ClassResponse = null;
+      let item: BaseResponse = null;
       let result: Class = null;
       if (class_id) {
         result = await class_service.getClassById(class_id, department_id);
@@ -162,7 +163,7 @@ export const generateData2Object = async (
     const k = await k_service.getKById(sheet.k);
 
     if (department && user && result_class && k) {
-      const headers: HeaderResponse[] = [];
+      const headers: BaseResponse[] = [];
       const payload: SheetDetailResponse = {
         id: sheet.id,
         department: {
@@ -203,7 +204,7 @@ export const generateData2Object = async (
 
       if (sheet?.form?.headers && sheet?.form?.headers.length > 0) {
         for (const header of sheet.form.headers) {
-          const item: HeaderResponse = {
+          const item: BaseResponse = {
             id: header.id,
             name: header.name,
           };
@@ -222,7 +223,7 @@ export const generateDetailTile2Object = (items: ItemEntity[] | null) => {
     const payload: ItemDetailResponse[] = [];
     for (const item of items) {
       const tmp: ItemDetailResponse = {
-        id: item.id,
+        id: item.evaluations[0].id,
         item: {
           id: item.id,
           content: item.content,
@@ -239,6 +240,34 @@ export const generateDetailTile2Object = (items: ItemEntity[] | null) => {
         });
       }
       payload.push(tmp);
+    }
+
+    return payload;
+  }
+  return null;
+};
+
+export const generateEvaluation2Array = (
+  evaluations: EvaluationEntity[] | null,
+) => {
+  if (evaluations) {
+    const payload: EvaluationDetailResponse[] = [];
+    for (const evaluation of evaluations) {
+      const item: EvaluationDetailResponse = {
+        id: evaluation.id,
+        item: {
+          id: evaluation.item.id,
+          content: evaluation.item.content,
+        },
+        option: evaluation.option
+          ? { id: evaluation.option.id, content: evaluation.option.content }
+          : null,
+        personal_mark_level: evaluation.personal_mark_level,
+        class_mark_level: evaluation.class_mark_level,
+        department_mark_level: evaluation.department_mark_level,
+      };
+
+      payload.push(item);
     }
 
     return payload;

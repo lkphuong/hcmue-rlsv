@@ -6,7 +6,6 @@ import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { TitleService } from './services/title.service';
-import { TitleController } from './controllers/title.controller';
 
 export const modules = [
   SharedModule,
@@ -14,7 +13,7 @@ export const modules = [
   LogModule,
 ];
 
-export const controllers = [TitleController];
+export const controllers = [];
 
 export const providers = [TitleService];
 

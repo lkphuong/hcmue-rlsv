@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, DataSource, EntityManager } from 'typeorm';
+import { Repository, DataSource, EntityManager, Brackets } from 'typeorm';
 
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 
@@ -18,6 +18,31 @@ export class EvaluationService {
     private _logger: LogService,
   ) {}
 
+  async contains(
+    sheet_id: number,
+    item_id: number,
+  ): Promise<EvaluationEntity | null> {
+    try {
+      const conditions = this._evaluationService
+        .createQueryBuilder('evaluation')
+        .where('evaluation.sheet_id = :sheet_id', { sheet_id })
+        .andWhere('evaluation.item_id = :item_id', { item_id })
+        .andWhere('evaluation.deleted = :deleted ', { deleted: false });
+
+      const evaluation = await conditions.getOne();
+
+      return evaluation || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'EvaluationService.contains()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getEvaluationById(id: number): Promise<EvaluationEntity | null> {
     try {
       const conditions = this._evaluationService
@@ -32,7 +57,7 @@ export class EvaluationService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'evaluation.getEvaluationById()',
+        'EvaluationService.getEvaluationById()',
         e,
       );
       return null;
@@ -41,18 +66,30 @@ export class EvaluationService {
 
   async getEvaluationBySheetId(
     sheet_id: number,
-    item_id: number,
-  ): Promise<EvaluationEntity | null> {
+  ): Promise<EvaluationEntity[] | null> {
     try {
       const conditions = this._evaluationService
         .createQueryBuilder('evaluation')
-        .where('evaluation.sheet_id = :sheet_id', { sheet_id })
-        .andWhere('evaluation.item_id = :item_id', { item_id })
-        .andWhere('evaluation.deleted = :deleted ', { deleted: false });
+        .innerJoin('evaluation.sheet', 'sheet')
+        .innerJoinAndSelect('evaluation.item', 'item')
+        .leftJoinAndSelect(
+          'evaluation.option',
+          'option',
+          'evaluation.option_id = option.id',
+        )
+        .where('sheet.id = :sheet_id', { sheet_id })
+        .andWhere('sheet.deleted = :deleted', { deleted: false })
+        .andWhere('item.deleted = :deleted', { deleted: false })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('option.deleted = :deleted', { deleted: false });
+            qb.orWhere('option.deleted IS NULL');
+          }),
+        );
 
-      const evaluation = await conditions.getOne();
+      const evaluations = await conditions.getMany();
 
-      return evaluation || null;
+      return evaluations || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
@@ -121,7 +158,6 @@ export class EvaluationService {
       const results = await manager.query(
         `CALL multi_approve (${sheet_ids.toString()})`,
       );
-      console.log('result: ', results);
 
       return results.affectedRows > 0;
     } catch (e) {

@@ -17,13 +17,12 @@ import { EvaluationModule } from './modules/evaluation/evaluation.module';
 import { LevelModule } from './modules/level/level.module';
 import { SheetModule } from './modules/sheet/sheet.module';
 import { UserModule } from './modules/user/user.module';
-import { FormmModule } from './modules/formm/form.module';
 
 import { ConfigurationService } from './modules/shared/services/configuration/configuration.service';
 
 import { jwtFactory } from './factories/jwt.factory';
 import { FormModule } from './modules/form/form.module';
-import { TitleModule } from './modules/title/title.modules';
+import { TitleModule } from './modules/title/title.module';
 import { HeaderModule } from './modules/header/header.modules';
 
 export const modules = [
@@ -56,5 +55,4 @@ export const modules = [
   FormModule,
   HeaderModule,
   TitleModule,
-  FormmModule,
 ];

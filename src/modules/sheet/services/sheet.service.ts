@@ -47,7 +47,7 @@ export class SheetService {
     }
   }
 
-  async getSheetPaging(
+  async getSheets(
     semester_id: number,
     academic_id: number,
     class_id?: number,
@@ -77,7 +77,7 @@ export class SheetService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'SheetService.getSheetPaging()',
+        'SheetService.getSheets()',
         e,
       );
       return null;
@@ -109,31 +109,6 @@ export class SheetService {
         Levels.ERROR,
         Methods.SELECT,
         'SheetService.getSheetById()',
-        e,
-      );
-      return null;
-    }
-  }
-
-  async countSheetByStatus(
-    status: number,
-    sheet_ids: number[],
-  ): Promise<number> {
-    try {
-      const conditions = this._sheetRepository
-        .createQueryBuilder('sheet')
-        .where('sheet.status = :status', { status })
-        .andWhere('sheet.id IN (:...sheet_ids)', { sheet_ids })
-        .andWhere('sheet.deleted = :deleted', { deleted: false });
-
-      const { count } = await conditions.getRawOne();
-
-      return count;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'SheetService.countSheetByStatus()',
         e,
       );
       return null;

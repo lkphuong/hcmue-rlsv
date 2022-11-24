@@ -1,5 +1,4 @@
 import { AcademicYearEntity } from './academic_year.entity';
-import { ApprovalEntity } from './approval.entity';
 import { EvaluationEntity } from './evaluation.entity';
 import { FormEntity } from './form.entity';
 import { LevelEntity } from './level.entity';
@@ -19,7 +18,6 @@ import { TitleEntity } from './title.entity';
 const entities = [
   AcademicYearEntity,
   AcademicYearClassesEntity,
-  ApprovalEntity,
   EvaluationEntity,
   FormEntity,
   RoleEntity,

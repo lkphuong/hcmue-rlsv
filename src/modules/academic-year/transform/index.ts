@@ -14,7 +14,6 @@ export const generateData2Array = (
 
       payload.push(item);
     }
-    console.log('payload: ', payload);
     return payload;
   }
 

@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
-import { IsNumberValidator } from 'src/validators/number.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
+import { IsNumberValidator } from '../../../validators/number.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 class DataDtos {
@@ -36,22 +36,6 @@ class DataDtos {
       ),
   })
   option_id: number;
-
-  // @IsNotEmpty({
-  //   message: (arg) =>
-  //     generateValidationMessage(
-  //       arg,
-  //       'Bạn vui lòng nhập [điểm đánh giá của sinh viên].',
-  //     ),
-  // })
-  // @IsNumberValidator({
-  //   message: (arg) =>
-  //     generateValidationMessage(
-  //       arg,
-  //       'Giá trị [điểm đánh giá cảu sinh viên] phải là số.',
-  //     ),
-  // })
-  // personal_mark_level: number;
 
   @IsNotEmpty({
     message: (arg) =>

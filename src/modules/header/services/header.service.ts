@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { HeaderEntity } from '../../../entities/header.entity';
@@ -23,7 +22,8 @@ export class HeaderService {
     try {
       const conditions = this._headerRepository
         .createQueryBuilder('header')
-        .where('header.form_id = :id', { id });
+        .where('header.form_id = :id', { id })
+        .andWhere('header.deleted = :deleted', { deleted: false });
 
       const headers = await conditions.getMany();
 

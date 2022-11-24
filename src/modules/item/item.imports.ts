@@ -1,13 +1,11 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ItemEntity } from '../../entities/item.entity';
+
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
-import { ItemEntity } from '../../entities/item.entity';
-
 import { ItemService } from './services/item.service';
-
-import { ItemController } from './controllers/item.controller';
 
 export const modules = [
   SharedModule,
@@ -15,7 +13,7 @@ export const modules = [
   LogModule,
 ];
 
-export const controllers = [ItemController];
+export const controllers = [];
 
 export const providers = [ItemService];
 

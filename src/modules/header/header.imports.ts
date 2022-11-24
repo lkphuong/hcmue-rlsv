@@ -6,7 +6,6 @@ import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { HeaderService } from './services/header.service';
-import { HeaderController } from './controllers/header.controller';
 
 export const modules = [
   SharedModule,
@@ -14,7 +13,7 @@ export const modules = [
   LogModule,
 ];
 
-export const controllers = [HeaderController];
+export const controllers = [];
 
 export const providers = [HeaderService];
 

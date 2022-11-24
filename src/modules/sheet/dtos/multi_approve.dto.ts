@@ -1,8 +1,8 @@
 import { IsNotEmpty, IsOptional } from 'class-validator';
 
-import { MinValidator } from '../../../validators/min.validator';
-
 import { generateValidationMessage } from '../../../utils';
+
+import { MinValidator } from '../../../validators/min.validator';
 
 export class MultiApproveDto {
   @IsNotEmpty({

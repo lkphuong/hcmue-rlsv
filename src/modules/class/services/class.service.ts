@@ -4,12 +4,12 @@ import { Model } from 'mongoose';
 
 import { LogService } from '../../log/services/log.service';
 
-import { Levels } from '../../../constants/enums/level.enum';
-import { Methods } from '../../../constants/enums/method.enum';
-
 import { ClassDocument, Class } from '../../../schemas/class.schema';
 
 import { convertString2ObjectId } from 'src/utils';
+
+import { Levels } from '../../../constants/enums/level.enum';
+import { Methods } from '../../../constants/enums/method.enum';
 @Injectable()
 export class ClassService {
   constructor(

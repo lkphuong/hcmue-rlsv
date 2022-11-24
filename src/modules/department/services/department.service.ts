@@ -2,17 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
-import { LogService } from '../../log/services/log.service';
-
-import { Levels } from '../../../constants/enums/level.enum';
-import { Methods } from '../../../constants/enums/method.enum';
+import { convertString2ObjectId } from '../../../utils';
 
 import {
   Department,
   DepartmentDocument,
 } from '../../../schemas/department.schema';
 
-import { convertString2ObjectId } from '../../../utils';
+import { LogService } from '../../log/services/log.service';
+
+import { Levels } from '../../../constants/enums/level.enum';
+import { Methods } from '../../../constants/enums/method.enum';
+
 @Injectable()
 export class DepartmentService {
   constructor(

@@ -1,6 +1,6 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { AcademicYearEntity } from 'src/entities/academic_year.entity';
+import { AcademicYearEntity } from '../../entities/academic_year.entity';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';

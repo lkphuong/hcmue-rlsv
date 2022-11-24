@@ -3,20 +3,21 @@ import { isEmpty } from 'class-validator';
 
 import { Request } from 'express';
 
-import { convertString2Date, sprintf } from 'src/utils';
+import { convertString2Date, sprintf } from '../../../utils';
+
+import { FormEntity } from 'src/entities/form.entity';
 
 import { LevelService } from '../../level/services/level.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
-import { UnknownException } from 'src/exceptions/UnknownException';
+import { UnknownException } from '../../../exceptions/UnknownException';
+
 import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/errors.enum';
-
 import { RoleCode } from '../../../constants/enums/role_enum';
-import { FormEntity } from 'src/entities/form.entity';
 
 export const validateDepartmentId = (id: string, req: Request) => {
   if (isEmpty(id)) {
@@ -32,13 +33,27 @@ export const validateDepartmentId = (id: string, req: Request) => {
   return null;
 };
 
-export const validateId = (id: number, req: Request) => {
+export const validateUserId = (id: string, req: Request) => {
   if (isEmpty(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.EMPTY,
       req.method,
       req.url,
-      ErrorMessage.DEPARTMENT_ID_EMPTY_ERROR,
+      ErrorMessage.USER_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};
+
+export const validateSheetId = (id: number, req: Request) => {
+  if (isEmpty(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.SHEET_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   } else if (isNaN(id)) {
@@ -46,7 +61,7 @@ export const validateId = (id: number, req: Request) => {
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,
       req.url,
-      ErrorMessage.DEPARTMENT_ID_NAN_ERROR,
+      ErrorMessage.ID_NAN_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   }
@@ -105,7 +120,7 @@ export const validateMarkLevel = async (
 };
 
 export const validateRole = (role1: number, role2: number, req: Request) => {
-  if (role1 != role2 && role2 == RoleCode.ADMIN) {
+  if (role1 != role2 && role2 != RoleCode.ADMIN) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.NO_MATCHING,
       req.method,

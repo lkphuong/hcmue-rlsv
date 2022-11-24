@@ -1,9 +1,9 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
-import { IsNumberValidator } from 'src/validators/number.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
+import { IsNumberValidator } from '../../../validators/number.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 class DataDtos {

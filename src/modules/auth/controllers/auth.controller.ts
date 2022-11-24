@@ -65,7 +65,7 @@ export class AuthController {
     private readonly _jwtService: JwtService,
     private _logger: LogService,
   ) {
-    // Due to transient scope, StoreController has its own unique instance of LogService,
+    // Due to transient scope, AuthController has its own unique instance of LogService,
     // so setting context here will not affect other instances in other services
     this._logger.setContext(AuthController.name);
   }

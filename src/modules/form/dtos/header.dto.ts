@@ -1,10 +1,12 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
-import { generateValidationMessage } from 'src/utils';
-import { LengthValidator } from 'src/validators/length.validator';
-import { MinValidator } from 'src/validators/min.validator';
 
-export class UpdateHeaderDto {
+import { generateValidationMessage } from '../../../utils';
+
+import { LengthValidator } from '../../../validators/length.validator';
+import { MinValidator } from '../../../validators/min.validator';
+
+export class HeaderDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [biểu mẫu].'),

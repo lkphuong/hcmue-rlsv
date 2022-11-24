@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { FormEntity } from '../../../entities/form.entity';
 
@@ -14,13 +13,14 @@ import { Methods } from '../../../constants/enums/method.enum';
 export class FormService {
   constructor(
     @InjectRepository(FormEntity)
-    private readonly _formSerive: Repository<FormEntity>,
-    private _logger: LogService,
+    private readonly _formRepository: Repository<FormEntity>,
+    private readonly _dataSourece: DataSource,
+    private readonly _logger: LogService,
   ) {}
 
   async getFormById(id: number): Promise<FormEntity | null> {
     try {
-      const conditions = this._formSerive
+      const conditions = this._formRepository
         .createQueryBuilder('form')
         .innerJoinAndSelect('form.academic_year', 'academic_year')
         .innerJoinAndSelect('form.semester', 'semester')
@@ -43,52 +43,9 @@ export class FormService {
     }
   }
 
-  async getFormByParentId(ref: string): Promise<FormEntity[] | null> {
-    try {
-      const conditions = this._formSerive
-        .createQueryBuilder('form')
-        .where('form.parent_id = :ref', { ref })
-        .andWhere('form.deleted = :deleted', { deleted: false });
-
-      const forms = await conditions.getMany();
-
-      return forms || null;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'FormService.getFormByParentId()',
-        e,
-      );
-      return null;
-    }
-  }
-
-  async getForm(): Promise<FormEntity[] | null> {
-    try {
-      const conditions = this._formSerive
-        .createQueryBuilder('form')
-        .where('form.active = :active', { active: true })
-        .andWhere('form.parent_id IS NULL')
-        .andWhere('form.deleted = :deleted', { deleted: false });
-
-      const forms = await conditions.getMany();
-
-      return forms || null;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'FormService.getForm()',
-        e,
-      );
-      return null;
-    }
-  }
-
   async getForms(): Promise<FormEntity[] | null> {
     try {
-      const conditions = this._formSerive
+      const conditions = this._formRepository
         .createQueryBuilder('form')
         .innerJoinAndSelect('form.academic_year', 'academic_year')
         .innerJoinAndSelect('form.semester', 'semester')
@@ -110,30 +67,46 @@ export class FormService {
     }
   }
 
-  async getChildren(
-    sheet_id: number,
-    ref: string,
-  ): Promise<FormEntity[] | null> {
+  async add(
+    form: FormEntity,
+    manager?: EntityManager,
+  ): Promise<FormEntity | null> {
     try {
-      const conditions = this._formSerive
-        .createQueryBuilder('form')
-        .leftJoinAndSelect(
-          'form.evaluation_form',
-          'evaluation',
-          'evaluation.form_id = form.id AND evaluation.parent_id = :ref',
-          { ref },
-        )
-        .where('form.deleted = :deleted', { deleted: false })
-        .andWhere('evaluation.sheet_id = :sheet_id', { sheet_id });
+      if (!manager) {
+        manager = this._dataSourece.manager;
+      }
 
-      const forms = await conditions.getMany();
+      form = await manager.save(form);
 
-      return forms || null;
+      return form || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
-        Methods.SELECT,
-        'FormService.getChildren()',
+        Methods.INSERT,
+        'FormService.add()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async update(
+    form: FormEntity,
+    manager?: EntityManager,
+  ): Promise<FormEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSourece.manager;
+      }
+
+      form = await manager.save(form);
+
+      return form || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'FormService.update()',
         e,
       );
       return null;

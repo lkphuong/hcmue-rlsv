@@ -13,8 +13,8 @@ import { generateValidationMessage } from '../../../utils';
 import { MinValidator } from '../../../validators/min.validator';
 import { LengthValidator } from '../../../validators/length.validator';
 import { BetweenValidator } from '../../../validators/between.validator';
-import { IsBooleanValidator } from 'src/validators/boolean.validator';
-import { IsNumberValidator } from 'src/validators/number.validator';
+import { IsBooleanValidator } from '../../../validators/boolean.validator';
+import { IsNumberValidator } from '../../../validators/number.validator';
 
 class OptionDto {
   @Transform((params) =>
@@ -69,16 +69,16 @@ class OptionDto {
   unit: string;
 }
 
-export class CreateItemDto {
+export class ItemDto {
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [thể loại].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [tiêu chí đánh giá].'),
   })
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [điểm tối thiếu] tối thiểu bằng -10.',
+        'Giá trị [tiêu chí đánh giá] tối thiểu bằng 1.',
       ),
   })
   title_id: number;

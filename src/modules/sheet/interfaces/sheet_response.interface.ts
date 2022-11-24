@@ -1,29 +1,5 @@
-export interface SemesterResponse {
-  id: number;
-  name: string;
-}
-
-export interface AcademicResponse {
-  id: number;
-  name: string;
-}
-
-export interface AcademicResponse {
-  id: number;
-  name: string;
-}
-
-export interface DepartmentResponse {
-  id: string;
-  name: string;
-}
-export interface LevelResponse {
-  id: number;
-  name: string;
-}
-
-export interface ClassResponse {
-  id: string;
+export interface BaseResponse {
+  id: number | string;
   name: string;
 }
 
@@ -33,43 +9,37 @@ export interface UserResponse {
   std_code: string;
 }
 
-export interface KResponse {
-  id: string;
-  name: string;
-}
-
-export interface HeaderResponse {
-  id: number;
-  name: string;
-}
-
 export interface ItemResponse {
   id: number;
   content: string;
 }
 
-export interface SheetUsersResponse {
-  id: number;
-  semester: SemesterResponse;
-  academic: AcademicResponse;
+export interface MarkResponse {
   sum_of_personal_marks: number;
   sum_of_class_marks: number;
   sum_of_department_marks: number;
-  level: LevelResponse;
+}
+
+export interface MultiApproveResponse {
+  sheet_ids: number[];
+  success: boolean;
+}
+export interface SheetUsersResponse extends MarkResponse {
+  id: number;
+  semester: BaseResponse;
+  academic: BaseResponse;
+  level: BaseResponse;
   status: number;
 }
 
-export interface SheetClassResponse {
+export interface SheetClassResponse extends MarkResponse {
   id: number;
   user: UserResponse;
-  sum_of_personal_marks: number;
-  sum_of_class_marks: number;
-  sum_of_department_marks: number;
-  level: LevelResponse;
+  level: BaseResponse;
   status: number;
 }
 
-export interface EvaluationResponse {
+export interface EvaluationResponse extends MarkResponse {
   form_id: number;
   evaluation_id?: number;
   parent_id?: string;
@@ -80,36 +50,25 @@ export interface EvaluationResponse {
   to_mark: number;
   unit: string;
   children: boolean;
-  personal_mark_level: number;
-  class_mark_level: number;
-  department_mark_level: number;
 }
 
-export interface SheetDetailResponse {
+export interface SheetDetailResponse extends MarkResponse {
   id: number;
-  department: DepartmentResponse;
-  class: ClassResponse;
+  department: BaseResponse;
+  class: BaseResponse;
   user: UserResponse;
-  semester: SemesterResponse;
-  academic: AcademicResponse;
-  k: KResponse;
-  level: LevelResponse;
+  semester: BaseResponse;
+  academic: BaseResponse;
+  k: BaseResponse;
+  level: BaseResponse;
   status: number;
-  sum_of_personal_marks: number;
-  sum_of_class_marks: number;
-  sum_of_department_marks: number;
-  headers: HeaderResponse[];
-}
-
-export interface MultiApproveResponse {
-  sheet_ids: number[];
-  success: boolean;
+  headers: BaseResponse[];
 }
 
 export interface SheetEvaluationResponse {
   id: number;
-  semester: SemesterResponse;
-  academic: AcademicResponse;
+  semester: BaseResponse;
+  academic: BaseResponse;
   evaluations: EvaluationResponse[];
 }
 
@@ -117,6 +76,15 @@ export interface ItemDetailResponse {
   id: number;
   item: ItemResponse;
   option?: ItemResponse[];
+  personal_mark_level: number;
+  class_mark_level: number;
+  department_mark_level: number;
+}
+
+export interface EvaluationDetailResponse {
+  id: number;
+  item: ItemResponse;
+  option?: ItemResponse;
   personal_mark_level: number;
   class_mark_level: number;
   department_mark_level: number;

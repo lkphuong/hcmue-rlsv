@@ -12,13 +12,12 @@ import {
   Param,
   HttpCode,
 } from '@nestjs/common';
-
 import { DataSource } from 'typeorm';
-
 import { Request } from 'express';
 
 import {
-  generateDataTitle2Object,
+  generateDataEvaluationResponse,
+  generateDataTitleResponse,
   generateDetailSheet,
   generateMultiApproveSuccessResponse,
   generateResponseSheetClass,
@@ -33,41 +32,46 @@ import {
 
 import { generateAcademicYearClass2Array } from '../transform';
 
-import { LogService } from '../../log/services/log.service';
-import { SheetService } from '../services/sheet.service';
-import { UserService } from '../../user/services/user.service';
-import { ApprovalService } from '../../approval/services/approval.service';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
-import { KService } from '../../k/services/k.service';
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
+import { KService } from '../../k/services/k.service';
+import { LogService } from '../../log/services/log.service';
 import { LevelService } from '../../level/services/level.service';
 import { ItemService } from '../../item/services/item.service';
 import { OptionService } from '../../option/services/option.service';
+import { SheetService } from '../services/sheet.service';
+import { UserService } from '../../user/services/user.service';
 
-import { StudentUpdateMarkDto } from '../dtos/update_mark_student.dto';
 import { ClassUpdateMarkDto } from '../dtos/update_mark_class.dto';
 import { DepartmentUpdateMarkDto } from '../dtos/update_mark_department.dto';
 import { GetSheetByClass } from '../dtos/get_sheet_by_class.dto';
 import { GetClassDto } from '../dtos/get_class.dto';
-import { MultiApproveDto } from '../dtos/multi_approve.dto';
 import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
+import { MultiApproveDto } from '../dtos/multi_approve.dto';
+import { StudentUpdateMarkDto } from '../dtos/update_mark_student.dto';
 
 import {
-  ClassResponse,
   SheetClassResponse,
   SheetDetailResponse,
   SheetUsersResponse,
   MultiApproveResponse,
   ItemDetailResponse,
+  BaseResponse,
+  EvaluationDetailResponse,
 } from '../interfaces/sheet_response.interface';
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 
-import { validateDepartmentId, validateId, validateRole } from '../validations';
+import {
+  validateDepartmentId,
+  validateRole,
+  validateSheetId,
+  validateUserId,
+} from '../validations';
 
 import { Levels } from '../../../constants/enums/level.enum';
 
@@ -84,7 +88,6 @@ export class SheetController {
     private readonly _sheetService: SheetService,
     private readonly _userService: UserService,
     private readonly _academicYearService: AcademicYearService,
-    private readonly _approvalService: ApprovalService,
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
     private readonly _kService: KService,
@@ -126,6 +129,11 @@ export class SheetController {
         req.url,
         JSON.stringify({ sheet_id: id }),
       );
+
+      //#region Validation
+      const valid = validateSheetId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
 
       //#region Get sheet
       const sheet = await this._sheetService.getSheetById(id);
@@ -200,6 +208,11 @@ export class SheetController {
         JSON.stringify({ user_id: user_id }),
       );
 
+      //#region Validation
+      const valid = validateUserId(user_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
       //#region Get sheets
       const sheets = await this._sheetService.getSheetsByUserId(user_id);
       //#endregion
@@ -236,8 +249,8 @@ export class SheetController {
    * @url /api/sheets/:id/items/:title_id
    * @access private
    * @description Hiển thị chi tiết điểm theo tiêu chí đánh giá
-   * @return
-   * @page
+   * @return HttpResponse<ItemDetailResponse[]> | HttpException
+   * @page sheets
    */
   @Get(':id/items/:title_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -266,13 +279,10 @@ export class SheetController {
       const { id, title_id } = params;
       //#endregion
 
-      const title = await this._itemService.getItemByTitileAndSheetId(
-        title_id,
-        id,
-      );
+      const title = await this._itemService.contains(title_id, id);
 
       if (title) {
-        return generateDataTitle2Object(title, req);
+        return generateDataTitleResponse(title, req);
       } else {
         //#region throw HandlerException
         throw new HandlerException(
@@ -300,13 +310,68 @@ export class SheetController {
   }
 
   /**
-   * @method Get
-   * @url api/sheets/:id/items/:title_id
+   * @method GET
+   * @url /api/sheets/items/:id
    * @access private
-   * @description Get hiển thị chi tiết điểm theo tiêu chí đánh giá
-   * @return
+   * @description Hiển thị chi tiết items theo sheet
+   * @return HttpResponse<ItemDetailResponse[]> | HttpException
    * @page sheets
    */
+  @Get('items/:id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getItemBySheet(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<EvaluationDetailResponse[]> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ sheet_id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ sheet_id: id }),
+      );
+
+      //#region Validation
+      const valid = validateSheetId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      const evaluations = await this._evaluationService.getEvaluationBySheetId(
+        id,
+      );
+
+      if (evaluations && evaluations.length > 0) {
+        return generateDataEvaluationResponse(evaluations, req);
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
 
   /**
    * @method Post
@@ -314,6 +379,7 @@ export class SheetController {
    * @access private
    * @description Get danh sách phiếu đánh giá cá nhân
    * @return  HttpResponse<SheetClassResponse> | HttpException
+   * @page sheets
    */
   @Post('class/:class_id')
   @HttpCode(HttpStatus.OK)
@@ -345,7 +411,7 @@ export class SheetController {
       const input = params.input ?? null;
 
       //#region Get sheets
-      const sheets = await this._sheetService.getSheetPaging(
+      const sheets = await this._sheetService.getSheets(
         semester_id,
         academic_id,
       );
@@ -390,7 +456,7 @@ export class SheetController {
    * @access private
    * @description danh sách lớp theo khoa
    * @return HttpResponse<Class[]> | null | HttpException
-   * @page
+   * @page sheets
    */
   @Post('department/:department_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -398,7 +464,7 @@ export class SheetController {
     @Param('department_id') department_id: string,
     @Body() params: GetClassDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<ClassResponse[]> | null | HttpException> {
+  ): Promise<HttpResponse<BaseResponse[]> | null | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
@@ -476,7 +542,7 @@ export class SheetController {
    * @access private
    * @description Sinh viên cập nhật kết quả phiếu rèn luyện
    * @return HttpResponse<SheetDetailResponse> | HttpException
-   * @page
+   * @page sheets
    */
   @Put('student/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -497,7 +563,7 @@ export class SheetController {
       );
 
       //#region Validation
-      const vali = validateId(id, req);
+      const vali = validateSheetId(id, req);
       if (vali instanceof HttpException) throw vali;
       //#endregion
 
@@ -546,7 +612,7 @@ export class SheetController {
    * @access private
    * @description Lớp cập nhật kết quả phiếu rèn luyện
    * @return HttpResponse<SheetDetailResponse> | HttpException
-   * @page
+   * @page sheets
    */
   @Put('class/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -567,7 +633,7 @@ export class SheetController {
       );
 
       //#region Validation
-      const vali = validateId(id, req);
+      const vali = validateSheetId(id, req);
       if (vali instanceof HttpException) throw vali;
       //#endregion
 
@@ -640,6 +706,7 @@ export class SheetController {
       //#endregion
 
       const { role } = req.user as JwtPayload;
+
       //#region  Validate role
       const valid = await validateRole(role_id, role, req);
       if (valid instanceof HttpException) throw valid;
@@ -701,7 +768,7 @@ export class SheetController {
       );
 
       //#region Validation
-      const vali = validateId(id, req);
+      const vali = validateSheetId(id, req);
       if (vali instanceof HttpException) throw vali;
       //#endregion
 

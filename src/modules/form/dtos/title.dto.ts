@@ -6,7 +6,7 @@ import { generateValidationMessage } from '../../../utils';
 import { MinValidator } from '../../../validators/min.validator';
 import { LengthValidator } from '../../../validators/length.validator';
 
-export class CreateTitleDto {
+export class TitleDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [hạng mục].'),

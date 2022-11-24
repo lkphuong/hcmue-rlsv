@@ -1,9 +1,9 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { LengthValidator } from 'src/validators/length.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
+import { LengthValidator } from '../../../validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class GetClassDto {
@@ -11,6 +11,7 @@ export class GetClassDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),
   })
+  @Transform((params) => parseInt(params.value) ?? 0)
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(arg, 'Giá trị [học kì] tối thiểu bằng 0.'),
@@ -21,6 +22,7 @@ export class GetClassDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [niên khóa].'),
   })
+  @Transform((params) => parseInt(params.value) ?? 0)
   @MinValidator(0, {
     message: (arg) =>
       generateValidationMessage(arg, 'Giá trị [niên khóa] tối thiểu bằng 0.'),

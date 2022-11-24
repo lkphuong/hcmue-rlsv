@@ -42,7 +42,7 @@ export class SemesterController {
    * @access private
    * @description danh sách lớp theo khoa
    * @return HttpResponse<SemesterEntity[]> | null | HttpException
-   * @page
+   * @page semesters
    */
   @Get()
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

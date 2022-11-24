@@ -348,7 +348,6 @@ export const updateEvaluationDepartment = async (
 
       let success: EvaluationEntity[] | HttpException | null = null;
       //#region Update Mark
-      console.log('departmentUpdateMark ');
       success = await departmentUpdateMark(
         sheet_id,
         user_id,
@@ -456,10 +455,7 @@ export const studentUpdateMark = async (
       //#endregion
       //#endregion
 
-      const evaluation = await evaluation_service.getEvaluationBySheetId(
-        sheet_id,
-        i.item_id,
-      );
+      const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
 
       if (evaluation) {
         //#region Update evaluation
@@ -552,10 +548,7 @@ export const classUpdateMark = async (
       //#endregion
       //#endregion
 
-      const evaluation = await evaluation_service.getEvaluationBySheetId(
-        sheet_id,
-        i.item_id,
-      );
+      const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
 
       if (evaluation) {
         //#region Update evaluation
@@ -648,10 +641,7 @@ export const departmentUpdateMark = async (
       //#endregion
       //#endregion
 
-      const evaluation = await evaluation_service.getEvaluationBySheetId(
-        sheet_id,
-        i.item_id,
-      );
+      const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
 
       if (evaluation) {
         //#region Update evaluation

@@ -4,6 +4,7 @@ import { isEmpty } from 'class-validator';
 import { Request } from 'express';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
+
 import { VALIDATION_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/errors.enum';
 

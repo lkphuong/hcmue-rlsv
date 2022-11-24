@@ -1,9 +1,10 @@
+import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
-
-import { returnObjects } from 'src/utils';
+import { returnObjects } from '../../../utils';
 
 import { SheetEntity } from '../../../entities/sheet.entity';
-import { ItemEntity } from 'src/entities/item.entity';
+import { ItemEntity } from '../../../entities/item.entity';
+import { EvaluationEntity } from '../../../entities/evaluation.entity';
 
 import { UserService } from '../../user/services/user.service';
 import { ClassService } from '../../class/services/class.service';
@@ -15,12 +16,12 @@ import { MultiApproveResponse } from '../interfaces/sheet_response.interface';
 import {
   generateData2Object,
   generateDetailTile2Object,
+  generateEvaluation2Array,
   generateSheets2Class,
   generateSheets2SheetUsuer,
 } from '../transform/index';
-import { QueryRunner } from 'typeorm';
 
-export const generateResponseSheetUser = async (
+export const generateResponseSheetUser = (
   sheets: SheetEntity[],
   req: Request,
 ) => {
@@ -91,7 +92,7 @@ export const generateUpdateSuccessResponse = async (
   };
 };
 
-export const generateMultiApproveSuccessResponse = async (
+export const generateMultiApproveSuccessResponse = (
   sheet_ids: number[],
   success: boolean,
 ) => {
@@ -125,12 +126,33 @@ export const generateDetailSheet = async (
   return returnObjects(payload);
 };
 
-export const generateDataTitle2Object = (item: ItemEntity[], req: Request) => {
+export const generateDataTitleResponse = (
+  items: ItemEntity[],
+  req: Request,
+) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', item);
+  console.log('data: ', items);
 
-  const payload = generateDetailTile2Object(item);
+  const payload = generateDetailTile2Object(items);
+
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
+
+export const generateDataEvaluationResponse = (
+  evaluations: EvaluationEntity[],
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', evaluations);
+
+  const payload = generateEvaluation2Array(evaluations);
 
   return {
     data: payload,

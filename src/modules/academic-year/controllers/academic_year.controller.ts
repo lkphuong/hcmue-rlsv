@@ -7,22 +7,19 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-
 import { Request } from 'express';
+
+import { LogService } from '../../log/services/log.service';
+import { AcademicYearService } from '../services/academic_year.service';
+
+import { generateData2Array } from '../transform';
+
+import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { AcademicYearResponse } from '../interfaces/academic_year_response.interface';
 
-import { LogService } from '../../log/services/log.service';
-
-import { AcademicYearService } from '../services/academic_year.service';
-
-import { HandlerException } from '../../../exceptions/HandlerException';
-
-import { generateData2Array } from '../transform';
-
 import { Levels } from '../../../constants/enums/level.enum';
-
 import { ErrorMessage } from '../constants/errors.enum';
 import {
   DATABASE_EXIT_CODE,
@@ -34,7 +31,11 @@ export class AcademicYearController {
   constructor(
     private readonly _academicYearService: AcademicYearService,
     private _logger: LogService,
-  ) {}
+  ) {
+    // Due to transient scope, AcademicYearController has its own unique instance of LogService,
+    // so setting context here will not affect other instances in other services
+    this._logger.setContext(AcademicYearController.name);
+  }
 
   /**
    * @method GET
@@ -42,7 +43,7 @@ export class AcademicYearController {
    * @access private
    * @description hiển thị danh sách niên khóa
    * @return HttpResponse<SemesterEntity[]> | null | HttpException
-   * @page
+   * @page academic-years
    */
   @Get()
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

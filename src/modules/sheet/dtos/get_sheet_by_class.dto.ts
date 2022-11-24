@@ -1,9 +1,9 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { LengthValidator } from 'src/validators/length.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
+import { LengthValidator } from 'src/validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class GetSheetByClass {
@@ -11,6 +11,7 @@ export class GetSheetByClass {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),
   })
+  @Transform((params) => parseInt(params.value) ?? 0)
   @MinValidator(1, {
     message: (arg) =>
       generateValidationMessage(arg, 'Giá trị [học kì] tối thiểu bằng 1.'),

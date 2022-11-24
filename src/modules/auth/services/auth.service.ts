@@ -30,12 +30,12 @@ export class AuthService {
       const conditions = this._sessionRepository
         .createQueryBuilder('session')
         .where('session.username = :username', { username })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('session.expired_time IS NULL');
-            qb.andWhere('session.logout_time IS NULL');
-          }),
-        )
+        // .andWhere(
+        //   new Brackets((qb) => {
+        //     qb.where('session.expired_time IS NULL');
+        //     qb.andWhere('session.logout_time IS NULL');
+        //   }),
+        // )
         .andWhere('session.active = :active', { active: true })
         .andWhere('session.deleted = :deleted', { deleted: false });
 
@@ -119,15 +119,16 @@ export class AuthService {
 
   async getProfile(user_id: string): Promise<SessionEntity | null> {
     try {
+      console.log('user_id: ', user_id);
       const conditions = this._sessionRepository
         .createQueryBuilder('session')
         .where('session.user_id = :user_id', { user_id })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('session.expired_time IS NULL');
-            qb.andWhere('session.logout_time IS NULL');
-          }),
-        )
+        // .andWhere(
+        //   new Brackets((qb) => {
+        //     qb.where('session.expired_time IS NULL');
+        //     qb.andWhere('session.logout_time IS NULL');
+        //   }),
+        // )
         .andWhere('session.active = :active', { active: true })
         .andWhere('session.deleted = :deleted', { deleted: false });
 

@@ -1,5 +1,7 @@
-import { convertObjectId2String } from 'src/utils';
+import { convertObjectId2String } from '../../../utils';
+
 import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+
 import { Class } from '../../../schemas/class.schema';
 
 import { ClassService } from '../services/class.service';
@@ -35,12 +37,12 @@ export const generateAcademicYearClass2Array = async (
     const payload: ClassResponse[] = [];
     const academic_year_classes = academic_year.academic_year_classes;
 
-    for (const academic_year_classe of academic_year_classes) {
+    for (const academic_year_class of academic_year_classes) {
       const result = await class_service.getClassById(
-        academic_year_classe.class_id,
+        academic_year_class.class_id,
         department_id,
       );
-      console.log(result);
+
       if (result) {
         const item: ClassResponse = {
           id: convertObjectId2String(result._id),

@@ -23,7 +23,7 @@ export class OptionService {
       const conditions = this._optionRepository
         .createQueryBuilder('option')
         .where('option.id = :id', { id })
-        .andWhere('option.deleted = :deleted');
+        .andWhere('option.deleted = :deleted', { deleted: false });
 
       const option = await conditions.getOne();
 
@@ -44,7 +44,9 @@ export class OptionService {
       const conditions = this._optionRepository
         .createQueryBuilder('option')
         .innerJoin('option.item', 'item')
-        .where('item.id = :item_id', { item_id });
+        .where('item.id = :item_id', { item_id })
+        .andWhere('item.deleted = :deleted', { deleted: false })
+        .andWhere('option.deleted = :deleted', { deleted: false });
 
       const options = await conditions.getMany();
 
@@ -54,6 +56,29 @@ export class OptionService {
         Levels.ERROR,
         Methods.SELECT,
         'OptionService.getOptionByItemId()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async bulkAdd(
+    options: OptionEntity[],
+    manager?: EntityManager,
+  ): Promise<OptionEntity[] | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      options = await manager.save(options);
+
+      return options || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'OptionService.bulkAdd()',
         e,
       );
       return null;

@@ -28,7 +28,7 @@ class TimeDto {
   end: string;
 }
 
-export class CreateFormDto {
+export class FormDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [niên khóa].'),

@@ -19,6 +19,9 @@ export const CAutocomplete = memo(
 		renderOption,
 		display,
 		valueGet,
+		error,
+		helperText,
+		inputRef,
 		// getOptionLabel,
 		...props
 	}) => {
@@ -83,7 +86,15 @@ export const CAutocomplete = memo(
 				inputValue={inputValue}
 				onInputChange={handleInputChange}
 				options={options}
-				renderInput={(params) => <TextField placeholder={placeholder} {...params} />}
+				renderInput={(params) => (
+					<TextField
+						placeholder={placeholder}
+						{...params}
+						error={error}
+						helperText={helperText}
+						inputRef={inputRef}
+					/>
+				)}
 				renderOption={renderOption}
 				getOptionLabel={getOptionLabel}
 				{...props}
@@ -106,6 +117,8 @@ CAutocomplete.propTypes = {
 	multiple: bool,
 	renderOption: func,
 	valueGet: string,
+	error: bool,
+	helperText: string,
 };
 
 CAutocomplete.defaultProps = {

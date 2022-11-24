@@ -6684,6 +6684,11 @@ ms@2.1.3:
   resolved "https://registry.npmjs.org/ms/-/ms-2.1.3.tgz"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
+mui-calendar-picker@^1.0.10:
+  version "1.0.10"
+  resolved "https://registry.yarnpkg.com/mui-calendar-picker/-/mui-calendar-picker-1.0.10.tgz#968ef89f2f7ca21cbc852f2498b5ecbe2d143a90"
+  integrity sha512-oQVOVQP0jhWGdG83iAVGRulNnkOtOmiaHZuO0n5VAf9CYSG0hujl2Q1h1qDi8pkjprpNIePq2DPiRgKpyfPXRQ==
+
 multicast-dns@^7.2.5:
   version "7.2.5"
   resolved "https://registry.npmjs.org/multicast-dns/-/multicast-dns-7.2.5.tgz"

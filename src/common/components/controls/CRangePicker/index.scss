@@ -1,14 +1,11 @@
-.c-rangepicker.react-daterange-picker {
-	.react-daterange-picker__wrapper {
-		justify-content: space-around;
-		border-radius: 4px;
-		border: 1px solid rgba(0, 0, 0, 0.23);
-		padding: 2.5px 0;
-
-		.react-daterange-picker__inputGroup {
-			flex-grow: unset;
-			font-size: 0.95rem;
-			line-height: 1.4em;
+.MuiModal-root.MuiPopover-root.MuiMenu-root {
+	.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded {
+		.MuiList-root.MuiList-padding.MuiMenu-list {
+			.MuiDialogActions-root.MuiDialogActions-spacing {
+				button:first-of-type {
+					display: none;
+				}
+			}
 		}
 	}
 }

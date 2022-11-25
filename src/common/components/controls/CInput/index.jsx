@@ -63,7 +63,7 @@ CInput.displayName = CInput;
 CInput.propTypes = {
 	id: any,
 	name: string,
-	value: string,
+	value: any,
 	placeholder: string,
 	onChange: func,
 	error: bool,

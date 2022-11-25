@@ -7,15 +7,12 @@ import { Divider, Grid, Typography } from '@mui/material';
 import { isSuccess } from '_func/';
 
 import { getItemsByTitleId } from '_api/form.api';
-import { getMarks } from '_api/sheets.api';
 
 import Item from './Item';
 
 const Title = memo(({ data, index, sheetId }) => {
 	//#region Data
 	const [items, setItems] = useState([]);
-
-	const [marks, setMarks] = useState([]);
 
 	const navigate = useNavigate();
 	//#endregion
@@ -32,25 +29,11 @@ const Title = memo(({ data, index, sheetId }) => {
 			throw error;
 		}
 	}, [data?.id, navigate]);
-
-	const getMarkByTitle = useCallback(async () => {
-		try {
-			const res = await getMarks(sheetId, data?.id);
-
-			if (isSuccess(res)) setMarks(res.data);
-		} catch (error) {
-			throw error;
-		}
-	}, [data?.id, sheetId]);
 	//#endregion
 
 	useEffect(() => {
 		getItems();
 	}, [getItems]);
-
-	useEffect(() => {
-		getMarkByTitle();
-	}, [getMarkByTitle]);
 
 	//#region Render
 	return (
@@ -66,7 +49,7 @@ const Title = memo(({ data, index, sheetId }) => {
 					</Typography>
 				</Grid>
 
-				{items.length > 0 && items.map((e, i) => <Item key={i} data={e} marks={marks} />)}
+				{items.length > 0 && items.map((e, i) => <Item key={i} data={e} />)}
 			</Grid>
 			<Divider sx={{ my: 2 }} />
 		</>

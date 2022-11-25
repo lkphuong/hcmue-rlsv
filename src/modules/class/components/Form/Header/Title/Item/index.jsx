@@ -1,27 +1,14 @@
 import React, { memo, useMemo, useContext } from 'react';
 
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Grid, Typography } from '@mui/material';
 
-import { Checkbox, Grid, Typography } from '@mui/material';
+import { ClassMarksContext } from '../../..';
 
-import { CInput } from '_controls/';
-
-import { actions } from '_slices/mark.slice';
-
-import { MarksContext } from '../../..';
+import Control from './Control';
 
 const Item = memo(({ data }) => {
 	//#region Data
-	const { status, itemsMark } = useContext(MarksContext);
-
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-
-	const roleId = useMemo(() => {
-		if (role_id === undefined || role_id === null) return null;
-		return role_id;
-	}, [role_id]);
-
-	const dispatch = useDispatch();
+	const { status, itemsMark } = useContext(ClassMarksContext);
 
 	const currentMark = useMemo(() => {
 		if (!itemsMark?.length)
@@ -31,7 +18,6 @@ const Item = memo(({ data }) => {
 				department_mark_level: 0,
 			};
 
-		// eslint-disable-next-line eqeqeq
 		const foundItem = itemsMark.find((e) => e.item.id?.toString() === data.id?.toString());
 
 		if (!foundItem)
@@ -48,31 +34,17 @@ const Item = memo(({ data }) => {
 		};
 	}, [data?.id, itemsMark]);
 
+	const initialMark = useMemo(() => {
+		if (status < 3) {
+			return currentMark.personal_mark_level;
+		} else {
+			return currentMark.class_mark_level;
+		}
+	}, [currentMark.class_mark_level, currentMark.personal_mark_level, status]);
 	//#endregion
 
 	//#region Event
-	const onCheck = (item_id, mark) => (e) => {
-		const markObj = {
-			item_id,
-			class_mark_level: e.target.checked ? mark : 0,
-		};
 
-		dispatch(actions.updateMarks(markObj));
-	};
-
-	const onKeyUp = (item_id, min, max) => (e) => {
-		const value = Number(e.target.value);
-		if (isNaN(value)) e.target.value = 0;
-		if (value > max) e.target.value = max;
-		if (value < min) e.target.value = min;
-
-		const markObj = {
-			item_id,
-			class_mark_level: Number(e.target.value),
-		};
-
-		dispatch(actions.updateMarks(markObj));
-	};
 	//#endregion
 
 	//#region Render
@@ -97,69 +69,14 @@ const Item = memo(({ data }) => {
 				)}
 			</Grid>
 
-			{data.control === 1 ? (
-				<>
-					<Grid item xs={1.2} textAlign='center'>
-						<Checkbox
-							disabled={roleId !== 0}
-							onChange={onCheck(data.id, data.from_mark)}
-							checked={currentMark.personal_mark_level > 0}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<Checkbox
-							disabled={roleId !== 1}
-							onChange={onCheck(data.id, data.from_mark)}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<Checkbox
-							disabled={roleId !== 2}
-							onChange={onCheck(data.id, data.from_mark)}
-							checked={currentMark.department_mark_level > 0}
-						/>
-					</Grid>
-				</>
-			) : (
-				<>
-					<Grid item xs={1.2} textAlign='center'>
-						<CInput
-							disabled={roleId !== 0}
-							fullWidth
-							type='number'
-							inputProps={{
-								min: data?.from_mark,
-								max: data?.to_mark,
-							}}
-							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<CInput
-							disabled={roleId !== 1}
-							fullWidth
-							type='number'
-							inputProps={{
-								min: data?.from_mark,
-								max: data?.to_mark,
-							}}
-							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<CInput
-							disabled={roleId !== 2}
-							fullWidth
-							type='number'
-							inputProps={{
-								min: data?.from_mark,
-								max: data?.to_mark,
-							}}
-							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-						/>
-					</Grid>
-				</>
-			)}
+			<Control
+				id={data.id}
+				min={data.from_mark}
+				max={data.to_mark}
+				control={data.control}
+				initialMark={initialMark}
+				currentMark={currentMark}
+			/>
 		</>
 	);
 	//#endregion

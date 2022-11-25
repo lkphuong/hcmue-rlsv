@@ -1,34 +1,24 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useContext } from 'react';
 
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Grid, Typography } from '@mui/material';
 
-import { Checkbox, Grid, Typography } from '@mui/material';
+import { DepartmentMarksContext } from '../../..';
 
-import { CInput } from '_controls/';
+import Control from './Control';
 
-import { actions } from '_slices/mark.slice';
-
-const Item = memo(({ data, marks }) => {
+const Item = memo(({ data }) => {
 	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-
-	const roleId = useMemo(() => {
-		if (role_id === undefined || role_id === null) return null;
-		return role_id;
-	}, [role_id]);
-
-	const dispatch = useDispatch();
+	const { status, itemsMark } = useContext(DepartmentMarksContext);
 
 	const currentMark = useMemo(() => {
-		if (!marks?.length)
+		if (!itemsMark?.length)
 			return {
 				personal_mark_level: 0,
 				class_mark_level: 0,
 				department_mark_level: 0,
 			};
 
-		// eslint-disable-next-line eqeqeq
-		const foundItem = marks.find((e) => e.item.id == data.id);
+		const foundItem = itemsMark.find((e) => e.item.id?.toString() === data.id?.toString());
 
 		if (!foundItem)
 			return {
@@ -42,32 +32,27 @@ const Item = memo(({ data, marks }) => {
 			class_mark_level: foundItem.class_mark_level,
 			department_mark_level: foundItem.department_mark_level,
 		};
-	}, [data?.id, marks]);
+	}, [data?.id, itemsMark]);
+
+	const initialMark = useMemo(() => {
+		if (status === 4) {
+			return currentMark.personal_mark_level;
+		}
+		if (status < 3) {
+			return currentMark.class_mark_level;
+		} else {
+			return currentMark.department_mark_level;
+		}
+	}, [
+		currentMark.class_mark_level,
+		currentMark.department_mark_level,
+		currentMark.personal_mark_level,
+		status,
+	]);
 	//#endregion
 
 	//#region Event
-	const onCheck = (item_id, mark) => (e) => {
-		const markObj = {
-			item_id,
-			department_mark_level: e.target.checked ? mark : 0,
-		};
 
-		dispatch(actions.updateMarks(markObj));
-	};
-
-	const onKeyUp = (item_id, min, max) => (e) => {
-		const value = Number(e.target.value);
-		if (isNaN(value)) e.target.value = 0;
-		if (value > max) e.target.value = max;
-		if (value < min) e.target.value = min;
-
-		const markObj = {
-			item_id,
-			department_mark_level: Number(e.target.value),
-		};
-
-		dispatch(actions.updateMarks(markObj));
-	};
 	//#endregion
 
 	//#region Render
@@ -92,71 +77,14 @@ const Item = memo(({ data, marks }) => {
 				)}
 			</Grid>
 
-			{data.control === 1 ? (
-				<>
-					<Grid item xs={1.2} textAlign='center'>
-						<Checkbox
-							disabled={roleId !== 0}
-							onChange={onCheck(data.id, data.from_mark)}
-							checked={currentMark.personal_mark_level > 0}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<Checkbox
-							disabled={roleId !== 1}
-							onChange={onCheck(data.id, data.from_mark)}
-							checked={currentMark.class_mark_level > 0}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<Checkbox
-							disabled={roleId !== 2}
-							onChange={onCheck(data.id, data.from_mark)}
-						/>
-					</Grid>
-				</>
-			) : (
-				<>
-					<Grid item xs={1.2} textAlign='center'>
-						<CInput
-							disabled={roleId !== 0}
-							fullWidth
-							type='number'
-							inputProps={{
-								min: data?.from_mark,
-								max: data?.to_mark,
-							}}
-							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-							value={currentMark.personal_mark_level}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<CInput
-							disabled={roleId !== 1}
-							fullWidth
-							type='number'
-							inputProps={{
-								min: data?.from_mark,
-								max: data?.to_mark,
-							}}
-							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-							value={currentMark.class_mark_level}
-						/>
-					</Grid>
-					<Grid item xs={1.2} textAlign='center'>
-						<CInput
-							disabled={roleId !== 2}
-							fullWidth
-							type='number'
-							inputProps={{
-								min: data?.from_mark,
-								max: data?.to_mark,
-							}}
-							onKeyUp={onKeyUp(data.id, data?.from_mark, data?.to_mark)}
-						/>
-					</Grid>
-				</>
-			)}
+			<Control
+				id={data.id}
+				min={data.from_mark}
+				max={data.to_mark}
+				control={data.control}
+				initialMark={initialMark}
+				currentMark={currentMark}
+			/>
 		</>
 	);
 	//#endregion

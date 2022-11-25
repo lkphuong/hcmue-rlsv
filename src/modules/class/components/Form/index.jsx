@@ -21,14 +21,14 @@ import Header from './Header';
 
 import './index.scss';
 
-export const MarksContext = createContext();
+export const ClassMarksContext = createContext();
 
 const Form = ({ data, status }) => {
 	//#region Data
-	const [itemsMark, setItemsMark] = useState([]);
-
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+
+	const [itemsMark, setItemsMark] = useState([]);
 
 	const [headers, setHeaders] = useState([]);
 
@@ -98,6 +98,25 @@ const Form = ({ data, status }) => {
 		getMarks();
 	}, [getHeaders, getMarks]);
 
+	useEffect(() => {
+		if (status < 3) {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				class_mark_level: e.personal_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		} else {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				class_mark_level: e.class_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [status, itemsMark]);
+
 	//#region Render
 	return (
 		<Paper>
@@ -140,14 +159,14 @@ const Form = ({ data, status }) => {
 				</Grid>
 			</Grid>
 
-			<MarksContext.Provider value={{ itemsMark, status }}>
+			<ClassMarksContext.Provider value={{ itemsMark, status }}>
 				<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
 					{headers.length > 0 &&
 						headers.map((e, i) => (
 							<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
 						))}
 				</Grid>
-			</MarksContext.Provider>
+			</ClassMarksContext.Provider>
 
 			<Button variant='contained' onClick={handleUpdate}>
 				Cập nhật

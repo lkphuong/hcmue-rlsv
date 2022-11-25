@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, createContext } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -13,7 +13,7 @@ import { isSuccess } from '_func/';
 
 import { ROUTES } from '_constants/routes';
 
-import { updateDepartmentSheets } from '_api/sheets.api';
+import { updateDepartmentSheets, getItemsMarks } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
 
@@ -21,10 +21,14 @@ import Header from './Header';
 
 import './index.scss';
 
-const Form = ({ data }) => {
+export const DepartmentMarksContext = createContext();
+
+const Form = ({ data, status }) => {
 	//#region Data
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+
+	const [itemsMark, setItemsMark] = useState([]);
 
 	const [headers, setHeaders] = useState([]);
 
@@ -45,6 +49,16 @@ const Form = ({ data }) => {
 			throw error;
 		}
 	}, [data?.id, navigate]);
+
+	const getMarks = useCallback(async () => {
+		try {
+			const res = await getItemsMarks(data.id);
+
+			if (isSuccess(res)) setItemsMark(res.data);
+		} catch (error) {
+			throw error;
+		}
+	}, [data?.id]);
 
 	const handleUpdate = async () => {
 		try {
@@ -79,7 +93,35 @@ const Form = ({ data }) => {
 
 	useEffect(() => {
 		getHeaders();
-	}, [getHeaders]);
+		getMarks();
+	}, [getHeaders, getMarks]);
+
+	useEffect(() => {
+		if (status === 4) {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				department_mark_level: e.personal_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		}
+		if (status < 3) {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				department_mark_level: e.class_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		} else {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				department_mark_level: e.department_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [status, itemsMark]);
 
 	//#region Render
 	return (

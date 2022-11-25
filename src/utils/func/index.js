@@ -15,7 +15,7 @@ export const updateObjInArr = (obj, arr) => {
 		const newArr = [obj];
 		return newArr;
 	}
-	const index = arr.findIndex((e) => e.item_id === obj.item_id);
+	const index = arr.findIndex((e) => e.item_id.toString() === obj.item_id.toString());
 
 	const newArr = [...arr];
 	if (index < 0) {

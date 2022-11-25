@@ -13,6 +13,9 @@ export const markSlice = createSlice({
 	name: 'mark',
 	initialState,
 	reducers: {
+		renewMarks: (state, action) => {
+			state.marks = action.payload;
+		},
 		updateMarks: (state, action) => {
 			const updatedValues = updateObjInArr(action.payload, [...state.marks]);
 

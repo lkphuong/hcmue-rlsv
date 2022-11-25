@@ -50,7 +50,7 @@ const ListDetailPage = () => {
 				{`${FORM.user.fullname} - Niên khóa ${FORM.user.std_code}`}
 			</Typography>
 
-			<Box mt={1}>{data && <Form data={data} />}</Box>
+			<Box mt={1}>{data && <Form data={data} status={data?.status} />}</Box>
 		</Box>
 	);
 	//#endregion

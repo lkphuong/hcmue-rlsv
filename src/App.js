@@ -4,7 +4,7 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 
-import { ThemeProvider } from '@mui/material';
+import { StyledEngineProvider, ThemeProvider } from '@mui/material';
 
 import { AbilityContext, AdminContext } from '_contexts';
 
@@ -54,17 +54,19 @@ function App() {
 	if (isLoading) return <SuspenseLoading />;
 
 	return (
-		<ThemeProvider theme={theme}>
-			<Suspense fallback={<SuspenseLoading />}>
-				<AbilityContext.Provider value={ability}>
-					<AdminContext.Provider value={[adminContext, setAdminContext]}>
-						<div className='App'>
-							<RouterProvider router={router} />
-						</div>
-					</AdminContext.Provider>
-				</AbilityContext.Provider>
-			</Suspense>
-		</ThemeProvider>
+		<StyledEngineProvider injectFirst>
+			<ThemeProvider theme={theme()}>
+				<Suspense fallback={<SuspenseLoading />}>
+					<AbilityContext.Provider value={ability}>
+						<AdminContext.Provider value={[adminContext, setAdminContext]}>
+							<div className='App'>
+								<RouterProvider router={router} />
+							</div>
+						</AdminContext.Provider>
+					</AbilityContext.Provider>
+				</Suspense>
+			</ThemeProvider>
+		</StyledEngineProvider>
 	);
 }
 

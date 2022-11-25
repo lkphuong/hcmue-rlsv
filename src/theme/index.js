@@ -1,126 +1,51 @@
-const { createTheme } = require('@mui/material');
+import { createTheme } from '@mui/material';
 
-const BORDER_TABLE = '1px solid rgb(146 142 142)';
+// assets
+import colors from '_styles/_themes-vars.module.scss';
 
-const theme = createTheme({
-	breakpoints: {
-		values: {
-			xs: 320,
-			sm: 480,
-			md: 768,
-			lg: 1024,
-			xl: 1536,
-			xxl: 1680,
-		},
-	},
-	typography: {
-		fontFamily: "'Inter', sans-serif",
-	},
-	components: {
-		MuiTextField: {
-			defaultProps: {
-				autoComplete: 'off',
-				autoCorrect: 'off',
-			},
-			styleOverrides: {
-				root: {
-					'& .MuiOutlinedInput-root': {
-						backgroundColor: 'white',
-						'& .MuiOutlinedInput-input': {
-							padding: '9px 14px',
-							"&[type='number']": {
-								textAlign: 'center',
-							},
-						},
-					},
+// project imports
+import componentStyleOverrides from './compStyleOverride';
+import themePalette from './palette';
+import themeTypography from './typography';
+
+// const BORDER_TABLE = '1px solid rgb(146 142 142)';
+
+const theme = () => {
+	const color = colors;
+
+	const themeOption = {
+		colors: color,
+		heading: color.grey900,
+		paper: color.paper,
+		backgroundDefault: color.paper,
+		background: color.primaryLight,
+		darkTextPrimary: color.grey700,
+		darkTextSecondary: color.grey500,
+		textDark: color.grey900,
+		menuSelected: color.secondaryDark,
+		menuSelectedBack: color.secondaryLight,
+		divider: color.grey200,
+	};
+
+	const themeOptions = {
+		direction: 'ltr',
+		palette: themePalette(themeOption),
+		mixins: {
+			toolbar: {
+				minHeight: '48px',
+				padding: '16px',
+				'@media (min-width: 600px)': {
+					minHeight: '48px',
 				},
 			},
 		},
-		MuiAutocomplete: {
-			styleOverrides: {
-				input: {
-					'&.MuiOutlinedInput-input': {
-						padding: '0!important',
-					},
-				},
-			},
-		},
-		MuiInputBase: {
-			styleOverrides: {
-				root: {
-					fontSize: '0.95rem',
-					lineHeight: '1.4em',
-				},
-				input: {
-					height: 'unset',
-				},
-				inputAdornedStart: {
-					paddingLeft: '0!important',
-				},
-				inputAdornedEnd: {
-					paddingRight: '0!important',
-				},
-			},
-		},
-		MuiButton: {
-			styleOverrides: {
-				root: {
-					textTransform: 'none',
-				},
-			},
-		},
-		MuiTableContainer: {
-			styleOverrides: {
-				root: {
-					border: BORDER_TABLE,
-				},
-			},
-		},
-		MuiTable: {
-			styleOverrides: {
-				root: {
-					'& .MuiTableCell-root': {
-						borderLeft: BORDER_TABLE,
-					},
-				},
-			},
-		},
-		MuiTableHead: {
-			styleOverrides: {
-				root: {
-					'& .MuiTableRow-root': {
-						'& .MuiTableCell-root': {
-							borderBottom: BORDER_TABLE + '!important',
-							fontWeight: 700,
-						},
-					},
-				},
-			},
-		},
-		MuiTableRow: {
-			styleOverrides: {
-				root: {
-					'& .MuiTableCell-root': {
-						borderBottom: BORDER_TABLE,
-					},
-					'&:last-child': {
-						'& .MuiTableCell-root': {
-							borderBottom: 0,
-						},
-					},
-				},
-			},
-		},
-		MuiTableCell: {
-			styleOverrides: {
-				root: {
-					'&:first-of-type': {
-						borderLeft: 0,
-					},
-				},
-			},
-		},
-	},
-});
+		typography: themeTypography(themeOption),
+	};
+
+	const themes = createTheme(themeOptions);
+	themes.components = componentStyleOverrides(themeOption);
+
+	return themes;
+};
 
 export default theme;

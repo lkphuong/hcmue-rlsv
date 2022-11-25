@@ -11,5 +11,5 @@ export const login = async (body) => {
 };
 
 export const logout = async () => {
-	return await post(AUTH.LOGOUT);
+	return await get(AUTH.LOGOUT);
 };

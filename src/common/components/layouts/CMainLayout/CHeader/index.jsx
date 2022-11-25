@@ -1,57 +1,64 @@
-import React from 'react';
+import { useTheme } from '@mui/material/styles';
+import { Avatar, Box, ButtonBase } from '@mui/material';
+import { List } from '@mui/icons-material';
 
-import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-import { useSelector } from 'react-redux';
+import CLogo from '../CLogo';
+import CProfile from './CProfile';
 
-import { Box, Button, Container, Grid, Typography } from '@mui/material';
+const Header = ({ handleLeftDrawerToggle }) => {
+	const theme = useTheme();
 
-import { CNavigation } from '../CNavigation';
-
-import { tryLogout } from '_axios/';
-
-import './index.scss';
-
-export const CHeader = () => {
-	//#region Data
-	const profile = useSelector((state) => state.auth.profile);
-	//#endregion
-
-	//#region Event
-	const onLogout = () => tryLogout();
-	//#endregion
-
-	//#region Render
 	return (
-		<Box component='header'>
-			<Container maxWidth='xl' sx={{ height: '100%' }}>
-				<Grid container alignItems='center' justifyContent='center' height='inherit'>
-					<Grid item xl={8}>
-						<CNavigation />
-					</Grid>
-					<Grid item xl={4}>
-						<Box
-							sx={{ float: 'right' }}
-							display='flex'
-							alignItems='center'
-							justifyContent='center'
-						>
-							<Box mr={2}>
-								<Typography>
-									Xin chào,&nbsp;
-									<Typography fontSize='110%' fontWeight={500} component='span'>
-										{profile?.fullname}
-									</Typography>
-								</Typography>
-							</Box>
-							<Link to='/login'>
-								<Button onClick={onLogout}>Thoát</Button>
-							</Link>
-						</Box>
-					</Grid>
-				</Grid>
-			</Container>
-		</Box>
+		<>
+			{/* logo & toggler button */}
+			<Box
+				sx={{
+					width: 228,
+					display: 'flex',
+					[theme.breakpoints.down('md')]: {
+						width: 'auto',
+					},
+				}}
+			>
+				<Box component='span' sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+					<CLogo />
+				</Box>
+				<ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>
+					<Avatar
+						variant='rounded'
+						sx={{
+							...theme.typography.commonAvatar,
+							...theme.typography.mediumAvatar,
+							transition: 'all .2s ease-in-out',
+							background: theme.palette.secondary.light,
+							color: theme.palette.secondary.dark,
+							'&:hover': {
+								background: theme.palette.secondary.dark,
+								color: theme.palette.secondary.light,
+							},
+						}}
+						onClick={handleLeftDrawerToggle}
+						color='inherit'
+					>
+						<List stroke={1.5} size='1.3rem' />
+					</Avatar>
+				</ButtonBase>
+			</Box>
+
+			{/* header search */}
+			<Box sx={{ flexGrow: 1 }} />
+			<Box sx={{ flexGrow: 1 }} />
+
+			{/* notification & profile */}
+			<CProfile />
+		</>
 	);
-	//#endregion
 };
+
+Header.propTypes = {
+	handleLeftDrawerToggle: PropTypes.func,
+};
+
+export default Header;

@@ -4,8 +4,6 @@ import { Box, Typography } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
 
-import { FORM_BY_ID as FORM } from '_modules/class/mocks';
-
 import { Form } from '_modules/class/components';
 
 import { getSheetById } from '_api/sheets.api';
@@ -47,7 +45,7 @@ const ClassDetailPage = () => {
 				fontSize={20}
 				sx={{ backgroundColor: 'rgba(0 0 0 / 15%)' }}
 			>
-				{`${FORM.user.fullname} - Niên khóa ${FORM.user.std_code}`}
+				{`${data?.user?.fullname} - ${data?.user?.std_code}`}
 			</Typography>
 
 			<Box mt={1}>{data && <Form data={data} status={data?.status} />}</Box>

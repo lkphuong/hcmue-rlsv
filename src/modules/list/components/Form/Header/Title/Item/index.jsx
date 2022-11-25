@@ -38,7 +38,7 @@ const Item = memo(({ data }) => {
 		if (status === 4) {
 			return currentMark.personal_mark_level;
 		}
-		if (status < 3) {
+		if (status < 4) {
 			return currentMark.class_mark_level;
 		} else {
 			return currentMark.department_mark_level;

@@ -105,7 +105,7 @@ const Form = ({ data, status }) => {
 
 			dispatch(actions.renewMarks(payload));
 		}
-		if (status < 3) {
+		if (status < 4) {
 			const payload = itemsMark.map((e) => ({
 				item_id: Number(e.item.id),
 				department_mark_level: e.class_mark_level,
@@ -165,12 +165,14 @@ const Form = ({ data, status }) => {
 				</Grid>
 			</Grid>
 
-			<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
-				{headers.length > 0 &&
-					headers.map((e, i) => (
-						<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
-					))}
-			</Grid>
+			<DepartmentMarksContext.Provider value={{ status, itemsMark }}>
+				<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
+					{headers.length > 0 &&
+						headers.map((e, i) => (
+							<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
+						))}
+				</Grid>
+			</DepartmentMarksContext.Provider>
 
 			<Button variant='contained' onClick={handleUpdate}>
 				Cập nhật

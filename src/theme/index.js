@@ -25,6 +25,7 @@ const theme = createTheme({
 			styleOverrides: {
 				root: {
 					'& .MuiOutlinedInput-root': {
+						backgroundColor: 'white',
 						'& .MuiOutlinedInput-input': {
 							padding: '9px 14px',
 							"&[type='number']": {

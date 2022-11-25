@@ -28,15 +28,21 @@
 	},
 	"scripts": {
 		"start": "set PORT=3410 && craco start",
-		"build": "craco build",
+		"build": "craco build && compress-cra",
 		"test": "craco test",
-		"eject": "react-scripts eject"
+		"eject": "react-scripts eject",
+		"lint": "eslint --ext .jsx --ext .js src/",
+		"lint:fix": "eslint --fix --ext .jsx --ext .js src/"
 	},
 	"eslintConfig": {
 		"extends": [
 			"react-app",
 			"react-app/jest"
-		]
+		],
+		"rules": {
+			"react-hooks/exhaustive-deps": "off",
+			"react-hooks/rules-of-hooks": "off"
+		}
 	},
 	"browserslist": {
 		"production": [

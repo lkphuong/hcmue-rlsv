@@ -62,68 +62,79 @@ export const LoginPage = () => {
 
 	//#region Render
 	return (
-		<Box position='absolute' top='50%' left='50%' sx={{ transform: 'translate(-50% , -50%)' }}>
-			<Container maxWidth='xl'>
-				<Paper className='paper-form'>
-					<Stack direction='column'>
-						<Box align='center'>
-							<img src={logo} alt='' />
-						</Box>
-						<form onSubmit={handleSubmit(onSubmit)}>
-							<Stack direction='column'>
-								<Box my={1}>
-									<Controller
-										control={control}
-										name='username'
-										render={({
-											field: { onChange, onBlur, value, name, ref },
-											fieldState: { error },
-										}) => (
-											<CInput
-												fullWidth
-												placeholder='Nhập mssv...'
-												onChange={onChange}
-												onBlur={onBlur}
-												value={value}
-												name={name}
-												inputRef={ref}
-												error={!!error}
-												helperText={error?.message}
-											/>
-										)}
-									/>
-								</Box>
-								<Box my={1}>
-									<Controller
-										control={control}
-										name='password'
-										render={({
-											field: { onChange, onBlur, value, name, ref },
-											fieldState: { error },
-										}) => (
-											<CInput
-												fullWidth
-												isPassword
-												placeholder='Nhập mật khẩu...'
-												onChange={onChange}
-												onBlur={onBlur}
-												value={value}
-												name={name}
-												inputRef={ref}
-												error={!!error}
-												helperText={error?.message}
-											/>
-										)}
-									/>
-								</Box>
-								<Button type='submit' sx={{ my: 2, fontSize: 20 }}>
-									Đăng nhập
-								</Button>
-							</Stack>
-						</form>
-					</Stack>
-				</Paper>
-			</Container>
+		<Box className='login-background'>
+			<Box
+				position='absolute'
+				top='50%'
+				left='50%'
+				sx={{ transform: 'translate(-50% , -50%)' }}
+			>
+				<Container maxWidth='xl'>
+					<Paper className='paper-form'>
+						<Stack direction='column'>
+							<Box align='center'>
+								<img src={logo} alt='' />
+							</Box>
+							<form onSubmit={handleSubmit(onSubmit)}>
+								<Stack direction='column'>
+									<Box my={1}>
+										<Controller
+											control={control}
+											name='username'
+											render={({
+												field: { onChange, onBlur, value, name, ref },
+												fieldState: { error },
+											}) => (
+												<CInput
+													fullWidth
+													placeholder='Nhập mssv...'
+													onChange={onChange}
+													onBlur={onBlur}
+													value={value}
+													name={name}
+													inputRef={ref}
+													error={!!error}
+													helperText={error?.message}
+												/>
+											)}
+										/>
+									</Box>
+									<Box my={1}>
+										<Controller
+											control={control}
+											name='password'
+											render={({
+												field: { onChange, onBlur, value, name, ref },
+												fieldState: { error },
+											}) => (
+												<CInput
+													fullWidth
+													isPassword
+													placeholder='Nhập mật khẩu...'
+													onChange={onChange}
+													onBlur={onBlur}
+													value={value}
+													name={name}
+													inputRef={ref}
+													error={!!error}
+													helperText={error?.message}
+												/>
+											)}
+										/>
+									</Box>
+									<Button
+										variant='contained'
+										type='submit'
+										sx={{ m: 'auto', maxWidth: '150px', my: 2, fontSize: 16 }}
+									>
+										Đăng nhập
+									</Button>
+								</Stack>
+							</form>
+						</Stack>
+					</Paper>
+				</Container>
+			</Box>
 		</Box>
 	);
 	//#endregion

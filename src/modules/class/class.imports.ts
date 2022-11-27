@@ -8,6 +8,7 @@ import { AcademicYearModule } from '../academic-year/academic_year.module';
 import { Class, ClassSchema } from '../../schemas/class.schema';
 
 import { ClassService } from './services/class.service';
+import { ClassController } from './controllers/class.controller';
 
 export const modules = [
   SharedModule,
@@ -16,8 +17,6 @@ export const modules = [
   AcademicYearModule,
 ];
 
-export const controllers = [];
-
+export const controllers = [ClassController];
 export const providers = [ClassService];
-
 export const exporteds = [ClassService];

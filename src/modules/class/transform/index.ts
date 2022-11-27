@@ -1,9 +1,8 @@
 import { convertObjectId2String } from '../../../utils';
 
-import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import { AcademicYearClassesEntity } from '../../../entities/academic_year_classes.entity';
 
 import { Class } from '../../../schemas/class.schema';
-
 import { ClassService } from '../services/class.service';
 
 import { ClassResponse } from '../interfaces/class_response.interface';
@@ -16,6 +15,7 @@ export const generateData2Array = (classes: Class[] | null) => {
         id: convertObjectId2String(item._id),
         name: item.name,
       };
+
       payload.push(result);
     }
 
@@ -25,29 +25,28 @@ export const generateData2Array = (classes: Class[] | null) => {
   return null;
 };
 
-export const generateAcademicYearClass2Array = async (
+export const generateClasses2Array = async (
   department_id: string,
-  academic_year: AcademicYearEntity | null,
+  academic_year_classes: AcademicYearClassesEntity[] | null,
   class_service: ClassService,
 ) => {
-  if (
-    academic_year.academic_year_classes &&
-    academic_year.academic_year_classes.length > 0
-  ) {
+  if (academic_year_classes && academic_year_classes.length > 0) {
     const payload: ClassResponse[] = [];
-    const academic_year_classes = academic_year.academic_year_classes;
 
     for (const academic_year_class of academic_year_classes) {
+      //#region Get class by class_id
       const result = await class_service.getClassById(
         academic_year_class.class_id,
         department_id,
       );
+      //#endregion
 
       if (result) {
         const item: ClassResponse = {
           id: convertObjectId2String(result._id),
           name: result.name,
         };
+
         payload.push(item);
       }
     }

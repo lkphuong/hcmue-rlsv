@@ -1,12 +1,12 @@
 import { HttpStatus } from '@nestjs/common';
-import { isEmpty } from 'class-validator';
-
 import { Request } from 'express';
 
+import { isEmpty } from 'class-validator';
+
+import { ErrorMessage } from '../constants/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { VALIDATION_EXIT_CODE } from '../../../constants/enums/error-code.enum';
-import { ErrorMessage } from '../constants/errors.enum';
 
 export const validateDepartmentId = (id: string, req: Request) => {
   if (isEmpty(id)) {

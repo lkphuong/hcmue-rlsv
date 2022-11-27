@@ -17,13 +17,13 @@ import { JwtStrategy } from './strategy/jwt';
 
 import { User, UserSchema } from '../../schemas/user.schema';
 
-import { SessionEntity } from '../../entities/session.entity';
-import { RoleUserEntity } from '../../entities/role_users.entity';
 import { RoleEntity } from '../../entities/role.entity';
+import { RoleUsersEntity } from '../../entities/role_users.entity';
+import { SessionEntity } from '../../entities/session.entity';
 
 export const modules = [
   SharedModule,
-  TypeOrmModule.forFeature([RoleEntity, RoleUserEntity, SessionEntity]),
+  TypeOrmModule.forFeature([RoleEntity, RoleUsersEntity, SessionEntity]),
   MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
   JwtModule.registerAsync({
     imports: [SharedModule],

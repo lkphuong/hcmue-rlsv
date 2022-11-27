@@ -4,8 +4,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Model } from 'mongoose';
 import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
+import { RoleUsersEntity } from '../../../entities/role_users.entity';
 import { SessionEntity } from '../../../entities/session.entity';
-import { RoleUserEntity } from '../../../entities/role_users.entity';
 import { User, UserDocument } from '../../../schemas/user.schema';
 
 import { LogService } from '../../log/services/log.service';
@@ -16,11 +16,11 @@ import { Methods } from '../../../constants/enums/method.enum';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel(User.name) private readonly _userModel: Model<UserDocument>,
+    @InjectRepository(RoleUsersEntity)
+    private readonly _roleUserRepository: Repository<RoleUsersEntity>,
     @InjectRepository(SessionEntity)
     private readonly _sessionRepository: Repository<SessionEntity>,
-    @InjectRepository(RoleUserEntity)
-    private readonly _roleUserRepository: Repository<RoleUserEntity>,
+    @InjectModel(User.name) private readonly _userModel: Model<UserDocument>,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
@@ -30,12 +30,6 @@ export class AuthService {
       const conditions = this._sessionRepository
         .createQueryBuilder('session')
         .where('session.username = :username', { username })
-        // .andWhere(
-        //   new Brackets((qb) => {
-        //     qb.where('session.expired_time IS NULL');
-        //     qb.andWhere('session.logout_time IS NULL');
-        //   }),
-        // )
         .andWhere('session.active = :active', { active: true })
         .andWhere('session.deleted = :deleted', { deleted: false });
 
@@ -55,20 +49,19 @@ export class AuthService {
   async getUserByUsername(username: string): Promise<User | null> {
     try {
       const user = await this._userModel.findOne({ username: username });
-
       return user || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'AuthService.getUser()',
+        'AuthService.getUserByUsername()',
         e,
       );
       return null;
     }
   }
 
-  async getRoleUser(user_id: string): Promise<RoleUserEntity | null> {
+  async getRoleByUserId(user_id: string): Promise<RoleUsersEntity | null> {
     try {
       const conditions = await this._roleUserRepository
         .createQueryBuilder('role_user')
@@ -77,13 +70,12 @@ export class AuthService {
         .andWhere('role.deleted = :deleted', { deleted: false });
 
       const role = await conditions.getOne();
-
       return role;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'AuthService.getRoleUser()',
+        'AuthService.getRoleByUserId()',
         e,
       );
       return null;
@@ -104,7 +96,6 @@ export class AuthService {
         .andWhere('session.active = :active', { active: true });
 
       const session = await conditions.getOne();
-
       return session || null;
     } catch (e) {
       this._logger.writeLog(
@@ -123,12 +114,6 @@ export class AuthService {
       const conditions = this._sessionRepository
         .createQueryBuilder('session')
         .where('session.user_id = :user_id', { user_id })
-        // .andWhere(
-        //   new Brackets((qb) => {
-        //     qb.where('session.expired_time IS NULL');
-        //     qb.andWhere('session.logout_time IS NULL');
-        //   }),
-        // )
         .andWhere('session.active = :active', { active: true })
         .andWhere('session.deleted = :deleted', { deleted: false });
 
@@ -177,7 +162,6 @@ export class AuthService {
       session.deleted = false;
 
       session = await manager.save(session);
-
       return session || null;
     } catch (e) {
       console.log(e);

@@ -15,7 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { Request } from 'express';
 
-import { convertObjectId2String, returnObjects, sprintf } from 'src/utils';
+import { convertObjectId2String, returnObjects, sprintf } from '../../../utils';
 
 import {
   generateAccessToken,
@@ -24,38 +24,41 @@ import {
   validatePassword,
 } from '../utils';
 
-import { HttpNoneResponse } from 'src/interfaces/http-none-response.interface';
-import { ProfileResponse } from '../interfaces/auth-response.interface';
+import { LoginParamsDto } from '../dtos/login-params.dto';
+import { RenewalParamsDto } from '../dtos/renewal-params.dto';
+
 import { JwtPayload } from '../interfaces/payloads/jwt-payload.interface';
+
+import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { HttpNoneResponse } from '../../../interfaces/http-none-response.interface';
+
 import { LoginResponse } from '../interfaces/login-response.interface';
-import { HttpResponse } from 'src/interfaces/http-response.interface';
+import { ProfileResponse } from '../interfaces/auth-response.interface';
 
 import { AuthService } from '../services/auth.service';
 
-import { LogService } from 'src/modules/log/services/log.service';
-import { ConfigurationService } from 'src/modules/shared/services/configuration/configuration.service';
+import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
+import { LogService } from '../../log/services/log.service';
 
-import { HandlerException } from 'src/exceptions/HandlerException';
-import { UnauthorizedException } from '../exceptions/UnauthorizedException';
+import { ErrorMessage } from '../constants/errors.enum';
+
+import { HandlerException } from '../../../exceptions/HandlerException';
 import { InvalidTokenException } from '../exceptions/InvalidTokenException';
-import { UnknownException } from 'src/exceptions/UnknownException';
+import { UnauthorizedException } from '../exceptions/UnauthorizedException';
+import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { LogoutGuard } from '../guards/logout.guard';
 
-import { LoginParamsDto } from '../dtos/login-params.dto';
-import { RenewalParamsDto } from '../dtos/renewal-params.dto';
-
-import { Configuration } from 'src/modules/shared/constants/configuration.enum';
-import { ErrorMessage } from '../constants/errors.enum';
-import { Levels } from 'src/constants/enums/level.enum';
+import { Configuration } from '../../shared/constants/configuration.enum';
+import { Levels } from '../../../constants/enums/level.enum';
 
 import {
   AUTHENTICATION_EXIT_CODE,
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
   VALIDATION_EXIT_CODE,
-} from 'src/constants/enums/error-code.enum';
+} from '../../../constants/enums/error-code.enum';
 
 @Controller('auth')
 export class AuthController {
@@ -108,7 +111,7 @@ export class AuthController {
 
         if (isMatch) {
           //#region get role
-          const role_user = await this._authService.getRoleUser(
+          const role_user = await this._authService.getRoleByUserId(
             convertObjectId2String(result._id),
           );
 
@@ -326,7 +329,7 @@ export class AuthController {
           );
           if (user) {
             //#region get role
-            const role_user = await this._authService.getRoleUser(
+            const role_user = await this._authService.getRoleByUserId(
               convertObjectId2String(user._id),
             );
             //#endregion

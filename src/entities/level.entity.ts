@@ -1,8 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { SheetEntity } from './sheet.entity';
-
 import { RootEntity } from './root.entity';
+import { SheetEntity } from './sheet.entity';
 
 @Entity('levels')
 export class LevelEntity extends RootEntity {
@@ -21,14 +20,14 @@ export class LevelEntity extends RootEntity {
   @Column('int', {
     name: 'from_mark',
     nullable: true,
-    default: null,
+    default: 0,
   })
   from_mark: number;
 
   @Column('int', {
     name: 'to_mark',
     nullable: true,
-    default: null,
+    default: 0,
   })
   to_mark: number;
 

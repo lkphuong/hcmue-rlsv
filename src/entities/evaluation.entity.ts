@@ -5,9 +5,9 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+
 import { ItemEntity } from './item.entity';
 import { OptionEntity } from './option.entity';
-
 import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
 

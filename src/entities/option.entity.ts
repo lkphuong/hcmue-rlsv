@@ -7,9 +7,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RootEntity } from './root.entity';
-import { ItemEntity } from './item.entity';
 import { EvaluationEntity } from './evaluation.entity';
+import { FormEntity } from './form.entity';
+import { RootEntity } from './root.entity';
 
 @Entity('options')
 export class OptionEntity extends RootEntity {
@@ -18,14 +18,21 @@ export class OptionEntity extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => ItemEntity, (item) => item.options)
+  @ManyToOne(() => FormEntity, (form) => form.options)
   @JoinColumn([
     {
-      name: 'item_id',
+      name: 'form_id',
       referencedColumnName: 'id',
     },
   ])
-  item: ItemEntity;
+  form: FormEntity;
+
+  @Column('varchar', {
+    name: 'parent_ref',
+    nullable: false,
+    length: 50,
+  })
+  parent_ref: string;
 
   @Column('text', {
     name: 'content',
@@ -34,26 +41,11 @@ export class OptionEntity extends RootEntity {
   content: string;
 
   @Column('float', {
-    name: 'from_mark',
-    nullable: true,
-    default: null,
+    name: 'mark',
+    nullable: false,
+    default: 0,
   })
-  from_mark: number;
-
-  @Column('float', {
-    name: 'to_mark',
-    nullable: true,
-    default: null,
-  })
-  to_mark: number;
-
-  @Column('varchar', {
-    name: 'unit',
-    nullable: true,
-    length: 50,
-    default: null,
-  })
-  unit: string;
+  mark: number;
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.option)
   evaluations: EvaluationEntity[];

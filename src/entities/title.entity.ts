@@ -3,13 +3,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { HeaderEntity } from './header.entity';
+import { FormEntity } from './form.entity';
 import { RootEntity } from './root.entity';
-import { ItemEntity } from './item.entity';
 
 @Entity('titles')
 export class TitleEntity extends RootEntity {
@@ -18,21 +16,33 @@ export class TitleEntity extends RootEntity {
   })
   id: number;
 
-  @Column('text', {
-    name: 'name',
-    nullable: false,
-  })
-  name: string;
-
-  @ManyToOne(() => HeaderEntity, (header) => header.titles)
+  @ManyToOne(() => FormEntity, (form) => form.titles)
   @JoinColumn([
     {
-      name: 'header_id',
+      name: 'form_id',
       referencedColumnName: 'id',
     },
   ])
-  header: HeaderEntity;
+  form: FormEntity;
 
-  @OneToMany(() => ItemEntity, (item) => item.title)
-  items: ItemEntity[];
+  @Column('varchar', {
+    name: 'parent_ref',
+    nullable: false,
+    length: 50,
+  })
+  parent_ref: string;
+
+  @Column('varchar', {
+    name: 'ref',
+    nullable: false,
+    length: 50,
+  })
+  ref: string;
+
+  @Column('varchar', {
+    name: 'name',
+    nullable: false,
+    length: 500,
+  })
+  name: string;
 }

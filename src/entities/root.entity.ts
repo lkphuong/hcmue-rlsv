@@ -20,15 +20,15 @@ export class RootEntity extends BaseEntity {
   @Column({
     name: 'created_at',
     nullable: false,
-    default: () => 'getdate()',
+    default: () => 'CURRENT_TIMESTAMP',
   })
   created_at: Date;
 
   @Column('varchar', {
     name: 'updated_by',
     nullable: true,
-    default: 'system',
     length: 24,
+    onUpdate: 'system',
     select: false,
   })
   updated_by?: string;
@@ -36,7 +36,7 @@ export class RootEntity extends BaseEntity {
   @Column({
     name: 'updated_at',
     nullable: true,
-    default: () => 'getdate()',
+    onUpdate: 'CURRENT_TIMESTAMP',
     select: false,
   })
   updated_at?: Date;
@@ -44,7 +44,6 @@ export class RootEntity extends BaseEntity {
   @Column('varchar', {
     name: 'deleted_by',
     nullable: true,
-    default: 'system',
     length: 24,
     select: false,
   })
@@ -53,7 +52,6 @@ export class RootEntity extends BaseEntity {
   @Column({
     name: 'deleted_at',
     nullable: true,
-    default: () => 'getdate()',
     select: false,
   })
   deleted_at?: Date;

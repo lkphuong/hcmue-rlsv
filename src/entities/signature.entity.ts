@@ -17,9 +17,6 @@ export class SignatureEntity extends RootEntity {
   })
   name: string;
 
-  @OneToMany(
-    () => SheetSignatures,
-    (sheet_signature) => sheet_signature.signature,
-  )
-  sheet_signature: SheetSignatures[];
+  @OneToMany(() => SheetSignatures, (sheet) => sheet.signature)
+  sheets: SheetSignatures[];
 }

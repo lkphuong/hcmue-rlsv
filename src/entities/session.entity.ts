@@ -1,5 +1,4 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-
 import { RootEntity } from './root.entity';
 
 @Entity('sessions')

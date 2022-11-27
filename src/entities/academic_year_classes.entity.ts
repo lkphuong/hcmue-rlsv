@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RootEntity } from './root.entity';
 import { AcademicYearEntity } from './academic_year.entity';
+import { RootEntity } from './root.entity';
 
 @Entity('academic_year_classes')
 export class AcademicYearClassesEntity extends RootEntity {

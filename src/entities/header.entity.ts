@@ -3,12 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
 import { FormEntity } from './form.entity';
-import { TitleEntity } from './title.entity';
 import { RootEntity } from './root.entity';
 
 @Entity('headers')
@@ -27,12 +25,24 @@ export class HeaderEntity extends RootEntity {
   ])
   form: FormEntity;
 
-  @Column('text', {
+  @Column('varchar', {
+    name: 'ref',
+    nullable: false,
+    length: 50,
+  })
+  ref: string;
+
+  @Column('varchar', {
     name: 'name',
     nullable: false,
+    length: 500,
   })
   name: string;
 
-  @OneToMany(() => TitleEntity, (title) => title.header)
-  titles: TitleEntity[];
+  @Column('float', {
+    name: 'max_mark',
+    nullable: false,
+    default: 0,
+  })
+  max_mark: number;
 }

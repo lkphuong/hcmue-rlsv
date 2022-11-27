@@ -22,6 +22,15 @@ export class SheetEntity extends RootEntity {
   })
   id: number;
 
+  @ManyToOne(() => FormEntity, (form) => form.sheets)
+  @JoinColumn([
+    {
+      name: 'form_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  form: FormEntity;
+
   @Column('varchar', {
     name: 'department_id',
     nullable: false,
@@ -61,15 +70,6 @@ export class SheetEntity extends RootEntity {
   ])
   academic_year: AcademicYearEntity;
 
-  @ManyToOne(() => FormEntity, (form) => form.sheets)
-  @JoinColumn([
-    {
-      name: 'form_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  form: FormEntity;
-
   @Column('varchar', {
     name: 'k',
     nullable: false,
@@ -86,8 +86,10 @@ export class SheetEntity extends RootEntity {
   ])
   level: LevelEntity;
 
+  // 0. Chưa đánh giá, 1.Chờ lớp xét duyệt,2 Lớp quá hạn 3.Chờ khoa xét duyệt,
+  // 4. Khoa quá hạn, 5. Hoàn thành , default: 0
   @Column('tinyint', {
-    name: 'status', //0. Chưa đánh giá, 1.Chờ lớp xét duyệt,2 Lớp quá hạn 3.Chờ khoa xét duyệt, 4. Khoa quá hạn, 5. Hoàn thành , default: 0
+    name: 'status',
     nullable: false,
     default: 0,
   })
@@ -117,6 +119,6 @@ export class SheetEntity extends RootEntity {
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.sheet)
   evaluations: EvaluationEntity[];
 
-  @OneToMany(() => SheetSignatures, (sheet_signature) => sheet_signature.sheet)
-  sheet_signature: SheetSignatures[];
+  @OneToMany(() => SheetSignatures, (signature) => signature.sheet)
+  signatures: SheetSignatures[];
 }

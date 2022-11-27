@@ -7,10 +7,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RootEntity } from './root.entity';
-import { TitleEntity } from './title.entity';
-import { OptionEntity } from './option.entity';
 import { EvaluationEntity } from './evaluation.entity';
+import { FormEntity } from './form.entity';
+import { RootEntity } from './root.entity';
 
 @Entity('items')
 export class ItemEntity extends RootEntity {
@@ -19,19 +18,34 @@ export class ItemEntity extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => TitleEntity, (title) => title.items)
+  @ManyToOne(() => FormEntity, (form) => form.items)
   @JoinColumn([
     {
-      name: 'title_id',
+      name: 'form_id',
       referencedColumnName: 'id',
     },
   ])
-  title: TitleEntity;
+  form: FormEntity;
 
+  @Column('varchar', {
+    name: 'parent_ref',
+    nullable: false,
+    length: 50,
+  })
+  parent_ref: string;
+
+  @Column('varchar', {
+    name: 'ref',
+    nullable: false,
+    length: 50,
+  })
+  ref: string;
+
+  // 0. input, 1. checkbox, 2.single select, 3: multiple select
   @Column('tinyint', {
     name: 'control',
     nullable: true,
-    default: null,
+    default: 0,
   })
   control: number;
 
@@ -62,8 +76,8 @@ export class ItemEntity extends RootEntity {
   })
   to_mark: number;
 
+  // 0. single value, 1. range value, 2: per unit
   @Column('tinyint', {
-    //0 single number, 1 range value
     name: 'category',
     default: null,
     nullable: true,
@@ -74,7 +88,6 @@ export class ItemEntity extends RootEntity {
     name: 'unit',
     nullable: true,
     length: 50,
-    default: null,
   })
   unit: string;
 
@@ -84,9 +97,6 @@ export class ItemEntity extends RootEntity {
     default: true,
   })
   required?: boolean = false;
-
-  @OneToMany(() => OptionEntity, (option) => option.item)
-  options: OptionEntity[];
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.item)
   evaluations: EvaluationEntity[];

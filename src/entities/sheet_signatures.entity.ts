@@ -1,8 +1,8 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 import { RootEntity } from './root.entity';
-import { SignatureEntity } from './signature.entity';
 import { SheetEntity } from './sheet.entity';
+import { SignatureEntity } from './signature.entity';
 
 @Entity('sheet_signatures')
 export class SheetSignatures extends RootEntity {
@@ -11,7 +11,7 @@ export class SheetSignatures extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => SheetEntity, (sheet) => sheet.sheet_signature)
+  @ManyToOne(() => SheetEntity, (sheet) => sheet.signatures)
   @JoinColumn([
     {
       name: 'sheet_id',
@@ -20,7 +20,7 @@ export class SheetSignatures extends RootEntity {
   ])
   sheet: SheetEntity;
 
-  @ManyToOne(() => SignatureEntity, (signature) => signature.sheet_signature)
+  @ManyToOne(() => SignatureEntity, (signature) => signature.sheets)
   @JoinColumn([
     {
       name: 'signature_id',

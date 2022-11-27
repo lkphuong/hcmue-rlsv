@@ -5,12 +5,12 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { RoleEntity } from './role.entity';
 
+import { RoleEntity } from './role.entity';
 import { RootEntity } from './root.entity';
 
 @Entity('role_users')
-export class RoleUserEntity extends RootEntity {
+export class RoleUsersEntity extends RootEntity {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
   })
@@ -23,7 +23,7 @@ export class RoleUserEntity extends RootEntity {
   })
   user_id: string;
 
-  @ManyToOne(() => RoleEntity, (role) => role.role_user)
+  @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn([
     {
       name: 'role_id',

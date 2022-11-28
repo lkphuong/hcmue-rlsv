@@ -36,7 +36,7 @@ async function bootstrap() {
   // app.use(urlencoded({ extended: true, limit: '50mb' }));
   await app.listen(process.env.PORT_RUNTIME || 3000);
   console.log(
-    `Hcmue rlsv service is listenning on ${process.env.PORT_RUNTIME || 3000}.`,
+    `Hcmue service is listenning on ${process.env.PORT_RUNTIME || 3000}.`,
   );
 }
 

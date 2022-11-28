@@ -6,6 +6,7 @@ import authReducer from './slices/auth.slice';
 import markReducer from './slices/mark.slice';
 import optionsReducer from './slices/options.slice';
 import menuReducer from './slices/menu.slice';
+import formReducer from './slices/form.slice';
 
 export const store = configureStore({
 	reducer: {
@@ -13,6 +14,7 @@ export const store = configureStore({
 		mark: markReducer,
 		options: optionsReducer,
 		menu: menuReducer,
+		form: formReducer,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { useTheme } from '@mui/material/styles';
 import {
@@ -14,16 +15,24 @@ import { ExpandMore, ExpandLess, FiberManualRecord } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 
 import CNavItem from '../CNavItem';
+import { useMemo } from 'react';
 
 const CNavCollapse = ({ menu, level }) => {
 	const theme = useTheme();
+	const { pathname } = useLocation();
 
 	const [open, setOpen] = useState(false);
-	const [selected, setSelected] = useState(null);
+
+	const selected = useMemo(() => {
+		for (let e of menu.children) {
+			if (pathname.includes(e.path)) return true;
+		}
+
+		return false;
+	}, [menu]);
 
 	const handleClick = () => {
 		setOpen(!open);
-		setSelected(!selected ? menu.id : null);
 	};
 
 	// menu collapse & item
@@ -66,7 +75,7 @@ const CNavCollapse = ({ menu, level }) => {
 					py: level > 1 ? 1 : 1.25,
 					pl: `${level * 24}px`,
 				}}
-				selected={selected === menu.id}
+				selected={selected}
 				onClick={handleClick}
 			>
 				<ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
@@ -74,11 +83,7 @@ const CNavCollapse = ({ menu, level }) => {
 				</ListItemIcon>
 				<ListItemText
 					primary={
-						<Typography
-							variant={selected === menu.id ? 'h5' : 'body1'}
-							color='inherit'
-							sx={{ my: 'auto' }}
-						>
+						<Typography variant='h5' color='inherit' sx={{ my: 'auto' }}>
 							{menu.title}
 						</Typography>
 					}

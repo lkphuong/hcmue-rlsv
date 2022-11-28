@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ROUTES } from '_constants/routes';
 
 import { Box, Button, Typography } from '@mui/material';
 
@@ -6,6 +7,7 @@ import { CreateModal, Filter, ListForms } from '_modules/form/components';
 
 import { getForms } from '_api/form.api';
 import { isSuccess } from '_func/';
+import { Link } from 'react-router-dom';
 
 const ListFormsPage = () => {
 	//#region Data
@@ -52,9 +54,11 @@ const ListFormsPage = () => {
 				<Filter />
 
 				<Box textAlign='right' my={2}>
-					<Button variant='contained' onClick={toggleCreateModal}>
-						Thêm mới
-					</Button>
+					<Link to={ROUTES.FORM_CREATE}>
+						<Button variant='contained' onClick={toggleCreateModal}>
+							Thêm mới
+						</Button>
+					</Link>
 				</Box>
 
 				<ListForms data={[]} />

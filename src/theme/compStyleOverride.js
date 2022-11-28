@@ -16,6 +16,17 @@ export default function componentStyleOverrides(theme) {
 			styleOverrides: {
 				root: {
 					backgroundImage: 'none',
+					'&.paper-wrapper': {
+						backgroundColor: '#ffffff',
+						color: '#616161',
+						transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
+						boxShadow: 'none',
+						backgroundImage: 'none',
+						borderRadius: '12px',
+						overflow: 'hidden',
+						border: '1px solid',
+						borderColor: '#90caf975',
+					},
 				},
 				rounded: {
 					borderRadius: `12px`,
@@ -100,6 +111,9 @@ export default function componentStyleOverrides(theme) {
 			},
 		},
 		MuiOutlinedInput: {
+			defaultProps: {
+				autoComplete: 'off',
+			},
 			styleOverrides: {
 				root: {
 					background: bgColor,
@@ -180,6 +194,28 @@ export default function componentStyleOverrides(theme) {
 				tooltip: {
 					color: theme.paper,
 					background: theme.colors?.grey700,
+				},
+			},
+		},
+		MuiAutocomplete: {
+			styleOverrides: {
+				paper: {
+					marginTop: '0.2rem',
+					boxShadow: '0 0 10px 6px rgb(0 0 0 / 14%)',
+				},
+			},
+		},
+		MuiStepLabel: {
+			styleOverrides: {
+				label: {
+					fontWeight: 600,
+					'&.Mui-active': {
+						fontSize: '1rem',
+						fontWeight: 600,
+					},
+					'&.Mui-completed': {
+						fontWeight: 600,
+					},
 				},
 			},
 		},

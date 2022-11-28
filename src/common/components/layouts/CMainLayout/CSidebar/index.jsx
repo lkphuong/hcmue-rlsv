@@ -11,7 +11,7 @@ import PropTypes from 'prop-types';
 import CMenuList from './CMenuList';
 import CLogo from '../CLogo';
 
-const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
+const CSidebar = ({ drawerOpen, drawerToggle, window }) => {
 	const theme = useTheme();
 	const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -76,10 +76,10 @@ const Sidebar = ({ drawerOpen, drawerToggle, window }) => {
 	);
 };
 
-Sidebar.propTypes = {
+CSidebar.propTypes = {
 	drawerOpen: PropTypes.bool,
 	drawerToggle: PropTypes.func,
 	window: PropTypes.object,
 };
 
-export default Sidebar;
+export default CSidebar;

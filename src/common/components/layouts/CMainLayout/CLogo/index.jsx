@@ -4,7 +4,7 @@ import logo from '_assets/images/logo.png';
 
 const CLogo = () => (
 	<ButtonBase disableRipple>
-		<img src={logo} alt='' />
+		<img src={logo} alt='' style={{ maxHeight: '50px' }} />
 	</ButtonBase>
 );
 

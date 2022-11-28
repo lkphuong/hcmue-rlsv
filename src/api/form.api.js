@@ -10,6 +10,18 @@ export const createForm = async (body = {}) => {
 	return await post(FORMS.CREATE_FORM, body);
 };
 
+export const createHeader = async (body = {}) => {
+	return await post(FORMS.CREATE_HEADER, body);
+};
+
+export const createTitle = async (body = {}) => {
+	return await post(FORMS.CREATE_TITLE, body);
+};
+
+export const createItem = async (body = {}) => {
+	return await post(FORMS.CREATE_HEADER, body);
+};
+
 export const getHeadersByFormId = async (id) => {
 	return await get(`${FORMS.GET_HEADERS_BY_FORM_ID}/${id}`);
 };

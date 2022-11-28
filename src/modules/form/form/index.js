@@ -17,6 +17,15 @@ export const initialValues = {
 		end: null,
 	},
 };
+
+export const initialHeader = {
+	name: '',
+	max_mark: 0,
+};
+
+export const initialTitle = {
+	name: '',
+};
 //#endregion
 
 //#region Validation
@@ -68,5 +77,20 @@ export const validationSchema = yup.object({
 				.required('Vui lòng chọn thời gian khoa chấm điểm'),
 		})
 		.required('Vui lòng chọn thời gian khoa chấm điểm'),
+});
+
+export const validationHeader = yup.object({
+	name: yup.string('Vui lòng nhập tên danh mục.').required('Vui lòng nhập tên danh mục.'),
+	max_mark: yup
+		.number('Vui lòng nhập điểm tối đa')
+		.min(0, 'Điểm tối đa tối thiểu là 0.')
+		.typeError('Điểm tối đa phải là số.')
+		.required('Vui lòng nhập điểm tối đa'),
+});
+
+export const validationTitle = yup.object({
+	name: yup
+		.string('Vui lòng nhập tên tiêu chí đánh giá.')
+		.required('Vui lòng nhập tên tiêu chí đánh giá.'),
 });
 //#endregion

@@ -23,7 +23,7 @@ export const alert = {
 	},
 	loading: () => {
 		Swal.fire({
-			title: 'Đang cập nhật',
+			title: 'Đang xử lý',
 			allowEnterKey: false,
 			allowOutsideClick: false,
 			showConfirmButton: false,

@@ -1,32 +1,30 @@
 import React, { forwardRef, useState, useImperativeHandle } from 'react';
 
-import { shallowEqual, useSelector } from 'react-redux';
-
 import { Controller, useForm } from 'react-hook-form';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Grow, Modal, Paper, Stack, Typography } from '@mui/material';
 
-import { CAutocomplete, CRangePicker } from '_controls/';
-
 import { useResolver } from '_hooks/';
 
-import { initialValues, validationSchema } from '_modules/form/form';
+import { initialHeader, validationHeader } from '_modules/form/form';
 
-const CreateModal = forwardRef(({ props }, ref) => {
+import { CInput } from '_controls/';
+
+import { createHeader } from '_api/form.api';
+import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
+
+const CreateModal = forwardRef(({ refetch }, ref) => {
 	//#region Data
-	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
+	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
-	const resolver = useResolver(validationSchema);
+	const resolver = useResolver(validationHeader);
 
 	const [open, setOpen] = useState(false);
 
-	const {
-		control,
-		handleSubmit,
-		reset,
-		formState: { errors },
-	} = useForm({
-		defaultValues: initialValues,
+	const { control, handleSubmit, reset } = useForm({
+		defaultValues: initialHeader,
 		mode: 'all',
 		resolver,
 	});
@@ -40,12 +38,18 @@ const CreateModal = forwardRef(({ props }, ref) => {
 		setOpen(false);
 	};
 
-	const onSubmit = (values) => {
-		console.log(values);
-	};
+	const onSubmit = async (values) => {
+		const res = await createHeader({ form_id, ...values });
 
-	const handleChangeSelect = (CallbackUpdateForm) => (value) => {
-		CallbackUpdateForm(value?.id);
+		if (isSuccess(res)) {
+			refetch();
+
+			alert.success({ text: 'Lưu danh mục thành công.' });
+
+			handleClose();
+		} else {
+			alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+		}
 	};
 	//#endregion
 
@@ -65,146 +69,67 @@ const CreateModal = forwardRef(({ props }, ref) => {
 				<Paper className='center' sx={{ borderRadius: 3 }}>
 					<Box p={4} minWidth={330}>
 						<form onSubmit={handleSubmit(onSubmit)}>
-							<Stack direction='column'>
-								<Typography align='center' fontWeight={600} fontSize={18} mb={2.5}>
-									Cài đặt thời gian cho phiếu
-								</Typography>
-
-								<Box mb={2}>
-									<Typography mb={0.8} fontWeight={500}>
-										Học kỳ - Niên khóa
-									</Typography>
-									<Stack direction='row'>
-										<Box flex={1} mr={1}>
-											<Controller
-												control={control}
-												name='semester_id'
-												render={({
-													field: { onChange, onBlur, value, name, ref },
-													fieldState: { error },
-												}) => (
-													<CAutocomplete
-														onChange={handleChangeSelect(onChange)}
-														onBlur={onBlur}
-														value={value}
-														name={name}
-														inputRef={ref}
-														fullWidth
-														options={semesters}
-														display='name'
-														renderOption={(props, option) => (
-															<Box
-																{...props}
-																key={option.id}
-																component='li'
-															>
-																{option.name}
-															</Box>
-														)}
-														error={!!error}
-														helperText={error?.message}
-													/>
-												)}
-											/>
-										</Box>
-										<Box flex={1}>
-											<Controller
-												control={control}
-												name='academic_id'
-												render={({
-													field: { onChange, onBlur, value, name, ref },
-													fieldState: { error },
-												}) => (
-													<CAutocomplete
-														onChange={handleChangeSelect(onChange)}
-														onBlur={onBlur}
-														value={value}
-														name={name}
-														inputRef={ref}
-														fullWidth
-														options={academic_years}
-														display='name'
-														renderOption={(props, option) => (
-															<Box
-																{...props}
-																key={option.id}
-																component='li'
-															>
-																{option.name}
-															</Box>
-														)}
-														error={!!error}
-														helperText={error?.message}
-													/>
-												)}
-											/>
-										</Box>
-									</Stack>
-								</Box>
-
-								<Box mb={2}>
-									<Typography mb={0.8} fontWeight={500}>
-										Thời hạn sinh viên chấm
-									</Typography>
+							<Stack>
+								<Stack
+									direction='row'
+									alignItems='center'
+									justifyContent='space-between'
+									mb={2}
+								>
+									<Typography mr={1.5}>Danh mục</Typography>
 									<Controller
 										control={control}
-										name='student'
+										name='name'
 										render={({
-											field: { onChange, value },
+											field: { name, onBlur, onChange, ref, value },
 											fieldState: { error },
 										}) => (
-											<CRangePicker
+											<CInput
+												name={name}
+												inputRef={ref}
+												onBlur={onBlur}
 												onChange={onChange}
-												dateRange={value}
-												error={!!errors['student.start']}
-												helperText={errors['student.start']?.message}
+												value={value}
+												error={!!error}
+												helperText={error?.message}
 											/>
 										)}
 									/>
-								</Box>
-
-								<Box mb={2}>
-									<Typography mb={0.8} fontWeight={500}>
-										Thời hạn lớp chấm
-									</Typography>
+								</Stack>
+								<Stack
+									direction='row'
+									alignItems='center'
+									justifyContent='space-between'
+									mb={2}
+								>
+									<Typography mr={1.5}>Điểm tối đa</Typography>
 									<Controller
 										control={control}
-										name='classes'
-										render={({ field: { onChange, value } }) => (
-											<CRangePicker
+										name='max_mark'
+										render={({
+											field: { name, onBlur, onChange, ref, value },
+											fieldState: { error },
+										}) => (
+											<CInput
+												type='number'
+												name={name}
+												inputRef={ref}
+												onBlur={onBlur}
 												onChange={onChange}
-												dateRange={value}
-												error={!!errors['classes.start']}
-												helperText={errors['classes.start']?.message}
+												value={value}
+												error={!!error}
+												helperText={error?.message}
 											/>
 										)}
 									/>
-								</Box>
-
-								<Box mb={2}>
-									<Typography mb={0.8} fontWeight={500}>
-										Thời hạn khoa chấm
-									</Typography>
-									<Controller
-										control={control}
-										name='department'
-										render={({ field: { onChange, value } }) => (
-											<CRangePicker
-												onChange={onChange}
-												dateRange={value}
-												error={!!errors['department.start']}
-												helperText={errors['department.start']?.message}
-											/>
-										)}
-									/>
-								</Box>
+								</Stack>
 
 								<Button
-									sx={{ maxWidth: 100, margin: 'auto' }}
+									sx={{ maxWidth: 150, margin: 'auto' }}
 									type='submit'
 									variant='contained'
 								>
-									Tạo phiếu
+									Lưu danh mục
 								</Button>
 							</Stack>
 						</form>

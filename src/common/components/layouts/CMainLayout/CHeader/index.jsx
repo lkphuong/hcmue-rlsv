@@ -22,7 +22,11 @@ const Header = ({ handleLeftDrawerToggle }) => {
 					},
 				}}
 			>
-				<Box component='span' sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}>
+				<Box
+					textAlign='center'
+					component='span'
+					sx={{ display: { xs: 'none', md: 'block' }, flexGrow: 1 }}
+				>
 					<CLogo />
 				</Box>
 				<ButtonBase sx={{ borderRadius: '12px', overflow: 'hidden' }}>

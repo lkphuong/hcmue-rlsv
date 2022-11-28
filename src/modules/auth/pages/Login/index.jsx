@@ -55,7 +55,7 @@ export const LoginPage = () => {
 
 			alert.success({ title: 'Đăng nhập thành công!' });
 		} else {
-			alert.fail({ title: 'Đăng nhập không thành công!' });
+			alert.fail({ text: res?.message || 'Đăng nhập không thành công!' });
 		}
 	};
 	//#endregion

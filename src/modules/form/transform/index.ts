@@ -157,6 +157,7 @@ export const generateFormsArray = async (forms: FormEntity[] | null) => {
           start: form.department_start,
           end: form.department_end,
         },
+        status: form.status,
       };
 
       payload.push(item);
@@ -192,6 +193,7 @@ export const generateFormObject = (form: FormEntity | null) => {
         start: form.department_start,
         end: form.department_end,
       },
+      status: form.status,
     };
 
     return payload;

@@ -19,11 +19,14 @@ export class TitleDto {
 
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng chọn  tiêu chí đánh giá].'),
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [hạng mục đánh giá].'),
   })
   @MinValidator(0, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị  tiêu chí] tối thiểu bằng 0.'),
+      generateValidationMessage(
+        arg,
+        'Giá trị [hạng mục đánh giá] tối thiểu bằng 0.',
+      ),
   })
   header_id: number;
 

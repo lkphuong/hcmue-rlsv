@@ -9,7 +9,9 @@ import {
 
 import { EvaluationEntity } from './evaluation.entity';
 import { FormEntity } from './form.entity';
+import { OptionEntity } from './option.entity';
 import { RootEntity } from './root.entity';
+import { TitleEntity } from './title.entity';
 
 @Entity('items')
 export class ItemEntity extends RootEntity {
@@ -100,4 +102,8 @@ export class ItemEntity extends RootEntity {
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.item)
   evaluations: EvaluationEntity[];
+
+  options: OptionEntity[] | null;
+
+  title: TitleEntity | null;
 }

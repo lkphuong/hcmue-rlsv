@@ -4,7 +4,7 @@ import { generateValidationMessage } from '../../../utils';
 
 import { MinValidator } from '../../../validators/min.validator';
 
-export class MultiApproveDto {
+export class ApproveAllDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [vai trò].'),

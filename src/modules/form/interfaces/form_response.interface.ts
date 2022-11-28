@@ -2,19 +2,17 @@ export interface BaseResponse {
   id: number;
   name: string;
 }
+
+export interface HeaderResponse extends BaseResponse {
+  max_mark: number;
+}
+
 export interface TimeResponse {
   start: Date;
   end: Date;
 }
 
-export interface OptionResponse {
-  content: string;
-  from_mark: number;
-  to_mark: number;
-  unit: string;
-}
-
-export interface FormInfoResponse {
+export interface FormResponse {
   id: number;
   academic: BaseResponse;
   semester: BaseResponse;
@@ -33,12 +31,11 @@ export interface ItemResponse {
   category: number;
   unit: string;
   required: boolean;
-  options?: OptionResponse[];
+  options?: OptionResponse[] | null;
 }
 
 export interface OptionResponse {
+  id: number;
   content: string;
-  from_mark: number;
-  to_mark: number;
-  unit: string;
+  mark: number;
 }

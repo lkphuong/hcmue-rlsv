@@ -1,41 +1,73 @@
+import { HttpStatus } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
+
 import { returnObjects } from '../../../utils';
 
-import { SheetEntity } from '../../../entities/sheet.entity';
-import { ItemEntity } from '../../../entities/item.entity';
+import { AcademicYearClassesEntity } from '../../../entities/academic_year_classes.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { ItemEntity } from '../../../entities/item.entity';
+import { SheetEntity } from '../../../entities/sheet.entity';
 
-import { UserService } from '../../user/services/user.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
-
-import { MultiApproveResponse } from '../interfaces/sheet_response.interface';
+import { UserService } from '../../user/services/user.service';
 
 import {
+  ApproveAllResponse,
+  BaseResponse,
+} from '../interfaces/sheet_response.interface';
+
+import {
+  generateClasses2Array,
+  generateClassSheets,
   generateData2Object,
-  generateDetailTile2Object,
-  generateEvaluation2Array,
-  generateSheets2Class,
-  generateSheets2SheetUsuer,
+  generateEvaluationsArray,
+  generateItemsArray,
+  generateUserSheets,
 } from '../transform/index';
 
-export const generateResponseSheetUser = (
+import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
+
+import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+
+export const generateClassesResponse = async (
+  department_id: string,
+  data: AcademicYearClassesEntity[] | null,
+  class_service: ClassService,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', data);
+
+  const classes = await generateClasses2Array(
+    department_id,
+    data,
+    class_service,
+  );
+
+  // Returns object
+  return returnObjects<BaseResponse>(classes);
+};
+
+export const generateUserSheetsResponse = (
   sheets: SheetEntity[],
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
 
-  // Transform SheetEntity class to
-  const payload = generateSheets2SheetUsuer(sheets);
+  // Transform SheetEntity class to UserSheetsResponse
+  const payload = generateUserSheets(sheets);
 
   // Returns data
   return returnObjects(payload);
 };
 
-export const generateResponseSheetClass = async (
+export const generateClassSheetsResponse = async (
   input: string,
   sheets: SheetEntity[],
   user_service: UserService,
@@ -45,14 +77,24 @@ export const generateResponseSheetClass = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', sheets);
 
-  // Transform SheetEntity class to
-  const payload = await generateSheets2Class(sheets, user_service, input);
+  // Transform SheetEntity to ClassSheetsResponse
+  const payload = await generateClassSheets(sheets, user_service, input);
 
   // Returns data
   return returnObjects(payload);
 };
 
-export const generateUpdateSuccessResponse = async (
+export const generateFailedResponse = (req: Request, message?: string) => {
+  return new HandlerException(
+    SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+    req.method,
+    req.url,
+    message ?? ErrorMessage.OPERATOR_SHEET_ERROR,
+    HttpStatus.EXPECTATION_FAILED,
+  );
+};
+
+export const generateSuccessResponse = async (
   sheet: SheetEntity,
   class_service: ClassService,
   department_service: DepartmentService,
@@ -67,22 +109,14 @@ export const generateUpdateSuccessResponse = async (
   // Transform SheetEntity class to SheetResponse class
   const payload = await generateData2Object(
     sheet,
-    department_service,
     class_service,
-    user_service,
+    department_service,
     k_service,
+    user_service,
   );
 
-  if (payload) {
-    // Commit transaction
-    if (query_runner) await query_runner.commitTransaction();
-  } else {
-    // Rollback transaction
-    await query_runner.rollbackTransaction();
-
-    // Release transaction
-    await query_runner.release();
-  }
+  // Commit transaction
+  if (query_runner) await query_runner.commitTransaction();
 
   return {
     data: payload,
@@ -92,18 +126,19 @@ export const generateUpdateSuccessResponse = async (
   };
 };
 
-export const generateMultiApproveSuccessResponse = (
+export const generateApproveAllResponse = (
   sheet_ids: number[],
   success: boolean,
 ) => {
-  const payload: MultiApproveResponse = {
+  const payload: ApproveAllResponse = {
     sheet_ids: sheet_ids,
     success: success,
   };
-  return returnObjects(payload);
+
+  return returnObjects<ApproveAllResponse>(payload);
 };
 
-export const generateDetailSheet = async (
+export const generateSheet = async (
   sheet: SheetEntity,
   department_service: DepartmentService,
   class_service: ClassService,
@@ -117,24 +152,21 @@ export const generateDetailSheet = async (
 
   const payload = await generateData2Object(
     sheet,
-    department_service,
     class_service,
-    user_service,
+    department_service,
     k_service,
+    user_service,
   );
 
   return returnObjects(payload);
 };
 
-export const generateDataTitleResponse = (
-  items: ItemEntity[],
-  req: Request,
-) => {
+export const generateItemsResponse = (items: ItemEntity[], req: Request) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', items);
 
-  const payload = generateDetailTile2Object(items);
+  const payload = generateItemsArray(items);
 
   return {
     data: payload,
@@ -144,7 +176,7 @@ export const generateDataTitleResponse = (
   };
 };
 
-export const generateDataEvaluationResponse = (
+export const generateEvaluationsResponse = (
   evaluations: EvaluationEntity[],
   req: Request,
 ) => {
@@ -152,7 +184,7 @@ export const generateDataEvaluationResponse = (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', evaluations);
 
-  const payload = generateEvaluation2Array(evaluations);
+  const payload = generateEvaluationsArray(evaluations);
 
   return {
     data: payload,

@@ -26,7 +26,6 @@ export class HeaderService {
         .andWhere('header.deleted = :deleted', { deleted: false });
 
       const headers = await conditions.getMany();
-
       return headers || null;
     } catch (e) {
       this._logger.writeLog(
@@ -47,7 +46,6 @@ export class HeaderService {
         .andWhere('header.deleted = :deleted', { deleted: false });
 
       const header = await conditions.getOne();
-
       return header || null;
     } catch (e) {
       this._logger.writeLog(
@@ -70,7 +68,6 @@ export class HeaderService {
       }
 
       header = await manager.save(header);
-
       return header || null;
     } catch (e) {
       this._logger.writeLog(
@@ -93,7 +90,6 @@ export class HeaderService {
       }
 
       header = await manager.save(header);
-
       return header || null;
     } catch (e) {
       this._logger.writeLog(

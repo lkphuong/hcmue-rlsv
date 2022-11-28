@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { convertString2ObjectId } from '../../../utils';
+
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
 
 import { UserDocument, User } from '../../../schemas/user.schema';
-
-import { convertString2ObjectId } from 'src/utils';
 
 @Injectable()
 export class UserService {

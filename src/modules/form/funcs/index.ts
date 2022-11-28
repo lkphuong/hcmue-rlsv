@@ -1,100 +1,106 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { sprintf } from '../../../utils';
+import { randomUUID } from 'crypto';
 
 import {
   generateFailedResponse,
-  generateResponseForm,
-  generateResponseHeader,
-  generateResponseItem,
-  generateResponseTitle,
+  generateFormResponse,
+  generateHeaderResponse,
+  generateItemResponse,
+  generateTitleResponse,
 } from '../utils';
 
 import {
   valiadteTitle,
   validateAcademicYear,
+  validateForm,
   validateHeader,
   validateSemester,
   validateTime,
 } from '../validations';
 
-import { HeaderEntity } from '../../../entities/header.entity';
+import { HeaderDto } from '../dtos/header.dto';
+import { FormDto } from '../dtos/form.dto';
+import { TitleDto } from '../dtos/title.dto';
+import { ItemDto, OptionDto } from '../dtos/item.dto';
+
 import { FormEntity } from '../../../entities/form.entity';
-import { TitleEntity } from '../../../entities/title.entity';
+import { HeaderEntity } from '../../../entities/header.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { OptionEntity } from '../../../entities/option.entity';
+import { TitleEntity } from '../../../entities/title.entity';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import {
   BaseResponse,
-  FormInfoResponse,
+  FormResponse,
   ItemResponse,
 } from '../interfaces/form_response.interface';
 
-import { HeaderService } from '../../header/services/header.service';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
-import { SemesterService } from '../../semester/services/semester.service';
-import { TitleService } from '../../title/services/title.service';
+import { FormService } from '../services/form.service';
+import { HeaderService } from '../../header/services/header.service';
 import { ItemService } from '../../item/services/item.service';
 import { OptionService } from '../../option/services/option.service';
-import { FormService } from '../services/form.service';
+import { SemesterService } from '../../semester/services/semester.service';
+import { TitleService } from '../../title/services/title.service';
 
-import { HeaderDto } from '../dtos/header.dto';
-import { FormDto } from '../dtos/form.dto';
-import { TitleDto } from '../dtos/title.dto';
-import { ItemDto } from '../dtos/item.dto';
+import { FormStatus } from '../constants/enums/statuses.enum';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
-import { UnknownException } from '../../../exceptions/UnknownException';
 
-import {
-  DATABASE_EXIT_CODE,
-  SERVER_EXIT_CODE,
-} from '../../../constants/enums/error-code.enum';
-import { ErrorMessage } from '../constants/errors.enum';
+import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const createForm = async (
   user_id: string,
   params: FormDto,
   academic_service: AcademicYearService,
+  form_service: FormService,
   semester_service: SemesterService,
-  data_source: DataSource,
   req: Request,
 ) => {
+  //#region Get params
   const { academic_id, classes, department, semester_id, student } = params;
+  //#endregion
 
-  //#region Validation time
+  //#region Validation
+  //#region Validate student times
   let valid = validateTime(student.start, student.end, req);
-  if (valid instanceof HttpException) throw valid;
+  if (valid instanceof HttpException) return valid;
+  //#endregion
 
+  //#region Validate class times
   valid = validateTime(classes.start, classes.end, req);
-  if (valid instanceof HttpException) throw valid;
+  if (valid instanceof HttpException) return valid;
+  //#endregion
 
+  //#region Validate department times
   valid = validateTime(department.start, department.end, req);
-  if (valid instanceof HttpException) throw valid;
+  if (valid instanceof HttpException) return valid;
+  //#endregion
 
+  //#region Validate academic year
   const academic = await validateAcademicYear(
     academic_id,
     academic_service,
     req,
   );
-  if (academic instanceof HttpException) throw academic;
 
-  const semester = await validateSemester(semester_id, semester_service, req);
-  if (semester instanceof HttpException) throw semester;
+  if (academic instanceof HttpException) return academic;
   //#endregion
 
-  // Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
+  //#region Validate semester
+  const semester = await validateSemester(semester_id, semester_service, req);
+  if (semester instanceof HttpException) return semester;
+  //#endregion
+  //#endregion
 
-  await query_runner.connect();
   try {
-    // Start transaction
-    await query_runner.startTransaction();
-
-    const form = new FormEntity();
+    //#region Create form
+    let form = new FormEntity();
     form.academic_year = academic;
     form.semester = semester;
     form.student_start = new Date(student.start);
@@ -103,16 +109,21 @@ export const createForm = async (
     form.class_end = new Date(classes.end);
     form.department_start = new Date(department.start);
     form.department_end = new Date(department.end);
-    form.created_at = new Date();
+    form.status = FormStatus.DRAFTED;
+
     form.created_by = user_id;
+    form.created_at = new Date();
+    //#endregion
 
-    const result = await query_runner.manager.save(form);
-
-    return await generateResponseForm(result, query_runner, req);
+    //#region Generate response
+    form = await form_service.add(form);
+    if (form) {
+      return await generateFormResponse(form, null, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_FORM_ERROR);
+    }
+    //#endregion
   } catch (err) {
-    // Rollback transaction
-    await query_runner.rollbackTransaction();
-
     console.log('--------------------------------------------------------');
     console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
@@ -126,73 +137,49 @@ export const createForm = async (
       );
       //#endregion
     }
-  } finally {
-    // Release transaction
-    await query_runner.release();
   }
 };
 
 export const createHeader = async (
   user_id: string,
   params: HeaderDto,
-  header_service: HeaderService,
   form_service: FormService,
-  data_source: DataSource,
+  header_service: HeaderService,
   req: Request,
 ) => {
   //#region Get params
-  const { form_id, name } = params;
+  const { form_id, name, max_mark } = params;
   //#endregion
 
-  //Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
-
-  await query_runner.connect();
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
+  //#endregion
 
   try {
-    // Start transaction
-    await query_runner.startTransaction();
-    //#region Validate form_id
-    const form = await form_service.getFormById(form_id);
-    if (form) {
-      //#region add data header
-      const header = new HeaderEntity();
-      header.form = form;
-      header.name = name;
-      header.created_by = user_id;
-      header.created_at = new Date();
-      header.updated_by = user_id;
-      header.updated_at = new Date();
-      header.active = true;
-      header.deleted = false;
-      //#endregion
+    //#region Create header
+    let header = new HeaderEntity();
+    header.form = form;
+    header.ref = randomUUID();
+    header.name = name;
+    header.max_mark = max_mark;
 
-      //#region Update header
-      const result = await header_service.add(header, query_runner.manager);
-      if (result) {
-        return await generateResponseHeader(header, query_runner, req);
-      } else {
-        throw generateFailedResponse(req, ErrorMessage.OPERATOR_HEADERS_ERROR);
-      }
-      //#endregion
+    header.created_by = user_id;
+    header.created_at = new Date();
+    //#endregion
+
+    //#region Generate response
+    header = await header_service.add(header);
+    if (header) {
+      return await generateHeaderResponse(header, null, req);
     } else {
-      //#region Throw exception
-      throw new UnknownException(
-        form_id,
-        DATABASE_EXIT_CODE.UNKNOW_VALUE,
-        req.method,
-        req.url,
-        sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, form_id),
-      );
-      //#endregion
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_HEADERS_ERROR);
     }
     //#endregion
     //#endregion
   } catch (err) {
-    console.log(err);
-    // Rollback transaction
-    await query_runner.rollbackTransaction();
-
     console.log('--------------------------------------------------------');
     console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
@@ -204,51 +191,54 @@ export const createHeader = async (
         req.url,
       );
     }
-  } finally {
-    // Release transaction
-    await query_runner.release();
   }
 };
 
 export const createTitle = async (
   user_id: string,
   param: TitleDto,
+  form_service: FormService,
   header_service: HeaderService,
   title_service: TitleService,
-  data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<BaseResponse> | HttpException> => {
-  const { header_id, name } = param;
-
-  //#region Validation
-  const header = await validateHeader(header_id, header_service, req);
-  if (header instanceof HttpException) throw header;
+  //#region Get params
+  const { form_id, header_id, name } = param;
   //#endregion
 
-  // Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
 
-  await query_runner.connect();
+  //#region Validate header
+  const header = await validateHeader(header_id, header_service, req);
+  if (header instanceof HttpException) return header;
+  //#endregion
+  //#endregion
+
   try {
-    // Start transaction
-    await query_runner.startTransaction();
-
-    const title = new TitleEntity();
-    title.header = header;
+    //#region Create title
+    let title = new TitleEntity();
+    title.form = form;
+    title.parent_ref = header.ref;
+    title.ref = randomUUID();
     title.name = name;
+
     title.created_at = new Date();
     title.created_by = user_id;
+    //#endregion
 
-    const result = await title_service.add(title, query_runner.manager);
-    if (result) {
-      return await generateResponseTitle(title, query_runner, req);
+    //#region Generate response
+    title = await title_service.add(title);
+    if (title) {
+      return await generateTitleResponse(title, null, req);
     } else {
       throw generateFailedResponse(req, ErrorMessage.OPERATOR_TITLE_ERROR);
     }
+    //#endregion
   } catch (err) {
-    // Rollback transaction
-    await query_runner.rollbackTransaction();
-
     console.log('--------------------------------------------------------');
     console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
@@ -262,41 +252,48 @@ export const createTitle = async (
       );
       //#endregion
     }
-  } finally {
-    // Release transaction
-    await query_runner.release();
   }
 };
 
 export const createItem = async (
   user_id: string,
   params: ItemDto,
-  title_service: TitleService,
-  option_service: OptionService,
+  form_service: FormService,
   item_serviec: ItemService,
+  option_service: OptionService,
+  title_service: TitleService,
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<ItemResponse> | HttpException> => {
-  const { title_id } = params;
+  //#region Get params
+  const { form_id, title_id } = params;
+  //#endregion
 
-  //#region Validate Title
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate title
   const title = await valiadteTitle(title_id, title_service, req);
-
-  if (title instanceof HttpException) throw title;
+  if (title instanceof HttpException) return title;
+  //#endregion
   //#endregion
 
   // Make the QueryRunner
   const query_runner = data_source.createQueryRunner();
-
   await query_runner.connect();
+
   try {
     // Start transaction
     await query_runner.startTransaction();
 
-    //#region Create Item
-    let item = await generateCreateItem(
+    //#region Create item
+    const item = await generateCreateItem(
       user_id,
       params,
+      form,
       title,
       item_serviec,
       query_runner,
@@ -304,36 +301,26 @@ export const createItem = async (
     //#endregion
 
     if (item) {
-      if (params.options && params.options.length > 0) {
-        const option = await createItemOption(
+      //#region Create options
+      const options = params.options;
+      if (options && options.length > 0) {
+        const results = await createItemOptions(
           user_id,
-          params,
+          options,
+          form,
           item,
           option_service,
           query_runner,
         );
-        if (option) item.options = option;
-        else {
+
+        if (!results) {
           throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
         }
       }
-
-      //#region Update Item relation
-      item = await query_runner.manager.save(item);
-      if (!item) {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_ITEM_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-        //#endregion
-      }
+      //#endregion
 
       //#region Generate response
-      return await generateResponseItem(item, query_runner, req);
+      return await generateItemResponse(item, query_runner, req);
       //#endregion
     } else {
       throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
@@ -365,174 +352,136 @@ export const updateForm = async (
   form_id: number,
   user_id: string,
   params: FormDto,
-  form_service: FormService,
   academic_service: AcademicYearService,
+  form_service: FormService,
   semester_service: SemesterService,
-  data_source: DataSource,
   req: Request,
-): Promise<HttpResponse<FormInfoResponse> | HttpException> => {
-  let form = await form_service.getFormById(form_id);
-  if (form) {
-    const { academic_id, classes, department, semester_id, student } = params;
+): Promise<HttpResponse<FormResponse> | HttpException> => {
+  //#region Get params
+  const { academic_id, classes, department, semester_id, student } = params;
+  //#endregion
 
-    //#region Validation time
-    let valid = validateTime(student.start, student.end, req);
-    if (valid instanceof HttpException) throw valid;
+  //#region Validation
+  //#region Validate form
+  let form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
 
-    valid = validateTime(classes.start, classes.end, req);
-    if (valid instanceof HttpException) throw valid;
+  //#region Validate student times
+  let valid = validateTime(student.start, student.end, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
 
-    valid = validateTime(department.start, department.end, req);
-    if (valid instanceof HttpException) throw valid;
+  //#region Validate class times
+  valid = validateTime(classes.start, classes.end, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
 
-    const academic = await validateAcademicYear(
-      academic_id,
-      academic_service,
-      req,
-    );
-    if (academic instanceof HttpException) throw academic;
+  //#region Validate department times
+  valid = validateTime(department.start, department.end, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
 
-    const semester = await validateSemester(semester_id, semester_service, req);
-    if (semester instanceof HttpException) throw semester;
+  //#region Validate academic year
+  const academic = await validateAcademicYear(
+    academic_id,
+    academic_service,
+    req,
+  );
+
+  if (academic instanceof HttpException) return academic;
+  //#endregion
+
+  //#region Validate semester
+  const semester = await validateSemester(semester_id, semester_service, req);
+  if (semester instanceof HttpException) return semester;
+  //#endregion
+  //#endregion
+
+  try {
+    //#region Update form
+    form.academic_year = academic;
+    form.semester = semester;
+    form.student_start = new Date(student.start);
+    form.student_end = new Date(student.end);
+    form.class_start = new Date(classes.start);
+    form.class_end = new Date(classes.end);
+    form.department_start = new Date(department.start);
+    form.department_end = new Date(department.end);
+    form.status = FormStatus.DRAFTED;
+
+    form.updated_by = user_id;
+    form.updated_at = new Date();
     //#endregion
 
-    // Make the QueryRunner
-    const query_runner = data_source.createQueryRunner();
-
-    await query_runner.connect();
-    try {
-      // Start transaction
-      await query_runner.startTransaction();
-
-      form.academic_year = academic;
-      form.semester = semester;
-      form.student_start = new Date(student.start);
-      form.student_end = new Date(student.end);
-      form.class_start = new Date(classes.start);
-      form.class_end = new Date(classes.end);
-      form.department_start = new Date(department.start);
-      form.department_end = new Date(department.end);
-      form.created_at = new Date();
-      form.created_by = user_id;
-
-      form = await form_service.update(form, query_runner.manager);
-
-      if (form) {
-        return await generateResponseForm(form, query_runner, req);
-      } else {
-        throw generateFailedResponse(req, ErrorMessage.OPERATOR_FORM_ERROR);
-      }
-    } catch (err) {
-      // Rollback transaction
-      await query_runner.rollbackTransaction();
-
-      console.log('--------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) return err;
-      else {
-        //#region throw HandlerException
-        return new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-        //#endregion
-      }
-    } finally {
-      // Release transaction
-      await query_runner.release();
+    //#region Generate response
+    form = await form_service.update(form);
+    if (form) {
+      return await generateFormResponse(form, null, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_FORM_ERROR);
     }
-  } else {
-    //#region throw HandlerException
-    return new UnknownException(
-      form_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, form_id),
-    );
     //#endregion
+  } catch (err) {
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
   }
 };
 
 export const updateHeader = async (
-  id: number,
+  header_id: number,
   user_id: string,
   params: HeaderDto,
-  header_service: HeaderService,
   form_service: FormService,
-  data_source: DataSource,
+  header_service: HeaderService,
   req: Request,
 ) => {
   //#region Get params
-  const { form_id, name } = params;
+  const { form_id, name, max_mark } = params;
   //#endregion
 
-  //Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
 
-  // Establish real database connection
-  await query_runner.connect();
+  //#region Validate header
+  let header = await validateHeader(header_id, header_service, req);
+  if (header instanceof HttpException) return header;
+  //#endregion
+  //#endregion
 
-  let header: HeaderEntity | HttpException | null = null;
   try {
-    // Start transaction
-    await query_runner.startTransaction();
+    //#region Update header
+    header.form = form;
+    header.name = name;
+    header.max_mark = max_mark;
 
-    //#region Validate title
-    header = await header_service.getHeaderById(id);
+    header.updated_by = user_id;
+    header.updated_at = new Date();
+    //#endregion
+
+    //#region Generate response
+    header = await header_service.update(header);
     if (header) {
-      //#region Validate form_id
-      const form = await form_service.getFormById(form_id);
-      if (form) {
-        //#region Update data header
-        header.form = form;
-        header.name = name;
-        header.updated_by = user_id;
-        header.updated_at = new Date();
-        //#endregion
-
-        //#region Update header
-        header = await header_service.update(header, query_runner.manager);
-        //#endregion
-
-        if (header) {
-          return await generateResponseHeader(header, query_runner, req);
-        } else {
-          throw generateFailedResponse(
-            req,
-            ErrorMessage.OPERATOR_HEADERS_ERROR,
-          );
-        }
-      } else {
-        //#region Throw exception
-        throw new UnknownException(
-          form_id,
-          DATABASE_EXIT_CODE.UNKNOW_VALUE,
-          req.method,
-          req.url,
-          sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, form_id),
-        );
-        //#endregion
-      }
-      //#endregion
+      return await generateHeaderResponse(header, null, req);
     } else {
-      //#region Throw exception
-      throw new UnknownException(
-        id,
-        DATABASE_EXIT_CODE.UNKNOW_VALUE,
-        req.method,
-        req.url,
-        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, id),
-      );
-      //#endregion
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_HEADERS_ERROR);
     }
     //#endregion
   } catch (err) {
-    // Rollback transaction
-    await query_runner.rollbackTransaction();
-
     console.log('--------------------------------------------------------');
     console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
@@ -544,9 +493,6 @@ export const updateHeader = async (
         req.url,
       );
     }
-  } finally {
-    // Release transaction
-    await query_runner.release();
   }
 };
 
@@ -554,218 +500,180 @@ export const updateTitle = async (
   title_id: number,
   user_id: string,
   param: TitleDto,
+  form_service: FormService,
   header_service: HeaderService,
   title_service: TitleService,
-  data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<BaseResponse> | HttpException> => {
-  let title = await title_service.getTitleById(title_id);
-  if (title) {
-    const { header_id, name } = param;
+  //#region Get params
+  const { form_id, header_id, name } = param;
+  //#endregion
 
-    //#region Validation
-    const header = await validateHeader(header_id, header_service, req);
-    if (header instanceof HttpException) throw header;
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate header
+  const header = await validateHeader(header_id, header_service, req);
+  if (header instanceof HttpException) return header;
+  //#endregion
+
+  //#region Validate title
+  let title = await valiadteTitle(title_id, title_service, req);
+  if (title instanceof HttpException) return title;
+  //#endregion
+  //#endregion
+
+  try {
+    //#region Update title
+    title.form = form;
+    title.parent_ref = header.ref;
+    title.name = name;
+
+    title.updated_at = new Date();
+    title.updated_by = user_id;
     //#endregion
 
-    // Make the QueryRunner
-    const query_runner = data_source.createQueryRunner();
-    try {
-      // Start transaction
-      await query_runner.startTransaction();
-
-      title.header = header;
-      title.name = name;
-      title.updated_at = new Date();
-      title.updated_by = user_id;
-
-      title = await title_service.update(title, query_runner.manager);
-
-      if (title) {
-        return await generateResponseTitle(title, query_runner, req);
-      } else {
-        throw generateFailedResponse(req, ErrorMessage.OPERATOR_TITLE_ERROR);
-      }
-    } catch (err) {
-      // Rollback transaction
-      await query_runner.rollbackTransaction();
-
-      console.log('--------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) return err;
-      else {
-        //#region throw HandlerException
-        return new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-        //#endregion
-      }
-    } finally {
-      // Release transaction
-      await query_runner.release();
+    //#region Generate response
+    title = await title_service.update(title);
+    if (title) {
+      return await generateTitleResponse(title, null, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_TITLE_ERROR);
     }
-  } else {
-    //#region throw HandlerException
-    return new UnknownException(
-      title_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.TITLE_NOT_FOUND_ERROR, title_id),
-    );
     //#endregion
+  } catch (err) {
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
   }
 };
 
 export const updateItem = async (
-  user_id: string,
   item_id: number,
+  user_id: string,
   params: ItemDto,
-  title_service: TitleService,
+  form_service: FormService,
   item_serviec: ItemService,
   option_service: OptionService,
+  title_service: TitleService,
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<ItemResponse> | HttpException> => {
-  const item = await item_serviec.getItemById(item_id);
+  //#region Get params
+  const { form_id, title_id } = params;
+  //#endregion
 
-  if (item) {
-    const { title_id } = params;
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
 
-    //#region Validation Iteme
-    const title = await valiadteTitle(title_id, title_service, req);
-    if (title instanceof HttpException) throw title;
-    //#endregion
-    // Make the QueryRunner
-    const query_runner = data_source.createQueryRunner();
+  //#region Validate title
+  const title = await valiadteTitle(title_id, title_service, req);
+  if (title instanceof HttpException) return title;
+  //#endregion
 
-    await query_runner.connect();
-    try {
-      // Start transaction
-      await query_runner.startTransaction();
+  //#region Validate item
+  const item = await valiadteTitle(item_id, title_service, req);
+  if (item instanceof HttpException) return item;
+  //#endregion
+  //#endregion
 
-      //#region Get Option
-      const options = await option_service.getOptionByItemId(item_id);
-      //#endregion
+  // Make the QueryRunner
+  const query_runner = data_source.createQueryRunner();
+  await query_runner.connect();
 
-      if (options && options.length > 0) {
-        //#region Delete Option
-        const success = await option_service.bulkUnlinkByItemId(
-          item_id,
-          user_id,
-          query_runner.manager,
-        );
-        if (!success)
-          throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
-        //#endregion
-      }
-      //#region Create Item
-      let item = await generateCreateItem(
-        user_id,
-        params,
-        title,
-        item_serviec,
-        query_runner,
-      );
-      //#endregion
+  try {
+    // Start transaction
+    await query_runner.startTransaction();
 
-      if (item) {
-        if (params.options && params.options.length > 0) {
-          const option = await createItemOption(
-            user_id,
-            params,
-            item,
-            option_service,
-            query_runner,
-          );
-
-          if (option) item.options = option;
-          else {
-            throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
-          }
-        }
-
-        //#region Update Item relation
-        item = await query_runner.manager.save(item);
-        if (!item) {
-          //#region throw HandlerException
-          throw new HandlerException(
-            DATABASE_EXIT_CODE.OPERATOR_ERROR,
-            req.method,
-            req.url,
-            ErrorMessage.OPERATOR_ITEM_ERROR,
-            HttpStatus.EXPECTATION_FAILED,
-          );
-          //#endregion
-        }
-
-        //#region Generate response
-        return await generateResponseItem(item, query_runner, req);
-        //#endregion
-      } else {
-        throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
-      }
-    } catch (err) {
-      // Rollback transaction
-      await query_runner.rollbackTransaction();
-
-      console.log('--------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) return err;
-      else {
-        //#region throw HandlerException
-        return new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-        //#endregion
-      }
-    } finally {
-      // Release transaction
-      await query_runner.release();
-    }
-  } else {
-    //#region throw HandlerException
-    return new UnknownException(
+    //#region Remove old options if available`
+    const results = await removeItemOptions(
       item_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, item_id),
+      user_id,
+      option_service,
+      query_runner,
+      req,
+    );
+
+    if (results instanceof HttpException) throw results;
+    //#endregion
+
+    //#region Create item
+    const item = await generateCreateItem(
+      user_id,
+      params,
+      form,
+      title,
+      item_serviec,
+      query_runner,
     );
     //#endregion
+
+    if (item) {
+      //#region Create options
+      const options = params.options;
+      if (options && options.length > 0) {
+        const results = await createItemOptions(
+          user_id,
+          options,
+          form,
+          item,
+          option_service,
+          query_runner,
+        );
+
+        if (!results) {
+          throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+        }
+      }
+      //#endregion
+
+      //#region Generate response
+      return await generateItemResponse(item, query_runner, req);
+      //#endregion
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+    }
+  } finally {
+    // Release transaction
+    await query_runner.release();
   }
 };
 
 export const generateCreateItem = async (
   user_id: string,
   params: ItemDto,
+  form: FormEntity,
   title: TitleEntity,
   item_serviec: ItemService,
   query_runner: QueryRunner,
 ) => {
   //#region Get params
-  const {
-    content,
-    control,
-    unit,
-    category,
-    from_mark,
-    multiple,
-    required,
-    to_mark,
-  } = params;
+  const { content, control, unit, category, from_mark, required, to_mark } =
+    params;
   //#endregion
 
   let item = new ItemEntity();
-  item.title = title;
+  item.form = form;
+  item.parent_ref = title.ref;
+  item.ref = randomUUID();
   item.control = control;
-  item.multiple = multiple;
+  item.multiple = false;
   item.content = content;
   item.from_mark = from_mark;
   item.to_mark = to_mark;
@@ -775,39 +683,32 @@ export const generateCreateItem = async (
   item.created_at = new Date();
   item.updated_by = user_id;
   item.deleted = false;
-
   item = await item_serviec.add(item, query_runner.manager);
-
   return item;
 };
 
-export const createItemOption = async (
+export const createItemOptions = async (
   user_id: string,
-  params: ItemDto,
+  options: OptionDto[],
+  form: FormEntity,
   item: ItemEntity,
   option_service: OptionService,
   query_runner: QueryRunner,
 ) => {
   let item_options: OptionEntity[] = [];
 
-  //#region Get params
-  const { options } = params;
-  //#endregion
-
-  for (const i of options) {
+  for await (const i of options) {
     const option = new OptionEntity();
-    option.item = item;
+    option.form = form;
+    option.parent_ref = item.ref;
     option.content = i.content;
-    option.from_mark = i.from_mark;
-    option.to_mark = i.to_mark;
-    option.content = i.content;
+    option.mark = i.mark;
     option.created_at = new Date();
     option.created_by = user_id;
-
     item_options.push(option);
   }
 
-  //#region Create Option
+  //#region Create options
   item_options = await option_service.bulkAdd(
     item_options,
     query_runner.manager,
@@ -815,4 +716,32 @@ export const createItemOption = async (
   //#endregion
 
   return item_options;
+};
+
+export const removeItemOptions = async (
+  item_id: number,
+  user_id: string,
+  option_service: OptionService,
+  query_runner: QueryRunner,
+  req: Request,
+): Promise<HttpException | null> => {
+  //#region Get options by item_id
+  const options = await option_service.getOptionsByItemId(item_id);
+  //#endregion
+
+  if (options && options.length > 0) {
+    //#region Delete options
+    const success = await option_service.bulkUnlink(
+      item_id,
+      user_id,
+      query_runner.manager,
+    );
+
+    if (!success) {
+      return generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+    }
+    //#endregion
+  }
+
+  return null;
 };

@@ -1,0 +1,8 @@
+export enum SheetStatus {
+  UNASSESS = 0,
+  WAITING_CLASS = 1,
+  OVERDUE_CLASS = 2,
+  WAITING_DEPARTMENT = 3,
+  OVERDUE_DEPARTMENT = 4,
+  SUCCESS = 5,
+}

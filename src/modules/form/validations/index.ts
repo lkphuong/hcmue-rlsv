@@ -6,8 +6,6 @@ import { sprintf } from '../../../utils';
 
 import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
-import { HandlerException } from '../../../exceptions/HandlerException';
-import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { HeaderService } from '../../header/services/header.service';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
@@ -15,11 +13,14 @@ import { FormService } from '../services/form.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { TitleService } from '../../title/services/title.service';
 
-import { ErrorMessage } from '../constants/errors.enum';
+import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
+import { UnknownException } from '../../../exceptions/UnknownException';
+
 import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
-} from 'src/constants/enums/error-code.enum';
+} from '../../../constants/enums/error-code.enum';
 
 export const validateFormId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -93,7 +94,6 @@ export const validateHeader = async (
   req: Request,
 ): Promise<HeaderEntity | HttpException> => {
   const header = await header_service.getHeaderById(header_id);
-
   if (!header) {
     return new UnknownException(
       header_id,
@@ -109,11 +109,10 @@ export const validateHeader = async (
 
 export const validateForm = async (
   form_id: number,
-  form_ervice: FormService,
+  form_service: FormService,
   req: Request,
 ): Promise<FormEntity | HttpException> => {
-  const form = await form_ervice.getFormById(form_id);
-
+  const form = await form_service.getFormById(form_id);
   if (!form) {
     return new UnknownException(
       form_id,
@@ -133,7 +132,6 @@ export const valiadteTitle = async (
   req: Request,
 ) => {
   const title = await title_service.getTitleById(title_id);
-
   if (!title) {
     //#region throw HandlerException
     return new UnknownException(
@@ -156,7 +154,6 @@ export const validateAcademicYear = async (
   req: Request,
 ) => {
   const academic = await academic_service.getAcademicYearById(academic_id);
-
   if (!academic) {
     //#region throw HandlerException
     return new UnknownException(

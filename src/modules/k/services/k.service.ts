@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
+import { convertString2ObjectId } from '../../../utils';
+
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
@@ -9,7 +11,6 @@ import { Methods } from '../../../constants/enums/method.enum';
 
 import { _KDocument, _K } from '../../../schemas/_k.schema';
 
-import { convertString2ObjectId } from '../../../utils';
 @Injectable()
 export class KService {
   constructor(

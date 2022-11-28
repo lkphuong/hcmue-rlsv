@@ -6,36 +6,45 @@ import { FormEntity } from '../../../entities/form.entity';
 import {
   BaseResponse,
   ItemResponse,
-  FormInfoResponse,
+  FormResponse,
+  HeaderResponse,
 } from '../interfaces/form_response.interface';
 
-export const generateHeaders2Array = async (headers: HeaderEntity[] | null) => {
+export const generateHeadersArray = async (headers: HeaderEntity[] | null) => {
   if (headers) {
-    const payload: BaseResponse[] = [];
+    const payload: HeaderResponse[] = [];
+
     for await (const header of headers) {
-      const item: BaseResponse = {
+      const item: HeaderResponse = {
         id: header.id,
         name: header.name,
+        max_mark: header.max_mark,
       };
+
       payload.push(item);
     }
+
     return payload;
   }
+
   return null;
 };
 
-export const generateHeader2Object = async (header: HeaderEntity | null) => {
+export const generateHeaderObject = async (header: HeaderEntity | null) => {
   if (header) {
-    const payload: BaseResponse = {
+    const payload: HeaderResponse = {
       id: header.id,
       name: header.name,
+      max_mark: header.max_mark,
     };
+
     return payload;
   }
+
   return null;
 };
 
-export const generateItems2Array = async (items: ItemEntity[] | null) => {
+export const generateItemsArray = async (items: ItemEntity[] | null) => {
   if (items) {
     const payload: ItemResponse[] = [];
     for await (const ite of items) {
@@ -53,10 +62,9 @@ export const generateItems2Array = async (items: ItemEntity[] | null) => {
           ite.options && ite.options.length > 0
             ? ite.options.map((option) => {
                 return {
+                  id: option.id,
                   content: option.content,
-                  from_mark: option.from_mark,
-                  to_mark: option.to_mark,
-                  unit: option.unit,
+                  mark: option.mark,
                 };
               })
             : null,
@@ -68,7 +76,7 @@ export const generateItems2Array = async (items: ItemEntity[] | null) => {
   return null;
 };
 
-export const generateItem2Object = async (item: ItemEntity | null) => {
+export const generateItemObject = async (item: ItemEntity | null) => {
   if (item) {
     const payload: ItemResponse = {
       id: item.id,
@@ -84,10 +92,9 @@ export const generateItem2Object = async (item: ItemEntity | null) => {
         item.options && item.options.length > 0
           ? item.options.map((option) => {
               return {
+                id: option.id,
                 content: option.content,
-                from_mark: option.from_mark,
-                to_mark: option.to_mark,
-                unit: option.unit,
+                mark: option.mark,
               };
             })
           : null,
@@ -97,7 +104,7 @@ export const generateItem2Object = async (item: ItemEntity | null) => {
   return null;
 };
 
-export const generateTitles2Array = async (titles: TitleEntity[] | null) => {
+export const generateTitlesArray = async (titles: TitleEntity[] | null) => {
   if (titles) {
     const payload: BaseResponse[] = [];
     for await (const title of titles) {
@@ -112,7 +119,7 @@ export const generateTitles2Array = async (titles: TitleEntity[] | null) => {
   return null;
 };
 
-export const generateTitle2Object = (title: TitleEntity | null) => {
+export const generateTitleObject = (title: TitleEntity | null) => {
   if (title) {
     const payload: BaseResponse = {
       id: title.id,
@@ -123,11 +130,12 @@ export const generateTitle2Object = (title: TitleEntity | null) => {
   return null;
 };
 
-export const generateForms2Array = async (forms: FormEntity[] | null) => {
+export const generateFormsArray = async (forms: FormEntity[] | null) => {
   if (forms) {
-    const payload: FormInfoResponse[] = [];
+    const payload: FormResponse[] = [];
+
     for await (const form of forms) {
-      const item: FormInfoResponse = {
+      const item: FormResponse = {
         id: form.id,
         academic: {
           id: form.academic_year.id,
@@ -150,16 +158,19 @@ export const generateForms2Array = async (forms: FormEntity[] | null) => {
           end: form.department_end,
         },
       };
+
       payload.push(item);
     }
+
     return payload;
   }
+
   return null;
 };
 
-export const generateForm2Object = (form: FormEntity | null) => {
+export const generateFormObject = (form: FormEntity | null) => {
   if (form) {
-    const payload: FormInfoResponse = {
+    const payload: FormResponse = {
       id: form.id,
       academic: {
         id: form.academic_year.id,
@@ -182,6 +193,7 @@ export const generateForm2Object = (form: FormEntity | null) => {
         end: form.department_end,
       },
     };
+
     return payload;
   }
 

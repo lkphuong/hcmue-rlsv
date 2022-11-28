@@ -1,236 +1,379 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
-import { sprintf } from 'src/utils';
-import { generateUpdateSuccessResponse } from '../utils';
+import { sprintf } from '../../../utils';
+import { generateFailedResponse, generateSuccessResponse } from '../utils';
+import { validateMark, validateSheet, validateTime } from '../validations';
 
-import { SheetEntity } from '../../../entities/sheet.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
-
-import { UnknownException } from '../../../exceptions/UnknownException';
-import { HandlerException } from 'src/exceptions/HandlerException';
-
-import { EvaluationService } from '../../evaluation/services/evaluation.service';
-import { LevelService } from '../../level/services/level.service';
-import { UserService } from '../../user/services/user.service';
-import { ClassService } from '../../class/services/class.service';
-import { DepartmentService } from '../../department/services/department.service';
-import { KService } from '../../k/services/k.service';
-import { SheetService } from '../services/sheet.service';
-import { ItemService } from '../../item/services/item.service';
-import { OptionService } from '../../option/services/option.service';
-
-import { DepartmentUpdateMarkDto } from '../dtos/update_mark_department.dto';
-import { StudentUpdateMarkDto } from '../dtos/update_mark_student.dto';
-import { ClassUpdateMarkDto } from '../dtos/update_mark_class.dto';
-
-import { HttpResponse } from 'src/interfaces/http-response.interface';
-import { SheetDetailResponse } from '../interfaces/sheet_response.interface';
+import { SheetEntity } from '../../../entities/sheet.entity';
 
 import {
-  validateApprovalTime,
-  validateMark,
-  validateMarkLevel,
-  validateRole,
-} from '../validations';
+  ClassMarkDtos,
+  UpdateClassMarkDto,
+} from '../dtos/update_class_mark.dto';
+
+import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
+
+import {
+  StudentMarkDtos,
+  UpdateStudentMarkDto,
+} from '../dtos/update_student_mark.dto';
+
+import { ClassService } from '../../class/services/class.service';
+import { DepartmentService } from '../../department/services/department.service';
+import { EvaluationService } from '../../evaluation/services/evaluation.service';
+import { ItemService } from '../../item/services/item.service';
+import { KService } from '../../k/services/k.service';
+import { LevelService } from '../../level/services/level.service';
+import { OptionService } from '../../option/services/option.service';
+import { SheetService } from '../services/sheet.service';
+import { UserService } from '../../user/services/user.service';
+
+import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { SheetDetailsResponse } from '../interfaces/sheet_response.interface';
+
+import { SheetCategory } from '../constants/enums/categories.enum';
+import { SheetStatus } from '../constants/enums/status.enum';
+
+import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
+import { UnknownException } from '../../../exceptions/UnknownException';
 
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
-} from 'src/constants/enums/error-code.enum';
-import { StatusSheet } from '../constants/status.enum';
-import { ErrorMessage } from '../constants/errors.enum';
-import { OptionEntity } from 'src/entities/option.entity';
+} from '../../../constants/enums/error-code.enum';
 
-export const updateEvaluationPersonal = async (
+export const generatePersonalMarks = async (
   sheet_id: number,
-  role: number,
   user_id: string,
-  params: StudentUpdateMarkDto,
-  sheet_service: SheetService,
-  item_service: ItemService,
-  option_service: OptionService,
-  evaluation_service: EvaluationService,
-  level_service: LevelService,
-  department_service: DepartmentService,
+  params: UpdateStudentMarkDto,
   class_service: ClassService,
+  department_service: DepartmentService,
+  evaluation_service: EvaluationService,
+  item_service: ItemService,
   k_service: KService,
+  level_service: LevelService,
+  option_service: OptionService,
+  sheet_service: SheetService,
   user_service: UserService,
   data_source: DataSource,
   req: Request,
-): Promise<HttpResponse<SheetDetailResponse> | HttpException> => {
-  //#region
-  const { role_id } = params;
-  //#endregion
-
-  //#region Validation
-
-  //#region Validate role
-  const vali_role = validateRole(role_id, role, req);
-  if (vali_role instanceof HttpException) throw vali_role;
-  //#endregion
-
-  const sheet = await sheet_service.getSheetById(sheet_id);
-  if (sheet) {
-    // Make the QueryRunner
-    const query_runner = data_source.createQueryRunner();
-
-    // Establish real database connection
-    await query_runner.connect();
-
-    try {
-      // Start transaction
-      await query_runner.startTransaction();
-
-      // //#region Validate approval
-      const vali_approval = await validateApprovalTime(
-        sheet.form,
-        role_id,
-        req,
-      );
-      if (vali_approval instanceof HttpException) throw vali_approval;
-      // //#endregion
-
-      //#region Update sheet
-      const result = await generatePersonalUpdateMark(
-        user_id,
-        params,
-        sheet,
-        sheet_service,
-        level_service,
-        query_runner,
-        req,
-      );
-      //#endregion
-
-      if (result instanceof HttpException) throw result;
-
-      if (result) {
-        let success: EvaluationEntity[] | HttpException | null = null;
-
-        //#region
-        success = await studentUpdateMark(
-          sheet_id,
-          user_id,
-          params,
-          sheet,
-          item_service,
-          option_service,
-          evaluation_service,
-          query_runner,
-          req,
-        );
-        //#endregion
-
-        if (success instanceof HttpException) throw success;
-
-        return await generateUpdateSuccessResponse(
-          sheet,
-          class_service,
-          department_service,
-          k_service,
-          user_service,
-          query_runner,
-          req,
-        );
-      }
-    } catch (err) {
-      // Rollback transaction
-      await query_runner.rollbackTransaction();
-
-      console.log('--------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) return err;
-      else {
-        //#region throw HandlerException
-        return new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-        //#endregion
-      }
-    } finally {
-      // Release transaction
-      await query_runner.release();
-    }
-  } else {
-    //#region throw HandlerException
-    return new UnknownException(
-      sheet_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.SHEET_NOT_FOUND_ERROR, sheet_id),
-    );
-    //#endregion
-  }
-};
-
-export const updateEvaluationClass = async (
-  sheet_id: number,
-  role: number,
-  user_id: string,
-  params: ClassUpdateMarkDto,
-  sheet_service: SheetService,
-  item_service: ItemService,
-  option_service: OptionService,
-  evaluation_service: EvaluationService,
-  level_service: LevelService,
-  department_service: DepartmentService,
-  class_service: ClassService,
-  k_service: KService,
-  user_service: UserService,
-  data_source: DataSource,
-  req: Request,
-): Promise<HttpResponse<SheetDetailResponse> | HttpException> => {
+): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Get params
   const { role_id } = params;
   //#endregion
 
   //#region Validation
-  //#region Validate role
-  const vali_role = validateRole(role_id, role, req);
-  if (vali_role instanceof HttpException) throw vali_role;
+  //#region Validate sheet
+  let sheet = await validateSheet(sheet_id, sheet_service, req);
+  if (sheet instanceof HttpException) return sheet;
   //#endregion
 
+  //#region Validate evaluate time
+  const valid = await validateTime(sheet.form, role_id, req);
+  if (valid instanceof HttpException) throw valid;
+  //#endregion
   //#endregion
 
-  const sheet = await sheet_service.getSheetById(sheet_id);
-  if (sheet) {
-    //#region Validate approval
-    const vali_approval = await validateApprovalTime(sheet.form, role_id, req);
-    if (vali_approval instanceof HttpException) throw vali_approval;
+  // Make the QueryRunner
+  const query_runner = data_source.createQueryRunner();
+  await query_runner.connect();
+
+  try {
+    // Start transaction
+    await query_runner.startTransaction();
+
+    //#region Update sheet
+    sheet = await generateUpdateSheet(
+      user_id,
+      SheetCategory.STUDENT,
+      SheetStatus.WAITING_CLASS,
+      params,
+      sheet,
+      sheet_service,
+      level_service,
+      query_runner,
+      req,
+    );
     //#endregion
 
-    // Make the QueryRunner
-    const query_runner = data_source.createQueryRunner();
-
-    // Establish real database connection
-    await query_runner.connect();
-
-    try {
-      // Start transaction
-      await query_runner.startTransaction();
-
-      //#region Update sheet
-      const result = await generateClassUpdateMark(
+    if (sheet instanceof HttpException) throw sheet;
+    else if (sheet) {
+      //#region Update student evaluation
+      const evaluations = await generateUpdateStudentEvaluation(
+        sheet_id,
         user_id,
         params,
         sheet,
-        sheet_service,
-        level_service,
+        evaluation_service,
+        item_service,
+        option_service,
         query_runner,
         req,
       );
-      if (result instanceof HttpException) throw result;
+
+      //#region throw HandlerException
+      if (evaluations instanceof HttpException) throw evaluations;
+      else if (evaluations) sheet.evaluations = evaluations;
+      else {
+        throw generateFailedResponse(
+          req,
+          ErrorMessage.OPERATOR_EVALUATION_ERROR,
+        );
+      }
+      //#endregion
       //#endregion
 
-      let success: EvaluationEntity[] | HttpException | null = null;
-      //#region Update Mark
-      success = await classUpdateMark(
+      //#region Update sheet relation
+      sheet = await query_runner.manager.save(sheet);
+      if (!sheet) {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_SHEET_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+        //#endregion
+      }
+      //#endregion
+
+      //#region Generate response
+      return await generateSuccessResponse(
+        sheet,
+        class_service,
+        department_service,
+        k_service,
+        user_service,
+        query_runner,
+        req,
+      );
+      //#endregion
+    } else {
+      //#region throw HandlerException
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_SHEET_ERROR);
+      //#endregion
+    }
+  } catch (err) {
+    // Rollback transaction
+    await query_runner.rollbackTransaction();
+
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  } finally {
+    // Release transaction
+    await query_runner.release();
+  }
+};
+
+export const generateClassMarks = async (
+  sheet_id: number,
+  user_id: string,
+  params: UpdateClassMarkDto,
+  class_service: ClassService,
+  department_service: DepartmentService,
+  evaluation_service: EvaluationService,
+  item_service: ItemService,
+  k_service: KService,
+  level_service: LevelService,
+  option_service: OptionService,
+  sheet_service: SheetService,
+  user_service: UserService,
+  data_source: DataSource,
+  req: Request,
+): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
+  //#region Get params
+  const { role_id } = params;
+  //#endregion
+
+  //#region Validation
+  //#region Validate sheet
+  let sheet = await validateSheet(sheet_id, sheet_service, req);
+  if (sheet instanceof HttpException) return sheet;
+  //#endregion
+
+  //#region Validate evaluate time
+  const valid = await validateTime(sheet.form, role_id, req);
+  if (valid instanceof HttpException) throw valid;
+  //#endregion
+  //#endregion
+
+  // Make the QueryRunner
+  const query_runner = data_source.createQueryRunner();
+  await query_runner.connect();
+
+  try {
+    // Start transaction
+    await query_runner.startTransaction();
+
+    //#region Update sheet
+    sheet = await generateUpdateSheet(
+      user_id,
+      SheetCategory.CLASS,
+      SheetStatus.WAITING_DEPARTMENT,
+      params,
+      sheet,
+      sheet_service,
+      level_service,
+      query_runner,
+      req,
+    );
+    //#endregion
+
+    if (sheet instanceof HttpException) throw sheet;
+    else if (sheet) {
+      //#region Update class evaluation
+      const evaluations = await generateUpdateClassEvaluation(
+        sheet_id,
+        user_id,
+        params,
+        sheet,
+        evaluation_service,
+        item_service,
+        option_service,
+        query_runner,
+        req,
+      );
+
+      //#region throw HandlerException
+      if (evaluations instanceof HttpException) throw evaluations;
+      else if (evaluations) sheet.evaluations = evaluations;
+      else {
+        throw generateFailedResponse(
+          req,
+          ErrorMessage.OPERATOR_EVALUATION_ERROR,
+        );
+      }
+      //#endregion
+      //#endregion
+
+      //#region Update sheet relation
+      sheet = await query_runner.manager.save(sheet);
+      if (!sheet) {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_SHEET_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+        //#endregion
+      }
+      //#endregion
+
+      //#region Generate response
+      return await generateSuccessResponse(
+        sheet,
+        class_service,
+        department_service,
+        k_service,
+        user_service,
+        query_runner,
+        req,
+      );
+      //#endregion
+    } else {
+      //#region throw HandlerException
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_SHEET_ERROR);
+      //#endregion
+    }
+  } catch (err) {
+    // Rollback transaction
+    await query_runner.rollbackTransaction();
+
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  } finally {
+    // Release transaction
+    await query_runner.release();
+  }
+};
+
+export const generateDepartmentMarks = async (
+  sheet_id: number,
+  user_id: string,
+  params: UpdateDepartmentMarkDto,
+  class_service: ClassService,
+  department_service: DepartmentService,
+  evaluation_service: EvaluationService,
+  item_service: ItemService,
+  k_service: KService,
+  level_service: LevelService,
+  option_service: OptionService,
+  sheet_service: SheetService,
+  user_service: UserService,
+  data_source: DataSource,
+  req: Request,
+): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
+  //#region Get params
+  const { role_id } = params;
+  //#endregion
+
+  //#region Validation
+  //#region Validate sheet
+  let sheet = await validateSheet(sheet_id, sheet_service, req);
+  if (sheet instanceof HttpException) return sheet;
+  //#endregion
+
+  //#region Validate evaluate time
+  const valid = await validateTime(sheet.form, role_id, req);
+  if (valid instanceof HttpException) throw valid;
+  //#endregion
+  //#endregion
+
+  // Make the QueryRunner
+  const query_runner = data_source.createQueryRunner();
+  await query_runner.connect();
+
+  try {
+    // Start transaction
+    await query_runner.startTransaction();
+
+    //#region Update sheet
+    sheet = await generateUpdateSheet(
+      user_id,
+      SheetCategory.DEPARTMENT,
+      SheetStatus.SUCCESS,
+      params,
+      sheet,
+      sheet_service,
+      level_service,
+      query_runner,
+      req,
+    );
+    //#endregion
+
+    if (sheet instanceof HttpException) throw sheet;
+    else if (sheet) {
+      //#region Update department evaluation
+      const evaluations = await generateUpdateDepartmentEvaluation(
         sheet_id,
         user_id,
         params,
@@ -242,10 +385,35 @@ export const updateEvaluationClass = async (
         req,
       );
 
-      if (success instanceof HttpException) throw success;
+      //#region throw HandlerException
+      if (evaluations instanceof HttpException) throw evaluations;
+      else if (evaluations) sheet.evaluations = evaluations;
+      else {
+        throw generateFailedResponse(
+          req,
+          ErrorMessage.OPERATOR_EVALUATION_ERROR,
+        );
+      }
+      //#endregion
       //#endregion
 
-      return await generateUpdateSuccessResponse(
+      //#region Update sheet relation
+      sheet = await query_runner.manager.save(sheet);
+      if (!sheet) {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_SHEET_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+        //#endregion
+      }
+      //#endregion
+
+      //#region Generate response
+      return await generateSuccessResponse(
         sheet,
         class_service,
         department_service,
@@ -254,209 +422,71 @@ export const updateEvaluationClass = async (
         query_runner,
         req,
       );
-    } catch (err) {
-      // Rollback transaction
-      await query_runner.rollbackTransaction();
-
-      console.log('--------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) return err;
-      else {
-        //#region throw HandlerException
-        return new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-        //#endregion
-      }
-    } finally {
-      // Release transaction
-      await query_runner.release();
+      //#endregion
+    } else {
+      //#region throw HandlerException
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_SHEET_ERROR);
+      //#endregion
     }
-  } else {
-    //#region throw HandlerException
-    return new UnknownException(
-      sheet_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.SHEET_NOT_FOUND_ERROR, sheet_id),
-    );
-    //#endregion
+  } catch (err) {
+    // Rollback transaction
+    await query_runner.rollbackTransaction();
+
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  } finally {
+    // Release transaction
+    await query_runner.release();
   }
 };
 
-export const updateEvaluationDepartment = async (
-  sheet_id: number,
-  role: number,
-  user_id: string,
-  params: DepartmentUpdateMarkDto,
-  sheet_service: SheetService,
-  item_service: ItemService,
-  option_service: OptionService,
-  evaluation_service: EvaluationService,
-  level_service: LevelService,
-  department_service: DepartmentService,
-  class_service: ClassService,
-  k_service: KService,
-  user_service: UserService,
-  data_source: DataSource,
-  req: Request,
-): Promise<HttpResponse<SheetDetailResponse> | HttpException> => {
-  //#region Get params
-  const { role_id } = params;
-  //#endregion
-
-  //#region Validation
-  //#region Validate role
-  const vali_role = validateRole(role_id, role, req);
-  if (vali_role instanceof HttpException) throw vali_role;
-  //#endregion
-  //#endregion
-
-  const sheet = await sheet_service.getSheetById(sheet_id);
-  if (sheet) {
-    //#region Validate approval
-    const vali_approval = await validateApprovalTime(sheet.form, role_id, req);
-    if (vali_approval instanceof HttpException) throw vali_approval;
-    //#endregion
-
-    // Make the QueryRunner
-    const query_runner = data_source.createQueryRunner();
-
-    // Establish real database connection
-    await query_runner.connect();
-
-    try {
-      // Start transaction
-      await query_runner.startTransaction();
-
-      //#region Update sheet
-      const result = await generateUpdateDepartmentMark(
-        user_id,
-        params,
-        sheet,
-        sheet_service,
-        level_service,
-        query_runner,
-        req,
-      );
-      if (result instanceof HttpException) throw result;
-      //#endregion
-
-      let success: EvaluationEntity[] | HttpException | null = null;
-      //#region Update Mark
-      success = await departmentUpdateMark(
-        sheet_id,
-        user_id,
-        params,
-        sheet,
-        item_service,
-        option_service,
-        evaluation_service,
-        query_runner,
-        req,
-      );
-
-      if (success instanceof HttpException) throw success;
-      //#endregion
-
-      return await generateUpdateSuccessResponse(
-        sheet,
-        class_service,
-        department_service,
-        k_service,
-        user_service,
-        query_runner,
-        req,
-      );
-    } catch (err) {
-      // Rollback transaction
-      await query_runner.rollbackTransaction();
-
-      console.log('--------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) return err;
-      else {
-        //#region throw HandlerException
-        return new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-        //#endregion
-      }
-    } finally {
-      // Release transaction
-      await query_runner.release();
-    }
-  } else {
-    //#region throw HandlerException
-    return new UnknownException(
-      sheet_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.SHEET_NOT_FOUND_ERROR, sheet_id),
-    );
-    //#endregion
-  }
-};
-
-export const studentUpdateMark = async (
+export const generateUpdateStudentEvaluation = async (
   sheet_id: number,
   user_id: string,
-  params: StudentUpdateMarkDto,
+  params: UpdateStudentMarkDto,
   sheet: SheetEntity,
+  evaluation_service: EvaluationService,
   item_service: ItemService,
   option_service: OptionService,
-  evaluation_service: EvaluationService,
   query_runner: QueryRunner,
   req: Request,
-) => {
-  const { data } = params;
-  let add_evaluations: EvaluationEntity[] = [];
+): Promise<EvaluationEntity[] | HttpException> => {
+  let evaluations: EvaluationEntity[] = [];
 
-  for (const i of data) {
+  //#region Get params
+  const { data } = params;
+  //#endregion
+
+  for await (const i of data) {
     const item = await item_service.getItemById(i.item_id);
     if (item) {
-      let option: OptionEntity = null,
-        valid_mark: HttpException | null = null;
-      if (i.option_id) {
-        option = await option_service.getOptionById(i.option_id);
+      //#region Get option
+      const option = await option_service.getOptionById(i.option_id ?? 0);
+      //#endregion
 
-        //#region Validate Mark
-        //#region  Validate Mark Student
-        valid_mark = validateMark(
-          i.personal_mark_level,
-          option.from_mark,
-          option.to_mark,
-          req,
-        );
-
-        if (valid_mark instanceof HttpException) return valid_mark;
-        //#endregion
-        //#endregion
-      }
-
-      //#region Validate Mark
-      //#region  Validate Mark Student
-      valid_mark = validateMark(
+      //#region Validate mark evaluation
+      const valid = validateMark(
         i.personal_mark_level,
         item.from_mark,
         item.to_mark,
         req,
       );
 
-      if (valid_mark instanceof HttpException) return valid_mark;
-      //#endregion
+      if (valid instanceof HttpException) return valid;
       //#endregion
 
       const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
-
       if (evaluation) {
         //#region Update evaluation
         evaluation.sheet = sheet;
@@ -465,8 +495,7 @@ export const studentUpdateMark = async (
         evaluation.personal_mark_level = i.personal_mark_level;
         evaluation.updated_at = new Date();
         evaluation.updated_by = user_id;
-
-        add_evaluations.push(evaluation);
+        evaluations.push(evaluation);
         //#endregion
       } else {
         //#region Create evaluation
@@ -477,8 +506,7 @@ export const studentUpdateMark = async (
         evaluation.personal_mark_level = i.personal_mark_level;
         evaluation.created_at = new Date();
         evaluation.created_by = user_id;
-
-        add_evaluations.push(evaluation);
+        evaluations.push(evaluation);
         //#endregion
       }
     } else {
@@ -495,61 +523,48 @@ export const studentUpdateMark = async (
   }
 
   //#region Update evaluation
-  add_evaluations = await query_runner.manager.save(add_evaluations);
+  evaluations = await query_runner.manager.save(evaluations);
   //#endregion
 
-  return add_evaluations;
+  return evaluations;
 };
 
-export const classUpdateMark = async (
+export const generateUpdateClassEvaluation = async (
   sheet_id: number,
   user_id: string,
-  params: ClassUpdateMarkDto,
+  params: UpdateClassMarkDto,
   sheet: SheetEntity,
+  evaluation_service: EvaluationService,
   item_service: ItemService,
   option_service: OptionService,
-  evaluation_service: EvaluationService,
   query_runner: QueryRunner,
   req: Request,
 ) => {
+  let evaluations: EvaluationEntity[] = [];
+
+  //#region Get params
   const { data } = params;
-  let add_evaluations: EvaluationEntity[] = [];
+  //#endregion
 
   for (const i of data) {
     const item = await item_service.getItemById(i.item_id);
     if (item) {
-      let option: OptionEntity = null,
-        valid_mark: HttpException | null = null;
-      if (i.option_id) {
-        option = await option_service.getOptionById(i.option_id);
+      //#region Get option
+      const option = await option_service.getOptionById(i.option_id ?? 0);
+      //#endregion
 
-        //#region Validate Mark
-        //#region Validate Mark Class
-        valid_mark = validateMark(
-          i.class_mark_level,
-          option.from_mark,
-          option.to_mark,
-          req,
-        );
-        if (valid_mark instanceof HttpException) return valid_mark;
-        //#endregion
-        //#endregion
-      }
-
-      //#region Validate Mark
-      //#region Validate Mark Class
-      valid_mark = validateMark(
+      //#region Validate mark evaluation
+      const valid = validateMark(
         i.class_mark_level,
         item.from_mark,
         item.to_mark,
         req,
       );
-      if (valid_mark instanceof HttpException) return valid_mark;
-      //#endregion
+
+      if (valid instanceof HttpException) return valid;
       //#endregion
 
       const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
-
       if (evaluation) {
         //#region Update evaluation
         evaluation.sheet = sheet;
@@ -558,8 +573,7 @@ export const classUpdateMark = async (
         evaluation.class_mark_level = i.class_mark_level;
         evaluation.updated_at = new Date();
         evaluation.updated_by = user_id;
-
-        add_evaluations.push(evaluation);
+        evaluations.push(evaluation);
         //#endregion
       } else {
         //#region Create evaluation
@@ -570,8 +584,7 @@ export const classUpdateMark = async (
         evaluation.class_mark_level = i.class_mark_level;
         evaluation.created_at = new Date();
         evaluation.created_by = user_id;
-
-        add_evaluations.push(evaluation);
+        evaluations.push(evaluation);
         //#endregion
       }
     } else {
@@ -588,16 +601,16 @@ export const classUpdateMark = async (
   }
 
   //#region Update evaluation
-  add_evaluations = await query_runner.manager.save(add_evaluations);
+  evaluations = await query_runner.manager.save(evaluations);
   //#endregion
 
-  return add_evaluations;
+  return evaluations;
 };
 
-export const departmentUpdateMark = async (
+export const generateUpdateDepartmentEvaluation = async (
   sheet_id: number,
   user_id: string,
-  params: DepartmentUpdateMarkDto,
+  params: UpdateDepartmentMarkDto,
   sheet: SheetEntity,
   item_service: ItemService,
   option_service: OptionService,
@@ -605,44 +618,31 @@ export const departmentUpdateMark = async (
   query_runner: QueryRunner,
   req: Request,
 ) => {
+  let evaluations: EvaluationEntity[] = [];
+
+  //#region Get params
   const { data } = params;
-  let add_evaluations: EvaluationEntity[] = [];
+  //#endregion
 
   for (const i of data) {
     const item = await item_service.getItemById(i.item_id);
     if (item) {
-      let option: OptionEntity = null,
-        valid_mark: HttpException | null = null;
-      if (i.option_id) {
-        option = await option_service.getOptionById(i.option_id);
+      //#region Get option
+      const option = await option_service.getOptionById(i.option_id ?? 0);
+      //#endregion
 
-        //#region Validate Mark
-        //#region Validate Mark Department
-        valid_mark = validateMark(
-          i.department_mark_level,
-          option.from_mark,
-          option.to_mark,
-          req,
-        );
-        if (valid_mark instanceof HttpException) return valid_mark;
-        //#endregion
-        //#endregion
-      }
-
-      //#region Validate Mark
-      //#region Validate Mark Department
-      valid_mark = validateMark(
+      //#region Validate mark evaluation
+      const valid = validateMark(
         i.department_mark_level,
         item.from_mark,
         item.to_mark,
         req,
       );
-      if (valid_mark instanceof HttpException) return valid_mark;
-      //#endregion
+
+      if (valid instanceof HttpException) return valid;
       //#endregion
 
       const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
-
       if (evaluation) {
         //#region Update evaluation
         evaluation.sheet = sheet;
@@ -651,8 +651,7 @@ export const departmentUpdateMark = async (
         evaluation.department_mark_level = i.department_mark_level;
         evaluation.updated_at = new Date();
         evaluation.updated_by = user_id;
-
-        add_evaluations.push(evaluation);
+        evaluations.push(evaluation);
         //#endregion
       } else {
         //#region Create evaluation
@@ -663,8 +662,7 @@ export const departmentUpdateMark = async (
         evaluation.department_mark_level = i.department_mark_level;
         evaluation.created_at = new Date();
         evaluation.created_by = user_id;
-
-        add_evaluations.push(evaluation);
+        evaluations.push(evaluation);
         //#endregion
       }
     } else {
@@ -681,122 +679,75 @@ export const departmentUpdateMark = async (
   }
 
   //#region Update evaluation
-  add_evaluations = await query_runner.manager.save(add_evaluations);
+  evaluations = await query_runner.manager.save(evaluations);
   //#endregion
 
-  return add_evaluations;
+  return evaluations;
 };
-export const generatePersonalUpdateMark = async (
+
+export const generateUpdateSheet = async (
   user_id: string,
-  params: StudentUpdateMarkDto,
+  category: SheetCategory,
+  status: SheetStatus,
+  params: UpdateStudentMarkDto | UpdateClassMarkDto | UpdateDepartmentMarkDto,
   sheet: SheetEntity,
   sheet_service: SheetService,
   level_service: LevelService,
   query_runner: QueryRunner,
   req: Request,
-) => {
+): Promise<SheetEntity | HttpException> => {
+  //#region Get params
   const { data } = params;
-
-  let sum_of_personal_marks = 0;
-  for (const item of data) {
-    sum_of_personal_marks += item.personal_mark_level;
-  }
-
-  //#region Validate mark
-  const level = await validateMarkLevel(
-    sum_of_personal_marks,
-    level_service,
-    req,
-  );
-  if (level instanceof HttpException) throw level;
   //#endregion
 
-  sheet.sum_of_personal_marks = sum_of_personal_marks;
-  sheet.status = StatusSheet.WAITING_CLASS;
+  //#region Calculate sum of marks
+  let sum_of_marks = 0;
+  for (const item of data) {
+    if (item instanceof StudentMarkDtos)
+      sum_of_marks += item.personal_mark_level;
+    else if (item instanceof ClassMarkDtos)
+      sum_of_marks += item.class_mark_level;
+    else sum_of_marks += item.department_mark_level;
+  }
+  //#endregion
+
+  //#region Get level in mark range
+  const level = await getLevel(sum_of_marks, level_service, req);
+  if (level instanceof HttpException) return level;
+  //#endregion
+
+  if (category === SheetCategory.STUDENT)
+    sheet.sum_of_personal_marks = sum_of_marks;
+  else if (category === SheetCategory.CLASS)
+    sheet.sum_of_class_marks = sum_of_marks;
+  else sheet.sum_of_department_marks = sum_of_marks;
+
+  sheet.status = status;
   sheet.level = level;
   sheet.updated_at = new Date();
   sheet.updated_by = user_id;
 
   sheet = await sheet_service.update(sheet, query_runner.manager);
-
   return sheet;
 };
 
-export const generateClassUpdateMark = async (
-  user_id: string,
-  params: ClassUpdateMarkDto,
-  sheet: SheetEntity,
-  sheet_service: SheetService,
+export const getLevel = async (
+  mark: number,
   level_service: LevelService,
-  query_runner: QueryRunner,
   req: Request,
 ) => {
-  const { data } = params;
-
-  let sum_of_class_marks = 0;
-
-  for (const item of data) {
-    sum_of_class_marks += item.class_mark_level;
+  const level = await level_service.getLevelByMark(mark);
+  if (!level) {
+    //#region throw HandleException
+    return new UnknownException(
+      mark,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.LEVEL_NOT_FOUND_ERROR, mark),
+    );
+    //#endregion
   }
 
-  //#region Validation mark
-  //#region Validate class mark
-  const level = await validateMarkLevel(sum_of_class_marks, level_service, req);
-  if (level instanceof HttpException) throw level;
-  //#endregion
-  //#endregion
-
-  //#region Update sheet
-
-  sheet.sum_of_class_marks = sum_of_class_marks;
-  sheet.status = StatusSheet.WAITING_DEPARTMENT;
-  sheet.level = level;
-  sheet.updated_at = new Date();
-  sheet.updated_by = user_id;
-
-  sheet = await sheet_service.update(sheet, query_runner.manager);
-
-  return sheet;
-  //#endregion
-};
-
-export const generateUpdateDepartmentMark = async (
-  user_id: string,
-  params: DepartmentUpdateMarkDto,
-  sheet: SheetEntity,
-  sheet_service: SheetService,
-  level_service: LevelService,
-  query_runner: QueryRunner,
-  req: Request,
-) => {
-  const { data } = params;
-
-  let sum_of_department_marks = 0;
-
-  for (const item of data) {
-    sum_of_department_marks += item.department_mark_level;
-  }
-
-  //#region Validation mark
-  //#region Validate department mark
-  const level = await validateMarkLevel(
-    sum_of_department_marks,
-    level_service,
-    req,
-  );
-  if (level instanceof HttpException) throw level;
-  //#endregion
-  //#endregion
-
-  //#region Update sheet
-  sheet.sum_of_department_marks = sum_of_department_marks;
-  sheet.status = StatusSheet.SUCCESS;
-  sheet.level = level;
-  sheet.updated_at = new Date();
-  sheet.updated_by = user_id;
-
-  sheet = await sheet_service.update(sheet, query_runner.manager);
-
-  return sheet;
-  //#endregion
+  return level;
 };

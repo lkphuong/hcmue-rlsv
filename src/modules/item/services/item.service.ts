@@ -3,11 +3,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { ItemEntity } from '../../../entities/item.entity';
+import { OptionEntity } from '../../../entities/option.entity';
 
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { TitleEntity } from 'src/entities/title.entity';
 
 @Injectable()
 export class ItemService {
@@ -41,7 +43,6 @@ export class ItemService {
         .andWhere('evaluation.sheet_id = :sheet_id', { sheet_id });
 
       const item = await conditions.getMany();
-
       return item || null;
     } catch (e) {
       this._logger.writeLog(
@@ -62,7 +63,6 @@ export class ItemService {
         .andWhere('item.deleted = :deleted', { deleted: false });
 
       const item = await conditions.getOne();
-
       return item || null;
     } catch (e) {
       this._logger.writeLog(
@@ -79,18 +79,28 @@ export class ItemService {
     try {
       const conditions = this._itemRepository
         .createQueryBuilder('item')
-        .leftJoinAndSelect('item.options', 'option')
+        .innerJoinAndMapOne(
+          'item.title',
+          TitleEntity,
+          'title',
+          `title.form_id = item.form_id AND 
+          title.ref = item.parent_ref`,
+        )
+        .leftJoinAndMapMany(
+          'item.options',
+          OptionEntity,
+          'options',
+          `item.form_id = options.form_id AND 
+          item.ref = options.parent_ref AND 
+          options.delete_flag = 0`,
+        )
         .where('item.title_id = :id', { id })
-        .andWhere('item.deleted = :deleted', { deleted: false })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('option.deleted = :deleted', { deleted: false });
-            qb.orWhere('option.deleted IS NULL');
-          }),
-        );
+        .andWhere('title.deleted = :deleted', { deleted: false })
+        .andWhere('item.deleted = :deleted', { deleted: false });
+
+      console.log('sql: ', conditions.getSql());
 
       const items = await conditions.getMany();
-
       return items || null;
     } catch (e) {
       this._logger.writeLog(
@@ -111,8 +121,8 @@ export class ItemService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
-      item = await manager.save(item);
 
+      item = await manager.save(item);
       return item || null;
     } catch (e) {
       this._logger.writeLog(

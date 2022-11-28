@@ -2,28 +2,28 @@ import { HttpStatus } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
+import {
+  generateFormObject,
+  generateFormsArray,
+  generateHeaderObject,
+  generateHeadersArray,
+  generateItemObject,
+  generateItemsArray,
+  generateTitleObject,
+  generateTitlesArray,
+} from '../transform';
+
+import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { TitleEntity } from '../../../entities/title.entity';
-import { FormEntity } from 'src/entities/form.entity';
 
-import { HandlerException } from 'src/exceptions/HandlerException';
+import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
 
-import {
-  generateForm2Object,
-  generateItem2Object,
-  generateTitle2Object,
-  generateHeader2Object,
-  generateForms2Array,
-  generateHeaders2Array,
-  generateItems2Array,
-  generateTitles2Array,
-} from '../transform';
-
-import { ErrorMessage } from '../constants/errors.enum';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
-export const generateResponseForms = async (
+export const generateFormsResponse = async (
   forms: FormEntity[],
   req: Request,
 ) => {
@@ -31,8 +31,8 @@ export const generateResponseForms = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', forms);
 
-  // Transform FormEntity[] class to FormInfoResponse[] class
-  const payload = await generateForms2Array(forms);
+  // Transform FormEntity class to FormResponse class
+  const payload = await generateFormsArray(forms);
 
   // Returns objects
   return {
@@ -43,7 +43,7 @@ export const generateResponseForms = async (
   };
 };
 
-export const generateResponseForm = async (
+export const generateFormResponse = async (
   form: FormEntity,
   query_runner: QueryRunner,
   req: Request,
@@ -52,7 +52,8 @@ export const generateResponseForm = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', form);
 
-  const payload = generateForm2Object(form);
+  // Transform FormEntity class to FormResponse class
+  const payload = generateFormObject(form);
 
   if (query_runner) await query_runner.commitTransaction();
 
@@ -64,7 +65,7 @@ export const generateResponseForm = async (
   };
 };
 
-export const generateResponseHeaders = async (
+export const generateHeadersResponse = async (
   headers: HeaderEntity[],
   req: Request,
 ) => {
@@ -72,8 +73,8 @@ export const generateResponseHeaders = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', headers);
 
-  // Transform HeaderEntity class to ReceiptResponse class
-  const payload = await generateHeaders2Array(headers);
+  // Transform HeaderEntity to HeaderResponse class
+  const payload = await generateHeadersArray(headers);
 
   // Returns objects
   return {
@@ -84,7 +85,7 @@ export const generateResponseHeaders = async (
   };
 };
 
-export const generateResponseHeader = async (
+export const generateHeaderResponse = async (
   header: HeaderEntity,
   query_runner: QueryRunner,
   req: Request,
@@ -93,10 +94,12 @@ export const generateResponseHeader = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', header);
 
-  const payload = await generateHeader2Object(header);
+  // Transform HeaderEntity class to HeaderResponse class
+  const payload = await generateHeaderObject(header);
 
   // Commit transaction
   if (query_runner) await query_runner.commitTransaction();
+
   // Return object
   return {
     data: payload,
@@ -106,7 +109,7 @@ export const generateResponseHeader = async (
   };
 };
 
-export const generateResponseItems = async (
+export const generateItemsResponse = async (
   items: ItemEntity[],
   req: Request,
 ) => {
@@ -114,8 +117,8 @@ export const generateResponseItems = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', items);
 
-  // Transform HeaderEntity class to ReceiptResponse class
-  const payload = await generateItems2Array(items);
+  // Transform ItemEntity class to ItemResponse class
+  const payload = await generateItemsArray(items);
 
   // Returns objects
   return {
@@ -126,7 +129,7 @@ export const generateResponseItems = async (
   };
 };
 
-export const generateResponseItem = async (
+export const generateItemResponse = async (
   item: ItemEntity,
   query_runner: QueryRunner,
   req: Request,
@@ -135,8 +138,11 @@ export const generateResponseItem = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', item);
 
-  const payload = await generateItem2Object(item);
+  // Transform HeaderEntity class to ItemResponse class
+  const payload = await generateItemObject(item);
+
   if (query_runner) await query_runner.commitTransaction();
+
   return {
     data: payload,
     errorCode: 0,
@@ -145,7 +151,7 @@ export const generateResponseItem = async (
   };
 };
 
-export const generateResponseTitles = async (
+export const generateTitlesResponse = async (
   titles: TitleEntity[],
   req: Request,
 ) => {
@@ -153,8 +159,8 @@ export const generateResponseTitles = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', titles);
 
-  // Transform HeaderEntity class to ReceiptResponse class
-  const payload = await generateTitles2Array(titles);
+  // Transform TitleEntity class to TitleResponse class
+  const payload = await generateTitlesArray(titles);
 
   // Returns objects
   return {
@@ -165,7 +171,7 @@ export const generateResponseTitles = async (
   };
 };
 
-export const generateResponseTitle = async (
+export const generateTitleResponse = async (
   title: TitleEntity,
   query_runner: QueryRunner,
   req: Request,
@@ -174,8 +180,11 @@ export const generateResponseTitle = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', title);
 
-  const payload = generateTitle2Object(title);
+  // Transform TitleEntity class to TitleResponse class
+  const payload = generateTitleObject(title);
+
   if (query_runner) await query_runner.commitTransaction();
+
   return {
     data: payload,
     errorCode: 0,

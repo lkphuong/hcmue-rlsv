@@ -42,12 +42,14 @@ export const generateClasses2Array = async (
       //#endregion
 
       if (result) {
+        //#region Generate class response
         const item: ClassResponse = {
           id: convertObjectId2String(result._id),
           name: result.name,
         };
 
         payload.push(item);
+        //#endregion
       }
     }
 

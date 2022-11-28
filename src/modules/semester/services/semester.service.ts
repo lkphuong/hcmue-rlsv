@@ -25,7 +25,6 @@ export class SemesterService {
         .andWhere('semester.deleted = :deleted', { deleted: 0 });
 
       const semesters = conditions.getMany();
-
       return semesters || null;
     } catch (e) {
       this._logger.writeLog(
@@ -38,6 +37,7 @@ export class SemesterService {
       return null;
     }
   }
+
   async getSemesterById(semester_id: number): Promise<SemesterEntity | null> {
     try {
       const conditions = this._semesterRepository
@@ -46,7 +46,6 @@ export class SemesterService {
         .andWhere('semester.deleted = :deleted', { deleted: false });
 
       const semester = await conditions.getOne();
-
       return semester || null;
     } catch (e) {
       this._logger.writeLog(

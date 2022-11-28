@@ -16,12 +16,13 @@ import { Request } from 'express';
 import { DataSource } from 'typeorm';
 
 import { sprintf } from '../../../utils';
+
 import {
-  generateResponseItems,
-  generateResponseTitles,
-  generateResponseHeaders,
-  generateResponseForms,
-  generateResponseForm,
+  generateFormResponse,
+  generateFormsResponse,
+  generateHeadersResponse,
+  generateItemsResponse,
+  generateTitlesResponse,
 } from '../utils';
 
 import {
@@ -41,34 +42,36 @@ import {
   validateTitleId,
 } from '../validations';
 
-import { HeaderService } from '../../header/services/header.service';
-import { ItemService } from '../../item/services/item.service';
-import { LogService } from '../../log/services/log.service';
-import { TitleService } from '../../title/services/title.service';
-import { AcademicYearService } from '../../academic-year/services/academic_year.service';
-import { SemesterService } from '../../semester/services/semester.service';
-import { OptionService } from '../../option/services/option.service';
-import { FormService } from '../services/form.service';
-
-import { HttpResponse } from '../../../interfaces/http-response.interface';
-import {
-  BaseResponse,
-  FormInfoResponse,
-  ItemResponse,
-} from '../interfaces/form_response.interface';
-
-import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
-
-import { HandlerException } from '../../../exceptions/HandlerException';
-import { UnknownException } from 'src/exceptions/UnknownException';
-
 import { HeaderDto } from '../dtos/header.dto';
 import { FormDto } from '../dtos/form.dto';
 import { TitleDto } from '../dtos/title.dto';
 import { ItemDto } from '../dtos/item.dto';
 
-import { ErrorMessage } from '../constants/errors.enum';
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
+import { FormService } from '../services/form.service';
+import { HeaderService } from '../../header/services/header.service';
+import { ItemService } from '../../item/services/item.service';
+import { LogService } from '../../log/services/log.service';
+import { OptionService } from '../../option/services/option.service';
+import { SemesterService } from '../../semester/services/semester.service';
+import { TitleService } from '../../title/services/title.service';
+
+import { HttpResponse } from '../../../interfaces/http-response.interface';
+import {
+  BaseResponse,
+  FormResponse,
+  HeaderResponse,
+  ItemResponse,
+} from '../interfaces/form_response.interface';
+
+import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
+
+import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
+import { UnknownException } from '../../../exceptions/UnknownException';
+
 import { Levels } from '../../../constants/enums/level.enum';
+
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
@@ -77,13 +80,13 @@ import {
 @Controller('forms')
 export class FormController {
   constructor(
-    private readonly _formService: FormService,
     private readonly _academicYearService: AcademicYearService,
-    private readonly _semesterService: SemesterService,
+    private readonly _formService: FormService,
     private readonly _headerService: HeaderService,
-    private readonly _titleService: TitleService,
     private readonly _itemServicve: ItemService,
     private readonly _optionService: OptionService,
+    private readonly _semesterService: SemesterService,
+    private readonly _titleService: TitleService,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {
@@ -97,14 +100,14 @@ export class FormController {
    * @url /api/forms
    * @access private
    * @description Hiển thị danh sách biểu mẫu
-   * @return HttpResponse<TitleResponse[]> | null | HttpException
-   * @page forms
+   * @return HttpResponse<FormResponse> | HttpException | null
+   * @page forms page
    */
-  @Get()
+  @Get('/')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getForms(
     @Req() req: Request,
-  ): Promise<HttpResponse<FormInfoResponse[]> | HttpException> {
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + '');
@@ -117,7 +120,7 @@ export class FormController {
 
       if (forms && forms.length > 0) {
         //#region Generate response
-        return await generateResponseForms(forms, req);
+        return await generateFormsResponse(forms, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -149,9 +152,10 @@ export class FormController {
    * @method GET
    * @url /api/forms/:id
    * @access private
+   * @param id
    * @description Hiển thị chi tiết biểu mẫu
-   * @return HttpResponse<FormInfoResponse> | null | HttpException
-   * @page forms
+   * @return HttpResponse<FormResponse> | HttpException | null
+   * @page forms page
    */
   @Get(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -159,7 +163,7 @@ export class FormController {
   async getFormById(
     @Param('id') id: number,
     @Req() req: Request,
-  ): Promise<HttpResponse<FormInfoResponse> | HttpException> {
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -182,7 +186,7 @@ export class FormController {
       const form = await this._formService.getFormById(id);
       if (form) {
         //#region Generate response
-        return await generateResponseForm(form, null, req);
+        return await generateFormResponse(form, null, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -215,9 +219,10 @@ export class FormController {
    * @method GET
    * @url /api/forms/headers/:form_id
    * @access private
-   * @description Hiển thị danh sách hạng mục đánh giá
-   * @return HttpResponse<BaseResponse[]> | HttpException
-   * @page forms
+   * @param form_id
+   * @description Hiển thị danh sách hạng mục đánh giá theo biểu mẫu
+   * @return HttpResponse<HeaderResponse> | HttpException | null
+   * @page forms page
    */
   @Get('headers/:form_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -225,7 +230,7 @@ export class FormController {
   async getHeadersByFormId(
     @Param('form_id') form_id: number,
     @Req() req: Request,
-  ): Promise<HttpResponse<BaseResponse[]> | HttpException> {
+  ): Promise<HttpResponse<HeaderResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -254,7 +259,7 @@ export class FormController {
 
       if (headers && headers.length > 0) {
         //#region Generate response
-        return await generateResponseHeaders(headers, req);
+        return await generateHeadersResponse(headers, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -286,9 +291,10 @@ export class FormController {
    * @method GET
    * @url /api/forms/titles/:header_id
    * @access private
-   * @description Hiển thị danh sách tiêu chí đánh giá
-   * @return HttpResponse<BaseResponse[]> | HttpException
-   * @page forms
+   * @param header_id
+   * @description Hiển thị danh sách tiêu chí đánh giá theo hạng mục
+   * @return HttpResponse<BaseResponse> | HttpException | null
+   * @page forms page
    */
   @Get('titles/:header_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -296,7 +302,7 @@ export class FormController {
   async getTitlesByHeaderId(
     @Param('header_id') header_id: number,
     @Req() req: Request,
-  ): Promise<HttpResponse<BaseResponse[]> | HttpException> {
+  ): Promise<HttpResponse<BaseResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -325,7 +331,7 @@ export class FormController {
 
       if (titles && titles.length > 0) {
         //#region Generate response
-        return await generateResponseTitles(titles, req);
+        return await generateTitlesResponse(titles, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -357,9 +363,10 @@ export class FormController {
    * @method GET
    * @url /api/forms/items/:title_id
    * @access private
-   * @description Hiển thị danh sách nội dung chấm điểm (Item) theo tiêu chí đánh giá
-   * @return HttpResponse<ItemResponse[]> | null | HttpException
-   * @page forms
+   * @param title_id
+   * @description Hiển thị danh sách nội dung chấm điểm theo tiêu chí đánh giá
+   * @return HttpResponse<ItemResponse> | HttpException | null
+   * @page forms page
    */
   @Get('items/:title_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -367,7 +374,7 @@ export class FormController {
   async getItemsByTitleId(
     @Param('title_id') title_id: number,
     @Req() req: Request,
-  ): Promise<HttpResponse<ItemResponse[]> | HttpException> {
+  ): Promise<HttpResponse<ItemResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -396,7 +403,7 @@ export class FormController {
 
       if (items && items.length > 0) {
         //#region Generate items response
-        return await generateResponseItems(items, req);
+        return await generateItemsResponse(items, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -428,16 +435,21 @@ export class FormController {
    * @method POST
    * @url /api/forms/
    * @access private
+   * @param academic_id
+   * @param semester_id
+   * @param student
+   * @param class
+   * @param department
    * @description Tạo mới biểu mẫu
    * @return HttpResponse<CreateFormResponse> | HttpException
-   * @page forms
+   * @page forms page
    */
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async createForm(
     @Body() params: FormDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<FormInfoResponse> | HttpException> {
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -455,16 +467,25 @@ export class FormController {
         JSON.stringify({ params: params }),
       );
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
-      return await createForm(
+      //#region Create form
+      const form = await createForm(
         user_id,
         params,
         this._academicYearService,
+        this._formService,
         this._semesterService,
-        this._dataSource,
         req,
       );
+      //#endregion
+
+      //#region Generate response
+      if (form instanceof HttpException) throw form;
+      else return form;
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -484,14 +505,17 @@ export class FormController {
    * @method POST
    * @url /api/forms/headers
    * @access private
-   * @description Thêm hạng mục đánh giá (Header) cho biểu mẫu
+   * @param form_id
+   * @param name
+   * @param max_mark
+   * @description Thêm hạng mục đánh giá cho biểu mẫu
    * @return HttpResponse<BaseResponse> | HttpException
-   * @page forms
+   * @page forms page
    */
   @Post('headers')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
-  async createHeaders(
+  async createHeader(
     @Body() params: HeaderDto,
     @Req() req: Request,
   ): Promise<HttpResponse<BaseResponse> | HttpException> {
@@ -506,16 +530,19 @@ export class FormController {
         JSON.stringify(params),
       );
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
+      //#region Create header
       const header = await createHeader(
         user_id,
         params,
-        this._headerService,
         this._formService,
-        this._dataSource,
+        this._headerService,
         req,
       );
+      //#endregion
 
       //#region Generate response
       if (header instanceof HttpException) throw header;
@@ -540,9 +567,12 @@ export class FormController {
    * @method POST
    * @url /api/forms/titles
    * @access private
+   * @param form_id
+   * @param header_id
+   * @param name
    * @description Tạo mới tiêu chí đánh giá
    * @return HttpResponse<BaseResponse> | HttpException
-   * @page forms
+   * @page forms page
    */
   @Post('titles')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -567,20 +597,25 @@ export class FormController {
         JSON.stringify({ params: params }),
       );
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
+      //#region Create title
       const result = await createTitle(
         user_id,
         params,
+        this._formService,
         this._headerService,
         this._titleService,
-        this._dataSource,
         req,
       );
+      //#endregion
 
+      //#region Generate response
       if (result instanceof HttpException) throw result;
-
       return result;
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -600,9 +635,19 @@ export class FormController {
    * @method POST
    * @url /api/forms/titles
    * @access private
-   * @description Tạo mới tiêu chí đánh giá
+   * @param form_id
+   * @param title_id
+   * @param control
+   * @param content
+   * @param from_mark
+   * @param to_mark
+   * @param category
+   * @param unit
+   * @param required
+   * @param options
+   * @description Tạo mới nội dung chấm điểm
    * @return HttpResponse<ItemResponse> | HttpException
-   * @page forms
+   * @page forms page
    */
   @Post('items')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -627,21 +672,27 @@ export class FormController {
         JSON.stringify({ params: params }),
       );
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
+      //#region Create item
       const result = await createItem(
         user_id,
         params,
-        this._titleService,
-        this._optionService,
+        this._formService,
         this._itemServicve,
+        this._optionService,
+        this._titleService,
         this._dataSource,
         req,
       );
+      //#endregion
 
+      //#region Generate response
       if (result instanceof HttpException) throw result;
-
       return result;
+      //#endregion
     } catch (err) {
       console.log(err);
       console.log('----------------------------------------------------------');
@@ -662,8 +713,14 @@ export class FormController {
    * @method PUT
    * @url /api/forms/:id
    * @access private
+   * @param id
+   * @param academic_id
+   * @param semester_id
+   * @param student
+   * @param class
+   * @param department
    * @description Cập nhật thông tin biểu mẫu
-   * @return HttpResponse<FormInfoResponse> | HttpException
+   * @return HttpResponse<FormResponse> | HttpException
    * @page forms
    */
   @Put(':id')
@@ -672,7 +729,7 @@ export class FormController {
     @Param('id') id: number,
     @Body() params: FormDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<FormInfoResponse> | HttpException> {
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -680,14 +737,14 @@ export class FormController {
           ' - ' +
           req.url +
           ': ' +
-          JSON.stringify({ params: params }),
+          JSON.stringify({ form_id: id, params }),
       );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ params: params }),
+        JSON.stringify({ form_id: id, params }),
       );
 
       //#region Validation
@@ -695,18 +752,26 @@ export class FormController {
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
-      return await updateForm(
+      //#region Update form
+      const form = await updateForm(
         id,
         user_id,
         params,
-        this._formService,
         this._academicYearService,
+        this._formService,
         this._semesterService,
-        this._dataSource,
         req,
       );
+      //#endregion
+
+      //#region Generate response
+      if (form instanceof HttpException) throw form;
+      else return form;
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -726,6 +791,10 @@ export class FormController {
    * @method PUT
    * @url /api/forms/headers/:id
    * @access private
+   * @param id
+   * @param form_id
+   * @param name
+   * @param max_mark
    * @description Cập nhật hạng mục đánh giá (Header) cho biểu mẫu
    * @return HttpResponse<BaseResponse> | HttpException
    * @page forms
@@ -733,38 +802,47 @@ export class FormController {
   @Put('headers/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
-  async updateHeaders(
+  async updateHeader(
     @Param('id') id: number,
     @Body() params: HeaderDto,
     @Req() req: Request,
   ): Promise<HttpResponse<BaseResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ header_id: id, params }),
+      );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify(params),
+        JSON.stringify({ header_id: id, params }),
       );
 
-      //#region Validate id
+      //#region Validation
       const valid = validateHeaderId(id, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
+      //#region Update header
       const header = await updateHeader(
         id,
         user_id,
         params,
-        this._headerService,
         this._formService,
-        this._dataSource,
+        this._headerService,
         req,
       );
+      //#endregion
 
       //#region Generate response
       if (header instanceof HttpException) throw header;
@@ -789,6 +867,10 @@ export class FormController {
    * @method PUT
    * @url /api/forms/titles/:id
    * @access private
+   * @param id
+   * @param form_id
+   * @param header_id
+   * @param name
    * @description Cập nhật tiêu chí đánh giá
    * @return HttpResponse<BaseResponse> | HttpException
    * @page forms
@@ -807,14 +889,14 @@ export class FormController {
           ' - ' +
           req.url +
           ': ' +
-          JSON.stringify({ params: params }),
+          JSON.stringify({ title_id: id, params }),
       );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ params: params }),
+        JSON.stringify({ title_id: id, params }),
       );
 
       //#region Validation
@@ -822,20 +904,26 @@ export class FormController {
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
+      //#region Update title
       const result = await updateTitle(
         id,
         user_id,
         params,
+        this._formService,
         this._headerService,
         this._titleService,
-        this._dataSource,
         req,
       );
+      //#endregion
 
+      //#region Generate response
       if (result instanceof HttpException) throw result;
       return result;
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -855,6 +943,17 @@ export class FormController {
    * @method PUT
    * @url /api/forms/titles/:id
    * @access private
+   * @param id
+   * @param form_id
+   * @param title_id
+   * @param control
+   * @param content
+   * @param from_mark
+   * @param to_mark
+   * @param category
+   * @param unit
+   * @param required
+   * @param options
    * @description Cập nhật nội dung đánh giá
    * @return HttpResponse<ItemResponse> | HttpException
    * @page forms
@@ -873,14 +972,14 @@ export class FormController {
           ' - ' +
           req.url +
           ': ' +
-          JSON.stringify({ params: params }),
+          JSON.stringify({ item_id: id, params }),
       );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ params: params }),
+        JSON.stringify({ item_id: id, params }),
       );
 
       //#region Validation
@@ -888,21 +987,28 @@ export class FormController {
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
+      //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
+      //#endregion
 
+      //#region Update item
       const result = await updateItem(
-        user_id,
         id,
+        user_id,
         params,
-        this._titleService,
+        this._formService,
         this._itemServicve,
         this._optionService,
+        this._titleService,
         this._dataSource,
         req,
       );
+      //#endregion
 
+      //#region Generate response
       if (result instanceof HttpException) throw result;
       return result;
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

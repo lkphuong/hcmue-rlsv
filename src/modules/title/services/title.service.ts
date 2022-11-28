@@ -8,6 +8,7 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { HeaderEntity } from 'src/entities/header.entity';
 
 @Injectable()
 export class TitleService {
@@ -18,15 +19,22 @@ export class TitleService {
     private _logger: LogService,
   ) {}
 
-  async getTitlesByHeaderId(id: number): Promise<TitleEntity[] | null> {
+  async getTitlesByHeaderId(header_id: number): Promise<TitleEntity[] | null> {
     try {
       const conditions = this._titleService
         .createQueryBuilder('title')
-        .where('title.header_id = :id', { id })
+        .innerJoinAndMapOne(
+          'title.header',
+          HeaderEntity,
+          'header',
+          `header.form_id = title.form_id AND 
+          header.ref = title.parent_ref`,
+        )
+        .where('header.id = :header_id', { header_id })
+        .andWhere('header.deleted = :deleted', { deleted: false })
         .andWhere('title.deleted = :deleted', { deleted: false });
 
       const titles = await conditions.getMany();
-
       return titles || null;
     } catch (e) {
       this._logger.writeLog(
@@ -47,7 +55,6 @@ export class TitleService {
         .andWhere('title.deleted = :deleted', { deleted: false });
 
       const title = await conditions.getOne();
-
       return title || null;
     } catch (e) {
       this._logger.writeLog(
@@ -70,7 +77,6 @@ export class TitleService {
       }
 
       title = await manager.save(title);
-
       return title || null;
     } catch (e) {
       this._logger.writeLog(
@@ -93,7 +99,6 @@ export class TitleService {
       }
 
       title = await manager.save(title);
-
       return title || null;
     } catch (e) {
       this._logger.writeLog(

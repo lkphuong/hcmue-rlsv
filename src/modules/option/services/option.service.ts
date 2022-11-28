@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
-import { OptionEntity } from 'src/entities/option.entity';
+import { OptionEntity } from '../../../entities/option.entity';
 
 import { LogService } from '../../log/services/log.service';
 
@@ -26,7 +26,6 @@ export class OptionService {
         .andWhere('option.deleted = :deleted', { deleted: false });
 
       const option = await conditions.getOne();
-
       return option || null;
     } catch (e) {
       this._logger.writeLog(
@@ -39,7 +38,7 @@ export class OptionService {
     }
   }
 
-  async getOptionByItemId(item_id: number): Promise<OptionEntity[] | null> {
+  async getOptionsByItemId(item_id: number): Promise<OptionEntity[] | null> {
     try {
       const conditions = this._optionRepository
         .createQueryBuilder('option')
@@ -55,7 +54,7 @@ export class OptionService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'OptionService.getOptionByItemId()',
+        'OptionService.getOptionsByItemId()',
         e,
       );
       return null;
@@ -85,7 +84,7 @@ export class OptionService {
     }
   }
 
-  async bulkUnlinkByItemId(
+  async bulkUnlink(
     item_id: number,
     user_id: string,
     manager?: EntityManager,
@@ -106,7 +105,7 @@ export class OptionService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.DELETE,
-        'OptionService.bulkUnlinkByItemId()',
+        'OptionService.bulkUnlink()',
         e,
       );
       return null;

@@ -1,32 +1,31 @@
 import { User } from '../../../schemas/user.schema';
-import { Class } from '../../../schemas/class.schema';
 
+import { AcademicYearClassesEntity } from '../../../entities/academic_year_classes.entity';
+import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
-import { AcademicYearEntity } from '../../../entities/academic_year.entity';
-import { EvaluationEntity } from '../../../entities/evaluation.entity';
 
-import { convertObjectId2String } from '../../../utils';
-
-import { UserService } from '../../user/services/user.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
+import { UserService } from '../../user/services/user.service';
 
 import {
-  SheetClassResponse,
-  SheetUsersResponse,
-  SheetDetailResponse,
-  ItemDetailResponse,
-  EvaluationDetailResponse,
   BaseResponse,
+  ClassSheetsResponse,
+  EvaluationsResponse,
+  ItemsResponse,
+  SheetDetailsResponse,
+  UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 
-export const generateSheets2SheetUsuer = (sheets: SheetEntity[] | null) => {
+import { convertObjectId2String } from '../../../utils';
+
+export const generateUserSheets = (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
-    const payload: SheetUsersResponse[] = [];
+    const payload: UserSheetsResponse[] = [];
     for (const sheet of sheets) {
-      const item: SheetUsersResponse = {
+      const item: UserSheetsResponse = {
         id: sheet.id,
         semester: {
           id: sheet.semester.id,
@@ -45,21 +44,23 @@ export const generateSheets2SheetUsuer = (sheets: SheetEntity[] | null) => {
         sum_of_department_marks: sheet.sum_of_department_marks,
         status: sheet.status,
       };
+
       payload.push(item);
     }
+
     return payload;
   }
 
   return null;
 };
 
-export const generateSheets2Class = async (
+export const generateClassSheets = async (
   sheets: SheetEntity[] | null,
   user_service: UserService,
   input?: string,
 ) => {
   if (sheets && sheets.length > 0) {
-    const payload: SheetClassResponse[] = [];
+    const payload: ClassSheetsResponse[] = [];
     for (const sheet of sheets) {
       let result: User = null;
       if (input) {
@@ -67,8 +68,9 @@ export const generateSheets2Class = async (
       } else {
         result = await user_service.getUserById(sheet.user_id);
       }
+
       if (result) {
-        const item: SheetClassResponse = {
+        const item: ClassSheetsResponse = {
           id: sheet.id,
           user: {
             id: convertObjectId2String(result._id),
@@ -84,6 +86,7 @@ export const generateSheets2Class = async (
           sum_of_class_marks: sheet.sum_of_class_marks,
           status: sheet.status,
         };
+
         payload.push(item);
       }
     }
@@ -94,45 +97,31 @@ export const generateSheets2Class = async (
   return null;
 };
 
-export const generateAcademicYearClass2Array = async (
+export const generateClasses2Array = async (
   department_id: string,
-  class_id: string,
-  academic_year: AcademicYearEntity | null,
+  academic_year_classes: AcademicYearClassesEntity[] | null,
   class_service: ClassService,
 ) => {
-  if (
-    academic_year.academic_year_classes &&
-    academic_year.academic_year_classes.length > 0
-  ) {
+  if (academic_year_classes && academic_year_classes.length > 0) {
     const payload: BaseResponse[] = [];
-    const academic_year_classes = academic_year.academic_year_classes;
 
-    for (const academic_year_classe of academic_year_classes) {
-      let item: BaseResponse = null;
-      let result: Class = null;
-      if (class_id) {
-        result = await class_service.getClassById(class_id, department_id);
-        if (result) {
-          item = {
-            id: convertObjectId2String(result._id),
-            name: result.name,
-          };
-          payload.push(item);
-          return payload;
-        }
-      } else {
-        result = await class_service.getClassById(
-          academic_year_classe.class_id,
-          department_id,
-        );
+    for (const academic_year_class of academic_year_classes) {
+      //#region Get class by class_id
+      const result = await class_service.getClassById(
+        academic_year_class.class_id,
+        department_id,
+      );
+      //#endregion
 
-        if (result) {
-          item = {
-            id: convertObjectId2String(result._id),
-            name: result.name,
-          };
-          payload.push(item);
-        }
+      if (result) {
+        //#region Generate class response
+        const item: BaseResponse = {
+          id: convertObjectId2String(result._id),
+          name: result.name,
+        };
+
+        payload.push(item);
+        //#endregion
       }
     }
 
@@ -144,35 +133,44 @@ export const generateAcademicYearClass2Array = async (
 
 export const generateData2Object = async (
   sheet: SheetEntity | null,
-  department_service: DepartmentService,
   class_service: ClassService,
-  user_service: UserService,
+  department_service: DepartmentService,
   k_service: KService,
+  user_service: UserService,
 ) => {
   if (sheet) {
+    //#region Get user by user_id
+    const user = await user_service.getUserById(sheet.user_id);
+    //#endregion
+
+    //#region Get department by department_id
     const department = await department_service.getDepartmentById(
       sheet.department_id,
     );
-    const user = await user_service.getUserById(sheet.user_id);
+    //#endregion
 
-    const result_class = await class_service.getClassById(
+    //#region Get class by class_id
+    const classes = await class_service.getClassById(
       sheet.class_id,
       sheet.department_id,
     );
+    //#endregion
 
+    //#region Get k by _id
     const k = await k_service.getKById(sheet.k);
+    //#endregion
 
-    if (department && user && result_class && k) {
+    if (department && user && classes && k) {
       const headers: BaseResponse[] = [];
-      const payload: SheetDetailResponse = {
+      const payload: SheetDetailsResponse = {
         id: sheet.id,
         department: {
           id: convertObjectId2String(department._id),
           name: department.name,
         },
         class: {
-          id: convertObjectId2String(result_class._id),
-          name: result_class.name,
+          id: convertObjectId2String(classes._id),
+          name: classes.name,
         },
         user: {
           id: convertObjectId2String(user._id),
@@ -202,6 +200,7 @@ export const generateData2Object = async (
         headers: headers,
       };
 
+      //#region Get headers
       if (sheet?.form?.headers && sheet?.form?.headers.length > 0) {
         for (const header of sheet.form.headers) {
           const item: BaseResponse = {
@@ -211,6 +210,8 @@ export const generateData2Object = async (
           payload.headers.push(item);
         }
       }
+      //#endregion
+
       return payload;
     }
   }
@@ -218,50 +219,59 @@ export const generateData2Object = async (
   return null;
 };
 
-export const generateDetailTile2Object = (items: ItemEntity[] | null) => {
+export const generateItemsArray = (items: ItemEntity[] | null) => {
   if (items) {
-    const payload: ItemDetailResponse[] = [];
+    const payload: ItemsResponse[] = [];
+
     for (const item of items) {
-      const tmp: ItemDetailResponse = {
+      const result: ItemsResponse = {
         id: item.evaluations[0].id,
         item: {
           id: item.id,
           content: item.content,
         },
-        option: [],
+        options: [],
         personal_mark_level: item.evaluations[0].personal_mark_level,
         class_mark_level: item.evaluations[0].class_mark_level,
         department_mark_level: item.evaluations[0].department_mark_level,
       };
+
+      //#region Get options by item
       for (const i of item.options) {
-        tmp.option.push({
+        result.options.push({
           id: i.id,
           content: i.content,
         });
       }
-      payload.push(tmp);
+      //#endregion
+
+      payload.push(result);
     }
 
     return payload;
   }
+
   return null;
 };
 
-export const generateEvaluation2Array = (
+export const generateEvaluationsArray = (
   evaluations: EvaluationEntity[] | null,
 ) => {
   if (evaluations) {
-    const payload: EvaluationDetailResponse[] = [];
+    const payload: EvaluationsResponse[] = [];
+
     for (const evaluation of evaluations) {
-      const item: EvaluationDetailResponse = {
+      const item: EvaluationsResponse = {
         id: evaluation.id,
         item: {
           id: evaluation.item.id,
           content: evaluation.item.content,
         },
-        option: evaluation.option
+
+        options: evaluation.option
           ? { id: evaluation.option.id, content: evaluation.option.content }
           : null,
+
         personal_mark_level: evaluation.personal_mark_level,
         class_mark_level: evaluation.class_mark_level,
         department_mark_level: evaluation.department_mark_level,
@@ -272,5 +282,6 @@ export const generateEvaluation2Array = (
 
     return payload;
   }
+
   return null;
 };

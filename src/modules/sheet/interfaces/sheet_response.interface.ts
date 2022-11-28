@@ -9,22 +9,18 @@ export interface UserResponse {
   std_code: string;
 }
 
-export interface ItemResponse {
-  id: number;
-  content: string;
-}
-
 export interface MarkResponse {
   sum_of_personal_marks: number;
   sum_of_class_marks: number;
   sum_of_department_marks: number;
 }
 
-export interface MultiApproveResponse {
+export interface ApproveAllResponse {
   sheet_ids: number[];
   success: boolean;
 }
-export interface SheetUsersResponse extends MarkResponse {
+
+export interface UserSheetsResponse extends MarkResponse {
   id: number;
   semester: BaseResponse;
   academic: BaseResponse;
@@ -32,11 +28,39 @@ export interface SheetUsersResponse extends MarkResponse {
   status: number;
 }
 
-export interface SheetClassResponse extends MarkResponse {
+export interface ClassSheetsResponse extends MarkResponse {
   id: number;
   user: UserResponse;
   level: BaseResponse;
   status: number;
+}
+
+export interface ItemsResponse {
+  id: number;
+  item: ItemResponse;
+  options?: OptionResponse[] | null;
+  personal_mark_level: number;
+  class_mark_level: number;
+  department_mark_level: number;
+}
+
+export interface ItemResponse {
+  id: number;
+  content: string;
+}
+
+export interface OptionResponse {
+  id: number;
+  content: string;
+}
+
+export interface EvaluationsResponse {
+  id: number;
+  item: ItemResponse;
+  options?: OptionResponse | null;
+  personal_mark_level: number;
+  class_mark_level: number;
+  department_mark_level: number;
 }
 
 export interface EvaluationResponse extends MarkResponse {
@@ -52,7 +76,7 @@ export interface EvaluationResponse extends MarkResponse {
   children: boolean;
 }
 
-export interface SheetDetailResponse extends MarkResponse {
+export interface SheetDetailsResponse extends MarkResponse {
   id: number;
   department: BaseResponse;
   class: BaseResponse;
@@ -70,22 +94,4 @@ export interface SheetEvaluationResponse {
   semester: BaseResponse;
   academic: BaseResponse;
   evaluations: EvaluationResponse[];
-}
-
-export interface ItemDetailResponse {
-  id: number;
-  item: ItemResponse;
-  option?: ItemResponse[];
-  personal_mark_level: number;
-  class_mark_level: number;
-  department_mark_level: number;
-}
-
-export interface EvaluationDetailResponse {
-  id: number;
-  item: ItemResponse;
-  option?: ItemResponse;
-  personal_mark_level: number;
-  class_mark_level: number;
-  department_mark_level: number;
 }

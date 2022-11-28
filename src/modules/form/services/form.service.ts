@@ -30,7 +30,6 @@ export class FormService {
         .andWhere('form.deleted = :deleted', { deleted: false });
 
       const form = await conditions.getOne();
-
       return form || null;
     } catch (e) {
       this._logger.writeLog(
@@ -54,7 +53,6 @@ export class FormService {
         .andWhere('form.deleted = :deleted', { deleted: false });
 
       const forms = await conditions.getMany();
-
       return forms || null;
     } catch (e) {
       this._logger.writeLog(
@@ -77,7 +75,6 @@ export class FormService {
       }
 
       form = await manager.save(form);
-
       return form || null;
     } catch (e) {
       this._logger.writeLog(
@@ -100,7 +97,6 @@ export class FormService {
       }
 
       form = await manager.save(form);
-
       return form || null;
     } catch (e) {
       this._logger.writeLog(

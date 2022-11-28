@@ -1,23 +1,24 @@
-import { HttpStatus } from '@nestjs/common';
-import { isEmpty } from 'class-validator';
-
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
+
+import { isEmpty } from 'class-validator';
 
 import { convertString2Date, sprintf } from '../../../utils';
 
-import { FormEntity } from 'src/entities/form.entity';
+import { FormEntity } from '../../../entities/form.entity';
+import { SheetEntity } from '../../../entities/sheet.entity';
 
-import { LevelService } from '../../level/services/level.service';
+import { SheetService } from '../services/sheet.service';
 
+import { RoleCode } from '../../../constants/enums/role_enum';
+
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
-import { UnknownException } from '../../../exceptions/UnknownException';
 
 import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import { ErrorMessage } from '../constants/errors.enum';
-import { RoleCode } from '../../../constants/enums/role_enum';
 
 export const validateDepartmentId = (id: string, req: Request) => {
   if (isEmpty(id)) {
@@ -26,20 +27,6 @@ export const validateDepartmentId = (id: string, req: Request) => {
       req.method,
       req.url,
       ErrorMessage.DEPARTMENT_ID_EMPTY_ERROR,
-      HttpStatus.BAD_REQUEST,
-    );
-  }
-
-  return null;
-};
-
-export const validateUserId = (id: string, req: Request) => {
-  if (isEmpty(id)) {
-    return new HandlerException(
-      VALIDATION_EXIT_CODE.EMPTY,
-      req.method,
-      req.url,
-      ErrorMessage.USER_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   }
@@ -69,6 +56,20 @@ export const validateSheetId = (id: number, req: Request) => {
   return null;
 };
 
+export const validateUserId = (id: string, req: Request) => {
+  if (isEmpty(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.USER_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};
+
 export const validateMark = (
   mark: number,
   from_mark: number,
@@ -77,6 +78,7 @@ export const validateMark = (
 ) => {
   if (from_mark != 0 && to_mark != 0) {
     if (mark > to_mark || mark < from_mark) {
+      //#region throw HandlerException
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_FORMAT,
         req.method,
@@ -84,8 +86,10 @@ export const validateMark = (
         sprintf(ErrorMessage.RANGE_MARK_INVALID_FORMAT, from_mark, to_mark),
         HttpStatus.BAD_REQUEST,
       );
+      //#endregion
     }
   } else if (from_mark != 0 && from_mark < mark) {
+    //#region throw HandlerException
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,
@@ -93,30 +97,10 @@ export const validateMark = (
       sprintf(ErrorMessage.SINGLE_MARK_INVALID_FORMAT, from_mark),
       HttpStatus.BAD_REQUEST,
     );
-  }
-
-  return null;
-};
-
-export const validateMarkLevel = async (
-  mark: number,
-  level_service: LevelService,
-  req: Request,
-) => {
-  const level = await level_service.getLevelByMark(mark);
-  if (!level) {
-    //#region throw HandleException
-    return new UnknownException(
-      mark,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.MARK_NOT_FOUND_ERROR, mark),
-    );
     //#endregion
   }
 
-  return level;
+  return null;
 };
 
 export const validateRole = (role1: number, role2: number, req: Request) => {
@@ -133,13 +117,35 @@ export const validateRole = (role1: number, role2: number, req: Request) => {
   return null;
 };
 
-export const validateApprovalTime = async (
+export const validateSheet = async (
+  id: number,
+  sheet_service: SheetService,
+  req: Request,
+): Promise<SheetEntity | HttpException> => {
+  const sheet = await sheet_service.getSheetById(id);
+  if (!sheet) {
+    //#region throw HandlerException
+    return new HandlerException(
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.SHEET_NOT_FOUND_ERROR, id),
+      HttpStatus.NOT_FOUND,
+    );
+    //#endregion
+  }
+
+  return sheet;
+};
+
+export const validateTime = async (
   form: FormEntity,
-  role: number,
+  role: RoleCode,
   req: Request,
 ) => {
   const current = new Date();
   if (role === RoleCode.STUDENT) {
+    //#region Validate student time
     if (
       current < convertString2Date(form.student_start.toString()) ||
       current > convertString2Date(form.student_end.toString())
@@ -148,11 +154,13 @@ export const validateApprovalTime = async (
         VALIDATION_EXIT_CODE.NO_MATCHING,
         req.method,
         req.url,
-        ErrorMessage.PAST_APPROVAL_TIME_ERROR,
+        sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
         HttpStatus.BAD_REQUEST,
       );
     }
+    //#endregion
   } else if (role === RoleCode.CLASS) {
+    //#region Validate class time
     if (
       current < convertString2Date(form.class_start.toString()) ||
       current > convertString2Date(form.class_end.toString())
@@ -161,11 +169,13 @@ export const validateApprovalTime = async (
         VALIDATION_EXIT_CODE.NO_MATCHING,
         req.method,
         req.url,
-        ErrorMessage.PAST_APPROVAL_TIME_ERROR,
+        sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
         HttpStatus.BAD_REQUEST,
       );
     }
+    //#endregion
   } else if (role == RoleCode.DEPARTMENT) {
+    //#region Validate department time
     if (
       current < convertString2Date(form.department_start.toString()) ||
       current > convertString2Date(form.department_end.toString())
@@ -174,10 +184,11 @@ export const validateApprovalTime = async (
         VALIDATION_EXIT_CODE.NO_MATCHING,
         req.method,
         req.url,
-        ErrorMessage.PAST_APPROVAL_TIME_ERROR,
+        sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
         HttpStatus.BAD_REQUEST,
       );
     }
+    //#endregion
   }
 
   return null;

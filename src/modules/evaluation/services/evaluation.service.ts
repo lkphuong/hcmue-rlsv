@@ -30,7 +30,6 @@ export class EvaluationService {
         .andWhere('evaluation.deleted = :deleted ', { deleted: false });
 
       const evaluation = await conditions.getOne();
-
       return evaluation || null;
     } catch (e) {
       this._logger.writeLog(
@@ -51,7 +50,6 @@ export class EvaluationService {
         .andWhere('evaluation.deleted = :deleted', { deleted: false });
 
       const evaluation = await conditions.getOne();
-
       return evaluation || null;
     } catch (e) {
       this._logger.writeLog(
@@ -88,7 +86,6 @@ export class EvaluationService {
         );
 
       const evaluations = await conditions.getMany();
-
       return evaluations || null;
     } catch (e) {
       this._logger.writeLog(
@@ -111,7 +108,6 @@ export class EvaluationService {
       }
 
       evaluation = await manager.save(evaluation);
-
       return evaluation;
     } catch (e) {
       this._logger.writeLog(
@@ -132,8 +128,8 @@ export class EvaluationService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
-      evaluation = await manager.save(evaluation);
 
+      evaluation = await manager.save(evaluation);
       return evaluation;
     } catch (e) {
       this._logger.writeLog(
@@ -146,7 +142,7 @@ export class EvaluationService {
     }
   }
 
-  async multiApprove(
+  async bulkApprove(
     sheet_ids: number[],
     manager?: EntityManager,
   ): Promise<boolean> {
@@ -164,7 +160,7 @@ export class EvaluationService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.UPDATE,
-        'EvaluationService.multiApprove()',
+        'EvaluationService.bulkApprove()',
         e,
       );
       return null;

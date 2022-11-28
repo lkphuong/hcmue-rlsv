@@ -48,9 +48,11 @@ export class ClassController {
    * @method POST
    * @url /api/classes/all
    * @access private
+   * @param department_id
+   * @param academic_year_id
    * @description Hiển thị danh sách lớp theo khoa thuộc niên khóa
    * @return HttpResponse<ClassResponse> | HttpException | null
-   * @page
+   * @page Any page
    */
   @Post('all')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -73,11 +75,9 @@ export class ClassController {
       const { academic_year_id, department_id } = params;
       //#endregion
 
-      //#region Get data
+      //#region Get classes
       const academic_year =
-        await this._academicYearService.getAcademicYearClassesById(
-          academic_year_id,
-        );
+        await this._academicYearService.getClassesByAcademic(academic_year_id);
       //#endregion
 
       if (

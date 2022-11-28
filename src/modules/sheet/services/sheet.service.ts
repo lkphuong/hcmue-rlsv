@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
+import { SheetEntity } from '../../../entities/sheet.entity';
+
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
-
-import { SheetEntity } from 'src/entities/sheet.entity';
 
 @Injectable()
 export class SheetService {
@@ -102,7 +102,6 @@ export class SheetService {
         .andWhere('sheet.deleted = :deleted', { deleted: false });
 
       const sheet = await conditions.getOne();
-
       return sheet || null;
     } catch (e) {
       this._logger.writeLog(
@@ -125,7 +124,6 @@ export class SheetService {
       }
 
       sheet = await manager.save(sheet);
-
       return sheet || null;
     } catch (e) {
       this._logger.writeLog(

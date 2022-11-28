@@ -31,7 +31,6 @@ export class LevelService {
         .andWhere('level.deleted = :deleted', { deleted: false });
 
       const level = await conditions.getOne();
-
       return level || null;
     } catch (e) {
       this._logger.writeLog(

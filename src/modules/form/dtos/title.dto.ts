@@ -9,11 +9,21 @@ import { LengthValidator } from '../../../validators/length.validator';
 export class TitleDto {
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [hạng mục].'),
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [biểu mẫu].'),
   })
   @MinValidator(0, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [hạng mục] tối thiểu bằng 0.'),
+      generateValidationMessage(arg, 'Giá trị [biểu mẫu] tối thiểu bằng 0.'),
+  })
+  form_id: number;
+
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng chọn  tiêu chí đánh giá].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị  tiêu chí] tối thiểu bằng 0.'),
   })
   header_id: number;
 
@@ -22,11 +32,17 @@ export class TitleDto {
   )
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [tiêu chí].'),
+      generateValidationMessage(
+        arg,
+        'Bạn vui lòng nhập [nội dung tiêu chí đánh giá].',
+      ),
   })
   @LengthValidator(1, 500, {
     message: (arg) =>
-      generateValidationMessage(arg, '[Tiêu chí] độ dài tối đa 500 kí tự.'),
+      generateValidationMessage(
+        arg,
+        '[Nội dung tiêu chí đánh giá] độ dài tối đa 500 kí tự.',
+      ),
   })
   name: string;
 }

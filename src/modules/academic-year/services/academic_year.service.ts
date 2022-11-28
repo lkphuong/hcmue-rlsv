@@ -25,7 +25,6 @@ export class AcademicYearService {
         .andWhere('academic_year.deleted = :deleted', { deleted: 0 });
 
       const academic_years = conditions.getMany();
-
       return academic_years || null;
     } catch (e) {
       this._logger.writeLog(
@@ -39,24 +38,33 @@ export class AcademicYearService {
     }
   }
 
-  async getAcademicYearClassesById(
+  async getClassesByAcademic(
     academic_year_id: number,
+    class_id?: string | null,
   ): Promise<AcademicYearEntity | null> {
     try {
-      const conditions = await this._academicYearRepository
+      let conditions = await this._academicYearRepository
         .createQueryBuilder('academic_year')
         .innerJoinAndSelect(
           'academic_year.academic_year_classes',
           'academic_year_classes',
         )
-        .where('academic_year.deleted = :deleted', { deleted: false })
-        .andWhere('academic_year.id = :academic_year_id', { academic_year_id })
+        .where('academic_year_classes.academic_year_id = :academic_year_id', {
+          academic_year_id,
+        })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
         .andWhere('academic_year_classes.deleted = :deleted', {
           deleted: false,
         });
 
-      const academic_year = await conditions.getOne();
+      if (class_id) {
+        conditions = conditions.andWhere(
+          'academic_year_classes.class_id = :class_id',
+          { class_id },
+        );
+      }
 
+      const academic_year = await conditions.getOne();
       return academic_year || null;
     } catch (e) {
       this._logger.writeLog(
@@ -77,7 +85,6 @@ export class AcademicYearService {
         .andWhere('academic_year.deleted = :deleted', { deleted: false });
 
       const academic_year = await conditions.getOne();
-
       return academic_year || null;
     } catch (e) {
       this._logger.writeLog(

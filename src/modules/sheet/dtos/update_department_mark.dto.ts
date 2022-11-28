@@ -6,7 +6,7 @@ import { generateValidationMessage } from '../../../utils';
 import { IsNumberValidator } from '../../../validators/number.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
-class DataDtos {
+class DepartmentMarkDtos {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [nội dung chấm điểm].'),
@@ -41,20 +41,20 @@ class DataDtos {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Bạn vui lòng nhập [điểm đánh giá của lớp].',
+        'Bạn vui lòng nhập [điểm đánh giá của khoa].',
       ),
   })
   @IsNumberValidator({
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [điểm đánh giá của lớp] phải là số.',
+        'Giá trị [điểm đánh giá khoa] phải là số.',
       ),
   })
-  class_mark_level: number;
+  department_mark_level: number;
 }
 
-export class ClassUpdateMarkDto {
+export class UpdateDepartmentMarkDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [vai trò].'),
@@ -66,6 +66,6 @@ export class ClassUpdateMarkDto {
   role_id: number;
 
   @ValidateNested({ each: true })
-  @Type(() => DataDtos)
-  data: DataDtos[];
+  @Type(() => DepartmentMarkDtos)
+  data: DepartmentMarkDtos[];
 }

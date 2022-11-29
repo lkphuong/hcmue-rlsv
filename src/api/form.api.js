@@ -1,4 +1,4 @@
-import { get, post } from '_axios/request';
+import { get, post, remove } from '_axios/request';
 
 import { FORMS } from './url';
 
@@ -32,4 +32,20 @@ export const getTitlesByHeaderId = async (id) => {
 
 export const getItemsByTitleId = async (id) => {
 	return await get(`${FORMS.GET_ITEMS_BY_TITLE_ID}/${id}`);
+};
+
+export const deleteForm = async (id) => {
+	return await remove(`${FORMS.DELETE_FORM}/${id}`);
+};
+
+export const deleteHeader = async (form_id, header_id) => {
+	return await remove(`${FORMS.DELETE_HEADER}/${form_id}/headers/${header_id}`);
+};
+
+export const deleteTitle = async (form_id, title_id) => {
+	return await remove(`${FORMS.DELETE_HEADER}/${form_id}/headers/${title_id}`);
+};
+
+export const deleteItem = async (form_id, item_id) => {
+	return await remove(`${FORMS.DELETE_HEADER}/${form_id}/headers/${item_id}`);
 };

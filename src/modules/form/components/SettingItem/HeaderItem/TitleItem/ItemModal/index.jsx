@@ -1,5 +1,5 @@
 import React, { forwardRef, memo, useImperativeHandle, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useController, useForm } from 'react-hook-form';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Checkbox, Grid, Grow, Modal, Paper, Stack, Typography } from '@mui/material';
@@ -14,9 +14,11 @@ import { CONTROL } from '_constants/variables';
 
 import { createItem } from '_api/form.api';
 
-import Optional from './Optional';
 import { isSuccess } from '_func/';
+
 import { alert } from '_func/alert';
+
+import Optional from './Optional';
 
 const ItemModal = memo(
 	forwardRef(({ refetch, title_id }, ref) => {
@@ -32,6 +34,11 @@ const ItemModal = memo(
 			mode: 'all',
 			resolver,
 		});
+
+		const {
+			field: { onChange },
+		} = useController({ control, name: 'options', rules: { required: true } });
+
 		//#endregion
 
 		//#region Event
@@ -59,6 +66,13 @@ const ItemModal = memo(
 				toggleClose();
 			} else {
 				alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+			}
+		};
+
+		const changeControl = (CallbackFunc) => (event) => {
+			CallbackFunc(Number(event.target.value));
+			if (event.target.value !== 2 && event.target.value !== 3) {
+				onChange([]);
 			}
 		};
 		//#endregion
@@ -91,7 +105,7 @@ const ItemModal = memo(
 													<CSelect
 														value={value}
 														options={CONTROL}
-														onChange={onChange}
+														onChange={changeControl(onChange)}
 														name={name}
 														fullWidth
 													/>

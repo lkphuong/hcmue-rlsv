@@ -23,6 +23,8 @@ export const CInput = memo(
 
 		const togglePassword = () => setShow(!show);
 
+		const handleFocus = (event) => event.target.select();
+
 		return (
 			<TextField
 				id={id}
@@ -31,6 +33,7 @@ export const CInput = memo(
 				type={isPassword ? (show ? 'text' : 'password') : 'text'}
 				placeholder={placeholder}
 				onChange={onChange}
+				onFocus={handleFocus}
 				error={error}
 				helperText={helperText}
 				InputProps={

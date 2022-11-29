@@ -12,9 +12,12 @@ const TypeInput = memo(({ control }) => {
 	//#endregion
 
 	//#region Event
-	const handleChangeMark = (CallbackFunc) => (value) => {
-		if (!isNaN(value)) CallbackFunc(Number(value));
-		else CallbackFunc(value);
+	const handleChangeMark = (CallbackFunc) => (event) => {
+		if (!isNaN(event.target.value)) {
+			CallbackFunc(Number(event.target.value));
+		} else {
+			CallbackFunc(event.target.value);
+		}
 	};
 	//#endregion
 
@@ -36,6 +39,11 @@ const TypeInput = memo(({ control }) => {
 						}) => (
 							<CInput
 								placeholder='Min'
+								inputProps={{
+									min: -100,
+									max: 100,
+									maxLength: 3,
+								}}
 								name={name}
 								inputRef={ref}
 								value={value}
@@ -55,6 +63,11 @@ const TypeInput = memo(({ control }) => {
 						}) => (
 							<CInput
 								placeholder='Max'
+								inputProps={{
+									min: -100,
+									max: 100,
+									maxLength: 3,
+								}}
 								name={name}
 								inputRef={ref}
 								value={value}

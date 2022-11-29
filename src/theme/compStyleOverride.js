@@ -219,5 +219,21 @@ export default function componentStyleOverrides(theme) {
 				},
 			},
 		},
+		MuiAccordionSummary: {
+			styleOverrides: {
+				root: {
+					'&.Mui-expanded': {
+						minHeight: '50px',
+					},
+				},
+			},
+		},
+		MuiAccordionDetails: {
+			styleOverrides: {
+				root: {
+					padding: '8px',
+				},
+			},
+		},
 	};
 }

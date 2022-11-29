@@ -35,6 +35,7 @@ export const initialItem = {
 	to_mark: 0,
 	category: 0,
 	unit: 'Điểm',
+	options: [{ content: '', mark: 0 }],
 };
 //#endregion
 
@@ -110,5 +111,31 @@ export const validationItem = yup.object({
 		.string('Vui lòng nhập nội dung tiêu chí.')
 		.required('Vui lòng nhập nội dung tiêu chí.'),
 	required: yup.bool(),
+	from_mark: yup
+		.number('Giá trị điểm tối thiểu phải là số.')
+		.typeError('Giá trị điểm tối thiểu phải là số.')
+		.required('Vui lòng nhập điểm cho tiêu chí.'),
+	to_mark: yup
+		.number('Giá trị điểm tối đa phải là số.')
+		.typeError('Giá trị điểm tối đa phải là số.')
+		.required('Vui lòng nhập điểm cho tiêu chí.'),
+	category: yup.number().typeError(),
+	options: yup.array().when('control', {
+		is: (value) => value === 2 || value === 3,
+		then: yup
+			.array(
+				yup.object({
+					content: yup
+						.string('Vui lòng nhập chi tiết tiêu chí.')
+						.required('Vui lòng nhập chi tiết tiêu chí.'),
+					mark: yup
+						.number('Giá trị điểm của tiêu chí phải là số.')
+						.min(1, 'Giá trị điểm của tùy chọn phải lớn hơn 0.')
+						.typeError('Giá trị điểm của tiêu chí phải là số.')
+						.required('Vui lòng nhập điểm cho tiêu chí.'),
+				})
+			)
+			.min(1, 'Phải có ít nhất 1 tùy chọn cho control Select/Multiple select'),
+	}),
 });
 //#endregion

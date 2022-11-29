@@ -32,4 +32,18 @@ export const alert = {
 			},
 		});
 	},
+	warningDelete: ({ onConfirm } = {}) => {
+		Swal.fire({
+			title: 'Xóa?',
+			text: 'Thao tác này sẽ không thể hoàn tác, bạn chắc chắn muốn xóa?',
+			showCancelButton: true,
+			icon: 'warning',
+			confirmButtonText: 'Đồng ý',
+			cancelButtonText: 'Hủy bỏ',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onConfirm();
+			}
+		});
+	},
 };

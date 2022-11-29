@@ -41,21 +41,26 @@ const TitleItem = memo(({ data }) => {
 		getItems();
 	}, [data?.id]);
 
-	console.log(items);
-
 	//#region Render
 	return (
 		<Accordion>
 			<AccordionSummary expandIcon={<ExpandMore />}>
-				<Typography fontWeight={600}>{data.name}</Typography>
+				<Typography fontWeight={600}>- {data.name}</Typography>
 			</AccordionSummary>
 			<AccordionDetails>
 				{items.length > 0 && items.map((item) => <ItemDisplay key={item.id} data={item} />)}
 
 				<Grid item xs={12}>
-					<IconButton onClick={openModal}>
-						<AddCircleOutline />
-					</IconButton>
+					<Grid container alignItems='center' justifyContent='center' spacing={1}>
+						<Grid item xs='auto'>
+							<IconButton onClick={openModal}>
+								<AddCircleOutline />
+							</IconButton>
+						</Grid>
+						<Grid item xs>
+							<Typography>Thêm chi tiết tiêu chí</Typography>
+						</Grid>
+					</Grid>
 				</Grid>
 			</AccordionDetails>
 

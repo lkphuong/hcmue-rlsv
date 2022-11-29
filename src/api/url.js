@@ -22,18 +22,22 @@ export const FORMS = {
 	CREATE_FORM: '/forms',
 	UPDATE_FORM: '/forms',
 	GET_FORM_BY_ID: '/forms',
+	DELETE_FORM: '/forms' /* /forms/:id */,
 
 	CREATE_HEADER: '/forms/headers',
 	GET_HEADERS_BY_FORM_ID: '/forms/headers',
 	UPDATE_HEADER: '/forms/headers',
+	DELETE_HEADER: '/forms' /* /forms/:form_id/headers/:header_id */,
 
 	CREATE_TITLE: '/forms/titles',
 	GET_TITLES_BY_HEADER_ID: '/forms/titles',
 	UPDATE_TITLE: '/forms/titles',
+	DELETE_TITLE: '/forms' /* /forms/:form_id/headers/:title_id */,
 
 	CREATE_ITEM: '/forms/items',
 	GET_ITEMS_BY_TITLE_ID: '/forms/items',
 	UPDATE_ITEM: '/forms/items',
+	DELETE_ITEM: '/forms' /* /forms/:form_id/headers/:item_id */,
 };
 
 export const CLASSES = {

@@ -20,7 +20,7 @@ const FormCreatePage = () => {
 	//#region Data
 	const [isEdit, setIsEdit] = useState();
 
-	const [step, setStep] = useState(2);
+	const [step, setStep] = useState(3);
 
 	const { form_id } = useParams();
 

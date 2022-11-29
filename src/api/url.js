@@ -18,7 +18,6 @@ export const SHEETS = {
 };
 
 export const FORMS = {
-	GET_ITEMS_BY_TITLE_ID: '/forms/items',
 	GET_FORMS: '/forms',
 	CREATE_FORM: '/forms',
 	UPDATE_FORM: '/forms',
@@ -31,6 +30,10 @@ export const FORMS = {
 	CREATE_TITLE: '/forms/titles',
 	GET_TITLES_BY_HEADER_ID: '/forms/titles',
 	UPDATE_TITLE: '/forms/titles',
+
+	CREATE_ITEM: '/forms/items',
+	GET_ITEMS_BY_TITLE_ID: '/forms/items',
+	UPDATE_ITEM: '/forms/items',
 };
 
 export const CLASSES = {

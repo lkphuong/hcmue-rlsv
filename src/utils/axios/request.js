@@ -1,5 +1,3 @@
-import { alert } from '_func/alert';
-
 import apiInstance from '.';
 
 export const controller = null;
@@ -28,7 +26,6 @@ export const post = async (url, body, options = {}) => {
 
 	// controller = new AbortController();
 
-	alert.loading();
 	try {
 		return await apiInstance.post(url, body, {
 			...options,
@@ -46,7 +43,6 @@ export const put = async (url, body, options = {}) => {
 
 	// controller = new AbortController();
 
-	alert.loading();
 	try {
 		return await apiInstance.put(url, body, {
 			...options,

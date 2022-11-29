@@ -29,7 +29,7 @@ import CheckButton from './CheckButton';
 const HeaderItem = memo(({ data }) => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
-	// eslint-disable-next-line no-unused-vars
+
 	const [titles, setTitles] = useState([]);
 
 	const { id: header_id } = data;

@@ -1,0 +1,163 @@
+import React, { forwardRef, memo, useImperativeHandle, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { shallowEqual, useSelector } from 'react-redux';
+
+import { Box, Button, Checkbox, Grid, Grow, Modal, Paper, Stack, Typography } from '@mui/material';
+
+import { useResolver } from '_hooks/';
+
+import { initialItem, validationItem } from '_modules/form/form';
+
+import { CInput, CSelect } from '_controls/';
+
+import { CONTROL } from '_constants/variables';
+
+import { createItem } from '_api/form.api';
+
+import Optional from './Optional';
+import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
+
+const ItemModal = memo(
+	forwardRef(({ refetch, title_id }, ref) => {
+		//#region Data
+		const form_id = useSelector((state) => state.form.form_id, shallowEqual);
+
+		const [open, setOpen] = useState(false);
+
+		const resolver = useResolver(validationItem);
+
+		const { control, handleSubmit, reset } = useForm({
+			defaultValues: initialItem,
+			mode: 'all',
+			resolver,
+		});
+		//#endregion
+
+		//#region Event
+		const toggleModal = () => setOpen(true);
+
+		const toggleClose = () => {
+			reset();
+			setOpen(false);
+		};
+
+		const onSubmit = async (values) => {
+			const body = {
+				form_id,
+				title_id,
+				...values,
+			};
+
+			const res = await createItem(body);
+
+			if (isSuccess(res)) {
+				alert.success({ text: 'Cập nhật chi tiết tiêu chí đánh giá thành công.' });
+
+				refetch();
+
+				toggleClose();
+			} else {
+				alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+			}
+		};
+		//#endregion
+
+		useImperativeHandle(
+			ref,
+			() => ({
+				open: () => toggleModal(),
+			}),
+			[]
+		);
+
+		//#region Render
+		return (
+			<Modal open={open} onClose={toggleClose}>
+				<Grow in={open} timeout={400}>
+					<Paper className='center' sx={{ borderRadius: 3 }}>
+						<Box px={3} py={2} minWidth={430} maxWidth={450}>
+							<form onSubmit={handleSubmit(onSubmit)}>
+								<Stack spacing={2}>
+									<Grid container spacing={1} alignItems='center'>
+										<Grid item xs={12} md={3}>
+											<Typography>Control</Typography>
+										</Grid>
+										<Grid item xs={12} md={9}>
+											<Controller
+												control={control}
+												name='control'
+												render={({ field: { name, onChange, value } }) => (
+													<CSelect
+														value={value}
+														options={CONTROL}
+														onChange={onChange}
+														name={name}
+														fullWidth
+													/>
+												)}
+											/>
+										</Grid>
+
+										<Grid item xs={12} md={3}>
+											<Typography>Tiêu chí</Typography>
+										</Grid>
+										<Grid item xs={12} md={9}>
+											<Controller
+												control={control}
+												name='content'
+												render={({
+													field: { name, onBlur, onChange, ref, value },
+													fieldState: { error },
+												}) => (
+													<CInput
+														value={value}
+														inputRef={ref}
+														onChange={onChange}
+														onBlur={onBlur}
+														name={name}
+														fullWidth
+														error={!!error}
+														helperText={error?.message}
+													/>
+												)}
+											/>
+										</Grid>
+
+										<Grid item xs={12} md={3}>
+											<Typography>Bắt buộc</Typography>
+										</Grid>
+										<Grid item xs={12} md={9}>
+											<Controller
+												control={control}
+												name='required'
+												render={({ field: { name, onChange, value } }) => (
+													<Checkbox
+														name={name}
+														checked={value}
+														onChange={onChange}
+													/>
+												)}
+											/>
+										</Grid>
+
+										<Optional control={control} name='control' />
+									</Grid>
+								</Stack>
+
+								<Box textAlign='center' mt={4}>
+									<Button variant='contained' type='submit'>
+										Hoàn thành
+									</Button>
+								</Box>
+							</form>
+						</Box>
+					</Paper>
+				</Grow>
+			</Modal>
+		);
+		//#endregion
+	})
+);
+
+export default ItemModal;

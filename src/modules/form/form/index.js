@@ -26,6 +26,16 @@ export const initialHeader = {
 export const initialTitle = {
 	name: '',
 };
+
+export const initialItem = {
+	control: 0,
+	content: '',
+	required: true,
+	from_mark: 0,
+	to_mark: 0,
+	category: 0,
+	unit: 'Điểm',
+};
 //#endregion
 
 //#region Validation
@@ -92,5 +102,13 @@ export const validationTitle = yup.object({
 	name: yup
 		.string('Vui lòng nhập tên tiêu chí đánh giá.')
 		.required('Vui lòng nhập tên tiêu chí đánh giá.'),
+});
+
+export const validationItem = yup.object({
+	control: yup.number().typeError().required(),
+	content: yup
+		.string('Vui lòng nhập nội dung tiêu chí.')
+		.required('Vui lòng nhập nội dung tiêu chí.'),
+	required: yup.bool(),
 });
 //#endregion

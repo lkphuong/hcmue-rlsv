@@ -3,3 +3,4 @@ export * from './CPagination';
 export * from './CAutocomplete';
 export * from './CPermission';
 export * from './CRangePicker';
+export * from './CSelect';

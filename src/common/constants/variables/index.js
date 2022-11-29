@@ -37,3 +37,16 @@ export const NIENKHOA = [
 	{ id: 3, name: '2020-2021' },
 	{ id: 4, name: '2023-2024' },
 ];
+
+export const CONTROL = [
+	{ id: 0, name: 'Input' },
+	{ id: 1, name: 'Checkbox' },
+	{ id: 2, name: 'Single select' },
+	{ id: 3, name: 'Multiple select' },
+];
+
+export const CATEGORY = [
+	{ id: 0, name: 'Single value' },
+	{ id: 1, name: 'Range value' },
+	{ id: 2, name: 'Per unit' },
+];

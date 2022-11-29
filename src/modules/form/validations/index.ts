@@ -13,6 +13,8 @@ import { FormService } from '../services/form.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { TitleService } from '../../title/services/title.service';
 
+import { FormStatus } from '../constants/enums/statuses.enum';
+
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from '../../../exceptions/UnknownException';
@@ -124,6 +126,55 @@ export const validateForm = async (
   }
 
   return form;
+};
+
+export const validateFormPubishStatus = (form: FormEntity, req: Request) => {
+  if (form.status !== FormStatus.DRAFTED) {
+    //#region throw HandlerException
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.FORM_PUBLISH_STATUS_INVALID_ERROR, form.id),
+      HttpStatus.BAD_REQUEST,
+    );
+    //#endregion
+  }
+
+  return null;
+};
+
+export const validateFormUnPubishStatus = (form: FormEntity, req: Request) => {
+  if (form.status !== FormStatus.DRAFTED) {
+    if (form.status !== FormStatus.PUBLISHED) {
+      //#region throw HandlerException
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.INVALID_VALUE,
+        req.method,
+        req.url,
+        sprintf(
+          form.status !== FormStatus.DONE
+            ? ErrorMessage.FORM_IN_PROGRESS_STATUS_INVALID_ERROR
+            : ErrorMessage.FORM_DONE_STATUS_INVALID_ERROR,
+          form.id,
+        ),
+        HttpStatus.BAD_REQUEST,
+      );
+      //#endregion
+    }
+  } else {
+    //#region throw HandlerException
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.FORM_UNPUBLISH_STATUS_INVALID_ERROR, form.id),
+      HttpStatus.BAD_REQUEST,
+    );
+    //#endregion
+  }
+
+  return null;
 };
 
 export const valiadteTitle = async (

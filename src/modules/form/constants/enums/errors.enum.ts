@@ -5,6 +5,11 @@ export enum ErrorMessage {
   FORM_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [biểu mẫu].',
   FORM_NOT_FOUND_ERROR = '[Biểu mẫu] không tồn tại (id: %s)',
 
+  FORM_PUBLISH_STATUS_INVALID_ERROR = '[Biểu mẫu] đã được phát hành (id: %s).',
+  FORM_UNPUBLISH_STATUS_INVALID_ERROR = '[Biểu mẫu] chưa được phát hành (id: %s).',
+  FORM_IN_PROGRESS_STATUS_INVALID_ERROR = '[Biểu mẫu] đang được xử lý (id: %s).',
+  FORM_DONE_STATUS_INVALID_ERROR = '[Biểu mẫu] đã hoàn thành xử lý (id: %s).',
+
   HEADER_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [hạng mục đánh giá].',
   HEADER_NOT_FOUND_ERROR = '[Hạng mục đánh giá] không tồn tại (id: %s)',
 

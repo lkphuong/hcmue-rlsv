@@ -745,3 +745,42 @@ export const removeItemOptions = async (
 
   return null;
 };
+
+export const setFormStatus = async (
+  user_id: string,
+  status: FormStatus,
+  form: FormEntity,
+  form_service: FormService,
+  req: Request,
+): Promise<HttpResponse<FormResponse> | HttpException> => {
+  try {
+    //#region Update form
+    form.status = status;
+    form.updated_by = user_id;
+    form.updated_at = new Date();
+    //#endregion
+
+    //#region Generate response
+    form = await form_service.update(form);
+    if (form) {
+      return await generateFormResponse(form, null, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_FORM_ERROR);
+    }
+    //#endregion
+  } catch (err) {
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  }
+};

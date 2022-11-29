@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { ItemEntity } from '../../../entities/item.entity';
 import { OptionEntity } from '../../../entities/option.entity';
@@ -75,7 +75,7 @@ export class ItemService {
     }
   }
 
-  async getItemsByTitleId(id: number): Promise<ItemEntity[] | null> {
+  async getItemsByTitleId(title_id: number): Promise<ItemEntity[] | null> {
     try {
       const conditions = this._itemRepository
         .createQueryBuilder('item')
@@ -94,11 +94,9 @@ export class ItemService {
           item.ref = options.parent_ref AND 
           options.delete_flag = 0`,
         )
-        .where('item.title_id = :id', { id })
+        .where('title.id = :title_id', { title_id })
         .andWhere('title.deleted = :deleted', { deleted: false })
         .andWhere('item.deleted = :deleted', { deleted: false });
-
-      console.log('sql: ', conditions.getSql());
 
       const items = await conditions.getMany();
       return items || null;

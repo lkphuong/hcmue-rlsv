@@ -152,7 +152,7 @@ export class EvaluationService {
       }
 
       const results = await manager.query(
-        `CALL multi_approve (${sheet_ids.toString()})`,
+        `CALL sp_multiple_approval (${sheet_ids.toString()})`,
       );
 
       return results.affectedRows > 0;

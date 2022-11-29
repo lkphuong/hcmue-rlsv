@@ -7,9 +7,10 @@ import { sprintf } from '../../../utils';
 import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
 
-import { HeaderService } from '../../header/services/header.service';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { FormService } from '../services/form.service';
+import { HeaderService } from '../../header/services/header.service';
+import { ItemService } from '../../item/services/item.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { TitleService } from '../../title/services/title.service';
 
@@ -23,7 +24,6 @@ import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import { ItemService } from 'src/modules/item/services/item.service';
 
 export const validateFormId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -76,6 +76,28 @@ export const validateHeaderId = (id: number, req: Request) => {
       req.method,
       req.url,
       ErrorMessage.HEADER_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (isNaN(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_FORMAT,
+      req.method,
+      req.url,
+      ErrorMessage.ID_NAN_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};
+
+export const validateItemId = (id: number, req: Request) => {
+  if (isEmpty(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.ITEM_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   } else if (isNaN(id)) {

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpException,
@@ -31,6 +32,10 @@ import {
   createItem,
   createTitle,
   setFormStatus,
+  unlinkForm,
+  unlinkHeader,
+  unlinkItem,
+  unlinkTitle,
   updateForm,
   updateHeader,
   updateItem,
@@ -43,6 +48,7 @@ import {
   validateFormPubishStatus,
   validateFormUnPubishStatus,
   validateHeaderId,
+  validateItemId,
   validateTitleId,
 } from '../validations';
 
@@ -88,7 +94,7 @@ export class FormController {
     private readonly _academicYearService: AcademicYearService,
     private readonly _formService: FormService,
     private readonly _headerService: HeaderService,
-    private readonly _itemServicve: ItemService,
+    private readonly _itemService: ItemService,
     private readonly _optionService: OptionService,
     private readonly _semesterService: SemesterService,
     private readonly _titleService: TitleService,
@@ -580,7 +586,7 @@ export class FormController {
       //#endregion
 
       //#region Get items
-      const items = await this._itemServicve.getItemsByTitleId(title_id);
+      const items = await this._itemService.getItemsByTitleId(title_id);
       //#endregion
 
       if (items && items.length > 0) {
@@ -863,7 +869,7 @@ export class FormController {
         user_id,
         params,
         this._formService,
-        this._itemServicve,
+        this._itemService,
         this._optionService,
         this._titleService,
         this._dataSource,
@@ -1123,7 +1129,7 @@ export class FormController {
 
   /**
    * @method PUT
-   * @url /api/forms/titles/:id
+   * @url /api/forms/items/:id
    * @access private
    * @param id
    * @param form_id
@@ -1165,7 +1171,7 @@ export class FormController {
       );
 
       //#region Validation
-      const valid = validateFormId(id, req);
+      const valid = validateItemId(id, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
@@ -1179,9 +1185,313 @@ export class FormController {
         user_id,
         params,
         this._formService,
-        this._itemServicve,
+        this._itemService,
         this._optionService,
         this._titleService,
+        this._dataSource,
+        req,
+      );
+      //#endregion
+
+      //#region Generate response
+      if (result instanceof HttpException) throw result;
+      return result;
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method DELETE
+   * @url /api/forms/publish/:id
+   * @access private
+   * @param id
+   * @description Xoá biểu mẫu
+   * @return HttpResponse<FormResponse> | HttpException | null
+   * @page forms page
+   */
+  @Delete(':id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  @HttpCode(HttpStatus.OK)
+  async unlinkForm(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ id: id }),
+      );
+
+      //#region Validation
+      const valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Get jwt payload
+      const { user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Unlink form
+      const form = await unlinkForm(id, user_id, this._formService, req);
+      //#endregion
+
+      //#region Generate response
+      if (form instanceof HttpException) throw form;
+      else return form;
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method DELETE
+   * @url /api/forms/:form_id/headers/:header_id
+   * @access private
+   * @param form_id
+   * @param header_id
+   * @description Xóa hạng mục đánh giá (Header) cho biểu mẫu
+   * @return HttpResponse<BaseResponse> | HttpException
+   * @page forms
+   */
+  @Delete(':form_id/headers/:header_id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  @HttpCode(HttpStatus.OK)
+  async unlinkHeader(
+    @Param('form_id') form_id: number,
+    @Param('header_id') header_id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<BaseResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ form_id, header_id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ form_id, header_id }),
+      );
+
+      //#region Validation
+      //#region Validate form_id
+      let valid = validateFormId(form_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Validate header_id
+      valid = validateHeaderId(header_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Get jwt payload
+      const { user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Update header
+      const header = await unlinkHeader(
+        form_id,
+        header_id,
+        user_id,
+        this._formService,
+        this._headerService,
+        req,
+      );
+      //#endregion
+
+      //#region Generate response
+      if (header instanceof HttpException) throw header;
+      else return header;
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method DELETE
+   * @url /api/forms/:form_id/titles/:title_id
+   * @access private
+   * @param form_id
+   * @param title_id
+   * @description Xoá tiêu chí đánh giá
+   * @return HttpResponse<BaseResponse> | HttpException
+   * @page forms page
+   */
+  @Put(':form_id/titles/:title_id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async unlinkTitle(
+    @Param('form_id') form_id: number,
+    @Param('title_id') title_id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<BaseResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ form_id, title_id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ form_id, title_id }),
+      );
+
+      //#region Validation
+      //#region Validate form_id
+      let valid = validateFormId(form_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Validate title_id
+      valid = validateTitleId(title_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Get jwt payload
+      const { user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Unlink title
+      const title = await unlinkTitle(
+        form_id,
+        title_id,
+        user_id,
+        this._formService,
+        this._titleService,
+        req,
+      );
+      //#endregion
+
+      //#region Generate response
+      if (title instanceof HttpException) throw title;
+      return title;
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
+   * @url /api/forms/:form_id/items/:item_id
+   * @access private
+   * @param form_id
+   * @param item_id
+   * @description Xoá nội dung đánh giá
+   * @return HttpResponse<ItemResponse> | HttpException
+   * @page forms page
+   */
+  @Put(':form_id/items/:item_id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async unlinkItem(
+    @Param('form_id') form_id: number,
+    @Param('item_id') item_id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<ItemResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ form_id, item_id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ form_id, item_id }),
+      );
+
+      //#region Validation
+      //#region Validate form_id
+      let valid = validateFormId(form_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Validate item_id
+      valid = validateItemId(item_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Get jwt payload
+      const { user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Unlink item
+      const result = await unlinkItem(
+        form_id,
+        item_id,
+        user_id,
+        this._formService,
+        this._itemService,
+        this._optionService,
         this._dataSource,
         req,
       );

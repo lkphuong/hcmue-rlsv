@@ -17,6 +17,7 @@ import {
   valiadteTitle,
   validateAcademicYear,
   validateForm,
+  validateFormPubishStatus,
   validateHeader,
   validateSemester,
   validateTime,
@@ -368,8 +369,13 @@ export const updateForm = async (
   if (form instanceof HttpException) return form;
   //#endregion
 
+  //#region Validate form status
+  let valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
   //#region Validate student times
-  let valid = validateTime(student.start, student.end, req);
+  valid = validateTime(student.start, student.end, req);
   if (valid instanceof HttpException) return valid;
   //#endregion
 
@@ -458,6 +464,11 @@ export const updateHeader = async (
   if (form instanceof HttpException) return form;
   //#endregion
 
+  //#region Validate form status
+  const valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
   //#region Validate header
   let header = await validateHeader(header_id, header_service, req);
   if (header instanceof HttpException) return header;
@@ -514,6 +525,11 @@ export const updateTitle = async (
   //#region Validate form
   const form = await validateForm(form_id, form_service, req);
   if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form status
+  const valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
   //#endregion
 
   //#region Validate header
@@ -581,6 +597,11 @@ export const updateItem = async (
   //#region Validate form
   const form = await validateForm(form_id, form_service, req);
   if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form status
+  const valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
   //#endregion
 
   //#region Validate title
@@ -657,6 +678,234 @@ export const updateItem = async (
   }
 };
 
+export const unlinkForm = async (
+  form_id: number,
+  user_id: string,
+  form_service: FormService,
+  req: Request,
+): Promise<HttpResponse<FormResponse> | HttpException> => {
+  //#region Validation
+  //#region Validate form
+  let form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form status
+  const valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+  //#endregion
+
+  try {
+    //#region Update form
+    form.deleted = true;
+    form.deleted_by = user_id;
+    form.deleted_at = new Date();
+    //#endregion
+
+    //#region Generate response
+    form = await form_service.unlink(form);
+    if (form) {
+      return await generateFormResponse(form, null, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_FORM_ERROR);
+    }
+    //#endregion
+  } catch (err) {
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  }
+};
+
+export const unlinkHeader = async (
+  form_id: number,
+  header_id: number,
+  user_id: string,
+  form_service: FormService,
+  header_service: HeaderService,
+  req: Request,
+) => {
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form status
+  const valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
+  //#region Validate header
+  let header = await validateHeader(header_id, header_service, req);
+  if (header instanceof HttpException) return header;
+  //#endregion
+  //#endregion
+
+  try {
+    //#region Update header
+    header.deleted = true;
+    header.deleted_by = user_id;
+    header.deleted_at = new Date();
+    //#endregion
+
+    //#region Generate response
+    header = await header_service.unlink(header);
+    if (header) {
+      return await generateHeaderResponse(header, null, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_HEADERS_ERROR);
+    }
+    //#endregion
+  } catch (err) {
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+    }
+  }
+};
+
+export const unlinkTitle = async (
+  form_id: number,
+  title_id: number,
+  user_id: string,
+  form_service: FormService,
+  title_service: TitleService,
+  req: Request,
+): Promise<HttpResponse<BaseResponse> | HttpException> => {
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form status
+  const valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
+  //#region Validate title
+  let title = await valiadteTitle(title_id, title_service, req);
+  if (title instanceof HttpException) return title;
+  //#endregion
+  //#endregion
+
+  try {
+    //#region Update title
+    title.deleted = true;
+    title.deleted_at = new Date();
+    title.deleted_by = user_id;
+    //#endregion
+
+    //#region Generate response
+    title = await title_service.unlink(title);
+    if (title) {
+      return await generateTitleResponse(title, null, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_TITLE_ERROR);
+    }
+    //#endregion
+  } catch (err) {
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  }
+};
+
+export const unlinkItem = async (
+  form_id: number,
+  item_id: number,
+  user_id: string,
+  form_service: FormService,
+  item_service: ItemService,
+  option_service: OptionService,
+  data_source: DataSource,
+  req: Request,
+): Promise<HttpResponse<ItemResponse> | HttpException> => {
+  //#region Validation
+  //#region Validate form
+  const form = await validateForm(form_id, form_service, req);
+  if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form status
+  const valid = await validateFormPubishStatus(form, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
+  //#region Validate item
+  let item = await valiadteItem(item_id, item_service, req);
+  if (item instanceof HttpException) return item;
+  //#endregion
+  //#endregion
+
+  // Make the QueryRunner
+  const query_runner = data_source.createQueryRunner();
+  await query_runner.connect();
+
+  try {
+    // Start transaction
+    await query_runner.startTransaction();
+
+    //#region Remove old options if available`
+    const results = await removeItemOptions(
+      item_id,
+      user_id,
+      option_service,
+      query_runner,
+      req,
+    );
+
+    if (results instanceof HttpException) throw results;
+    //#endregion
+
+    //#region Update item
+    item = await generateUnlinkItem(user_id, item, item_service, query_runner);
+    //#endregion
+
+    if (item) {
+      //#region Generate response
+      return await generateItemResponse(item, query_runner, req);
+      //#endregion
+    } else {
+      //#region throw HandlerException
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+      //#endregion
+    }
+  } finally {
+    // Release transaction
+    await query_runner.release();
+  }
+};
+
 export const generateCreateItem = async (
   user_id: string,
   params: ItemDto,
@@ -719,6 +968,20 @@ export const generateUpdateItem = async (
   item.updated_by = user_id;
 
   item = await item_service.update(item, query_runner.manager);
+  return item;
+};
+
+export const generateUnlinkItem = async (
+  user_id: string,
+  item: ItemEntity,
+  item_service: ItemService,
+  query_runner: QueryRunner,
+) => {
+  item.deleted = true;
+  item.deleted_at = new Date();
+  item.deleted_by = user_id;
+
+  item = await item_service.unlink(item, query_runner.manager);
   return item;
 };
 

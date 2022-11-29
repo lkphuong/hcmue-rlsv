@@ -132,4 +132,48 @@ export class ItemService {
       return null;
     }
   }
+
+  async update(
+    item: ItemEntity,
+    manager?: EntityManager,
+  ): Promise<ItemEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      item = await manager.save(item);
+      return item || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'ItemService.update()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async unlink(
+    item: ItemEntity,
+    manager?: EntityManager,
+  ): Promise<ItemEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      item = await manager.save(item);
+      return item || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.DELETE,
+        'ItemService.unlink()',
+        e,
+      );
+      return null;
+    }
+  }
 }

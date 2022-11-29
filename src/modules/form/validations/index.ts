@@ -23,6 +23,7 @@ import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { ItemService } from 'src/modules/item/services/item.service';
 
 export const validateFormId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -88,25 +89,6 @@ export const validateHeaderId = (id: number, req: Request) => {
   }
 
   return null;
-};
-
-export const validateHeader = async (
-  header_id: number,
-  header_service: HeaderService,
-  req: Request,
-): Promise<HeaderEntity | HttpException> => {
-  const header = await header_service.getHeaderById(header_id);
-  if (!header) {
-    return new UnknownException(
-      header_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, header_id),
-    );
-  }
-
-  return header;
 };
 
 export const validateForm = async (
@@ -177,26 +159,45 @@ export const validateFormUnPubishStatus = (form: FormEntity, req: Request) => {
   return null;
 };
 
-export const valiadteTitle = async (
-  title_id: number,
-  title_service: TitleService,
+export const validateHeader = async (
+  header_id: number,
+  header_service: HeaderService,
   req: Request,
-) => {
-  const title = await title_service.getTitleById(title_id);
-  if (!title) {
-    //#region throw HandlerException
+): Promise<HeaderEntity | HttpException> => {
+  const header = await header_service.getHeaderById(header_id);
+  if (!header) {
     return new UnknownException(
-      title_id,
+      header_id,
       DATABASE_EXIT_CODE.UNKNOW_VALUE,
       req.method,
       req.url,
-      sprintf(ErrorMessage.TITLE_NOT_FOUND_ERROR, title_id),
+      sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, header_id),
+    );
+  }
+
+  return header;
+};
+
+export const valiadteItem = async (
+  item_id: number,
+  item_service: ItemService,
+  req: Request,
+) => {
+  const item = await item_service.getItemById(item_id);
+  if (!item) {
+    //#region throw HandlerException
+    return new UnknownException(
+      item_id,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.ITEM_NOT_FOUND_ERROR, item_id),
       HttpStatus.NOT_FOUND,
     );
     //#endregion
   }
 
-  return title;
+  return item;
 };
 
 export const validateAcademicYear = async (
@@ -243,6 +244,28 @@ export const validateSemester = async (
   return semester;
 };
 
+export const valiadteTitle = async (
+  title_id: number,
+  title_service: TitleService,
+  req: Request,
+) => {
+  const title = await title_service.getTitleById(title_id);
+  if (!title) {
+    //#region throw HandlerException
+    return new UnknownException(
+      title_id,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.TITLE_NOT_FOUND_ERROR, title_id),
+      HttpStatus.NOT_FOUND,
+    );
+    //#endregion
+  }
+
+  return title;
+};
+
 export const validateTime = (start: string, end: string, req: Request) => {
   if (new Date(start) > new Date(end)) {
     return new HandlerException(
@@ -253,4 +276,30 @@ export const validateTime = (start: string, end: string, req: Request) => {
       HttpStatus.BAD_REQUEST,
     );
   }
+};
+
+export const isAnyPublished = async (
+  academic_id: number,
+  semester_id: number,
+  form_service: FormService,
+  req: Request,
+) => {
+  const form = await form_service.isAnyPublish(semester_id, academic_id);
+  if (form) {
+    //#region throw HandlerException
+    return new HandlerException(
+      DATABASE_EXIT_CODE.OPERATOR_ERROR,
+      req.method,
+      req.url,
+      sprintf(
+        ErrorMessage.ACADEMIC_EXISTS_FORM_PUBLISHED_IN_SEMESTER_ERROR,
+        form.academic_year.name,
+        form.semester.name,
+      ),
+      HttpStatus.BAD_REQUEST,
+    );
+    //#endregion
+  }
+
+  return null;
 };

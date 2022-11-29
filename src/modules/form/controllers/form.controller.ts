@@ -38,6 +38,7 @@ import {
 } from '../funcs';
 
 import {
+  isAnyPublished,
   validateFormId,
   validateFormPubishStatus,
   validateFormUnPubishStatus,
@@ -256,9 +257,22 @@ export class FormController {
       //#region Get form
       const form = await this._formService.getFormById(id);
       if (form) {
+        //#region Validate
         //#region Validate form status
         valid = validateFormPubishStatus(form, req);
         if (valid instanceof HttpException) throw valid;
+        //#endregion
+
+        //#region Validate check if any form published in academic year and semester
+        valid = await isAnyPublished(
+          form.academic_year.id,
+          form.semester.id,
+          this._formService,
+          req,
+        );
+
+        if (valid instanceof HttpException) throw valid;
+        //#endregion
         //#endregion
 
         //#region Get jwt payload

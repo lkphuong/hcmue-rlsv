@@ -101,4 +101,26 @@ export class HeaderService {
       return null;
     }
   }
+
+  async unlink(
+    header: HeaderEntity,
+    manager?: EntityManager,
+  ): Promise<HeaderEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      header = await manager.save(header);
+      return header || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.DELETE,
+        'HeaderService.unlink()',
+        e,
+      );
+      return null;
+    }
+  }
 }

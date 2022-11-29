@@ -13,6 +13,7 @@ import {
 } from '../utils';
 
 import {
+  valiadteItem,
   valiadteTitle,
   validateAcademicYear,
   validateForm,
@@ -566,7 +567,7 @@ export const updateItem = async (
   user_id: string,
   params: ItemDto,
   form_service: FormService,
-  item_serviec: ItemService,
+  item_service: ItemService,
   option_service: OptionService,
   title_service: TitleService,
   data_source: DataSource,
@@ -588,7 +589,7 @@ export const updateItem = async (
   //#endregion
 
   //#region Validate item
-  const item = await valiadteTitle(item_id, title_service, req);
+  let item = await valiadteItem(item_id, item_service, req);
   if (item instanceof HttpException) return item;
   //#endregion
   //#endregion
@@ -613,13 +614,14 @@ export const updateItem = async (
     if (results instanceof HttpException) throw results;
     //#endregion
 
-    //#region Create item
-    const item = await generateCreateItem(
+    //#region Update item
+    item = await generateUpdateItem(
       user_id,
       params,
       form,
+      item,
       title,
-      item_serviec,
+      item_service,
       query_runner,
     );
     //#endregion
@@ -680,10 +682,43 @@ export const generateCreateItem = async (
   item.category = category;
   item.unit = unit;
   item.required = required;
+
   item.created_at = new Date();
-  item.updated_by = user_id;
-  item.deleted = false;
+  item.created_by = user_id;
+
   item = await item_serviec.add(item, query_runner.manager);
+  return item;
+};
+
+export const generateUpdateItem = async (
+  user_id: string,
+  params: ItemDto,
+  form: FormEntity,
+  item: ItemEntity,
+  title: TitleEntity,
+  item_service: ItemService,
+  query_runner: QueryRunner,
+) => {
+  //#region Get params
+  const { content, control, unit, category, from_mark, required, to_mark } =
+    params;
+  //#endregion
+
+  item.form = form;
+  item.parent_ref = title.ref;
+  item.control = control;
+  item.multiple = false;
+  item.content = content;
+  item.from_mark = from_mark;
+  item.to_mark = to_mark;
+  item.category = category;
+  item.unit = unit;
+  item.required = required;
+
+  item.updated_at = new Date();
+  item.updated_by = user_id;
+
+  item = await item_service.update(item, query_runner.manager);
   return item;
 };
 

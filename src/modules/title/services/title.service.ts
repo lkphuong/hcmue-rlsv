@@ -103,8 +103,30 @@ export class TitleService {
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
-        Methods.INSERT,
+        Methods.UPDATE,
         'TitleService.update()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async unlink(
+    title: TitleEntity,
+    manager?: EntityManager,
+  ): Promise<TitleEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      title = await manager.save(title);
+      return title || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.DELETE,
+        'TitleService.unlink()',
         e,
       );
       return null;

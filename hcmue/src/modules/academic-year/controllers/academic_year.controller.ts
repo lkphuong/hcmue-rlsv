@@ -41,7 +41,7 @@ export class AcademicYearController {
    * @method GET
    * @url /api/academic-years/
    * @access private
-   * @description hiển thị danh sách niên khóa
+   * @description Hiển thị danh sách niên khóa
    * @return HttpResponse<SemesterEntity[]> | null | HttpException
    * @page academic-years
    */
@@ -90,4 +90,12 @@ export class AcademicYearController {
       }
     }
   }
+
+  /**
+   * @method POST
+   * @url /api/academic-years/
+   * @access private
+   * @description Tạo mới niên khóa
+   *
+   */
 }

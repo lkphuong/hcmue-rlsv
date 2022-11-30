@@ -14,6 +14,7 @@ import { SemesterEntity } from './semester.entity';
 import { AcademicYearEntity } from './academic_year.entity';
 import { LevelEntity } from './level.entity';
 import { FormEntity } from './form.entity';
+import { ApprovalEntity } from './approval.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -121,4 +122,7 @@ export class SheetEntity extends RootEntity {
 
   @OneToMany(() => SheetSignatures, (signature) => signature.sheet)
   signatures: SheetSignatures[];
+
+  @OneToMany(() => ApprovalEntity, (approval) => approval.sheet)
+  approvals: ApprovalEntity[];
 }

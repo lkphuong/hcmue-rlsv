@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 
@@ -14,6 +14,7 @@ export class AcademicYearService {
   constructor(
     @InjectRepository(AcademicYearEntity)
     private readonly _academicYearRepository: Repository<AcademicYearEntity>,
+    private readonly _dataSourtce: DataSource,
     private _logger: LogService,
   ) {}
 
@@ -91,6 +92,29 @@ export class AcademicYearService {
         Levels.ERROR,
         Methods.SELECT,
         'AcademicYearService.getAcademicYearById()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async add(
+    academic_year: AcademicYearEntity,
+    manager?: EntityManager,
+  ): Promise<AcademicYearEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSourtce.manager;
+      }
+
+      academic_year = await manager.save(academic_year);
+
+      return academic_year || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'AcademicYearService.add()',
         e,
       );
       return null;

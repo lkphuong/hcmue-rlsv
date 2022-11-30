@@ -176,4 +176,32 @@ export class ItemService {
       return null;
     }
   }
+
+  async cloneItems(
+    source_form_id: number,
+    target_form_id: number,
+    manager?: EntityManager,
+  ): Promise<boolean> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.query(
+        `CALL sp_generate_items (${source_form_id}, ${target_form_id})`,
+      );
+
+      console.log('results: ', results);
+
+      return results.affectedRows > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'ItemService.cloneItems()',
+        e,
+      );
+      return null;
+    }
+  }
 }

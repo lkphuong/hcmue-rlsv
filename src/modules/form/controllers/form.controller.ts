@@ -27,6 +27,7 @@ import {
 } from '../utils';
 
 import {
+  cloneForm,
   createForm,
   createHeader,
   createItem,
@@ -1252,6 +1253,77 @@ export class FormController {
 
       //#region Unlink form
       const form = await unlinkForm(id, user_id, this._formService, req);
+      //#endregion
+
+      //#region Generate response
+      if (form instanceof HttpException) throw form;
+      else return form;
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url /api/forms/clone/:id
+   * @access private
+   * @param id
+   * @description Clone biểu mẫu
+   * @return HttpResponse<FormResponse> | HttpException | null
+   * @page forms page
+   */
+  @Post(':id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  @HttpCode(HttpStatus.OK)
+  async cloneForm(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ id: id }),
+      );
+
+      //#region Validation
+      const valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Get jwt payload
+      const { user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Clone form
+      const form = await cloneForm(
+        id,
+        user_id,
+        this._formService,
+        this._headerService,
+        this._itemService,
+        this._optionService,
+        this._titleService,
+        this._dataSource,
+        req,
+      );
       //#endregion
 
       //#region Generate response

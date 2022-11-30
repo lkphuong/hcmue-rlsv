@@ -30,4 +30,5 @@ export enum ErrorMessage {
   OPERATOR_HEADERS_ERROR = 'Lưu nội dung tiêu đề thất bại.',
   OPERATOR_TITLE_ERROR = 'Lưu nội dung hạng mục đánh giá thất bại.',
   OPERATOR_ITEM_ERROR = 'Lưu nội dung chấm điểm thất bại.',
+  OPERATOR_OPTION_ERROR = 'Lưu tùy chọn của nội dung chấm điểm thất bại.',
 }

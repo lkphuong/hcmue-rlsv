@@ -54,7 +54,10 @@ import { FormStatus } from '../constants/enums/statuses.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
-import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import {
+  DATABASE_EXIT_CODE,
+  SERVER_EXIT_CODE,
+} from '../../../constants/enums/error-code.enum';
 
 export const createForm = async (
   user_id: string,
@@ -898,6 +901,155 @@ export const unlinkItem = async (
     } else {
       //#region throw HandlerException
       throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
+      //#endregion
+    }
+  } finally {
+    // Release transaction
+    await query_runner.release();
+  }
+};
+
+export const cloneForm = async (
+  form_id: number,
+  user_id: string,
+  form_service: FormService,
+  header_service: HeaderService,
+  item_service: ItemService,
+  option_service: OptionService,
+  title_service: TitleService,
+  data_source: DataSource,
+  req: Request,
+) => {
+  //#region Validation
+  //#region Validate form
+  const source_form = await validateForm(form_id, form_service, req);
+  if (source_form instanceof HttpException) return source_form;
+  //#endregion
+  //#endregion
+
+  // Make the QueryRunner
+  const query_runner = data_source.createQueryRunner();
+  await query_runner.connect();
+
+  try {
+    // Start transaction
+    await query_runner.startTransaction();
+
+    //#region Create form
+    let target_form = new FormEntity();
+    target_form.academic_year = source_form.academic_year;
+    target_form.semester = source_form.semester;
+    target_form.student_start = source_form.student_start;
+    target_form.student_end = source_form.student_end;
+    target_form.class_start = source_form.class_start;
+    target_form.class_end = source_form.class_end;
+    target_form.department_start = source_form.department_start;
+    target_form.department_end = source_form.department_end;
+    target_form.status = FormStatus.DRAFTED;
+
+    target_form.created_by = user_id;
+    target_form.created_at = new Date();
+    //#endregion
+
+    //#region Generate response
+    target_form = await form_service.add(target_form);
+    if (target_form) {
+      //#region Clone headers
+      let success = await header_service.cloneHeaders(
+        source_form.id,
+        target_form.id,
+        query_runner.manager,
+      );
+
+      //#region throw HandlerException
+      if (!success) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_HEADERS_ERROR,
+        );
+      }
+      //#endregion
+      //#endregion
+
+      //#region Clone titles
+      success = await title_service.cloneTitles(
+        source_form.id,
+        target_form.id,
+        query_runner.manager,
+      );
+
+      //#region throw HandlerException
+      if (!success) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_TITLE_ERROR,
+        );
+      }
+      //#endregion
+      //#endregion
+
+      //#region Clone items
+      success = await item_service.cloneItems(
+        source_form.id,
+        target_form.id,
+        query_runner.manager,
+      );
+
+      //#region throw HandlerException
+      if (!success) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_ITEM_ERROR,
+        );
+      }
+      //#endregion
+      //#endregion
+
+      //#region Clone options
+      success = await option_service.cloneOptions(
+        source_form.id,
+        target_form.id,
+        query_runner.manager,
+      );
+
+      //#region throw HandlerException
+      if (!success) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_OPTION_ERROR,
+        );
+      }
+      //#endregion
+      //#endregion
+
+      return await generateFormResponse(target_form, query_runner, req);
+    } else {
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_FORM_ERROR);
+    }
+    //#endregion
+  } catch (err) {
+    // Rollback transaction
+    await query_runner.rollbackTransaction();
+
+    console.log('--------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
       //#endregion
     }
   } finally {

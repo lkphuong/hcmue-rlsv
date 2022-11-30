@@ -7,6 +7,7 @@ const initialState = {
 	form_id: null,
 	header_id: null,
 	title_id: null,
+	step: 0,
 };
 
 export const formSlice = createSlice({
@@ -22,10 +23,14 @@ export const formSlice = createSlice({
 		setTitleId: (state, action) => {
 			state.title_id = action.payload;
 		},
+		setStep: (state, action) => {
+			state.step = action.payload;
+		},
 		clearForm: (state) => {
 			state.form_id = null;
 			state.header_id = null;
 			state.title_id = null;
+			state.step = null;
 		},
 	},
 });
@@ -36,7 +41,7 @@ const persistConfig = {
 	key: 'form',
 	version: 1,
 	storage,
-	whitelist: ['form_id', 'header_id', 'title_id'],
+	whitelist: ['form_id', 'header_id', 'title_id', 'step'],
 };
 
 export default persistReducer(persistConfig, formSlice.reducer);

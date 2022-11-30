@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Box, Button, Typography } from '@mui/material';
+import { Box, Button, Paper, Typography } from '@mui/material';
 
 import { Filter, ListForms } from '_modules/form/components';
 
@@ -35,17 +35,15 @@ const ListFormsPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<Typography
-				borderRadius={2}
-				p={2}
-				fontWeight={500}
-				fontSize={18}
-				sx={{ backgroundColor: 'rgba(0 0 0 / 5%)' }}
-			>
-				Lịch sử Phiếu đánh giá kết quả rèn luyện
-			</Typography>
+			<Box mb={1.5}>
+				<Paper className='paper-wrapper'>
+					<Typography fontSize={20} p={1.5}>
+						Lịch sử biểu mẫu đánh giá kết quả rèn luyện
+					</Typography>
+				</Paper>
+			</Box>
 
-			<Box mt={1}>
+			<Box>
 				<Filter />
 
 				<Box textAlign='right' my={2}>

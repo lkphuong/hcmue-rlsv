@@ -1,11 +1,11 @@
 import React, { memo, useMemo } from 'react';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 
-import { Chip, IconButton, Stack, TableCell, TableRow } from '@mui/material';
-import { DeleteForever, Edit } from '@mui/icons-material';
+import { Chip, IconButton, Stack, TableCell, TableRow, Tooltip, Zoom } from '@mui/material';
+import { DeleteForever, Edit, FileCopy } from '@mui/icons-material';
 
 import { FORM_STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
@@ -14,14 +14,19 @@ import { ERRORS } from '_constants/messages';
 import { alert } from '_func/alert';
 import { isSuccess } from '_func/';
 
-import { deleteForm } from '_api/form.api';
+import { cloneForm, deleteForm } from '_api/form.api';
 
 //#region Array Status Chip
+const generalStyle = {
+	borderRadius: '10px',
+	fontWeight: 500,
+};
+
 const STATUS = {
 	0: (
 		<Chip
 			sx={{
-				borderRadius: '10px',
+				...generalStyle,
 				color: 'rgb(255, 25, 67)',
 				backgroundColor: 'rgba(255, 25, 67, 0.1)',
 			}}
@@ -31,7 +36,7 @@ const STATUS = {
 	1: (
 		<Chip
 			sx={{
-				borderRadius: '10px',
+				...generalStyle,
 				color: 'rgb(18 196 5)',
 				backgroundColor: 'rgb(3 186 28 / 10%)',
 			}}
@@ -41,7 +46,7 @@ const STATUS = {
 	2: (
 		<Chip
 			sx={{
-				borderRadius: '10px',
+				...generalStyle,
 				color: 'rgb(255, 163, 25)',
 				backgroundColor: 'rgba(255, 163, 25, 0.1)',
 			}}
@@ -51,7 +56,7 @@ const STATUS = {
 	3: (
 		<Chip
 			sx={{
-				borderRadius: '10px',
+				...generalStyle,
 				color: 'rgb(51, 194, 255)',
 				backgroundColor: 'rgba(51, 194, 255, 0.1)',
 			}}
@@ -99,6 +104,22 @@ const Row = memo(({ data, index, refetch }) => {
 			});
 		}
 	};
+
+	const onClone = () => {
+		alert.question({
+			onConfirm: async () => {
+				const res = await cloneForm(data.id);
+
+				if (isSuccess(res)) {
+					refetch();
+
+					alert.success({ text: 'Copy biểu mẫu thành công.' });
+				} else {
+					alert.fail({ text: res?.messages || ERRORS.FAIL });
+				}
+			},
+		});
+	};
 	//#endregion
 
 	//#region Render
@@ -110,8 +131,18 @@ const Row = memo(({ data, index, refetch }) => {
 			<TableCell align='center'>{dayjs(data.created_date).format('DD/MM/YYYY')}</TableCell>
 			<TableCell align='center'>{data.created_by}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
-			<TableCell align='center' width={100}>
+			<TableCell align='center' width={120}>
 				<Stack direction='row' alignItems='center' justifyContent='space-between'>
+					<Tooltip
+						TransitionComponent={Zoom}
+						arrow
+						title='Tạo biểu mẫu mới dựa theo biểu mẫu này'
+						disableInteractive
+					>
+						<IconButton onClick={onClone}>
+							<FileCopy />
+						</IconButton>
+					</Tooltip>
 					<IconButton onClick={onEdit}>
 						<Edit />
 					</IconButton>

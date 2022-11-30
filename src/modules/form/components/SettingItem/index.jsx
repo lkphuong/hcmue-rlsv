@@ -55,7 +55,7 @@ const SettingItem = memo(({ updateStep }) => {
 				</Grid>
 				<Grid item>
 					<Button
-						sx={{ maxWidth: 100 }}
+						sx={{ maxWidth: 140 }}
 						variant='contained'
 						onClick={() => updateStep((prev) => prev + 1)}
 					>

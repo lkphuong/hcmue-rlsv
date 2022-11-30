@@ -46,4 +46,18 @@ export const alert = {
 			}
 		});
 	},
+	question: ({ onConfirm } = {}) => {
+		Swal.fire({
+			title: 'Xác nhận?',
+			text: 'Bạn có muốn tạo ra 1 biểu mẫu mới tương tự?',
+			showCancelButton: true,
+			icon: 'question',
+			confirmButtonText: 'Đồng ý',
+			cancelButtonText: 'Hủy bỏ',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onConfirm();
+			}
+		});
+	},
 };

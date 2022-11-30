@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
@@ -11,7 +11,7 @@ import { CAutocomplete, CRangePicker } from '_controls/';
 
 import { isSuccess } from '_func/';
 
-import { createForm } from '_api/form.api';
+import { createForm, getFormById } from '_api/form.api';
 
 import { useResolver } from '_hooks/';
 
@@ -25,6 +25,8 @@ import { ERRORS } from '_constants/messages';
 
 const SettingTime = memo(({ updateStep }) => {
 	//#region Data
+	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
+
 	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
 
 	const dispatch = useDispatch();
@@ -35,6 +37,7 @@ const SettingTime = memo(({ updateStep }) => {
 		control,
 		handleSubmit,
 		formState: { errors },
+		reset,
 	} = useForm({
 		defaultValues: initialValues,
 		mode: 'all',
@@ -44,6 +47,11 @@ const SettingTime = memo(({ updateStep }) => {
 
 	//#region Event
 	const onSubmit = async (values) => {
+		if (form_id) {
+			updateStep(1);
+			return;
+		}
+
 		const body = {
 			...values,
 			student: {
@@ -80,6 +88,26 @@ const SettingTime = memo(({ updateStep }) => {
 
 	const handleBack = () => updateStep((prev) => prev - 1);
 	//#endregion
+
+	useEffect(() => {
+		const getFormData = async () => {
+			if (!form_id) return;
+
+			const res = await getFormById(form_id);
+
+			if (isSuccess(res)) {
+				const resetData = {
+					...res.data,
+					academic_id: Number(res.data.academic.id),
+					semester_id: Number(res.data.semester.id),
+				};
+
+				reset(resetData);
+			}
+		};
+
+		getFormData();
+	}, [form_id]);
 
 	//#region Render
 	return (

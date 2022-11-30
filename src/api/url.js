@@ -38,6 +38,10 @@ export const FORMS = {
 	GET_ITEMS_BY_TITLE_ID: '/forms/items',
 	UPDATE_ITEM: '/forms/items',
 	DELETE_ITEM: '/forms' /* /forms/:form_id/headers/:item_id */,
+
+	PUBLISH: '/forms/publish',
+	UNPUBLISH: '/forms/un-publish',
+	CLONE: '/forms/clone',
 };
 
 export const CLASSES = {

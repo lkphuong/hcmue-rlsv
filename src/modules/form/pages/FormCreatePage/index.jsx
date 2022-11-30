@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, lazy } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, CardContent, Grid, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
 
@@ -24,11 +24,9 @@ const STEPS = [
 
 const FormCreatePage = () => {
 	//#region Data
-	const [isEdit, setIsEdit] = useState();
+	const _step = useSelector((state) => state.form.step, shallowEqual);
 
-	const [step, setStep] = useState(0);
-
-	const { form_id } = useParams();
+	const [step, setStep] = useState(_step || 0);
 
 	const navigate = useNavigate();
 
@@ -54,10 +52,8 @@ const FormCreatePage = () => {
 	//#endregion
 
 	useEffect(() => {
-		if (form_id) setIsEdit(true);
-	}, [form_id]);
+		dispatch(actions.setStep(step));
 
-	useEffect(() => {
 		if (step < 0) {
 			dispatch(actions.clearForm());
 			navigate(ROUTES.FORM);
@@ -79,7 +75,7 @@ const FormCreatePage = () => {
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5}>
-						Quản lý biểu mẫu - {isEdit ? 'Chỉnh sửa phiếu' : 'Tạo mới phiếu'}
+						Quản lý biểu mẫu - Tạo mới biểu mẫu
 					</Typography>
 				</Paper>
 			</Box>

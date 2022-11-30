@@ -2,14 +2,14 @@ import { get, post } from '_axios/request';
 
 import { AUTH } from './url';
 
-export const profile = async () => {
-	return await get(AUTH.PROFILE);
+export const profile = () => {
+	return get(AUTH.PROFILE);
 };
 
-export const login = async (body) => {
-	return await post(AUTH.LOGIN, body);
+export const login = (body) => {
+	return post(AUTH.LOGIN, body);
 };
 
-export const logout = async () => {
-	return await get(AUTH.LOGOUT);
+export const logout = () => {
+	return get(AUTH.LOGOUT);
 };

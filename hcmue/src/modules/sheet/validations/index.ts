@@ -20,6 +20,20 @@ import {
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 
+export const validateClassId = (id: string, req: Request) => {
+  if (isEmpty(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.CLASS_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};
+
 export const validateDepartmentId = (id: string, req: Request) => {
   if (isEmpty(id)) {
     return new HandlerException(

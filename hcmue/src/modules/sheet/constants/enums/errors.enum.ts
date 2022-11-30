@@ -1,6 +1,7 @@
 export enum ErrorMessage {
   NO_CONTENT = 'Không có dữ liệu hiển thị.',
 
+  CLASS_ID_EMPTY_ERROR = 'Bạn vui lòng chọn lớp.',
   DEPARTMENT_ID_EMPTY_ERROR = 'Bạn vui lòng chọn khoa.',
   SHEET_ID_EMPTY_ERROR = 'Bạn vui lòng chọn phiếu.',
   USER_ID_EMPTY_ERROR = 'Bạn vui lòng chọn nhân viên.',

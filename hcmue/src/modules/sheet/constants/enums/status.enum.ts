@@ -1,5 +1,5 @@
 export enum SheetStatus {
-  UNASSESS = 0,
+  WAITING_STUDENT = 0,
   WAITING_CLASS = 1,
   OVERDUE_CLASS = 2,
   WAITING_DEPARTMENT = 3,

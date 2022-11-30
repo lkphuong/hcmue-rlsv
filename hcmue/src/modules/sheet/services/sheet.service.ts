@@ -8,6 +8,8 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { RoleCode } from '../../../constants/enums/role_enum';
+import { SheetStatus } from '../constants/enums/status.enum';
 
 @Injectable()
 export class SheetService {
@@ -26,10 +28,10 @@ export class SheetService {
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
         .innerJoinAndSelect('sheet.level', 'level')
         .where('sheet.user_id = :user_id', { user_id })
-        .andWhere('sheet.deleted = :deleted', { deleted: false })
-        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('level.deleted = :deleted', { deleted: false })
         .andWhere('academic_year.deleted = :deleted', { deleted: false })
-        .andWhere('level.deleted = :deleted', { deleted: false });
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
 
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')
@@ -47,26 +49,33 @@ export class SheetService {
     }
   }
 
-  async getSheets(
-    semester_id: number,
+  async getSheetsByClassId(
     academic_id: number,
-    class_id?: number,
+    class_id: string,
+    semester_id: number,
+    role: RoleCode,
   ): Promise<SheetEntity[] | null> {
     try {
-      const conditions = this._sheetRepository
+      let conditions = this._sheetRepository
         .createQueryBuilder('sheet')
         .innerJoin('sheet.semester', 'semester')
         .innerJoin('sheet.academic_year', 'academic_year')
-        .innerJoinAndSelect('sheet.level', 'level')
-        .where('sheet.deleted = :deleted', { deleted: false })
-        .andWhere('level.deleted = :deleted', { deleted: false })
-        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .leftJoinAndSelect(
+          'sheet.level',
+          'level',
+          `level.id = sheet.level_id AND 
+          level.deleted = 0`,
+        )
+        .where('academic_year.id = :academic_id', { academic_id })
         .andWhere('semester.id = :semester_id', { semester_id })
-        .andWhere('academic_year.id = :academic_id', { academic_id });
+        .andWhere('sheet.class_id = :class_id', { class_id })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
 
-      if (class_id && class_id !== 0) {
-        conditions.andWhere('sheet.class_id = :class_id', { class_id });
-      }
+      const status = this.generateStatus(role);
+
+      conditions = conditions.andWhere('sheet.status >= :status', { status });
 
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')
@@ -77,7 +86,7 @@ export class SheetService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'SheetService.getSheets()',
+        'SheetService.getSheetsByClassId()',
         e,
       );
       return null;
@@ -135,4 +144,15 @@ export class SheetService {
       return null;
     }
   }
+
+  generateStatus = (role: RoleCode) => {
+    switch (role) {
+      case RoleCode.ADMIN | RoleCode.STUDENT:
+        return SheetStatus.WAITING_STUDENT;
+      case RoleCode.CLASS:
+        return SheetStatus.WAITING_CLASS;
+      case RoleCode.DEPARTMENT:
+        return SheetStatus.WAITING_DEPARTMENT;
+    }
+  };
 }

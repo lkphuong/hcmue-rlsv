@@ -6,7 +6,7 @@ import { generateValidationMessage } from '../../../utils';
 import { LengthValidator } from 'src/validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
-export class GetSheetByClass {
+export class GetSheetsByClassDto {
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),

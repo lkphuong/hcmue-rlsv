@@ -32,17 +32,18 @@ import {
 } from '../utils';
 
 import {
+  validateClassId,
   validateDepartmentId,
   validateRole,
   validateSheetId,
   validateUserId,
 } from '../validations';
 
-import { ApproveAllDto } from '../dtos/multi_approve.dto';
+import { ApproveAllDto } from '../dtos/approve_all.dto';
 
 import { GetClassDto } from '../dtos/get_class.dto';
 import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
-import { GetSheetByClass } from '../dtos/get_sheet_by_class.dto';
+import { GetSheetsByClassDto } from '../dtos/get_sheets_by_class.dto';
 
 import { UpdateClassMarkDto } from '../dtos/update_class_mark.dto';
 import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
@@ -152,74 +153,6 @@ export class SheetController {
           this._kService,
           req,
         );
-        //#endregion
-      } else {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.NO_CONTENT,
-          req.method,
-          req.url,
-          ErrorMessage.NO_CONTENT,
-          HttpStatus.NOT_FOUND,
-        );
-        //#endregion
-      }
-    } catch (err) {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) throw err;
-      else {
-        throw new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-      }
-    }
-  }
-
-  /**
-   * @method GET
-   * @url /api/sheets/student/:user_id
-   * @access private
-   * @param user_id
-   * @description Hiển thị danh sách phiếu đánh giá cá nhân
-   * @return  HttpResponse<UserSheetsResponse> | HttpException
-   * @page sheets page
-   */
-  @Get('student/:user_id')
-  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async getSheetsByUser(
-    @Param('user_id') user_id: string,
-    @Req() req: Request,
-  ): Promise<HttpResponse<UserSheetsResponse> | HttpException> {
-    try {
-      console.log('----------------------------------------------------------');
-      console.log(
-        req.method +
-          ' - ' +
-          req.url +
-          ': ' +
-          JSON.stringify({ user_id: user_id }),
-      );
-
-      this._logger.writeLog(
-        Levels.LOG,
-        req.method,
-        req.url,
-        JSON.stringify({ user_id: user_id }),
-      );
-
-      //#region Validation
-      const valid = validateUserId(user_id, req);
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
-
-      const sheets = await this._sheetService.getSheetsByUserId(user_id);
-      if (sheets && sheets.length > 0) {
-        //#region Generate response
-        return generateUserSheetsResponse(sheets, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -385,6 +318,77 @@ export class SheetController {
   }
 
   /**
+   * @method GET
+   * @url /api/sheets/student/:user_id
+   * @access private
+   * @param user_id
+   * @description Hiển thị danh sách phiếu đánh giá cá nhân
+   * @return  HttpResponse<UserSheetsResponse> | HttpException
+   * @page sheets page
+   */
+  @Get('student/:user_id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getSheetsByUser(
+    @Param('user_id') user_id: string,
+    @Req() req: Request,
+  ): Promise<HttpResponse<UserSheetsResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ user_id: user_id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ user_id: user_id }),
+      );
+
+      //#region Validation
+      const valid = validateUserId(user_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Get sheets by user
+      const sheets = await this._sheetService.getSheetsByUserId(user_id);
+      //#endregion
+
+      if (sheets && sheets.length > 0) {
+        //#region Generate response
+        return generateUserSheetsResponse(sheets, req);
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
    * @method Post
    * @url /api/sheets/class/:class_id
    * @access private
@@ -398,7 +402,7 @@ export class SheetController {
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getSheetsByClass(
     @Param('class_id') class_id: string,
-    @Body() params: GetSheetByClass,
+    @Body() params: GetSheetsByClassDto,
     @Req() req: Request,
   ): Promise<HttpResponse<ClassSheetsResponse> | HttpException> {
     try {
@@ -418,15 +422,23 @@ export class SheetController {
         JSON.stringify({ class_id: class_id, params: params }),
       );
 
+      //#region Validation
+      const valid = validateClassId(class_id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
       //#region Get params
+      const { role } = req.user as JwtPayload;
       const { academic_id, semester_id } = params;
       const input = params.input ?? null;
       //#endregion
 
-      //#region Get sheets
-      const sheets = await this._sheetService.getSheets(
-        semester_id,
+      //#region Get sheets by class
+      const sheets = await this._sheetService.getSheetsByClassId(
         academic_id,
+        class_id,
+        semester_id,
+        role,
       );
       //#endregion
 
@@ -566,7 +578,7 @@ export class SheetController {
    */
   @Put('student/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async updateMartStudent(
+  async updateMarkStudent(
     @Param('id') id: number,
     @Body() params: UpdateStudentMarkDto,
     @Req() req: Request,
@@ -594,7 +606,7 @@ export class SheetController {
       //#endregion
 
       //#region Get payload
-      const { role, user_id } = req.user as JwtPayload;
+      const { user_id } = req.user as JwtPayload;
       //#endregion
 
       //#region Update student sheet
@@ -645,7 +657,7 @@ export class SheetController {
    */
   @Put('class/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async updateMartClass(
+  async updateMarkClass(
     @Param('id') id: number,
     @Body() params: UpdateClassMarkDto,
     @Req() req: Request,
@@ -722,7 +734,7 @@ export class SheetController {
    */
   @Put('department/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async updateMartDepartment(
+  async updateMarkDepartment(
     @Param('id') id: number,
     @Body() params: UpdateDepartmentMarkDto,
     @Req() req: Request,
@@ -797,9 +809,9 @@ export class SheetController {
    * @return HttpResponse<ApproveAllResponse> | HttpException
    * @page sheets page
    */
-  @Put('department/multi-approval')
+  @Put('department/approve-all')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async multiApprove(
+  async approveAll(
     @Body() params: ApproveAllDto,
     @Req() req: Request,
   ): Promise<HttpResponse<ApproveAllResponse> | HttpException> {

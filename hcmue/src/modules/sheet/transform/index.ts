@@ -35,10 +35,12 @@ export const generateUserSheets = (sheets: SheetEntity[] | null) => {
           id: sheet.academic_year.id,
           name: sheet.academic_year.name,
         },
-        level: {
-          id: sheet.level.id,
-          name: sheet.level.name,
-        },
+        level: sheet.level
+          ? {
+              id: sheet.level.id,
+              name: sheet.level.name,
+            }
+          : null,
         sum_of_personal_marks: sheet.sum_of_personal_marks,
         sum_of_class_marks: sheet.sum_of_class_marks,
         sum_of_department_marks: sheet.sum_of_department_marks,
@@ -77,10 +79,12 @@ export const generateClassSheets = async (
             fullname: result.fullname,
             std_code: result.username,
           },
-          level: {
-            id: sheet.level.id,
-            name: sheet.level.name,
-          },
+          level: sheet.level
+            ? {
+                id: sheet.level.id,
+                name: sheet.level.name,
+              }
+            : null,
           sum_of_personal_marks: sheet.sum_of_personal_marks,
           sum_of_department_marks: sheet.sum_of_department_marks,
           sum_of_class_marks: sheet.sum_of_class_marks,

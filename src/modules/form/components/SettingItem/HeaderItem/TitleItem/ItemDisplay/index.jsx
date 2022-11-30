@@ -6,16 +6,32 @@ import { Grid, IconButton, Typography } from '@mui/material';
 
 import { alert } from '_func/alert';
 
-const ItemDisplay = memo(({ data }) => {
+import { deleteItem } from '_api/form.api';
+
+import { isSuccess } from '_func/';
+
+import { ERRORS } from '_constants/messages';
+
+const ItemDisplay = memo(({ data, refetch }) => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
-
-	console.log(data);
 	//#endregion
 
 	//#region Event
-	const handleDeleteItem = async () => {
-		alert.warningDelete({ onConfirm: () => console.log('Đồng ý xóa') });
+	const handleDeleteItem = () => {
+		alert.warningDelete({
+			onConfirm: async () => {
+				const res = await deleteItem(form_id, Number(data.id));
+
+				if (isSuccess(res)) {
+					refetch();
+
+					alert.success({ text: 'Xóa chi tiết tiêu chí đánh giá thành công.' });
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+		});
 	};
 	//#endregion
 

@@ -12,8 +12,12 @@ import { initialHeader, validationHeader } from '_modules/form/form';
 import { CInput } from '_controls/';
 
 import { createHeader } from '_api/form.api';
+
 import { isSuccess } from '_func/';
+
 import { alert } from '_func/alert';
+
+import { ERRORS } from '_constants/messages';
 
 const CreateModal = forwardRef(({ refetch }, ref) => {
 	//#region Data
@@ -48,7 +52,7 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 
 			handleClose();
 		} else {
-			alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+			alert.fail({ text: res?.message || ERRORS.FAIL });
 		}
 	};
 	//#endregion

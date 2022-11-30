@@ -1,17 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { ROUTES } from '_constants/routes';
+import { Link } from 'react-router-dom';
 
 import { Box, Button, Typography } from '@mui/material';
 
-import { CreateModal, Filter, ListForms } from '_modules/form/components';
+import { Filter, ListForms } from '_modules/form/components';
+
+import { ROUTES } from '_constants/routes';
 
 import { getForms } from '_api/form.api';
+
 import { isSuccess } from '_func/';
-import { Link } from 'react-router-dom';
 
 const ListFormsPage = () => {
 	//#region Data
-	// eslint-disable-next-line no-unused-vars
 	const [data, setData] = useState([]);
 
 	const modalRef = useRef();
@@ -61,10 +62,8 @@ const ListFormsPage = () => {
 					</Link>
 				</Box>
 
-				<ListForms data={[]} />
+				<ListForms data={data} refetch={getData} />
 			</Box>
-
-			<CreateModal ref={modalRef} />
 		</Box>
 	);
 	//#endregion

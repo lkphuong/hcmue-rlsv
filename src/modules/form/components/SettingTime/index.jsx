@@ -21,6 +21,8 @@ import { alert } from '_func/alert';
 
 import { actions } from '_slices/form.slice';
 
+import { ERRORS } from '_constants/messages';
+
 const SettingTime = memo(({ updateStep }) => {
 	//#region Data
 	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
@@ -68,7 +70,7 @@ const SettingTime = memo(({ updateStep }) => {
 			dispatch(actions.setFormId(Number(id)));
 			updateStep(1);
 		} else {
-			alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+			alert.fail({ text: res?.message || ERRORS.FAIL });
 		}
 	};
 

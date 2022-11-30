@@ -24,6 +24,8 @@ import { initialTitle, validationTitle } from '_modules/form/form';
 
 import { alert } from '_func/alert';
 
+import { ERRORS } from '_constants/messages';
+
 import CheckButton from './CheckButton';
 
 const HeaderItem = memo(({ data }) => {
@@ -68,7 +70,7 @@ const HeaderItem = memo(({ data }) => {
 
 			reset();
 		} else {
-			alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+			alert.fail({ text: res?.message || ERRORS.FAIL });
 		}
 	};
 	//#endregion

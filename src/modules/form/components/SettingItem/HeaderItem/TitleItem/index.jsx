@@ -10,8 +10,7 @@ import {
 import React, { memo, useEffect, useRef, useState } from 'react';
 
 import { getItemsByTitleId } from '_api/form.api';
-
-import { isSuccess } from '_func/';
+import { isEmpty, isSuccess } from '_func/';
 
 import ItemDisplay from './ItemDisplay';
 import ItemModal from './ItemModal';
@@ -32,6 +31,9 @@ const TitleItem = memo(({ data }) => {
 		const res = await getItemsByTitleId(title_id);
 
 		if (isSuccess(res)) setItems(res.data);
+		else if (isEmpty) {
+			setItems([]);
+		}
 	};
 
 	const openModal = () => itemRef.current.open();
@@ -48,7 +50,10 @@ const TitleItem = memo(({ data }) => {
 				<Typography fontWeight={600}>- {data.name}</Typography>
 			</AccordionSummary>
 			<AccordionDetails>
-				{items.length > 0 && items.map((item) => <ItemDisplay key={item.id} data={item} />)}
+				{items.length > 0 &&
+					items.map((item) => (
+						<ItemDisplay key={item.id} data={item} refetch={getItems} />
+					))}
 
 				<Grid item xs={12}>
 					<Grid container alignItems='center' justifyContent='center' spacing={1}>

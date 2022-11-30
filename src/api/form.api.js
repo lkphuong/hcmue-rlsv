@@ -43,9 +43,9 @@ export const deleteHeader = async (form_id, header_id) => {
 };
 
 export const deleteTitle = async (form_id, title_id) => {
-	return await remove(`${FORMS.DELETE_HEADER}/${form_id}/headers/${title_id}`);
+	return await remove(`${FORMS.DELETE_TITLE}/${form_id}/titles/${title_id}`);
 };
 
 export const deleteItem = async (form_id, item_id) => {
-	return await remove(`${FORMS.DELETE_HEADER}/${form_id}/headers/${item_id}`);
+	return await remove(`${FORMS.DELETE_ITEM}/${form_id}/items/${item_id}`);
 };

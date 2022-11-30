@@ -5,6 +5,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { useFieldArray } from 'react-hook-form';
 
 import OptionItem from './OptionItem';
+import { useEffect } from 'react';
 
 const TypeSelect = memo(({ control }) => {
 	//#region Data
@@ -17,6 +18,12 @@ const TypeSelect = memo(({ control }) => {
 	//#region Event
 	const addOneMoreOption = () => append({ content: '', mark: 0 });
 	//#endregion
+
+	useEffect(() => {
+		if (!fields.length) {
+			append({ content: '', mark: 0 });
+		}
+	}, [fields]);
 
 	//#region Render
 	return (

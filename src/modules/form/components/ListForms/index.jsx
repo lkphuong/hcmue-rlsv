@@ -12,7 +12,7 @@ import {
 
 import Row from './Row';
 
-const ListSemester = ({ data }) => {
+const ListSemester = ({ data, refetch }) => {
 	//#region Data
 
 	//#endregion
@@ -33,11 +33,14 @@ const ListSemester = ({ data }) => {
 							<TableCell align='center'>Ngày tạo</TableCell>
 							<TableCell align='center'>Người tạo</TableCell>
 							<TableCell align='center'>Trạng thái phiếu</TableCell>
+							<TableCell />
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{data?.length > 0 &&
-							data.map((row, index) => <Row key={row.id} index={index} data={row} />)}
+							data.map((row, index) => (
+								<Row key={row.id} index={index} data={row} refetch={refetch} />
+							))}
 					</TableBody>
 				</Table>
 			</TableContainer>

@@ -35,7 +35,7 @@ export const initialItem = {
 	to_mark: 0,
 	category: 0,
 	unit: 'Điểm',
-	options: [{ content: '', mark: 0 }],
+	options: [],
 };
 //#endregion
 

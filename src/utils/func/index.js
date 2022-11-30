@@ -2,6 +2,10 @@ export function isSuccess(response) {
 	return response?.status?.toString()[0] === '2';
 }
 
+export function isEmpty(response) {
+	return response?.status?.toString() === '404' && response?.errorCode?.toString() === '4008';
+}
+
 export const getCurrentState = (state) => {
 	try {
 		return JSON.parse(JSON.stringify(state));

@@ -18,6 +18,8 @@ import { isSuccess } from '_func/';
 
 import { alert } from '_func/alert';
 
+import { ERRORS } from '_constants/messages';
+
 import Optional from './Optional';
 
 const ItemModal = memo(
@@ -65,7 +67,7 @@ const ItemModal = memo(
 
 				toggleClose();
 			} else {
-				alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+				alert.fail({ text: res?.message || ERRORS.FAIL });
 			}
 		};
 

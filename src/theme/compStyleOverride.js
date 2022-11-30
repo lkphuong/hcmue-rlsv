@@ -235,5 +235,42 @@ export default function componentStyleOverrides(theme) {
 				},
 			},
 		},
+		MuiTableHead: {
+			styleOverrides: {
+				root: {
+					'& .MuiTableRow-root': {
+						'& .MuiTableCell-root': {
+							padding: '10px',
+							backgroundColor: 'rgb(243, 244, 246)',
+							textTransform: 'uppercase',
+							fontWeight: 600,
+							color: 'rgba(34, 51, 84, 0.7)',
+						},
+					},
+				},
+			},
+		},
+		MuiTableBody: {
+			styleOverrides: {
+				root: {
+					backgroundColor: 'white',
+				},
+			},
+		},
+		MuiTableCell: {
+			styleOverrides: {
+				root: {
+					padding: '6px 10px',
+					'& .MuiIconButton-root': {
+						borderRadius: '8px',
+						fontSize: '1.25rem',
+						color: 'rgb(85, 105, 255)',
+						'&:hover': {
+							backgroundColor: 'rgb(208 206 244)',
+						},
+					},
+				},
+			},
+		},
 	};
 }

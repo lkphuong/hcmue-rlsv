@@ -78,6 +78,15 @@ export class ItemEntity extends RootEntity {
   })
   to_mark: number;
 
+  // Điểm cho item when control = input | checkbox &&
+  // category = single-value | per unit
+  @Column('float', {
+    name: 'mark',
+    nullable: true,
+    default: 0,
+  })
+  mark: number;
+
   // 0. single value, 1. range value, 2: per unit
   @Column('tinyint', {
     name: 'category',

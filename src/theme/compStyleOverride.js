@@ -4,8 +4,11 @@ export default function componentStyleOverrides(theme) {
 		MuiButton: {
 			styleOverrides: {
 				root: {
-					fontWeight: 500,
+					fontWeight: 600,
 					borderRadius: '4px',
+					'&.publish': {
+						backgroundColor: 'rgb(0 207 14)',
+					},
 				},
 			},
 		},

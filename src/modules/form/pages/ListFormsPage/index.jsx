@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Box, Button, Typography } from '@mui/material';
@@ -14,8 +14,6 @@ import { isSuccess } from '_func/';
 const ListFormsPage = () => {
 	//#region Data
 	const [data, setData] = useState([]);
-
-	const modalRef = useRef();
 	//#endregion
 
 	//#region Event
@@ -28,10 +26,6 @@ const ListFormsPage = () => {
 			throw error;
 		}
 	}, []);
-
-	const toggleCreateModal = () => {
-		modalRef.current.open();
-	};
 	//#endregion
 
 	useEffect(() => {
@@ -56,9 +50,7 @@ const ListFormsPage = () => {
 
 				<Box textAlign='right' my={2}>
 					<Link to={ROUTES.FORM_CREATE}>
-						<Button variant='contained' onClick={toggleCreateModal}>
-							Thêm mới
-						</Button>
+						<Button variant='contained'>Thêm mới</Button>
 					</Link>
 				</Box>
 

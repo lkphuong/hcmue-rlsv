@@ -159,14 +159,19 @@ const SettingTime = memo(({ updateStep }) => {
 						<Controller
 							control={control}
 							name='student'
-							render={({ field: { onChange, value } }) => (
-								<CRangePicker
-									onChange={onChange}
-									dateRange={value}
-									error={!!errors['student.start']}
-									helperText={errors['student.start']?.message}
-								/>
-							)}
+							render={({
+								field: { onChange, value, name },
+								fieldState: { error },
+							}) => {
+								return (
+									<CRangePicker
+										onChange={onChange}
+										dateRange={value}
+										error={!!errors['student.start']}
+										helperText={errors['student.start']?.message}
+									/>
+								);
+							}}
 						/>
 					</Grid>
 

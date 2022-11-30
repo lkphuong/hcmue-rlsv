@@ -1,8 +1,14 @@
 import React, { useState, useEffect, useMemo, lazy } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import { Box, CardContent, Grid, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+
 import { ROUTES } from '_constants/routes';
+
+import { actions } from '_slices/form.slice';
+
+import { usePrompt } from '_hooks/';
 
 const SettingTime = lazy(() => import('_modules/form/components/SettingTime'));
 const SettingHeader = lazy(() => import('_modules/form/components/SettingHeader'));
@@ -20,11 +26,13 @@ const FormCreatePage = () => {
 	//#region Data
 	const [isEdit, setIsEdit] = useState();
 
-	const [step, setStep] = useState(3);
+	const [step, setStep] = useState(0);
 
 	const { form_id } = useParams();
 
 	const navigate = useNavigate();
+
+	const dispatch = useDispatch();
 
 	const currentStage = useMemo(() => {
 		switch (step) {
@@ -41,7 +49,6 @@ const FormCreatePage = () => {
 		}
 	}, [step]);
 	//#endregion
-
 	//#region Event
 
 	//#endregion
@@ -52,11 +59,19 @@ const FormCreatePage = () => {
 
 	useEffect(() => {
 		if (step < 0) {
+			dispatch(actions.clearForm());
 			navigate(ROUTES.FORM);
 		} else if (step > 3) {
+			dispatch(actions.clearForm());
 			navigate(ROUTES.FORM);
 		}
 	}, [step]);
+
+	usePrompt(
+		'Các thao tác đang điều chỉnh có thể mất khi bạn chuyển trang.',
+		true,
+		actions.clearForm()
+	);
 
 	//#region Render
 	return (

@@ -55,12 +55,11 @@ const SettingItem = memo(({ updateStep }) => {
 				</Grid>
 				<Grid item>
 					<Button
-						// disabled={headers.length < 1}
 						sx={{ maxWidth: 100 }}
 						variant='contained'
 						onClick={() => updateStep((prev) => prev + 1)}
 					>
-						Tiếp tục
+						Lưu biểu mẫu
 					</Button>
 				</Grid>
 			</Grid>

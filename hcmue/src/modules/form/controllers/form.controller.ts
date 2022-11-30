@@ -1436,7 +1436,7 @@ export class FormController {
    * @return HttpResponse<BaseResponse> | HttpException
    * @page forms page
    */
-  @Put(':form_id/titles/:title_id')
+  @Delete(':form_id/titles/:title_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async unlinkTitle(
     @Param('form_id') form_id: number,
@@ -1507,7 +1507,7 @@ export class FormController {
   }
 
   /**
-   * @method PUT
+   * @method DELETE
    * @url /api/forms/:form_id/items/:item_id
    * @access private
    * @param form_id
@@ -1516,7 +1516,7 @@ export class FormController {
    * @return HttpResponse<ItemResponse> | HttpException
    * @page forms page
    */
-  @Put(':form_id/items/:item_id')
+  @Delete(':form_id/items/:item_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async unlinkItem(
     @Param('form_id') form_id: number,

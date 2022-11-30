@@ -1,11 +1,13 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { isEmpty } from 'class-validator';
+import { arrayNotEmpty, isEmpty } from 'class-validator';
 import { Request } from 'express';
 
 import { sprintf } from '../../../utils';
 
 import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
+
+import { ItemDto } from '../dtos/item.dto';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { FormService } from '../services/form.service';
@@ -24,6 +26,8 @@ import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { ItemControl } from 'src/modules/item/constants/enums/controls.enum';
+import { ItemCategory } from 'src/modules/item/constants/enums/categories.enum';
 
 export const validateFormId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -111,6 +115,28 @@ export const validateItemId = (id: number, req: Request) => {
   }
 
   return null;
+};
+
+export const validateAcademicYear = async (
+  academic_id: number,
+  academic_service: AcademicYearService,
+  req: Request,
+) => {
+  const academic = await academic_service.getAcademicYearById(academic_id);
+  if (!academic) {
+    //#region throw HandlerException
+    return new UnknownException(
+      academic_id,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.ACADEMIC_YEAR_NOT_FOUND_ERROR, academic_id),
+      HttpStatus.NOT_FOUND,
+    );
+    //#endregion
+  }
+
+  return academic;
 };
 
 export const validateForm = async (
@@ -222,28 +248,6 @@ export const valiadteItem = async (
   return item;
 };
 
-export const validateAcademicYear = async (
-  academic_id: number,
-  academic_service: AcademicYearService,
-  req: Request,
-) => {
-  const academic = await academic_service.getAcademicYearById(academic_id);
-  if (!academic) {
-    //#region throw HandlerException
-    return new UnknownException(
-      academic_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.ACADEMIC_YEAR_NOT_FOUND_ERROR, academic_id),
-      HttpStatus.NOT_FOUND,
-    );
-    //#endregion
-  }
-
-  return academic;
-};
-
 export const validateSemester = async (
   semester_id: number,
   semester_service: SemesterService,
@@ -298,6 +302,132 @@ export const validateTime = (start: string, end: string, req: Request) => {
       HttpStatus.BAD_REQUEST,
     );
   }
+};
+
+export const validateItemDto = (params: ItemDto, req: Request) => {
+  //#region Get params
+  const { control, mark, from_mark, to_mark, category, options } = params;
+  //#endregion
+
+  switch (control) {
+    case ItemControl.INPUT:
+      if (category != ItemCategory.RANGE_VALUE) {
+        //#region category = SINGLE_VALUE | PER_UNIT
+        if (isEmpty(mark)) {
+          //#region throw HandlerException
+          return new HandlerException(
+            VALIDATION_EXIT_CODE.INVALID_VALUE,
+            req.method,
+            req.url,
+            ErrorMessage.ITEM_MARK_EMPTY_ERROR,
+            HttpStatus.BAD_REQUEST,
+          );
+          //#endregion
+        } else if (mark === 0) {
+          //#region throw HandlerException
+          return new HandlerException(
+            VALIDATION_EXIT_CODE.INVALID_VALUE,
+            req.method,
+            req.url,
+            ErrorMessage.ITEM_MARK_MUST_BE_NOT_EQUALS_ZERO_ERROR,
+            HttpStatus.BAD_REQUEST,
+          );
+          //#endregion
+        }
+        //#endregion
+      } else {
+        //#region category = RANGE_VALUE
+        if (isEmpty(from_mark) || isEmpty(to_mark)) {
+          //#region throw HandlerException
+          return new HandlerException(
+            VALIDATION_EXIT_CODE.INVALID_VALUE,
+            req.method,
+            req.url,
+            ErrorMessage.ITEM_RANGE_MARKS_EMPTY_ERROR,
+            HttpStatus.BAD_REQUEST,
+          );
+          //#endregion
+        } else if (to_mark < from_mark) {
+          //#region throw HandlerException
+          return new HandlerException(
+            VALIDATION_EXIT_CODE.INVALID_VALUE,
+            req.method,
+            req.url,
+            ErrorMessage.ITEM_RANGE_MARKS_INVALID_ERROR,
+            HttpStatus.BAD_REQUEST,
+          );
+          //#endregion
+        }
+        //#endregion
+      }
+      break;
+    case ItemControl.CHECKBOX:
+      if (category != ItemCategory.SINGLE_VALUE) {
+        //#region throw HandlerException
+        return new HandlerException(
+          VALIDATION_EXIT_CODE.INVALID_VALUE,
+          req.method,
+          req.url,
+          ErrorMessage.ITEM_CHECKBOX_CATEGORY_INVALID_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
+        //#endregion
+      } else {
+        //#region category = SINGLE_VALUE
+        if (isEmpty(mark)) {
+          //#region throw HandlerException
+          return new HandlerException(
+            VALIDATION_EXIT_CODE.INVALID_VALUE,
+            req.method,
+            req.url,
+            ErrorMessage.ITEM_MARK_EMPTY_ERROR,
+            HttpStatus.BAD_REQUEST,
+          );
+          //#endregion
+        } else if (mark === 0) {
+          //#region throw HandlerException
+          return new HandlerException(
+            VALIDATION_EXIT_CODE.INVALID_VALUE,
+            req.method,
+            req.url,
+            ErrorMessage.ITEM_MARK_MUST_BE_NOT_EQUALS_ZERO_ERROR,
+            HttpStatus.BAD_REQUEST,
+          );
+          //#endregion
+        }
+        //#endregion
+      }
+      break;
+    default:
+      if (category != ItemCategory.SINGLE_VALUE) {
+        //#region throw HandlerException
+        return new HandlerException(
+          VALIDATION_EXIT_CODE.INVALID_VALUE,
+          req.method,
+          req.url,
+          ErrorMessage.ITEM_SELECT_CATEGORY_INVALID_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
+        //#endregion
+      } else {
+        //#region category = SINGLE_VALUE
+        if (!arrayNotEmpty(options) || options.length === 0) {
+          //#region throw HandlerException
+          return new HandlerException(
+            VALIDATION_EXIT_CODE.INVALID_VALUE,
+            req.method,
+            req.url,
+            ErrorMessage.ITEM_OPTIONS_EMPTY_ERROR,
+            HttpStatus.BAD_REQUEST,
+          );
+          //#endregion
+        }
+        //#endregion
+      }
+      break;
+  }
+
+  return null;
 };
 
 export const isAnyPublished = async (

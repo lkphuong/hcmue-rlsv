@@ -12,9 +12,9 @@ import { generateValidationMessage } from '../../../utils';
 import { BetweenValidator } from '../../../validators/between.validator';
 import { IsBooleanValidator } from '../../../validators/boolean.validator';
 import { IsNumberValidator } from '../../../validators/number.validator';
-import { GreaterValidator } from '../../../validators/greater.validator';
 import { LengthValidator } from '../../../validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
+import { NotEqualsValidator } from '../../../validators/not-equals.validator';
 
 export class OptionDto {
   @Transform((params) =>
@@ -22,13 +22,13 @@ export class OptionDto {
   )
   @IsNotEmpty({
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [nội dung tùy chọn].'),
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [nội dung chi tiết].'),
   })
   @LengthValidator(1, 500, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        '[Nội dung tùy chọn] độ dài tối đa 500 kí tự.',
+        '[Nội dung chi tiết] độ dài tối đa 500 kí tự.',
       ),
   })
   content: string;
@@ -38,11 +38,11 @@ export class OptionDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm].'),
   })
-  @GreaterValidator(0, {
+  @NotEqualsValidator(0, {
     message: (arg) =>
       generateValidationMessage(
         arg,
-        'Giá trị [điểm] không hợp lệ (phải lớn hơn 0).',
+        'Giá trị [điểm] không hợp lệ (phải khác 0).',
       ),
   })
   mark: number;
@@ -116,6 +116,14 @@ export class ItemDto {
       generateValidationMessage(arg, 'Giá trị [điểm tối đa] không hợp lệ.'),
   })
   to_mark?: number = 0;
+
+  @IsOptional()
+  @Transform((params) => parseFloat(params.value) ?? 0)
+  @IsNumberValidator({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [điểm] không hợp lệ.'),
+  })
+  mark?: number = 0;
 
   @IsOptional()
   @Transform((params) => parseFloat(params.value) ?? 0)

@@ -2,6 +2,17 @@ export enum ErrorMessage {
   NO_CONTENT = 'Không có dữ liệu hiển thị.',
   ID_NAN_ERROR = 'Giá trị [id] không hợp lệ.',
 
+  ITEM_MARK_EMPTY_ERROR = 'Bạn vui lòng nhập [điểm] cho [tiêu chí đánh giá].',
+  ITEM_MARK_MUST_BE_NOT_EQUALS_ZERO_ERROR = '[Điểm] cho [tiêu chí đánh giá] phải khác 0.',
+
+  ITEM_RANGE_MARKS_EMPTY_ERROR = 'Bạn vui lòng nhập điểm [min] & [max] cho [tiêu chí đánh giá].',
+  ITEM_RANGE_MARKS_INVALID_ERROR = 'Điểm [max] phải nhỏ hơn điểm [min].',
+
+  ITEM_OPTIONS_EMPTY_ERROR = 'Bạn vui lòng nhập [chi tiết] cho [tiêu chí đánh giá].',
+
+  ITEM_CHECKBOX_CATEGORY_INVALID_ERROR = 'Chỉ có thể áp dụng loại điểm [single-value] cho control [checkbox].',
+  ITEM_SELECT_CATEGORY_INVALID_ERROR = 'Chỉ có thể áp dụng loại điểm [single-value] cho control [single & multiple select].',
+
   FORM_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [biểu mẫu].',
   FORM_NOT_FOUND_ERROR = '[Biểu mẫu] không tồn tại (id: %s)',
 

@@ -1,19 +1,18 @@
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { HttpModule } from '@nestjs/axios';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { backgroundFactory } from '../../factories/background.factory';
 
 import { SheetEntity } from '../../entities/sheet.entity';
 
-import { SheetService } from './services/sheet.service';
-
-import { SheetController } from './controllers/sheet.controller';
+import { SheetService } from './services/sheet/sheet.service';
+import { CronService } from './services/cron/cron.service';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
-import { ApprovalModule } from '../approval/approval.module';
+import { FormModule } from '../form/form.module';
 
 import { BACKGROUND_JOB_MODULE } from '../../constants';
 
@@ -27,11 +26,11 @@ export const modules = [
     },
   ]),
   TypeOrmModule.forFeature([SheetEntity]),
-  ApprovalModule,
+  FormModule,
   HttpModule,
   LogModule,
 ];
 
-export const controllers = [SheetController];
-export const providers = [SheetService];
-export const exporteds = [SheetService];
+export const controllers = [];
+export const providers = [CronService, SheetService];
+export const exporteds = [CronService, SheetService];

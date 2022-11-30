@@ -28,4 +28,5 @@ export default {
   ITEMS_PER_PAGE: 10,
 
   GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 * * * * *',
+  UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 * * * * *',
 };

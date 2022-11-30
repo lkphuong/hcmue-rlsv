@@ -9,6 +9,7 @@ import { LogModule } from './modules/log/log.module';
 import { SharedModule } from './modules/shared/shared.module';
 
 import { UserModule } from './modules/users/user.module';
+import { SheetModule } from './modules/sheet/sheet.module';
 
 import { ConfigurationService } from './modules/shared/services/configuration/configuration.service';
 
@@ -26,5 +27,6 @@ export const modules = [
     useFactory: mongoFactory,
   }),
   LogModule,
+  SheetModule,
   UserModule,
 ];

@@ -39,4 +39,27 @@ export class SheetService {
       return null;
     }
   }
+
+  async bulkUpdate(
+    sheets: SheetEntity[],
+    manager?: EntityManager,
+  ): Promise<SheetEntity[] | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+      sheets = manager.create(SheetEntity, sheets);
+      sheets = await manager.save(sheets);
+
+      return sheets || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'SheetService.bulkUpdate()',
+        e,
+      );
+      return null;
+    }
+  }
 }

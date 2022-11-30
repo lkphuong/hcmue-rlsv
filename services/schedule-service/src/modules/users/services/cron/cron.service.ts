@@ -26,7 +26,7 @@ import {
 import {
   SheetPayload,
   SPayload,
-} from '../../interfaces/payloads/sheet-payload.interface';
+} from '../../interfaces/payloads/sheet_payload.interface';
 
 let CRON_JOB_TIME = GENERATE_CREATE_SHEETS_CRON_JOB_TIME;
 
@@ -57,38 +57,40 @@ export class CronService {
       console.log('count: ', count);
       console.log('form: ', form);
 
-      if (count && form) {
-        //#region
-        const itemsPerPage = parseInt(
-          this._configurationService.get(Configuration.ITEMS_PER_PAGE),
-        );
-
-        const pages = Math.ceil(count / itemsPerPage);
-
-        //#endregion
-
-        for (let i = 0; i < pages; i++) {
-          const users = await this._userService.getUsersPaging(
-            i * itemsPerPage,
-            itemsPerPage,
+      if (new Date() > new Date(form.student_start)) {
+        if (count && form) {
+          //#region
+          const itemsPerPage = parseInt(
+            this._configurationService.get(Configuration.ITEMS_PER_PAGE),
           );
 
-          let flag = false;
-          if (i + 1 === pages) {
-            flag = true;
+          const pages = Math.ceil(count / itemsPerPage);
+
+          //#endregion
+
+          for (let i = 0; i < pages; i++) {
+            const users = await this._userService.getUsersPaging(
+              i * itemsPerPage,
+              itemsPerPage,
+            );
+
+            let flag = false;
+            if (i + 1 === pages) {
+              flag = true;
+            }
+            const results = await generateSheet2Array(form, flag, users);
+            this.send(results);
           }
-          const results = await generateSheet2Array(form, flag, users);
-          this.send(results);
+        } else {
+          //#region Handle log
+          this._logger.writeLog(
+            Levels.ERROR,
+            Methods.SCHEDULE,
+            'CronService.schedule()',
+            ErrorMessage.NO_CONTENT,
+          );
+          //#endregion
         }
-      } else {
-        //#region Handle log
-        this._logger.writeLog(
-          Levels.ERROR,
-          Methods.SCHEDULE,
-          'CronService.schedule()',
-          ErrorMessage.NO_CONTENT,
-        );
-        //#endregion
       }
     } catch (e) {
       //#region Handle log

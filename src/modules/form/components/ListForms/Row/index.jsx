@@ -98,7 +98,7 @@ const Row = memo(({ data, index, refetch }) => {
 
 						alert.success({ text: 'Xóa biểu mẫu thành công.' });
 					} else {
-						alert.fail({ text: res?.messages || ERRORS.FAIL });
+						alert.fail({ text: res?.message || ERRORS.FAIL });
 					}
 				},
 			});
@@ -115,7 +115,7 @@ const Row = memo(({ data, index, refetch }) => {
 
 					alert.success({ text: 'Copy biểu mẫu thành công.' });
 				} else {
-					alert.fail({ text: res?.messages || ERRORS.FAIL });
+					alert.fail({ text: res?.message || ERRORS.FAIL });
 				}
 			},
 		});

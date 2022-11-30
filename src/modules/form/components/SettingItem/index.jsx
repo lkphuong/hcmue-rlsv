@@ -40,10 +40,13 @@ const SettingItem = memo(({ updateStep }) => {
 	//#region Render
 	return (
 		<Box>
-			<Button>Lưu nháp</Button>
-			<Button>Phát hành</Button>
-
 			<Container maxWidth='lg'>
+				<Box textAlign='right' py={1.5}>
+					<Button variant='contained' className='publish'>
+						Phát hành
+					</Button>
+				</Box>
+
 				{headers.length > 0 && headers.map((e) => <HeaderItem key={e.id} data={e} />)}
 			</Container>
 

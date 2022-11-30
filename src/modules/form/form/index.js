@@ -94,7 +94,7 @@ export const validationHeader = yup.object({
 	name: yup.string('Vui lòng nhập tên danh mục.').required('Vui lòng nhập tên danh mục.'),
 	max_mark: yup
 		.number('Vui lòng nhập điểm tối đa')
-		.min(0, 'Điểm tối đa tối thiểu là 0.')
+		.moreThan(0, 'Điểm tối đa phải lớn hơn 0.')
 		.typeError('Điểm tối đa phải là số.')
 		.required('Vui lòng nhập điểm tối đa'),
 });
@@ -130,7 +130,7 @@ export const validationItem = yup.object({
 						.required('Vui lòng nhập chi tiết tiêu chí.'),
 					mark: yup
 						.number('Giá trị điểm của tiêu chí phải là số.')
-						.min(1, 'Giá trị điểm của tùy chọn phải lớn hơn 0.')
+						.moreThan(0, 'Giá trị điểm của tùy chọn phải lớn hơn 0.')
 						.typeError('Giá trị điểm của tiêu chí phải là số.')
 						.required('Vui lòng nhập điểm cho tiêu chí.'),
 				})

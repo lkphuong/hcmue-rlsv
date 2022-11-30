@@ -110,7 +110,7 @@ export const CMainLayout = () => {
 	return isLogined ? (
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
-			{/* header */}
+
 			<AppBar
 				enableColorOnDark
 				position='fixed'
@@ -126,12 +126,9 @@ export const CMainLayout = () => {
 				</Toolbar>
 			</AppBar>
 
-			{/* drawer */}
 			<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
-			{/* main content */}
 			<Main theme={theme} open={leftDrawerOpened}>
-				{/* breadcrumb */}
 				<Breadcrumbs separator={ChevronRight} icon title rightAlign />
 				<Outlet />
 			</Main>

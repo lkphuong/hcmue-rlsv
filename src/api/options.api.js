@@ -2,7 +2,7 @@ import { get } from '_axios/request';
 import { OPTIONS } from './url';
 
 export const getAcademicYears = () => {
-	return get(OPTIONS.GET_ACADEsMIC_YEARS);
+	return get(OPTIONS.GET_ACADEMIC_YEARS);
 };
 
 export const getSemesters = () => {

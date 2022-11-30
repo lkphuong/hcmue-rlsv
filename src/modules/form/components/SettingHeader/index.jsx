@@ -4,9 +4,12 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { Box, Button, Container, Grid, IconButton, Typography } from '@mui/material';
 import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material';
 
-import { getHeadersByFormId } from '_api/form.api';
+import { deleteHeader, getHeadersByFormId } from '_api/form.api';
 
-import { isSuccess } from '_func/';
+import { isSuccess, isEmpty } from '_func/';
+import { alert } from '_func/alert';
+
+import { ERRORS } from '_constants/messages';
 
 import { CreateModal } from '..';
 
@@ -28,6 +31,8 @@ const SettingHeader = memo(({ updateStep }) => {
 
 			if (isSuccess(res)) {
 				setHeaders(res.data);
+			} else if (isEmpty(res)) {
+				setHeaders([]);
 			}
 		} catch (error) {
 			throw error;
@@ -37,6 +42,22 @@ const SettingHeader = memo(({ updateStep }) => {
 	const handleBack = () => updateStep((prev) => prev - 1);
 
 	const openCreate = () => createRef.current.open();
+
+	const onDelete = (header_id) => () => {
+		alert.warningDelete({
+			onConfirm: async () => {
+				const res = await deleteHeader(form_id, Number(header_id));
+
+				if (isSuccess(res)) {
+					getHeaders();
+
+					alert.success({ text: 'Xóa danh mục thành công.' });
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+		});
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -64,7 +85,7 @@ const SettingHeader = memo(({ updateStep }) => {
 									spacing={1}
 								>
 									<Grid item xs='auto'>
-										<IconButton>
+										<IconButton onClick={onDelete(header.id)}>
 											<RemoveCircleOutline />
 										</IconButton>
 									</Grid>

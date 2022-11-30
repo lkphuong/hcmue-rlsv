@@ -12,11 +12,11 @@ import {
 	Typography,
 } from '@mui/material';
 
-import { createTitle, getTitlesByHeaderId } from '_api/form.api';
+import { createTitle, deleteTitle, getTitlesByHeaderId } from '_api/form.api';
 
 import { CInput } from '_controls/';
 
-import { isSuccess } from '_func/';
+import { isSuccess, isEmpty } from '_func/';
 
 import { useResolver } from '_hooks/';
 
@@ -52,6 +52,9 @@ const HeaderItem = memo(({ data }) => {
 		const res = await getTitlesByHeaderId(header_id);
 
 		if (isSuccess(res)) setTitles(res.data);
+		else if (isEmpty(res)) {
+			setTitles([]);
+		}
 	};
 
 	const onSubmit = async (values) => {
@@ -73,6 +76,22 @@ const HeaderItem = memo(({ data }) => {
 			alert.fail({ text: res?.message || ERRORS.FAIL });
 		}
 	};
+
+	const onDelete = (title_id) => () => {
+		alert.warningDelete({
+			onConfirm: async () => {
+				const res = await deleteTitle(form_id, Number(title_id));
+
+				if (isSuccess(res)) {
+					getTitles();
+
+					alert.success({ text: 'Xóa tiêu chí thành công.' });
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+		});
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -93,7 +112,7 @@ const HeaderItem = memo(({ data }) => {
 					titles.map((title) => (
 						<Grid key={title.id} container alignItems='center' spacing={1}>
 							<Grid item xs='auto'>
-								<IconButton>
+								<IconButton onClick={onDelete(title.id)}>
 									<RemoveCircleOutline />
 								</IconButton>
 							</Grid>

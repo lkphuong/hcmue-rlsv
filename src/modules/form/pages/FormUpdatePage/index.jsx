@@ -74,7 +74,7 @@ const FormUpdatePage = () => {
 	useEffect(() => {
 		if (!form_id) navigate(ROUTES.FORM);
 		else {
-			dispatch(actions.setFormId(form_id));
+			dispatch(actions.setFormId(Number(form_id)));
 		}
 	}, [form_id]);
 

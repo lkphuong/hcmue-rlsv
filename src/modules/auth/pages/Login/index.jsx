@@ -41,6 +41,8 @@ export const LoginPage = () => {
 
 	//#region Event
 	const onSubmit = async (values) => {
+		alert.loading();
+
 		const res = await login(values);
 
 		if (isSuccess(res)) {

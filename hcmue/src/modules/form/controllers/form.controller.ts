@@ -49,6 +49,7 @@ import {
   validateFormPubishStatus,
   validateFormUnPubishStatus,
   validateHeaderId,
+  validateItemDto,
   validateItemId,
   validateTitleId,
 } from '../validations';
@@ -861,6 +862,11 @@ export class FormController {
         JSON.stringify({ params: params }),
       );
 
+      //#region Validate item dto
+      const valid = validateItemDto(params, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
       //#region Get jwt payload
       const { user_id } = req.user as JwtPayload;
       //#endregion
@@ -1172,8 +1178,15 @@ export class FormController {
       );
 
       //#region Validation
-      const valid = validateItemId(id, req);
+      //#region Validate item id
+      let valid = validateItemId(id, req);
       if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Validate item dto
+      valid = validateItemDto(params, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
       //#endregion
 
       //#region Get jwt payload

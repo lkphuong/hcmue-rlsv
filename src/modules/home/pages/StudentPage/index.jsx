@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 
 import { ListSemester } from '_modules/home/components';
 
@@ -36,19 +36,15 @@ const SemestersPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<Typography
-				borderRadius={2}
-				p={2}
-				fontWeight={500}
-				fontSize={18}
-				sx={{ backgroundColor: 'rgba(0 0 0 / 5%)' }}
-			>
-				Danh sách điểm rèn luyện của tôi
-			</Typography>
-
-			<Box mt={1}>
-				<ListSemester data={data} />
+			<Box mb={1.5}>
+				<Paper className='paper-wrapper'>
+					<Typography fontSize={20} p={1.5}>
+						Danh sách điểm rèn luyện của tôi
+					</Typography>
+				</Paper>
 			</Box>
+
+			<ListSemester data={data} />
 		</Box>
 	);
 	//#endregion

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { SemesterEntity } from '../../../entities/semester.entity';
 
@@ -14,6 +14,7 @@ export class SemesterService {
   constructor(
     @InjectRepository(SemesterEntity)
     private readonly _semesterRepository: Repository<SemesterEntity>,
+    private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
@@ -52,6 +53,76 @@ export class SemesterService {
         Levels.ERROR,
         Methods.SELECT,
         'SemesterService.getSemesterByid()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getSemesterByName(name: string): Promise<SemesterEntity | null> {
+    try {
+      const conditions = this._semesterRepository
+        .createQueryBuilder('semester')
+        .where('semester.name = :name', { name })
+        .andWhere('semester.deleted = :deleted', { deleted: false });
+
+      const semester = await conditions.getOne();
+
+      return semester || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SemesterService.getSemesterByName()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async add(
+    semester: SemesterEntity,
+    manager?: EntityManager,
+  ): Promise<SemesterEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+      semester = await manager.save(semester);
+
+      return semester || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'SemesterService.add()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async unlink(
+    semester_id: number,
+    user_id: string,
+    manager?: EntityManager,
+  ): Promise<boolean | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+      const result = await manager.update(
+        SemesterEntity,
+        { id: semester_id },
+        { deleted: true, deleted_at: new Date(), deleted_by: user_id },
+      );
+
+      return result.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.DELETE,
+        'SemesterService.unlink()',
         e,
       );
       return null;

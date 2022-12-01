@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { FormEntity } from './form.entity';
 
 import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
@@ -19,4 +20,7 @@ export class SemesterEntity extends RootEntity {
 
   @OneToMany(() => SheetEntity, (sheet) => sheet.semester)
   sheets: SheetEntity[];
+
+  @OneToMany(() => FormEntity, (form) => form.semester)
+  forms: FormEntity[];
 }

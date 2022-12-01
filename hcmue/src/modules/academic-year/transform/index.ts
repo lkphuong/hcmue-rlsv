@@ -19,3 +19,18 @@ export const generateData2Array = (
 
   return null;
 };
+
+export const generateData2Object = (
+  academic_year: AcademicYearEntity | null,
+) => {
+  if (academic_year) {
+    const payload: AcademicYearResponse = {
+      id: academic_year.id,
+      name: academic_year.name,
+    };
+
+    return payload;
+  }
+
+  return null;
+};

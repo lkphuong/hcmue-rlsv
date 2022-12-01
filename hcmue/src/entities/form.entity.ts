@@ -23,7 +23,7 @@ export class FormEntity extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => AcademicYearEntity, (academic_year) => academic_year)
+  @ManyToOne(() => AcademicYearEntity, (academic_year) => academic_year.forms)
   @JoinColumn([
     {
       name: 'academic_id',
@@ -32,7 +32,7 @@ export class FormEntity extends RootEntity {
   ])
   academic_year: AcademicYearEntity;
 
-  @ManyToOne(() => SemesterEntity, (semester) => semester)
+  @ManyToOne(() => SemesterEntity, (semester) => semester.forms)
   @JoinColumn([
     {
       name: 'semester_id',

@@ -26,6 +26,7 @@ export interface ItemResponse {
   content: string;
   from_mark: number;
   to_mark: number;
+  mark: number;
   category: number;
   unit: string;
   required: boolean;

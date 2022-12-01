@@ -142,7 +142,6 @@ export class SheetController {
       //#region Get sheet
       const sheet = await this._sheetService.getSheetById(id);
       //#endregion
-
       if (sheet) {
         //#region Generate response
         return await generateSheet(

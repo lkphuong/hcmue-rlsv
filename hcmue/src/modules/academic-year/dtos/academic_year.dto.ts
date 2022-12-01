@@ -6,6 +6,7 @@ import { generateValidationMessage } from '../../../utils';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class AcademicYearDto {
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [năm bắt đầu].'),
@@ -14,8 +15,9 @@ export class AcademicYearDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Giá trị [năm bắt đầu] tối thiểu bằng 0.'),
   })
-  form: number;
+  from: number;
 
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [năm kết thúc].'),

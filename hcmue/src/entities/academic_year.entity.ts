@@ -1,6 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { AcademicYearClassesEntity } from './academic_year_classes.entity';
+import { FormEntity } from './form.entity';
 import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
 
@@ -26,4 +27,7 @@ export class AcademicYearEntity extends RootEntity {
     (classes) => classes.academic_year,
   )
   classes: AcademicYearClassesEntity[];
+
+  @OneToMany(() => FormEntity, (form) => form.academic_year)
+  forms: FormEntity[];
 }

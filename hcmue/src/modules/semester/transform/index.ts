@@ -17,3 +17,15 @@ export const generateData2Array = (semesters: SemesterEntity[] | null) => {
   }
   return null;
 };
+
+export const generateData2Object = (semester: SemesterEntity | null) => {
+  if (semester) {
+    const payload: SemesterResponse = {
+      id: semester.id,
+      name: semester.name,
+    };
+    return payload;
+  }
+
+  return null;
+};

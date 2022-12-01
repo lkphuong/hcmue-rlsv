@@ -53,6 +53,7 @@ import { AcademicYearService } from '../../academic-year/services/academic_year.
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
+import { HeaderService } from '../../header/services/header.service';
 import { ItemService } from '../../item/services/item.service';
 import { KService } from '../../k/services/k.service';
 import { LogService } from '../../log/services/log.service';
@@ -92,6 +93,7 @@ export class SheetController {
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
     private readonly _evaluationService: EvaluationService,
+    private readonly _headerService: HeaderService,
     private readonly _itemService: ItemService,
     private readonly _kService: KService,
     private readonly _levelService: LevelService,
@@ -616,6 +618,7 @@ export class SheetController {
         this._classService,
         this._departmentService,
         this._evaluationService,
+        this._headerService,
         this._itemService,
         this._kService,
         this._levelService,
@@ -632,6 +635,7 @@ export class SheetController {
       else return sheet;
       //#endregion
     } catch (err) {
+      console.log(err);
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
@@ -693,6 +697,7 @@ export class SheetController {
         this._classService,
         this._departmentService,
         this._evaluationService,
+        this._headerService,
         this._itemService,
         this._kService,
         this._levelService,
@@ -770,6 +775,7 @@ export class SheetController {
         this._classService,
         this._departmentService,
         this._evaluationService,
+        this._headerService,
         this._itemService,
         this._kService,
         this._levelService,

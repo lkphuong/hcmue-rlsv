@@ -26,6 +26,7 @@ import { DepartmentService } from '../../department/services/department.service'
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
 import { ItemService } from '../../item/services/item.service';
 import { KService } from '../../k/services/k.service';
+import { HeaderService } from '../../header/services/header.service';
 import { LevelService } from '../../level/services/level.service';
 import { OptionService } from '../../option/services/option.service';
 import { SheetService } from '../services/sheet.service';
@@ -53,6 +54,7 @@ export const generatePersonalMarks = async (
   class_service: ClassService,
   department_service: DepartmentService,
   evaluation_service: EvaluationService,
+  header_service: HeaderService,
   item_service: ItemService,
   k_service: KService,
   level_service: LevelService,
@@ -93,8 +95,9 @@ export const generatePersonalMarks = async (
       SheetStatus.WAITING_CLASS,
       params,
       sheet,
-      sheet_service,
+      header_service,
       level_service,
+      sheet_service,
       query_runner,
       req,
     );
@@ -109,6 +112,7 @@ export const generatePersonalMarks = async (
         params,
         sheet,
         evaluation_service,
+        header_service,
         item_service,
         option_service,
         query_runner,
@@ -128,18 +132,18 @@ export const generatePersonalMarks = async (
       //#endregion
 
       //#region Update sheet relation
-      sheet = await query_runner.manager.save(sheet);
-      if (!sheet) {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_SHEET_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-        //#endregion
-      }
+      // sheet = await query_runner.manager.save(sheet);
+      // if (!sheet) {
+      //   //#region throw HandlerException
+      //   throw new HandlerException(
+      //     DATABASE_EXIT_CODE.OPERATOR_ERROR,
+      //     req.method,
+      //     req.url,
+      //     ErrorMessage.OPERATOR_SHEET_ERROR,
+      //     HttpStatus.EXPECTATION_FAILED,
+      //   );
+      //   //#endregion
+      // }
       //#endregion
 
       //#region Generate response
@@ -159,6 +163,7 @@ export const generatePersonalMarks = async (
       //#endregion
     }
   } catch (err) {
+    console.log(err);
     // Rollback transaction
     await query_runner.rollbackTransaction();
 
@@ -188,6 +193,7 @@ export const generateClassMarks = async (
   class_service: ClassService,
   department_service: DepartmentService,
   evaluation_service: EvaluationService,
+  header_service: HeaderService,
   item_service: ItemService,
   k_service: KService,
   level_service: LevelService,
@@ -228,8 +234,9 @@ export const generateClassMarks = async (
       SheetStatus.WAITING_DEPARTMENT,
       params,
       sheet,
-      sheet_service,
+      header_service,
       level_service,
+      sheet_service,
       query_runner,
       req,
     );
@@ -244,6 +251,7 @@ export const generateClassMarks = async (
         params,
         sheet,
         evaluation_service,
+        header_service,
         item_service,
         option_service,
         query_runner,
@@ -263,18 +271,18 @@ export const generateClassMarks = async (
       //#endregion
 
       //#region Update sheet relation
-      sheet = await query_runner.manager.save(sheet);
-      if (!sheet) {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_SHEET_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-        //#endregion
-      }
+      // sheet = await query_runner.manager.save(sheet);
+      // if (!sheet) {
+      //   //#region throw HandlerException
+      //   throw new HandlerException(
+      //     DATABASE_EXIT_CODE.OPERATOR_ERROR,
+      //     req.method,
+      //     req.url,
+      //     ErrorMessage.OPERATOR_SHEET_ERROR,
+      //     HttpStatus.EXPECTATION_FAILED,
+      //   );
+      //   //#endregion
+      // }
       //#endregion
 
       //#region Generate response
@@ -323,6 +331,7 @@ export const generateDepartmentMarks = async (
   class_service: ClassService,
   department_service: DepartmentService,
   evaluation_service: EvaluationService,
+  header_service: HeaderService,
   item_service: ItemService,
   k_service: KService,
   level_service: LevelService,
@@ -363,8 +372,9 @@ export const generateDepartmentMarks = async (
       SheetStatus.SUCCESS,
       params,
       sheet,
-      sheet_service,
+      header_service,
       level_service,
+      sheet_service,
       query_runner,
       req,
     );
@@ -378,9 +388,10 @@ export const generateDepartmentMarks = async (
         user_id,
         params,
         sheet,
+        evaluation_service,
+        header_service,
         item_service,
         option_service,
-        evaluation_service,
         query_runner,
         req,
       );
@@ -398,18 +409,18 @@ export const generateDepartmentMarks = async (
       //#endregion
 
       //#region Update sheet relation
-      sheet = await query_runner.manager.save(sheet);
-      if (!sheet) {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_SHEET_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-        //#endregion
-      }
+      // sheet = await query_runner.manager.save(sheet);
+      // if (!sheet) {
+      //   //#region throw HandlerException
+      //   throw new HandlerException(
+      //     DATABASE_EXIT_CODE.OPERATOR_ERROR,
+      //     req.method,
+      //     req.url,
+      //     ErrorMessage.OPERATOR_SHEET_ERROR,
+      //     HttpStatus.EXPECTATION_FAILED,
+      //   );
+      //   //#endregion
+      // }
       //#endregion
 
       //#region Generate response
@@ -457,6 +468,7 @@ export const generateUpdateStudentEvaluation = async (
   params: UpdateStudentMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
+  header_service: HeaderService,
   item_service: ItemService,
   option_service: OptionService,
   query_runner: QueryRunner,
@@ -469,63 +481,82 @@ export const generateUpdateStudentEvaluation = async (
   //#endregion
 
   for await (const i of data) {
-    const item = await item_service.getItemById(i.item_id);
-    if (item) {
-      //#region Get option
-      const option = await option_service.getOptionById(i.option_id ?? 0);
-      //#endregion
+    //#region Validate Header
+    const header = await header_service.getHeaderById(i.header_id);
+    if (header) {
+      for await (const j of i.items) {
+        const item = await item_service.getItemById(j.item_id);
+        if (item) {
+          //#region Get option
+          const option = await option_service.getOptionById(j.option_id ?? 0);
+          //#endregion
 
-      //#region Validate mark evaluation
-      const valid = validateMark(
-        i.personal_mark_level,
-        item.from_mark,
-        item.to_mark,
-        req,
-      );
+          //#region Validate mark evaluation
+          const valid = validateMark(
+            j.personal_mark_level,
+            item.from_mark,
+            item.to_mark,
+            req,
+          );
 
-      if (valid instanceof HttpException) return valid;
-      //#endregion
+          if (valid instanceof HttpException) return valid;
+          //#endregion
 
-      const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
-      if (evaluation) {
-        //#region Update evaluation
-        evaluation.sheet = sheet;
-        evaluation.item = item;
-        evaluation.option = option ?? null;
-        evaluation.personal_mark_level = i.personal_mark_level;
-        evaluation.updated_at = new Date();
-        evaluation.updated_by = user_id;
-        evaluations.push(evaluation);
-        //#endregion
-      } else {
-        //#region Create evaluation
-        const evaluation = new EvaluationEntity();
-        evaluation.sheet = sheet;
-        evaluation.item = item;
-        evaluation.option = option;
-        evaluation.personal_mark_level = i.personal_mark_level;
-        evaluation.created_at = new Date();
-        evaluation.created_by = user_id;
-        evaluations.push(evaluation);
-        //#endregion
+          const evaluation = await evaluation_service.contains(
+            sheet_id,
+            j.item_id,
+          );
+          if (evaluation) {
+            //#region Update evaluation
+            evaluation.sheet = sheet;
+            evaluation.item = item;
+            evaluation.option = option ?? null;
+            evaluation.personal_mark_level = j.personal_mark_level;
+            evaluation.updated_at = new Date();
+            evaluation.updated_by = user_id;
+            evaluations.push(evaluation);
+            //#endregion
+          } else {
+            //#region Create evaluation
+            const evaluation = new EvaluationEntity();
+            evaluation.sheet = sheet;
+            evaluation.item = item;
+            evaluation.option = option;
+            evaluation.personal_mark_level = j.personal_mark_level;
+            evaluation.created_at = new Date();
+            evaluation.created_by = user_id;
+            evaluations.push(evaluation);
+            //#endregion
+          }
+        } else {
+          //#region throw HandlerException
+          return new UnknownException(
+            j.item_id,
+            DATABASE_EXIT_CODE.UNKNOW_VALUE,
+            req.method,
+            req.url,
+            sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, j.item_id),
+          );
+          //#endregion
+        }
       }
     } else {
       //#region throw HandlerException
       return new UnknownException(
-        i.item_id,
+        i.header_id,
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, i.item_id),
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, i.header_id),
       );
       //#endregion
     }
+    //#endregion
   }
 
   //#region Update evaluation
   evaluations = await query_runner.manager.save(evaluations);
   //#endregion
-
   return evaluations;
 };
 
@@ -535,6 +566,7 @@ export const generateUpdateClassEvaluation = async (
   params: UpdateClassMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
+  header_service: HeaderService,
   item_service: ItemService,
   option_service: OptionService,
   query_runner: QueryRunner,
@@ -546,58 +578,78 @@ export const generateUpdateClassEvaluation = async (
   const { data } = params;
   //#endregion
 
-  for (const i of data) {
-    const item = await item_service.getItemById(i.item_id);
-    if (item) {
-      //#region Get option
-      const option = await option_service.getOptionById(i.option_id ?? 0);
-      //#endregion
+  for await (const i of data) {
+    //#region Validate Header
+    const header = await header_service.getHeaderById(i.header_id);
+    if (header) {
+      for await (const j of i.items) {
+        const item = await item_service.getItemById(j.item_id);
+        if (item) {
+          //#region Get option
+          const option = await option_service.getOptionById(j.option_id ?? 0);
+          //#endregion
 
-      //#region Validate mark evaluation
-      const valid = validateMark(
-        i.class_mark_level,
-        item.from_mark,
-        item.to_mark,
-        req,
-      );
+          //#region Validate mark evaluation
+          const valid = validateMark(
+            j.class_mark_level,
+            item.from_mark,
+            item.to_mark,
+            req,
+          );
 
-      if (valid instanceof HttpException) return valid;
-      //#endregion
+          if (valid instanceof HttpException) return valid;
+          //#endregion
 
-      const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
-      if (evaluation) {
-        //#region Update evaluation
-        evaluation.sheet = sheet;
-        evaluation.item = item;
-        evaluation.option = option ?? null;
-        evaluation.class_mark_level = i.class_mark_level;
-        evaluation.updated_at = new Date();
-        evaluation.updated_by = user_id;
-        evaluations.push(evaluation);
-        //#endregion
-      } else {
-        //#region Create evaluation
-        const evaluation = new EvaluationEntity();
-        evaluation.sheet = sheet;
-        evaluation.item = item;
-        evaluation.option = option;
-        evaluation.class_mark_level = i.class_mark_level;
-        evaluation.created_at = new Date();
-        evaluation.created_by = user_id;
-        evaluations.push(evaluation);
-        //#endregion
+          const evaluation = await evaluation_service.contains(
+            sheet_id,
+            j.item_id,
+          );
+          if (evaluation) {
+            //#region Update evaluation
+            evaluation.sheet = sheet;
+            evaluation.item = item;
+            evaluation.option = option ?? null;
+            evaluation.class_mark_level = j.class_mark_level;
+            evaluation.updated_at = new Date();
+            evaluation.updated_by = user_id;
+            evaluations.push(evaluation);
+            //#endregion
+          } else {
+            //#region Create evaluation
+            const evaluation = new EvaluationEntity();
+            evaluation.sheet = sheet;
+            evaluation.item = item;
+            evaluation.option = option;
+            evaluation.class_mark_level = j.class_mark_level;
+            evaluation.created_at = new Date();
+            evaluation.created_by = user_id;
+            evaluations.push(evaluation);
+            //#endregion
+          }
+        } else {
+          //#region throw HandlerException
+          return new UnknownException(
+            j.item_id,
+            DATABASE_EXIT_CODE.UNKNOW_VALUE,
+            req.method,
+            req.url,
+            sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, j.item_id),
+          );
+          //#endregion
+        }
       }
     } else {
       //#region throw HandlerException
       return new UnknownException(
-        i.item_id,
+        i.header_id,
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, i.item_id),
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, i.header_id),
       );
       //#endregion
     }
+    //#endregion
   }
 
   //#region Update evaluation
@@ -612,9 +664,10 @@ export const generateUpdateDepartmentEvaluation = async (
   user_id: string,
   params: UpdateDepartmentMarkDto,
   sheet: SheetEntity,
+  evaluation_service: EvaluationService,
+  header_service: HeaderService,
   item_service: ItemService,
   option_service: OptionService,
-  evaluation_service: EvaluationService,
   query_runner: QueryRunner,
   req: Request,
 ) => {
@@ -624,58 +677,78 @@ export const generateUpdateDepartmentEvaluation = async (
   const { data } = params;
   //#endregion
 
-  for (const i of data) {
-    const item = await item_service.getItemById(i.item_id);
-    if (item) {
-      //#region Get option
-      const option = await option_service.getOptionById(i.option_id ?? 0);
-      //#endregion
+  for await (const i of data) {
+    //#region Validate Header
+    const header = await header_service.getHeaderById(i.header_id);
+    if (header) {
+      for await (const j of i.items) {
+        const item = await item_service.getItemById(j.item_id);
+        if (item) {
+          //#region Get option
+          const option = await option_service.getOptionById(j.option_id ?? 0);
+          //#endregion
 
-      //#region Validate mark evaluation
-      const valid = validateMark(
-        i.department_mark_level,
-        item.from_mark,
-        item.to_mark,
-        req,
-      );
+          //#region Validate mark evaluation
+          const valid = validateMark(
+            j.department_mark_level,
+            item.from_mark,
+            item.to_mark,
+            req,
+          );
 
-      if (valid instanceof HttpException) return valid;
-      //#endregion
+          if (valid instanceof HttpException) return valid;
+          //#endregion
 
-      const evaluation = await evaluation_service.contains(sheet_id, i.item_id);
-      if (evaluation) {
-        //#region Update evaluation
-        evaluation.sheet = sheet;
-        evaluation.item = item;
-        evaluation.option = option ?? null;
-        evaluation.department_mark_level = i.department_mark_level;
-        evaluation.updated_at = new Date();
-        evaluation.updated_by = user_id;
-        evaluations.push(evaluation);
-        //#endregion
-      } else {
-        //#region Create evaluation
-        const evaluation = new EvaluationEntity();
-        evaluation.sheet = sheet;
-        evaluation.item = item;
-        evaluation.option = option;
-        evaluation.department_mark_level = i.department_mark_level;
-        evaluation.created_at = new Date();
-        evaluation.created_by = user_id;
-        evaluations.push(evaluation);
-        //#endregion
+          const evaluation = await evaluation_service.contains(
+            sheet_id,
+            j.item_id,
+          );
+          if (evaluation) {
+            //#region Update evaluation
+            evaluation.sheet = sheet;
+            evaluation.item = item;
+            evaluation.option = option ?? null;
+            evaluation.department_mark_level = j.department_mark_level;
+            evaluation.updated_at = new Date();
+            evaluation.updated_by = user_id;
+            evaluations.push(evaluation);
+            //#endregion
+          } else {
+            //#region Create evaluation
+            const evaluation = new EvaluationEntity();
+            evaluation.sheet = sheet;
+            evaluation.item = item;
+            evaluation.option = option;
+            evaluation.department_mark_level = j.department_mark_level;
+            evaluation.created_at = new Date();
+            evaluation.created_by = user_id;
+            evaluations.push(evaluation);
+            //#endregion
+          }
+        } else {
+          //#region throw HandlerException
+          return new UnknownException(
+            j.item_id,
+            DATABASE_EXIT_CODE.UNKNOW_VALUE,
+            req.method,
+            req.url,
+            sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, j.item_id),
+          );
+          //#endregion
+        }
       }
     } else {
       //#region throw HandlerException
       return new UnknownException(
-        i.item_id,
+        i.header_id,
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, i.item_id),
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, i.header_id),
       );
       //#endregion
     }
+    //#endregion
   }
 
   //#region Update evaluation
@@ -691,8 +764,9 @@ export const generateUpdateSheet = async (
   status: SheetStatus,
   params: UpdateStudentMarkDto | UpdateClassMarkDto | UpdateDepartmentMarkDto,
   sheet: SheetEntity,
-  sheet_service: SheetService,
+  header_service: HeaderService,
   level_service: LevelService,
+  sheet_service: SheetService,
   query_runner: QueryRunner,
   req: Request,
 ): Promise<SheetEntity | HttpException> => {
@@ -703,14 +777,35 @@ export const generateUpdateSheet = async (
   //#region Calculate sum of marks
   let sum_of_marks = 0;
   for (const item of data) {
-    if (item instanceof StudentMarkDtos)
-      sum_of_marks += item.personal_mark_level;
-    else if (item instanceof ClassMarkDtos)
-      sum_of_marks += item.class_mark_level;
-    else sum_of_marks += item.department_mark_level;
+    const header = await header_service.getHeaderById(item.header_id);
+    if (header) {
+      let sum_of_mark_items = 0;
+      for (const j of item.items) {
+        if (j instanceof StudentMarkDtos) {
+          sum_of_mark_items += j.personal_mark_level;
+        } else if (j instanceof ClassMarkDtos) {
+          sum_of_mark_items += j.class_mark_level;
+        } else sum_of_mark_items += j.department_mark_level;
+      }
+      sum_of_mark_items =
+        header.max_mark > sum_of_mark_items
+          ? sum_of_mark_items
+          : header.max_mark;
+
+      sum_of_marks += sum_of_mark_items;
+    } else {
+      //#region throw HandlerException
+      return new UnknownException(
+        item.header_id,
+        DATABASE_EXIT_CODE.UNKNOW_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, item.header_id),
+      );
+      //#endregion
+    }
   }
   //#endregion
-
   //#region Get level in mark range
   const level = await getLevel(sum_of_marks, level_service, req);
   if (level instanceof HttpException) return level;

@@ -54,6 +54,24 @@ class DepartmentMarkDtos {
   department_mark_level: number;
 }
 
+export class ItemsDto {
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [hạng mục đánh giá].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [hạng mục đánh giá] tối thiểu bằng 0.',
+      ),
+  })
+  header_id: number;
+  @ValidateNested({ each: true })
+  @Type(() => DepartmentMarkDtos)
+  items: DepartmentMarkDtos[];
+}
+
 export class UpdateDepartmentMarkDto {
   @IsNotEmpty({
     message: (arg) =>
@@ -66,6 +84,6 @@ export class UpdateDepartmentMarkDto {
   role_id: number;
 
   @ValidateNested({ each: true })
-  @Type(() => DepartmentMarkDtos)
-  data: DepartmentMarkDtos[];
+  @Type(() => ItemsDto)
+  data: ItemsDto[];
 }

@@ -9,6 +9,7 @@ export enum ErrorMessage {
   ID_NAN_ERROR = 'Giá trị [id] không hợp lệ.',
 
   EVALUATION_NOT_FOUND_ERROR = 'Giá trị biểu mẫu không tồn tại (id: %s).',
+  HEADER_NOT_FOUND_ERROR = '[Hạng mục đánh giá] không tồn tại (id: %s)',
   ITEM_NOT_FOUND_ERROR = 'Nội dung chấm điểm không tồn tại (id: %s)',
   LEVEL_NOT_FOUND_ERROR = 'Không tìm thấy xếp loại (điểm: %s).',
   SHEET_NOT_FOUND_ERROR = 'Phiếu không tồn tại (id: %s).',

@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   Req,
   UsePipes,
@@ -12,14 +14,22 @@ import {
 
 import { Request } from 'express';
 
+import { generateFailedResponse } from '../utils';
+import { sprintf } from '../../../utils';
+
 import { SemesterEntity } from '../../../entities/semester.entity';
 
-import { validateNameSemester, validateSemesterId } from '../validations/index';
+import {
+  validateDuplicateSemester,
+  validateSemesterHasForm,
+  validateSemesterId,
+} from '../validations/index';
 
 import { LogService } from '../../log/services/log.service';
 import { SemesterService } from '../services/semester.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
+import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { generateData2Array, generateData2Object } from '../transform';
 
@@ -99,12 +109,12 @@ export class SemesterController {
 
   /**
    * @method POST
-   * @url /api/semester/
+   * @url /api/semesters/
    * @access private
    * @param name
    * @description Tạo mới học kì
-   * @return
-   * @page
+   * @return HttpResponse<SemesterResponse> | HttpException
+   * @page semesters
    */
   @Post()
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -132,7 +142,7 @@ export class SemesterController {
       //#endregion
 
       //#region validation
-      const valid = await validateNameSemester(
+      const valid = await validateDuplicateSemester(
         name,
         this._semesterService,
         req,
@@ -159,6 +169,99 @@ export class SemesterController {
         };
       } else {
       }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method DELETE
+   * @url /api/semesters/:id
+   * @access private
+   * @param id
+   * @description Xóa học kì
+   * @return HttpResponse<SemesterResponse> | HttpException
+   * @page semesters
+   */
+  @Delete(':id')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async unlinkSemester(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<SemesterResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url,
+        JSON.stringify({ semester_id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ academic_year: id }),
+      );
+
+      //#region Get jwt payload
+      const { user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Validation
+      //#region Validate ID
+      const valid_id = validateSemesterId(id, req);
+      if (valid_id instanceof HttpException) throw valid_id;
+      //#endregion
+
+      //#region Validate semester of form
+      const valid = await validateSemesterHasForm(
+        id,
+        this._semesterService,
+        req,
+      );
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Unlink semester
+      const semester = await this._semesterService.getSemesterById(id);
+      if (semester) {
+        const result = await this._semesterService.unlink(id, user_id);
+        if (result) {
+          return {
+            data: generateData2Object(semester),
+            errorCode: 0,
+            message: null,
+            errors: null,
+          };
+        } else {
+          throw generateFailedResponse(
+            req,
+            ErrorMessage.OPERATOR_SEMESTER_ERROR,
+          );
+        }
+      } else {
+        //#region throw HandleException
+        throw new UnknownException(
+          id,
+          DATABASE_EXIT_CODE.UNKNOW_VALUE,
+          req.method,
+          req.url,
+          sprintf(ErrorMessage.SEMESTER_NOT_FOUND_ERROR, id),
+        );
+        //#endregion
+      }
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

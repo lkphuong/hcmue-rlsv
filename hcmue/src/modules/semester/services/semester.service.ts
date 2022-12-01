@@ -18,6 +18,32 @@ export class SemesterService {
     private _logger: LogService,
   ) {}
 
+  async contains(id: number): Promise<SemesterEntity | null> {
+    try {
+      const conditions = this._semesterRepository
+        .createQueryBuilder('semester')
+        .leftJoinAndSelect(
+          'semester.forms',
+          'form',
+          'form.semester_id = semester.id AND form.deleted = 0',
+        )
+        .where('semester.id = :id', { id })
+        .andWhere('semester.deleted = :deleted', { deleted: false });
+
+      const semester = await conditions.getOne();
+
+      return semester || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SemesterService.contains()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getSemesters(): Promise<SemesterEntity[] | null> {
     try {
       const conditions = this._semesterRepository

@@ -69,7 +69,7 @@ export const validateAcademicYearHasForm = async (
       DATABASE_EXIT_CODE.UNKNOW_VALUE,
       req.method,
       req.url,
-      sprintf(ErrorMessage.ACADEMIC_YEARS_NO_CONTENT, id),
+      sprintf(ErrorMessage.ACADEMIC_YEAR_NOT_FOUND_ERROR, id),
     );
   }
 

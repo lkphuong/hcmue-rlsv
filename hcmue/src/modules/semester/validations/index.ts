@@ -38,7 +38,7 @@ export const validateSemesterId = (id: number, req: Request) => {
   return null;
 };
 
-export const validateNameSemester = async (
+export const validateDuplicateSemester = async (
   name: string,
   semester_service: SemesterService,
   req: Request,
@@ -51,6 +51,36 @@ export const validateNameSemester = async (
       req.method,
       req.url,
       sprintf(ErrorMessage.SEMESTER_DUPLICATE_ERROR, name),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};
+
+export const validateSemesterHasForm = async (
+  id: number,
+  semester_service: SemesterService,
+  req: Request,
+) => {
+  const semester = await semester_service.contains(id);
+
+  if (!semester) {
+    return new UnknownException(
+      id,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.SEMESTER_NOT_FOUND_ERROR, id),
+    );
+  }
+
+  if (semester.forms && semester.forms.length > 0) {
+    return new HandlerException(
+      DATABASE_EXIT_CODE.OPERATOR_ERROR,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.SEMESTER_EXIST_FORM_DONE, id),
       HttpStatus.BAD_REQUEST,
     );
   }

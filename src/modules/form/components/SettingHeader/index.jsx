@@ -1,10 +1,16 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Button, Container, Grid, IconButton, Typography } from '@mui/material';
 import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material';
 
-import { deleteHeader, getHeadersByFormId } from '_api/form.api';
+import {
+	deleteHeader,
+	getFormById,
+	getHeadersByFormId,
+	publishForm,
+	unpublishForm,
+} from '_api/form.api';
 
 import { isSuccess, isEmpty } from '_func/';
 import { alert } from '_func/alert';
@@ -12,14 +18,18 @@ import { alert } from '_func/alert';
 import { ERRORS } from '_constants/messages';
 
 import { CreateModal } from '..';
+import { actions } from '_slices/form.slice';
 
 const SettingHeader = memo(({ updateStep }) => {
 	//#region Data
 	const createRef = useRef();
 
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
+	const status = useSelector((state) => state.form.status, shallowEqual);
 
 	const [headers, setHeaders] = useState([]);
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -58,6 +68,38 @@ const SettingHeader = memo(({ updateStep }) => {
 			},
 		});
 	};
+
+	const handlePublish = () => {
+		alert.warning({
+			onConfirm: async () => {
+				if (status === 0) {
+					const res = await publishForm(form_id);
+
+					if (isSuccess(res)) {
+						alert.success({ text: 'Phát hành biểu mẫu thành công.' });
+					} else {
+						alert.fail({ text: res?.message || ERRORS.FAIL });
+					}
+				} else {
+					const res = await unpublishForm(form_id);
+
+					if (isSuccess(res)) {
+						alert.success({ text: 'Hủy phát hành biểu mẫu thành công.' });
+					} else {
+						alert.fail({ text: res?.message || ERRORS.FAIL });
+					}
+				}
+				const _res = await getFormById(form_id);
+
+				if (isSuccess(_res)) {
+					const { status } = _res.data;
+
+					dispatch(actions.setStatus(status));
+				}
+			},
+			title: status === 0 ? 'Phát hành' : 'Hủy phát hành',
+		});
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -68,11 +110,20 @@ const SettingHeader = memo(({ updateStep }) => {
 	return (
 		<Box>
 			<Container maxWidth='lg'>
-				<Box textAlign='right' py={1.5}>
-					<Button variant='contained' className='publish'>
-						Phát hành
-					</Button>
-				</Box>
+				{status === 0 && (
+					<Box textAlign='right' py={1.5}>
+						<Button variant='contained' className='publish' onClick={handlePublish}>
+							Phát hành
+						</Button>
+					</Box>
+				)}
+				{status === 1 && (
+					<Box textAlign='right' py={1.5}>
+						<Button variant='contained' className='publish' onClick={handlePublish}>
+							Hủy phát hành
+						</Button>
+					</Box>
+				)}
 
 				<Grid container alignItems='center'>
 					{headers.length > 0 &&

@@ -1,12 +1,11 @@
 import React, { memo } from 'react';
+import { Controller } from 'react-hook-form';
 
 import { Grid, Typography } from '@mui/material';
 
-import { Controller } from 'react-hook-form';
-
 import { CInput } from '_controls/';
 
-const TypeCheckbox = memo(({ control }) => {
+const TypeSingle = memo(({ control }) => {
 	//#region Data
 
 	//#endregion
@@ -56,7 +55,8 @@ const TypeCheckbox = memo(({ control }) => {
 			</Grid>
 		</>
 	);
+
 	//#endregion
 });
 
-export default TypeCheckbox;
+export default TypeSingle;

@@ -9,6 +9,8 @@ import { isSuccess } from '_func/';
 import { store } from '_store';
 
 import { actions } from '_slices/auth.slice';
+import { actions as actionsForm } from '_slices/form.slice';
+
 import { updateAbility } from '_func/permissions';
 
 const apiInstance = axios.create({
@@ -99,6 +101,7 @@ export const tryLogout = async () => {
 
 	store.dispatch(actions.setProfile(null));
 	store.dispatch(actions.setToken(null));
+	store.dispatch(actionsForm.clearForm());
 
 	window.localStorage.removeItem('access_token');
 	window.localStorage.removeItem('refresh_token');

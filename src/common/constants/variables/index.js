@@ -44,7 +44,6 @@ export const CONTROL = [
 	{ id: 0, name: 'Input' },
 	{ id: 1, name: 'Checkbox' },
 	{ id: 2, name: 'Single select' },
-	{ id: 3, name: 'Multiple select' },
 ];
 
 export const CATEGORY = [

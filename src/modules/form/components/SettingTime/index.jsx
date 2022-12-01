@@ -102,6 +102,9 @@ const SettingTime = memo(({ updateStep }) => {
 					semester_id: Number(res.data.semester.id),
 				};
 
+				const { status } = res.data;
+
+				dispatch(actions.setStatus(status));
 				reset(resetData);
 			}
 		};

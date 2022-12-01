@@ -8,6 +8,7 @@ const initialState = {
 	header_id: null,
 	title_id: null,
 	step: 0,
+	status: null,
 };
 
 export const formSlice = createSlice({
@@ -25,6 +26,9 @@ export const formSlice = createSlice({
 		},
 		setStep: (state, action) => {
 			state.step = action.payload;
+		},
+		setStatus: (state, action) => {
+			state.status = action.payload;
 		},
 		clearForm: (state) => {
 			state.form_id = null;

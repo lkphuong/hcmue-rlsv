@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { RemoveCircleOutline } from '@mui/icons-material';
-import { Grid, IconButton, Typography } from '@mui/material';
+import { Box, Grid, IconButton, Typography } from '@mui/material';
 
 import { alert } from '_func/alert';
 
@@ -48,9 +48,23 @@ const ItemDisplay = memo(({ data, refetch }) => {
 			<Grid item xs={true}>
 				<Typography>{data.content}</Typography>
 			</Grid>
-			<Grid item xs={3} md={2} textAlign='center'>
-				{data.unit}
-			</Grid>
+			{data.control !== 2 ? (
+				<Grid item xs={3} md={2} textAlign='center'>
+					{data.category === 1
+						? `Từ ${data.from_mark} đến ${data.to_mark}`
+						: `${data.mark}`}
+					&nbsp;
+					{data.unit}
+				</Grid>
+			) : (
+				data.options.map((option) => (
+					<Grid key={option.id} item xs={12}>
+						<Box ml={8}>
+							&#187;&nbsp;{option.content} {option.mark} Điểm
+						</Box>
+					</Grid>
+				))
+			)}
 		</Grid>
 	);
 });

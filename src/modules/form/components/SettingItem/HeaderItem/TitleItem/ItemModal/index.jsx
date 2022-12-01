@@ -31,16 +31,34 @@ const ItemModal = memo(
 
 		const resolver = useResolver(validationItem);
 
-		const { control, handleSubmit, reset } = useForm({
+		const {
+			control,
+			handleSubmit,
+			reset,
+			formState: { errors },
+		} = useForm({
 			defaultValues: initialItem,
 			mode: 'all',
 			resolver,
 		});
 
+		console.log(errors);
+
 		const {
-			field: { onChange },
+			field: { onChange: onChangeOption },
 		} = useController({ control, name: 'options', rules: { required: true } });
 
+		const {
+			field: { onChange: onChangeFromMark },
+		} = useController({ control, name: 'from_mark', rules: { required: true } });
+
+		const {
+			field: { onChange: onChangeToMark },
+		} = useController({ control, name: 'to_mark', rules: { required: true } });
+
+		const {
+			field: { onChange: onChangeCategory },
+		} = useController({ control, name: 'category', rules: { required: true } });
 		//#endregion
 
 		//#region Event
@@ -73,8 +91,15 @@ const ItemModal = memo(
 
 		const changeControl = (CallbackFunc) => (event) => {
 			CallbackFunc(Number(event.target.value));
-			if (event.target.value !== 2 && event.target.value !== 3) {
-				onChange([]);
+			if (!event.target.value !== 0) {
+				onChangeCategory(0);
+			}
+			if (event.target.value !== 2) {
+				onChangeOption([]);
+				if (event.target.value === 1) {
+					onChangeFromMark(0);
+					onChangeToMark(0);
+				}
 			}
 		};
 		//#endregion
@@ -92,14 +117,14 @@ const ItemModal = memo(
 			<Modal open={open} onClose={toggleClose}>
 				<Grow in={open} timeout={400}>
 					<Paper className='center' sx={{ borderRadius: 3 }}>
-						<Box px={3} py={2} minWidth={430} maxWidth={450}>
+						<Box px={3} py={2} width={375}>
 							<form onSubmit={handleSubmit(onSubmit)}>
 								<Stack spacing={2}>
 									<Grid container spacing={1} alignItems='center'>
-										<Grid item xs={12} md={3}>
+										<Grid item xs={12} md={4}>
 											<Typography>Control</Typography>
 										</Grid>
-										<Grid item xs={12} md={9}>
+										<Grid item xs={12} md={8}>
 											<Controller
 												control={control}
 												name='control'
@@ -115,10 +140,10 @@ const ItemModal = memo(
 											/>
 										</Grid>
 
-										<Grid item xs={12} md={3}>
+										<Grid item xs={12} md={4}>
 											<Typography>Tiêu chí</Typography>
 										</Grid>
-										<Grid item xs={12} md={9}>
+										<Grid item xs={12} md={8}>
 											<Controller
 												control={control}
 												name='content'
@@ -140,10 +165,10 @@ const ItemModal = memo(
 											/>
 										</Grid>
 
-										<Grid item xs={12} md={3}>
+										<Grid item xs={12} md={4}>
 											<Typography>Bắt buộc</Typography>
 										</Grid>
-										<Grid item xs={12} md={9}>
+										<Grid item xs={12} md={8}>
 											<Controller
 												control={control}
 												name='required'

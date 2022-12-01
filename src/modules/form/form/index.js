@@ -32,7 +32,8 @@ export const initialItem = {
 	content: '',
 	required: true,
 	from_mark: 0,
-	to_mark: 0,
+	to_mark: 1,
+	mark: 0,
 	category: 0,
 	unit: 'Điểm',
 	options: [],
@@ -111,15 +112,58 @@ export const validationItem = yup.object({
 		.string('Vui lòng nhập nội dung tiêu chí.')
 		.required('Vui lòng nhập nội dung tiêu chí.'),
 	required: yup.bool(),
+	category: yup.number().typeError(),
 	from_mark: yup
 		.number('Giá trị điểm tối thiểu phải là số.')
 		.typeError('Giá trị điểm tối thiểu phải là số.')
-		.required('Vui lòng nhập điểm cho tiêu chí.'),
+		.notRequired()
+		.when('category', {
+			is: (value) => value === 1,
+			then: yup
+				.number('Giá trị điểm tối thiểu phải là số.')
+				.typeError('Giá trị điểm tối thiểu phải là số.')
+				.required('Vui lòng nhập điểm tối thiểu.')
+				.test('is-more', 'Điểm tối thiểu phải nhỏ hơn tối đa.', (value, context) => {
+					const { parent } = context;
+
+					if (value > parent.to_mark) return false;
+
+					return true;
+				}),
+		}),
 	to_mark: yup
 		.number('Giá trị điểm tối đa phải là số.')
 		.typeError('Giá trị điểm tối đa phải là số.')
-		.required('Vui lòng nhập điểm cho tiêu chí.'),
-	category: yup.number().typeError(),
+		.notRequired()
+		.when('category', {
+			is: (value) => value === 1,
+			then: yup
+				.number('Giá trị điểm tối đa phải là số.')
+				.typeError('Giá trị điểm tối đa phải là số.')
+				.required('Vui lòng nhập điểm tối đa.')
+				.test('is-less', 'Điểm tối đa phải lớn hơn tối thiểu.', (value, context) => {
+					const { parent } = context;
+
+					if (value < parent.from_mark) return false;
+
+					return true;
+				}),
+		}),
+	mark: yup
+		.number('Giá trị điểm tối đa phải là số.')
+		.typeError('Giá trị điểm tối đa phải là số.')
+		.notRequired()
+		.when('category', {
+			is: (value) => value !== 1,
+			then: yup.number().when('control', {
+				is: (value) => value !== 2,
+				then: yup
+					.number('Giá trị điểm tối đa phải là số.')
+					.moreThan(0, 'Giá trị điểm phải lớn hơn 0.')
+					.typeError('Giá trị điểm tối đa phải là số.')
+					.required('Vui lòng nhập điểm tối đa.'),
+			}),
+		}),
 	options: yup.array().when('control', {
 		is: (value) => value === 2 || value === 3,
 		then: yup

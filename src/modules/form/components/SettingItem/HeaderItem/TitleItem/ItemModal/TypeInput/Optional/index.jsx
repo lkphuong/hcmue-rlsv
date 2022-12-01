@@ -1,14 +1,13 @@
 import { createElement, memo, useMemo } from 'react';
 import { useWatch } from 'react-hook-form';
 
-import TypeCheckbox from '../TypeCheckbox';
-import TypeInput from '../TypeInput';
-import TypeSelect from '../TypeSelect';
+import TypeRange from './TypeRange';
+import TypeSingle from './TypeSingle';
 
 const typeComponents = [
-	{ id: 0, component: TypeInput },
-	{ id: 1, component: TypeCheckbox },
-	{ id: 2, component: TypeSelect },
+	{ id: 0, component: TypeSingle },
+	{ id: 1, component: TypeRange },
+	{ id: 2, component: TypeSingle },
 ];
 
 const Optional = memo(({ control, name }) => {

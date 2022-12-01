@@ -34,14 +34,16 @@ const TypeSelect = memo(({ control }) => {
 				</Button>
 			</Box>
 
-			{fields.map((item, index) => (
-				<OptionItem
-					key={item.id}
-					control={control}
-					index={index}
-					remove={() => remove(index)}
-				/>
-			))}
+			<Box maxHeight={350} overflow='auto'>
+				{fields.map((item, index) => (
+					<OptionItem
+						key={item.id}
+						control={control}
+						index={index}
+						remove={() => remove(index)}
+					/>
+				))}
+			</Box>
 		</Stack>
 	);
 	//#endregion

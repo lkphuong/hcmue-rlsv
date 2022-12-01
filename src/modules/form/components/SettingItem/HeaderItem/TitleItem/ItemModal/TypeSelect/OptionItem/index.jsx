@@ -10,10 +10,10 @@ const OptionItem = memo(({ control, index, remove }) => {
 		<Box p={1.5} border='1px solid #c5c5c5'>
 			<Stack>
 				<Grid container spacing={1} alignItems='center'>
-					<Grid item xs={3}>
+					<Grid item xs={4}>
 						<Typography>Chi tiết tiêu chí</Typography>
 					</Grid>
-					<Grid item xs={9}>
+					<Grid item xs={8}>
 						<Controller
 							control={control}
 							name={`options[${index}].content`}
@@ -35,10 +35,10 @@ const OptionItem = memo(({ control, index, remove }) => {
 						/>
 					</Grid>
 
-					<Grid item xs={3}>
+					<Grid item xs={4}>
 						<Typography>Điểm</Typography>
 					</Grid>
-					<Grid item xs={9}>
+					<Grid item xs={8}>
 						<Controller
 							control={control}
 							name={`options[${index}].mark`}

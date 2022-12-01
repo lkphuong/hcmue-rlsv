@@ -32,6 +32,20 @@ export const alert = {
 			},
 		});
 	},
+	warning: ({ onConfirm, title, text } = {}) => {
+		Swal.fire({
+			title: title || 'Xác nhận?',
+			text: text || 'Bạn chắc chắn muốn thay đổi?',
+			showCancelButton: true,
+			icon: 'warning',
+			confirmButtonText: 'Đồng ý',
+			cancelButtonText: 'Hủy bỏ',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onConfirm();
+			}
+		});
+	},
 	warningDelete: ({ onConfirm } = {}) => {
 		Swal.fire({
 			title: 'Xóa?',

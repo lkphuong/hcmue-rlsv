@@ -1,22 +1,37 @@
 import React, { memo } from 'react';
 
-import { Grid, Stack, Typography } from '@mui/material';
-import { Controller } from 'react-hook-form';
+import { Grid, Typography } from '@mui/material';
+import { Controller, useController } from 'react-hook-form';
 
 import { CInput, CSelect } from '_controls/';
 
 import { CATEGORY } from '_constants/variables';
+import Optional from './Optional';
 
 const TypeInput = memo(({ control }) => {
 	//#region Data
+	const {
+		field: { onChange: onChangeFromMark },
+	} = useController({ control, name: 'from_mark', rules: { required: true } });
+
+	const {
+		field: { onChange: onChangeToMark },
+	} = useController({ control, name: 'to_mark', rules: { required: true } });
+
+	const {
+		field: { onChange: onChangeMark },
+	} = useController({ control, name: 'mark', rules: { required: true } });
 	//#endregion
 
 	//#region Event
-	const handleChangeMark = (CallbackFunc) => (event) => {
-		if (!isNaN(event.target.value)) {
-			CallbackFunc(Number(event.target.value));
+	const handleChangeCategory = (CallbackFunc) => (event) => {
+		CallbackFunc(Number(event.target.value));
+		if (event.target.value !== 1) {
+			onChangeFromMark(0);
+			onChangeToMark(0);
 		} else {
-			CallbackFunc(event.target.value);
+			onChangeToMark(1);
+			onChangeMark(0);
 		}
 	};
 	//#endregion
@@ -25,66 +40,10 @@ const TypeInput = memo(({ control }) => {
 
 	return (
 		<>
-			<Grid item xs={12} md={3}>
-				<Typography>Điểm</Typography>
-			</Grid>
-			<Grid item xs={12} md={9}>
-				<Stack direction='row' spacing={1.5}>
-					<Controller
-						control={control}
-						name='from_mark'
-						render={({
-							field: { name, onBlur, onChange, ref, value },
-							fieldState: { error },
-						}) => (
-							<CInput
-								placeholder='Min'
-								inputProps={{
-									min: -100,
-									max: 100,
-									maxLength: 3,
-								}}
-								name={name}
-								inputRef={ref}
-								value={value}
-								onChange={handleChangeMark(onChange)}
-								onBlur={onBlur}
-								error={!!error}
-								helperText={error?.message}
-							/>
-						)}
-					/>
-					<Controller
-						control={control}
-						name='to_mark'
-						render={({
-							field: { name, onBlur, onChange, ref, value },
-							fieldState: { error },
-						}) => (
-							<CInput
-								placeholder='Max'
-								inputProps={{
-									min: -100,
-									max: 100,
-									maxLength: 3,
-								}}
-								name={name}
-								inputRef={ref}
-								value={value}
-								onChange={handleChangeMark(onChange)}
-								onBlur={onBlur}
-								error={!!error}
-								helperText={error?.message}
-							/>
-						)}
-					/>
-				</Stack>
-			</Grid>
-
-			<Grid item xs={12} md={3}>
+			<Grid item xs={12} md={4}>
 				<Typography>Loại điểm</Typography>
 			</Grid>
-			<Grid item xs={12} md={9}>
+			<Grid item xs={12} md={8}>
 				<Controller
 					control={control}
 					name='category'
@@ -92,7 +51,7 @@ const TypeInput = memo(({ control }) => {
 						<CSelect
 							value={value}
 							options={CATEGORY}
-							onChange={onChange}
+							onChange={handleChangeCategory(onChange)}
 							name={name}
 							fullWidth
 						/>
@@ -100,10 +59,12 @@ const TypeInput = memo(({ control }) => {
 				/>
 			</Grid>
 
-			<Grid item xs={12} md={3}>
+			<Optional control={control} name='category' />
+
+			<Grid item xs={12} md={4}>
 				<Typography>Đơn vị</Typography>
 			</Grid>
-			<Grid item xs={12} md={9}>
+			<Grid item xs={12} md={8}>
 				<Controller
 					control={control}
 					name='unit'

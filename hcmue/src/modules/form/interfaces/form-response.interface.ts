@@ -10,7 +10,7 @@ export interface FormResponse {
   academic: BaseResponse;
   semester: BaseResponse;
   student: TimeResponse;
-  class: TimeResponse;
+  classes: TimeResponse;
   department: TimeResponse;
   status: FormStatus;
 }

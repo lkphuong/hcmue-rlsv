@@ -8,6 +8,7 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { StoreProcedureResponse } from 'src/modules/form/interfaces/store-procedure-response.interface';
 
 @Injectable()
 export class HeaderService {
@@ -130,17 +131,23 @@ export class HeaderService {
     manager?: EntityManager,
   ): Promise<boolean> {
     try {
+      let success = false;
+
       if (!manager) {
         manager = this._dataSource.manager;
       }
 
-      const results = await manager.query(
+      const results = (await manager.query(
         `CALL sp_generate_headers (${source_form_id}, ${target_form_id})`,
-      );
+      )) as StoreProcedureResponse[];
 
       console.log('results: ', results);
 
-      return results.affectedRows > 0;
+      if (results && results.length > 0) {
+        success = results[0].success != 0;
+      }
+
+      return success;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

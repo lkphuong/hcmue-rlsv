@@ -118,17 +118,23 @@ export class OptionService {
     manager?: EntityManager,
   ): Promise<boolean> {
     try {
+      let success = false;
+
       if (!manager) {
         manager = this._dataSource.manager;
       }
 
       const results = await manager.query(
-        `CALL sp_generate_headers (${source_form_id}, ${target_form_id})`,
+        `CALL sp_generate_options (${source_form_id}, ${target_form_id})`,
       );
 
       console.log('results: ', results);
 
-      return results.affectedRows > 0;
+      if (results && results.length > 0) {
+        success = results[0].success != 0;
+      }
+
+      return success;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

@@ -8,7 +8,7 @@ import {
   ItemResponse,
   FormResponse,
   HeaderResponse,
-} from '../interfaces/form_response.interface';
+} from '../interfaces/form-response.interface';
 
 export const generateHeadersArray = async (headers: HeaderEntity[] | null) => {
   if (headers) {
@@ -149,7 +149,7 @@ export const generateFormsArray = async (forms: FormEntity[] | null) => {
           start: form.student_start,
           end: form.student_end,
         },
-        class: {
+        classes: {
           start: form.class_start,
           end: form.class_end,
         },
@@ -185,7 +185,7 @@ export const generateFormObject = (form: FormEntity | null) => {
         start: form.student_start,
         end: form.student_end,
       },
-      class: {
+      classes: {
         start: form.class_start,
         end: form.class_end,
       },

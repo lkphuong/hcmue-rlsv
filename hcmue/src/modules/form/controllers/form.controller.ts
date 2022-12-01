@@ -74,7 +74,7 @@ import {
   FormResponse,
   HeaderResponse,
   ItemResponse,
-} from '../interfaces/form_response.interface';
+} from '../interfaces/form-response.interface';
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
@@ -1296,7 +1296,7 @@ export class FormController {
    * @return HttpResponse<FormResponse> | HttpException | null
    * @page forms page
    */
-  @Post(':id')
+  @Post('clone/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async cloneForm(

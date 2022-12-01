@@ -183,6 +183,8 @@ export class ItemService {
     manager?: EntityManager,
   ): Promise<boolean> {
     try {
+      let success = false;
+
       if (!manager) {
         manager = this._dataSource.manager;
       }
@@ -193,7 +195,11 @@ export class ItemService {
 
       console.log('results: ', results);
 
-      return results.affectedRows > 0;
+      if (results && results.length > 0) {
+        success = results[0].success != 0;
+      }
+
+      return success;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

@@ -39,7 +39,7 @@ import {
   BaseResponse,
   FormResponse,
   ItemResponse,
-} from '../interfaces/form_response.interface';
+} from '../interfaces/form-response.interface';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { FormService } from '../services/form.service';

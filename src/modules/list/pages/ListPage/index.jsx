@@ -7,7 +7,7 @@ import { Box } from '@mui/material';
 
 import { Filter, ListClasses } from '_modules/list/components';
 
-import { isSuccess } from '_func/';
+import { isSuccess, isEmpty } from '_func/';
 
 import { getDepartmentSheets } from '_api/sheets.api';
 
@@ -15,6 +15,7 @@ const ListPage = () => {
 	//#region Data
 	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const [classes, setClasses] = useState([]);
 
@@ -22,8 +23,6 @@ const ListPage = () => {
 		semester_id: semesters[0]?.id,
 		academic_id: academic_years[0]?.id,
 	});
-
-	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	//#endregion
 
 	//#region Event
@@ -33,6 +32,7 @@ const ListPage = () => {
 			const res = await getDepartmentSheets(department_id, body);
 
 			if (isSuccess(res)) setClasses(res.data);
+			else if (isEmpty(res)) setClasses([]);
 		} catch (error) {
 			throw error;
 		}

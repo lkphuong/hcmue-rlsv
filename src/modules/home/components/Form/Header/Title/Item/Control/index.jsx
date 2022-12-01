@@ -19,7 +19,7 @@ const Control = memo(({ id, min, max, initialMark, control, currentMark }) => {
 	//#region Event
 	const onCheck = (item_id, mark) => (e) => {
 		const markObj = {
-			item_id,
+			item_id: Number(item_id),
 			personal_mark_level: e.target.checked ? mark : 0,
 		};
 
@@ -34,7 +34,7 @@ const Control = memo(({ id, min, max, initialMark, control, currentMark }) => {
 		if (value < min) value = min;
 
 		const markObj = {
-			item_id,
+			item_id: Number(item_id),
 			personal_mark_level: value,
 		};
 

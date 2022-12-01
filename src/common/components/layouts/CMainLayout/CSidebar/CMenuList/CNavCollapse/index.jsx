@@ -21,15 +21,15 @@ const CNavCollapse = ({ menu, level }) => {
 	const theme = useTheme();
 	const { pathname } = useLocation();
 
-	const [open, setOpen] = useState(false);
-
 	const selected = useMemo(() => {
 		for (let e of menu.children) {
 			if (pathname.includes(e.path)) return true;
 		}
 
 		return false;
-	}, [menu]);
+	}, [menu, pathname]);
+
+	const [open, setOpen] = useState(selected || false);
 
 	const handleClick = () => {
 		setOpen(!open);

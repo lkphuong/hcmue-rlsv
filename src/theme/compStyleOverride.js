@@ -1,3 +1,5 @@
+import { Zoom } from '@mui/material';
+
 export default function componentStyleOverrides(theme) {
 	const bgColor = theme.colors?.grey50;
 	return {
@@ -29,6 +31,13 @@ export default function componentStyleOverrides(theme) {
 						overflow: 'hidden',
 						border: '1px solid',
 						borderColor: '#90caf975',
+					},
+					'&.paper-filter': {
+						background: 'rgba(255, 255, 255, 0.33)',
+						borderRadius: '12px',
+						boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+						backdropFilter: 'blur(0.8px)',
+						border: '1px solid rgba(255, 255, 255, 0.3)',
 					},
 				},
 				rounded: {
@@ -193,6 +202,11 @@ export default function componentStyleOverrides(theme) {
 			},
 		},
 		MuiTooltip: {
+			defaultProps: {
+				arrow: true,
+				disableInteractive: true,
+				TransitionComponent: Zoom,
+			},
 			styleOverrides: {
 				tooltip: {
 					color: theme.paper,
@@ -260,6 +274,18 @@ export default function componentStyleOverrides(theme) {
 				},
 			},
 		},
+		MuiTableFooter: {
+			styleOverrides: {
+				root: {
+					'& .MuiTableCell-root': {
+						padding: '14px',
+						fontSize: '1rem',
+						color: '#616161',
+						backgroundColor: 'white',
+					},
+				},
+			},
+		},
 		MuiTableCell: {
 			styleOverrides: {
 				root: {
@@ -270,6 +296,25 @@ export default function componentStyleOverrides(theme) {
 						color: 'rgb(85, 105, 255)',
 						'&:hover': {
 							backgroundColor: 'rgb(208 206 244)',
+						},
+					},
+					'&.border-left': {
+						borderLeft: '1px solid rgba(224, 224, 224, 1)',
+					},
+					'&.border-right': {
+						borderRight: '1px solid rgba(224, 224, 224, 1)',
+					},
+				},
+			},
+		},
+		MuiTable: {
+			styleOverrides: {
+				root: {
+					'&.statistic-table': {
+						'& .MuiTableHead-root': {
+							'& .MuiTableCell-root': {
+								lineHeight: '1.1rem',
+							},
 						},
 					},
 				},

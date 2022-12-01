@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
 
@@ -37,18 +37,17 @@ const SemesterDetail = () => {
 	//#region Render
 	return (
 		<Box>
-			<Typography
-				borderRadius={1}
-				p={2}
-				mt={2}
-				fontWeight={500}
-				fontSize={16}
-				sx={{ backgroundColor: 'rgba(0 0 0 / 15%)' }}
-			>
-				{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
-			</Typography>
+			<Box mb={1.5}>
+				<Paper className='paper-wrapper'>
+					<Typography fontSize={20} p={1.5}>
+						{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
+					</Typography>
+				</Paper>
+			</Box>
 
-			<Box mt={1}>{data && <Form data={data} />}</Box>
+			<Paper className='paper-wrapper'>
+				<Box p={1.5}>{data && <Form data={data} />}</Box>
+			</Paper>
 		</Box>
 	);
 	//#endregion

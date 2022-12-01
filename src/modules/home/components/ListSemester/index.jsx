@@ -33,6 +33,7 @@ const ListSemester = ({ data }) => {
 							<TableCell align='center'>Tổng điểm</TableCell>
 							<TableCell align='center'>Xếp loại</TableCell>
 							<TableCell align='center'>Trạng thái</TableCell>
+							<TableCell width={50} />
 						</TableRow>
 					</TableHead>
 					<TableBody>

@@ -133,12 +133,7 @@ const Row = memo(({ data, index, refetch }) => {
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center' width={120}>
 				<Stack direction='row' alignItems='center' justifyContent='space-between'>
-					<Tooltip
-						TransitionComponent={Zoom}
-						arrow
-						title='Tạo biểu mẫu mới dựa theo biểu mẫu này'
-						disableInteractive
-					>
+					<Tooltip title='Tạo biểu mẫu mới dựa theo biểu mẫu này'>
 						<IconButton onClick={onClone}>
 							<FileCopy />
 						</IconButton>

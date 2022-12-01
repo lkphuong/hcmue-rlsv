@@ -5,11 +5,9 @@ import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Paper, Typography } from '@mui/material';
 
-import { STUDENTS } from '_modules/class/mocks';
-
 import { getClassSheets } from '_api/sheets.api';
 
-import { isSuccess } from '_func/';
+import { isSuccess, isEmpty } from '_func/';
 
 import { Filter, ListStudents } from '_modules/class/components';
 
@@ -31,9 +29,15 @@ const ClassPage = () => {
 	const getData = useCallback(async () => {
 		if (!class_id) return;
 		try {
-			const res = await getClassSheets(class_id, body);
+			const _input = body?.input;
+
+			const res = await getClassSheets(
+				class_id,
+				_input === '' ? { ...body, input: null } : body
+			);
 
 			if (isSuccess(res)) setData(res.data);
+			else if (isEmpty(res)) setData([]);
 		} catch (error) {
 			throw error;
 		}

@@ -16,6 +16,8 @@ import { FormCreatePage, FormUpdatePage, ListFormsPage } from '_modules/form/pag
 
 import { ListDetailPage, ListPage, StudentListPage } from '_modules/list/pages';
 
+import { ListPageStatistic } from '_modules/statistic/pages';
+
 export const browserRouter = [
 	{
 		path: ROUTES.HOME,
@@ -126,7 +128,7 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STATISTIC.key}>
-						<div>thống kê phiếu</div>
+						<ListPageStatistic />
 					</CPermission>
 				),
 			},

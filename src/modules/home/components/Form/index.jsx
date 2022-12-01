@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Button, Grid, Paper } from '@mui/material';
+import { Box, Button, Grid, Paper } from '@mui/material';
 
 import { alert } from '_func/alert';
 
@@ -115,19 +115,10 @@ const Form = ({ data }) => {
 				overflow='hidden'
 				sx={{ boxShadow: '0px 2px 2px 1px rgb(0 0 0 / 20%)' }}
 			>
-				<Grid
-					item
-					xl={1}
-					textAlign='center'
-					sx={{ backgroundColor: '#b9bec0', fontWeight: 600, py: 1.3 }}
-				>
+				<Grid item xl={1} textAlign='center' className='grid-fake-header'>
 					Mục
 				</Grid>
-				<Grid
-					item
-					xl={11}
-					sx={{ backgroundColor: '#b9bec0', fontWeight: 600, py: 1.3, px: '10px' }}
-				>
+				<Grid item xl={11} className='grid-fake-header' px='10px'>
 					<Grid container spacing={1}>
 						<Grid item xs={6.4}>
 							Nội dung đánh giá
@@ -157,9 +148,11 @@ const Form = ({ data }) => {
 				</Grid>
 			</StudentMarksContext.Provider>
 
-			<Button variant='contained' onClick={handleUpdate}>
-				Cập nhật
-			</Button>
+			<Box textAlign='center' mt={3}>
+				<Button variant='contained' onClick={handleUpdate}>
+					Cập nhật
+				</Button>
+			</Box>
 		</Paper>
 	);
 	//#endregion

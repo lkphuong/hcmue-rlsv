@@ -21,4 +21,8 @@ export const ROUTES = {
 	NOTE: '/admin/notes',
 
 	STATISTIC: '/statistic',
+
+	ROLE: '/admin/roles',
+
+	CONFIG: '/admin/config',
 };

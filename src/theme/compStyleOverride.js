@@ -271,6 +271,9 @@ export default function componentStyleOverrides(theme) {
 			styleOverrides: {
 				root: {
 					backgroundColor: 'white',
+					'& .MuiTableCell-root.sticky': {
+						backgroundColor: 'white',
+					},
 				},
 			},
 		},
@@ -303,6 +306,17 @@ export default function componentStyleOverrides(theme) {
 					},
 					'&.border-right': {
 						borderRight: '1px solid rgba(224, 224, 224, 1)',
+					},
+					'&.sticky': {
+						position: 'sticky',
+						'&-right': {
+							right: 0,
+							boxShadow: '-2px 0px 10px 0px rgb(0 0 0 / 20%)',
+						},
+						'&-left': {
+							left: 0,
+							boxShadow: '2px 0px 10px 0px rgb(0 0 0 / 20%)',
+						},
 					},
 				},
 			},

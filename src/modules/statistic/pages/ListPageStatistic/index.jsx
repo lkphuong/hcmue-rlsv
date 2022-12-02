@@ -95,7 +95,6 @@ const DATA = [
 
 const ListPageStatistic = () => {
 	//#region Data
-
 	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	// const classes = useSelector((state) => state.options.classes, shallowEqual);

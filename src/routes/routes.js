@@ -18,6 +18,8 @@ import { ListDetailPage, ListPage, StudentListPage } from '_modules/list/pages';
 
 import { ListPageStatistic } from '_modules/statistic/pages';
 
+import { RolePage } from '_modules/role/pages';
+
 export const browserRouter = [
 	{
 		path: ROUTES.HOME,
@@ -129,6 +131,24 @@ export const browserRouter = [
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STATISTIC.key}>
 						<ListPageStatistic />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.ROLE,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
+						<RolePage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.CONFIG,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
+						<div>Học kỳ-Niên khóa</div>
 					</CPermission>
 				),
 			},

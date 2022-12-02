@@ -100,39 +100,22 @@ export const NAVIGATIONS = [
 				entity: ENTITY_KEY.NOTES.key,
 				breadcrumbs: false,
 			},
+			{
+				id: 'admin-role',
+				title: 'Phân quyền',
+				type: 'item',
+				path: '/admin/roles',
+				entity: ENTITY_KEY.NOTES.key,
+				breadcrumbs: false,
+			},
+			{
+				id: 'admin-config',
+				title: 'Học kỳ-Niên khóa',
+				type: 'item',
+				path: '/admin/config',
+				entity: ENTITY_KEY.NOTES.key,
+				breadcrumbs: false,
+			},
 		],
 	},
 ];
-
-// export const NAVIGATIONS = [
-// 	{
-// 		path: '/my-score',
-// 		name: 'Điểm rèn luyện của tôi',
-// 		entity: ENTITY_KEY.DASHBOARD.key,
-// 	},
-// 	{
-// 		path: '/class-score',
-// 		name: 'Điểm rèn luyện của lớp',
-// 		entity: ENTITY_KEY.CLASS_SCORE.key,
-// 	},
-// 	{
-// 		path: '/list',
-// 		name: 'Danh sách phiếu',
-// 		entity: ENTITY_KEY.SHEET.key,
-// 	},
-// 	{
-// 		path: '/admin/forms',
-// 		name: 'Quản lý biểu mẫu',
-// 		entity: ENTITY_KEY.FORMS.key,
-// 	},
-// 	{
-// 		path: '/admin/notes',
-// 		name: 'Quản lý phiếu đánh giá',
-// 		entity: ENTITY_KEY.NOTES.key,
-// 	},
-// 	{
-// 		path: '/statistic',
-// 		name: 'Thống kê phiếu',
-// 		entity: ENTITY_KEY.STATISTIC.key,
-// 	},
-// ];

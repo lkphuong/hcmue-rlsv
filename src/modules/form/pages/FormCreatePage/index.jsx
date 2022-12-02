@@ -1,14 +1,28 @@
 import React, { useState, useEffect, useMemo, lazy } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box, CardContent, Grid, Paper, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import {
+	Avatar,
+	Box,
+	ButtonBase,
+	CardContent,
+	Grid,
+	Paper,
+	Step,
+	StepLabel,
+	Stepper,
+	Tooltip,
+	Typography,
+	useTheme,
+} from '@mui/material';
 
 import { ROUTES } from '_constants/routes';
 
 import { actions } from '_slices/form.slice';
 
 import { usePrompt } from '_hooks/';
+import { ArrowBack } from '@mui/icons-material';
 
 const SettingTime = lazy(() => import('_modules/form/components/SettingTime'));
 const SettingHeader = lazy(() => import('_modules/form/components/SettingHeader'));
@@ -31,6 +45,8 @@ const FormCreatePage = () => {
 	const navigate = useNavigate();
 
 	const dispatch = useDispatch();
+
+	const theme = useTheme();
 
 	const currentStage = useMemo(() => {
 		switch (step) {
@@ -74,9 +90,33 @@ const FormCreatePage = () => {
 		<Box>
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5}>
-						Quản lý biểu mẫu - Tạo mới biểu mẫu
-					</Typography>
+					<Box display='flex' alignItems='center' justifyContent='space-between'>
+						<Typography fontSize={20} p={1.5} flex={1}>
+							Quản lý biểu mẫu - Tạo mới biểu mẫu
+						</Typography>
+						<Link to={ROUTES.FORM}>
+							<Tooltip title='Trở về danh sách biểu mẫu'>
+								<ButtonBase sx={{ paddingX: 1.5 }}>
+									<Avatar
+										variant='rounded'
+										sx={{
+											...theme.typography.commonAvatar,
+											...theme.typography.mediumAvatar,
+											transition: 'all .2s ease-in-out',
+											background: theme.palette.secondary.light,
+											color: theme.palette.secondary.dark,
+											'&:hover': {
+												background: theme.palette.secondary.dark,
+												color: theme.palette.secondary.light,
+											},
+										}}
+									>
+										<ArrowBack />
+									</Avatar>
+								</ButtonBase>
+							</Tooltip>
+						</Link>
+					</Box>
 				</Paper>
 			</Box>
 

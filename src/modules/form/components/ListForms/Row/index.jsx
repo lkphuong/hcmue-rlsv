@@ -83,26 +83,19 @@ const Row = memo(({ data, index, refetch }) => {
 	const onEdit = () => navigate(`${ROUTES.FORM}/update/${data.id}`);
 
 	const onDelete = () => {
-		if (data.status !== 0) {
-			alert.fail({
-				title: 'Không được phép!',
-				text: 'Chỉ có thể xóa biểu mẫu ở trạng thái nháp.',
-			});
-		} else {
-			alert.warningDelete({
-				onConfirm: async () => {
-					const res = await deleteForm(data.id);
+		alert.warningDelete({
+			onConfirm: async () => {
+				const res = await deleteForm(data.id);
 
-					if (isSuccess(res)) {
-						refetch();
+				if (isSuccess(res)) {
+					refetch();
 
-						alert.success({ text: 'Xóa biểu mẫu thành công.' });
-					} else {
-						alert.fail({ text: res?.message || ERRORS.FAIL });
-					}
-				},
-			});
-		}
+					alert.success({ text: 'Xóa biểu mẫu thành công.' });
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+		});
 	};
 
 	const onClone = () => {
@@ -141,9 +134,17 @@ const Row = memo(({ data, index, refetch }) => {
 					<IconButton onClick={onEdit}>
 						<Edit />
 					</IconButton>
-					<IconButton onClick={onDelete}>
-						<DeleteForever />
-					</IconButton>
+					<Tooltip
+						title={
+							data.status !== 0 ? 'Chỉ có thể xóa biểu mẫu ở trạng thái nháp.' : ''
+						}
+					>
+						<span>
+							<IconButton onClick={onDelete} disabled={data.status !== 0}>
+								<DeleteForever />
+							</IconButton>
+						</span>
+					</Tooltip>
 				</Stack>
 			</TableCell>
 		</TableRow>

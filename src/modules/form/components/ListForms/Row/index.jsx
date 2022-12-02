@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 
-import { Chip, IconButton, Stack, TableCell, TableRow, Tooltip, Zoom } from '@mui/material';
+import { Chip, IconButton, Stack, TableCell, TableRow, Tooltip } from '@mui/material';
 import { DeleteForever, Edit, FileCopy } from '@mui/icons-material';
 
 import { FORM_STATUS } from '_constants/variables';

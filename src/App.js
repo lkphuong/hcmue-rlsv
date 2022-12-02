@@ -6,7 +6,10 @@ import { useSelector } from 'react-redux';
 
 import { StyledEngineProvider, ThemeProvider } from '@mui/material';
 
-import { AbilityContext, AdminContext } from '_contexts';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+import { AbilityContext } from '_contexts';
 
 import ability from '_config/casl_ability';
 
@@ -24,7 +27,6 @@ const router = createBrowserRouter(browserRouter);
 
 function App() {
 	//#region Data
-	const [adminContext, setAdminContext] = useState('');
 	const [isLoading, setLoading] = useState(true);
 
 	const token = localStorage.getItem('access_token');
@@ -57,13 +59,13 @@ function App() {
 		<StyledEngineProvider injectFirst>
 			<ThemeProvider theme={theme()}>
 				<Suspense fallback={<SuspenseLoading />}>
-					<AbilityContext.Provider value={ability}>
-						<AdminContext.Provider value={[adminContext, setAdminContext]}>
+					<LocalizationProvider dateAdapter={AdapterDayjs}>
+						<AbilityContext.Provider value={ability}>
 							<div className='App'>
 								<RouterProvider router={router} />
 							</div>
-						</AdminContext.Provider>
-					</AbilityContext.Provider>
+						</AbilityContext.Provider>
+					</LocalizationProvider>
 				</Suspense>
 			</ThemeProvider>
 		</StyledEngineProvider>

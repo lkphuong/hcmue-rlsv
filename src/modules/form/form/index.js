@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import * as yup from 'yup';
 
 //#region Initial Values
@@ -54,12 +55,30 @@ export const validationSchema = yup.object({
 		.object()
 		.shape({
 			start: yup
-				.date('Vui lòng chọn thời gian sinh viên chấm điểm')
-				.typeError('Vui lòng chọn thời gian sinh viên chấm điểm')
+				.date('Định dạng ngày không hợp lệ.')
+				.typeError('Định dạng ngày không hợp lệ.')
+				.nullable()
+				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
+					const { parent } = context;
+
+					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end))
+						return false;
+
+					return true;
+				})
 				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
 			end: yup
-				.date('Vui lòng chọn thời gian sinh viên chấm điểm')
-				.typeError('Vui lòng chọn thời gian sinh viên chấm điểm')
+				.date('Định dạng ngày không hợp lệ.')
+				.typeError('Định dạng ngày không hợp lệ.')
+				.nullable()
+				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
+					const { parent } = context;
+
+					if (dayjs(value).isBefore(parent.start) || dayjs(value).isSame(parent.start))
+						return false;
+
+					return true;
+				})
 				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
 		})
 		.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
@@ -67,26 +86,62 @@ export const validationSchema = yup.object({
 		.object()
 		.shape({
 			start: yup
-				.date('Vui lòng chọn thời gian lớp chấm điểm')
-				.typeError('Vui lòng chọn thời gian lớp chấm điểm')
-				.required('Vui lòng chọn thời gian lớp chấm điểm'),
+				.date('Định dạng ngày không hợp lệ.')
+				.typeError('Định dạng ngày không hợp lệ.')
+				.nullable()
+				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
+					const { parent } = context;
+
+					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end))
+						return false;
+
+					return true;
+				})
+				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
 			end: yup
-				.date('Vui lòng chọn thời gian lớp chấm điểm')
-				.typeError('Vui lòng chọn thời gian lớp chấm điểm')
-				.required('Vui lòng chọn thời gian lớp chấm điểm'),
+				.date('Định dạng ngày không hợp lệ.')
+				.typeError('Định dạng ngày không hợp lệ.')
+				.nullable()
+				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
+					const { parent } = context;
+
+					if (dayjs(value).isBefore(parent.start) || dayjs(value).isSame(parent.start))
+						return false;
+
+					return true;
+				})
+				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
 		})
 		.required('Vui lòng chọn thời gian lớp chấm điểm'),
 	department: yup
 		.object()
 		.shape({
 			start: yup
-				.date('Vui lòng chọn thời gian khoa chấm điểm')
-				.typeError('Vui lòng chọn thời gian khoa chấm điểm')
-				.required('Vui lòng chọn thời gian khoa chấm điểm'),
+				.date('Định dạng ngày không hợp lệ.')
+				.typeError('Định dạng ngày không hợp lệ.')
+				.nullable()
+				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
+					const { parent } = context;
+
+					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end))
+						return false;
+
+					return true;
+				})
+				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
 			end: yup
-				.date('Vui lòng chọn thời gian khoa chấm điểm')
-				.typeError('Vui lòng chọn thời gian khoa chấm điểm')
-				.required('Vui lòng chọn thời gian khoa chấm điểm'),
+				.date('Định dạng ngày không hợp lệ.')
+				.typeError('Định dạng ngày không hợp lệ.')
+				.nullable()
+				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
+					const { parent } = context;
+
+					if (dayjs(value).isBefore(parent.start) || dayjs(value).isSame(parent.start))
+						return false;
+
+					return true;
+				})
+				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
 		})
 		.required('Vui lòng chọn thời gian khoa chấm điểm'),
 });

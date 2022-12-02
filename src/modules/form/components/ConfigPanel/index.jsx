@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 
-import { CAutocomplete, CRangePicker } from '_controls/';
+import { CAutocomplete } from '_controls/';
 
 import { HOCKY, NIENKHOA } from '_constants/variables';
 
 const ConfigPanel = () => {
-	const [values, setValues] = useState([new Date(), new Date()]);
-
-	const onChangeDates = (values) => setValues(values);
-
 	return (
 		<Box my={2} p={1} border='1px solid black'>
 			<Typography fontWeight={600} component='h1' mb={3}>
@@ -48,19 +44,19 @@ const ConfigPanel = () => {
 				<Grid item xs={12} md={6} xl={3}>
 					<Stack direction='column'>
 						<Typography>Thời hạn sinh viên chấm</Typography>
-						<CRangePicker values={values} onChange={onChangeDates} />
+						{/* <CRangePicker values={values} onChange={onChangeDates} /> */}
 					</Stack>
 				</Grid>
 				<Grid item xs={12} md={6} xl={3}>
 					<Stack direction='column'>
 						<Typography>Thời hạn lớp chấm</Typography>
-						<CRangePicker values={values} onChange={onChangeDates} />
+						{/* <CRangePicker values={values} onChange={onChangeDates} /> */}
 					</Stack>
 				</Grid>
 				<Grid item xs={12} md={6} xl={3}>
 					<Stack direction='column'>
 						<Typography>Thời hạn khoa chấm</Typography>
-						<CRangePicker values={values} onChange={onChangeDates} />
+						{/* <CRangePicker values={values} onChange={onChangeDates} /> */}
 					</Stack>
 				</Grid>
 			</Grid>

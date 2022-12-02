@@ -1,13 +1,13 @@
 import React, { memo, useEffect } from 'react';
 
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 
 import dayjs from 'dayjs';
 
-import { CAutocomplete, CRangePicker } from '_controls/';
+import { CAutocomplete } from '_controls/';
 
 import { isSuccess } from '_func/';
 
@@ -23,6 +23,8 @@ import { actions } from '_slices/form.slice';
 
 import { ERRORS } from '_constants/messages';
 
+import { RangeControl } from './RangeControl';
+
 const SettingTime = memo(({ updateStep }) => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
@@ -33,16 +35,15 @@ const SettingTime = memo(({ updateStep }) => {
 
 	const resolver = useResolver(validationSchema);
 
-	const {
-		control,
-		handleSubmit,
-		formState: { errors },
-		reset,
-	} = useForm({
+	const { control, handleSubmit, reset } = useForm({
 		defaultValues: initialValues,
 		mode: 'all',
 		resolver,
 	});
+
+	const studentEnd = useWatch({ control, name: 'student.end' });
+	const classEnd = useWatch({ control, name: 'classes.end' });
+
 	//#endregion
 
 	//#region Event
@@ -87,6 +88,12 @@ const SettingTime = memo(({ updateStep }) => {
 	};
 
 	const handleBack = () => updateStep((prev) => prev - 1);
+
+	const disableDates = (disableKey) => (date) => {
+		return (
+			dayjs(date).isBefore(dayjs(disableKey.$d)) || dayjs(date).isSame(dayjs(disableKey.$d))
+		);
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -115,9 +122,9 @@ const SettingTime = memo(({ updateStep }) => {
 	//#region Render
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
-			<Container maxWidth='md'>
+			<Container maxWidth='lg'>
 				<Grid container mb={2} spacing={2}>
-					<Grid item xs={12} xl={7}>
+					<Grid item xs={12} md={8} lg={6} xl={5}>
 						<Typography mb={0.8} fontWeight={500}>
 							Học kỳ - Niên khóa
 						</Typography>
@@ -180,66 +187,28 @@ const SettingTime = memo(({ updateStep }) => {
 							</Box>
 						</Stack>
 					</Grid>
-					<Grid item xs={0} xl={2.5} />
-					<Grid item xs={0} xl={2.5} />
+					<Grid item xs={0} md={2} lg={3} xl={3.5} />
+					<Grid item xs={0} md={2} lg={3} xl={3.5} />
 
-					<Grid item xs={12} xl={4}>
-						<Typography mb={0.8} fontWeight={500}>
-							Thời hạn sinh viên chấm
-						</Typography>
-						<Controller
-							control={control}
-							name='student'
-							render={({
-								field: { onChange, value, name },
-								fieldState: { error },
-							}) => {
-								return (
-									<CRangePicker
-										onChange={onChange}
-										dateRange={value}
-										error={!!errors['student.start']}
-										helperText={errors['student.start']?.message}
-									/>
-								);
-							}}
-						/>
-					</Grid>
+					<RangeControl
+						control={control}
+						label='Thời gian sinh viên chấm'
+						name='student'
+					/>
 
-					<Grid item xs={12} xl={4}>
-						<Typography mb={0.8} fontWeight={500}>
-							Thời hạn lớp chấm
-						</Typography>
-						<Controller
-							control={control}
-							name='classes'
-							render={({ field: { onChange, value } }) => (
-								<CRangePicker
-									onChange={onChange}
-									dateRange={value}
-									error={!!errors['classes.start']}
-									helperText={errors['classes.start']?.message}
-								/>
-							)}
-						/>
-					</Grid>
-					<Grid item xs={12} xl={4}>
-						<Typography mb={0.8} fontWeight={500}>
-							Thời hạn khoa chấm
-						</Typography>
-						<Controller
-							control={control}
-							name='department'
-							render={({ field: { onChange, value } }) => (
-								<CRangePicker
-									onChange={onChange}
-									dateRange={value}
-									error={!!errors['department.start']}
-									helperText={errors['department.start']?.message}
-								/>
-							)}
-						/>
-					</Grid>
+					<RangeControl
+						control={control}
+						label='Thời gian lớp chấm'
+						name='classes'
+						shouldDisableDate={disableDates(studentEnd)}
+					/>
+
+					<RangeControl
+						control={control}
+						label='Thời gian khoa chấm'
+						name='department'
+						shouldDisableDate={disableDates(classEnd)}
+					/>
 
 					<Grid item xs={12} textAlign='center'>
 						<Grid

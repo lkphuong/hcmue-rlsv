@@ -8,8 +8,6 @@ import componentStyleOverrides from './compStyleOverride';
 import themePalette from './palette';
 import themeTypography from './typography';
 
-// const BORDER_TABLE = '1px solid rgb(146 142 142)';
-
 const theme = () => {
 	const color = colors;
 
@@ -43,6 +41,7 @@ const theme = () => {
 	};
 
 	const themes = createTheme(themeOptions);
+
 	themes.components = componentStyleOverrides(themeOption);
 
 	return themes;

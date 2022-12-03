@@ -334,5 +334,10 @@ export default function componentStyleOverrides(theme) {
 				},
 			},
 		},
+		MuiTabs: {
+			defaultProps: {
+				selectionFollowsFocus: true,
+			},
+		},
 	};
 }

@@ -27,6 +27,9 @@ export const alert = {
 			allowEnterKey: false,
 			allowOutsideClick: false,
 			showConfirmButton: false,
+			customClass: {
+				container: 'my-swal',
+			},
 			willOpen: () => {
 				Swal.showLoading();
 			},
@@ -40,6 +43,9 @@ export const alert = {
 			icon: 'warning',
 			confirmButtonText: 'Đồng ý',
 			cancelButtonText: 'Hủy bỏ',
+			customClass: {
+				container: 'my-swal',
+			},
 		}).then((result) => {
 			if (result.isConfirmed) {
 				onConfirm();
@@ -54,6 +60,9 @@ export const alert = {
 			icon: 'warning',
 			confirmButtonText: 'Đồng ý',
 			cancelButtonText: 'Hủy bỏ',
+			customClass: {
+				container: 'my-swal',
+			},
 		}).then((result) => {
 			if (result.isConfirmed) {
 				onConfirm();
@@ -68,6 +77,9 @@ export const alert = {
 			icon: 'question',
 			confirmButtonText: 'Đồng ý',
 			cancelButtonText: 'Hủy bỏ',
+			customClass: {
+				container: 'my-swal',
+			},
 		}).then((result) => {
 			if (result.isConfirmed) {
 				onConfirm();

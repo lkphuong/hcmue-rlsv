@@ -50,5 +50,10 @@ export const CLASSES = {
 
 export const OPTIONS = {
 	GET_ACADEMIC_YEARS: '/academic-years',
+	CREATE_ACADEMIC_YEARS: '/academic-years',
+	DELETE_ACADEMIC_YEARS: '/academic-years',
+
 	GET_SEMESTERS: '/semesters',
+	CREATE_SEMESTERS: '/semesters',
+	DELETE_SEMESTERS: '/semesters',
 };

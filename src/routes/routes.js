@@ -20,6 +20,8 @@ import { ListPageStatistic } from '_modules/statistic/pages';
 
 import { RolePage } from '_modules/role/pages';
 
+import { ConfigPage } from '_modules/config/pages';
+
 export const browserRouter = [
 	{
 		path: ROUTES.HOME,
@@ -148,7 +150,7 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
-						<div>Học kỳ-Niên khóa</div>
+						<ConfigPage />
 					</CPermission>
 				),
 			},

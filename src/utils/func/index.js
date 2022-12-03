@@ -26,7 +26,20 @@ export const updateObjInArr = (obj, arr) => {
 		newArr.push(obj);
 		return newArr;
 	} else {
-		newArr[index] = obj;
+		newArr[index] = { ...newArr[index], ...obj };
 		return newArr;
 	}
+};
+
+export const updateHeaderIdInArr = (header_id, item_id, arr) => {
+	const newArr = [...arr];
+
+	for (let i of newArr) {
+		if (i.item_id === item_id) {
+			i.header_id = header_id;
+			break;
+		}
+	}
+
+	return newArr;
 };

@@ -1,6 +1,6 @@
 import { get, post, remove } from '_axios/request';
 
-import { OPTIONS } from './url';
+import { DEPARTMENTS, OPTIONS } from './url';
 
 export const getAcademicYears = () => {
 	return get(OPTIONS.GET_ACADEMIC_YEARS);
@@ -24,4 +24,8 @@ export const createSemester = (body) => {
 
 export const removeSemester = (id) => {
 	return remove(`${OPTIONS.DELETE_SEMESTERS}/${id}`);
+};
+
+export const getAllDepartments = () => {
+	return get(DEPARTMENTS.GET_ALL);
 };

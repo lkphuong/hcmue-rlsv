@@ -62,3 +62,7 @@ export const ROLES = {
 	GET_STUDENT: '/roles/users',
 	UPDATE_ROLE: '/roles/users',
 };
+
+export const DEPARTMENTS = {
+	GET_ALL: '/departments',
+};

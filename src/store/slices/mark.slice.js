@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
-import { updateObjInArr } from '_func/';
+import { updateHeaderIdInArr, updateObjInArr } from '_func/';
 
 const initialState = {
 	marks: [],
@@ -18,6 +18,15 @@ export const markSlice = createSlice({
 		},
 		updateMarks: (state, action) => {
 			const updatedValues = updateObjInArr(action.payload, [...state.marks]);
+
+			state.marks = updatedValues;
+		},
+		updateHeaderId: (state, action) => {
+			const updatedValues = updateHeaderIdInArr(
+				action.payload.header_id,
+				action.payload.item_id,
+				[...state.marks]
+			);
 
 			state.marks = updatedValues;
 		},

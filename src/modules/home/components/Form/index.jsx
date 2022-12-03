@@ -36,6 +36,7 @@ const Form = ({ data }) => {
 
 	const dispatch = useDispatch();
 	// //#endregion
+	console.log(marks);
 
 	//#region Event
 	const getHeaders = useCallback(async () => {

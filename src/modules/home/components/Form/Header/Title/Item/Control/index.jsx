@@ -8,9 +8,6 @@ import TypeSelect from './TypeSelect';
 
 const Control = memo(({ id, min, max, mark, control, category, unit, options }) => {
 	//#region Data
-
-	// const [mark, setMark] = useState(initialMark);
-
 	const { itemsMark } = useContext(StudentMarksContext);
 
 	const currentMark = useMemo(() => {

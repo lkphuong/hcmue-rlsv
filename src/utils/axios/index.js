@@ -83,9 +83,6 @@ export const getProfile = async (token) => {
 		if (isSuccess(res)) {
 			const role_id = res?.data?.role;
 
-			// Test roleId
-			// const role_id = 3;
-
 			updateAbility(role_id);
 			store.dispatch(actions.setProfile({ ...res.data, role_id }));
 		}

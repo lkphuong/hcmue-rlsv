@@ -1,17 +1,23 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { Grid, Typography } from '@mui/material';
 
+import { actions } from '_slices/mark.slice';
+
 import Control from './Control';
 
-const Item = memo(({ data }) => {
+const Item = memo(({ data, headerId }) => {
 	//#region Data
-
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
-
 	//#endregion
+
+	useEffect(() => {
+		dispatch(actions.updateHeaderId({ header_id: Number(headerId), item_id: Number(data.id) }));
+	}, [data.id, headerId]);
 
 	//#region Render
 	return (

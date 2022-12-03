@@ -8,11 +8,14 @@ import { ChevronRight } from '@mui/icons-material';
 
 import Breadcrumbs from 'src/ui-component/extended/Breadcrumbs';
 
+import { drawerWidth } from '_store/constant';
 import { actions } from '_slices/menu.slice';
 import { actions as optionsAction } from '_slices/options.slice';
-import { drawerWidth } from '_store/constant';
-import { getAcademicYears, getSemesters } from '_api/options.api';
+
+import { getAcademicYears, getSemesters, getAllDepartments } from '_api/options.api';
+
 import { isSuccess } from '_func/';
+
 import { ROUTES } from '_constants/routes';
 
 import CHeader from './CHeader';
@@ -78,20 +81,31 @@ export const CMainLayout = () => {
 	useEffect(() => {
 		const getOptions = async () => {
 			try {
-				const res = await getAcademicYears();
+				const resAcademic = await getAcademicYears();
 
-				if (isSuccess(res)) {
-					const _arr = res.data.map((e) => ({ ...e, id: parseInt(e.id) }));
+				if (isSuccess(resAcademic)) {
+					const academics = resAcademic.data.map((e) => ({ ...e, id: parseInt(e.id) }));
 
-					dispatch(optionsAction.setAcademicYears(_arr));
+					dispatch(optionsAction.setAcademicYears(academics));
 				}
 
-				const _res = await getSemesters();
+				const resSemester = await getSemesters();
 
-				if (isSuccess(_res)) {
-					const __arr = _res.data.map((e) => ({ ...e, id: parseInt(e.id) }));
+				if (isSuccess(resSemester)) {
+					const semesters = resSemester.data.map((e) => ({ ...e, id: parseInt(e.id) }));
 
-					dispatch(optionsAction.setSemesters(__arr));
+					dispatch(optionsAction.setSemesters(semesters));
+				}
+
+				const resDepartment = await getAllDepartments();
+
+				if (isSuccess(resDepartment)) {
+					const departments = resDepartment.data.map((e) => ({
+						...e,
+						id: parseInt(e.id),
+					}));
+
+					dispatch(optionsAction.setDepartments(departments));
 				}
 			} catch (error) {
 				throw error;

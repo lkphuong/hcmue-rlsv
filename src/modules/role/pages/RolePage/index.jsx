@@ -27,6 +27,7 @@ const RolePage = memo(() => {
 
 	const [classes, setClasses] = useState([]);
 
+	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
 	const [filter, setFilter] = useState({

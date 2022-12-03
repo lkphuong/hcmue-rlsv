@@ -79,9 +79,9 @@ const Control = memo(({ id, min, max, mark, control, category, unit, options }) 
 	}, [control]);
 	//#endregion
 
-	// //#region Event
+	//#region Event
 
-	// //#endregion
+	//#endregion
 
 	//#region Render
 	return <>{renderControl}</>;

@@ -23,7 +23,7 @@ const ListClasses = ({ data }) => {
 			{data.length > 0 &&
 				data.map((e, i) => (
 					<Link key={i} to={`${ROUTES.LIST}/${e.id}`}>
-						<ListItem className='class-item'>
+						<ListItem className='class-item' sx={{ mb: 1 }}>
 							<Grid container justifyContent='space-between' alignItems='center'>
 								<Grid item>Lớp {e.name}</Grid>
 								<Grid item display='flex' alignItems='center'>

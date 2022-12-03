@@ -46,16 +46,14 @@ const ListPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<Box mt={1}>
-				<Filter
-					filter={body}
-					onChangeFilter={setBody}
-					semesters={semesters}
-					academic_years={academic_years}
-				/>
+			<Filter
+				filter={body}
+				onChangeFilter={setBody}
+				semesters={semesters}
+				academic_years={academic_years}
+			/>
 
-				<ListClasses data={classes} />
-			</Box>
+			<ListClasses data={classes} />
 		</Box>
 	);
 	//#endregion

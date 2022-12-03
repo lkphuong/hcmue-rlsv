@@ -43,17 +43,15 @@ const ListFormsPage = () => {
 				</Paper>
 			</Box>
 
-			<Box>
-				<Filter />
+			<Filter />
 
-				<Box textAlign='right' my={2}>
-					<Link to={ROUTES.FORM_CREATE}>
-						<Button variant='contained'>Thêm mới</Button>
-					</Link>
-				</Box>
-
-				<ListForms data={data} refetch={getData} />
+			<Box textAlign='right' my={2}>
+				<Link to={ROUTES.FORM_CREATE}>
+					<Button variant='contained'>Thêm mới</Button>
+				</Link>
 			</Box>
+
+			<ListForms data={data} refetch={getData} />
 		</Box>
 	);
 	//#endregion

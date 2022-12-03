@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useState, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Button, Grid, Paper } from '@mui/material';
+import { Box, Button, Grid, Paper } from '@mui/material';
 
 import { alert } from '_func/alert';
 
@@ -159,9 +159,11 @@ const Form = ({ data, status }) => {
 				</Grid>
 			</ClassMarksContext.Provider>
 
-			<Button variant='contained' onClick={handleUpdate}>
-				Cập nhật
-			</Button>
+			<Box textAlign='center' mt={3}>
+				<Button variant='contained' onClick={handleUpdate}>
+					Cập nhật
+				</Button>
+			</Box>
 		</Paper>
 	);
 	//#endregion

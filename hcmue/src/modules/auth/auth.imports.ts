@@ -8,18 +8,21 @@ import { SharedModule } from '../shared/shared.module';
 
 import { AuthController } from './controllers/auth.controller';
 
+import { APP_GUARD } from '@nestjs/core';
+
+import { RoleEntity } from '../../entities/role.entity';
+import { RoleUsersEntity } from '../../entities/role_users.entity';
+import { SessionEntity } from '../../entities/session.entity';
+
 import { AuthService } from './services/auth.service';
 import { ConfigurationService } from '../shared/services/configuration/configuration.service';
 
 import { jwtFactory } from '../../factories/jwt.factory';
 
+import { RolesGuard } from './guards/role.guard';
 import { JwtStrategy } from './strategy/jwt';
 
 import { User, UserSchema } from '../../schemas/user.schema';
-
-import { RoleEntity } from '../../entities/role.entity';
-import { RoleUsersEntity } from '../../entities/role_users.entity';
-import { SessionEntity } from '../../entities/session.entity';
 
 export const modules = [
   SharedModule,
@@ -35,5 +38,12 @@ export const modules = [
 ];
 
 export const controllers = [AuthController];
-export const providers = [AuthService, JwtStrategy];
+export const providers = [
+  AuthService,
+  JwtStrategy,
+  {
+    provide: APP_GUARD,
+    useClass: RolesGuard,
+  },
+];
 export const exporteds = [AuthService];

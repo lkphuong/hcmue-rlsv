@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -76,12 +77,16 @@ import {
   ItemResponse,
 } from '../interfaces/form-response.interface';
 
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
+
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from '../../../exceptions/UnknownException';
 
+import { Role } from '../../auth/constants/enums/role.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
 import {
@@ -238,6 +243,8 @@ export class FormController {
    * @page forms page
    */
   @Put('publish/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async setPublishForm(
@@ -333,6 +340,8 @@ export class FormController {
    * @page forms page
    */
   @Put('un-publish/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async cancelPublishForm(
@@ -635,6 +644,8 @@ export class FormController {
    * @page forms page
    */
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async createForm(
     @Body() params: FormDto,
@@ -703,6 +714,8 @@ export class FormController {
    * @page forms page
    */
   @Post('headers')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async createHeader(
@@ -765,6 +778,8 @@ export class FormController {
    * @page forms page
    */
   @Post('titles')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async createTitle(
     @Body() params: TitleDto,
@@ -840,6 +855,8 @@ export class FormController {
    * @page forms page
    */
   @Post('items')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async createItem(
     @Body() params: ItemDto,
@@ -919,6 +936,8 @@ export class FormController {
    * @page forms
    */
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateForm(
     @Param('id') id: number,
@@ -995,6 +1014,8 @@ export class FormController {
    * @page forms
    */
   @Put('headers/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async updateHeader(
@@ -1071,6 +1092,8 @@ export class FormController {
    * @page forms
    */
   @Put('titles/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateTitle(
     @Param('id') id: number,
@@ -1154,6 +1177,8 @@ export class FormController {
    * @page forms
    */
   @Put('items/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateItem(
     @Param('id') id: number,
@@ -1236,6 +1261,8 @@ export class FormController {
    * @page forms page
    */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async unlinkForm(
@@ -1297,6 +1324,8 @@ export class FormController {
    * @page forms page
    */
   @Post('clone/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async cloneForm(
@@ -1369,6 +1398,8 @@ export class FormController {
    * @page forms
    */
   @Delete(':form_id/headers/:header_id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async unlinkHeader(
@@ -1450,6 +1481,8 @@ export class FormController {
    * @page forms page
    */
   @Delete(':form_id/titles/:title_id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async unlinkTitle(
     @Param('form_id') form_id: number,
@@ -1530,6 +1563,8 @@ export class FormController {
    * @page forms page
    */
   @Delete(':form_id/items/:item_id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async unlinkItem(
     @Param('form_id') form_id: number,

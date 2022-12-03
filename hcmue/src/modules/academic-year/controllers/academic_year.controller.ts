@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -28,16 +29,20 @@ import { AcademicYearDto } from '../dtos/academic_year.dto';
 import { AcademicYearService } from '../services/academic_year.service';
 import { LogService } from '../../log/services/log.service';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
+
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 
 import { AcademicYearResponse } from '../interfaces/academic_year_response.interface';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
+import { Role } from '../../auth/constants/enums/role.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
@@ -118,6 +123,8 @@ export class AcademicYearController {
    * @page academic-years page
    */
   @Post('/')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async createAcademic(
     @Body() params: AcademicYearDto,
@@ -195,6 +202,8 @@ export class AcademicYearController {
    * @page academic-years page
    */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async unlinkAcademic(
     @Param('id') id: number,

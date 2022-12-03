@@ -11,6 +11,7 @@ import {
   Body,
   Param,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Request } from 'express';
@@ -76,11 +77,15 @@ import {
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.guard';
+import { Roles } from 'src/modules/auth/decorators/roles.decorator';
+
 import { HandlerException } from '../../../exceptions/HandlerException';
 
+import { Role } from 'src/modules/auth/constants/enums/role.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
@@ -143,7 +148,6 @@ export class SheetController {
 
       //#region Get sheet
       const sheet = await this._sheetService.getSheetById(id);
-      console.log('sheet: ', sheet);
       //#endregion
       if (sheet) {
         //#region Generate response
@@ -400,6 +404,8 @@ export class SheetController {
    * @page sheets page
    */
   @Post('class/:class_id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.CLASS)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getSheetsByClass(
@@ -485,6 +491,8 @@ export class SheetController {
    * @page sheets page
    */
   @Post('department/:department_id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassesByDepartment(
     @Param('department_id') department_id: string,
@@ -575,6 +583,8 @@ export class SheetController {
    * @page sheets page
    */
   @Put('student/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.STUDENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkStudent(
     @Param('id') id: number,
@@ -656,6 +666,8 @@ export class SheetController {
    * @page sheets page
    */
   @Put('class/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CLASS)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkClass(
     @Param('id') id: number,
@@ -734,6 +746,8 @@ export class SheetController {
    * @page sheets page
    */
   @Put('department/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkDepartment(
     @Param('id') id: number,
@@ -812,6 +826,8 @@ export class SheetController {
    * @page sheets page
    */
   @Put('department/approve-all')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async approveAll(
     @Body() params: ApproveAllDto,

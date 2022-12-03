@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -20,6 +21,8 @@ import {
   generateResponses,
   generateUserIds,
 } from '../utils';
+
+import { validateUserId } from '../validations';
 
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
 
@@ -45,8 +48,12 @@ import {
   UserResponse,
 } from '../interfaces/user_response.interface';
 import { HttpResponse } from '../../../interfaces/http-response.interface';
-import { JwtPayload } from 'src/modules/auth/interfaces/payloads/jwt-payload.interface';
+import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
+
+import { Role } from '../../auth/constants/enums/role.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
 
@@ -56,7 +63,6 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
-import { validateUserId } from '../validations';
 
 @Controller('roles')
 export class RoleController {
@@ -78,6 +84,8 @@ export class RoleController {
    */
   @HttpCode(HttpStatus.OK)
   @Post('users')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getUsers(
     @Body() params: GetUsersDto,
@@ -101,8 +109,6 @@ export class RoleController {
       if (pages === 0) {
         //#region
         const count = await this._userService.count(classes, department, input);
-
-        console.log('count: ', count);
 
         if (count > 0) pages = Math.ceil(count / itemsPerPage);
         //#endregion
@@ -165,6 +171,8 @@ export class RoleController {
    * @page roles page
    */
   @Put('users/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateRole(
     @Param('id') id: string,

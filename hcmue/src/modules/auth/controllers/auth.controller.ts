@@ -40,7 +40,7 @@ import { AuthService } from '../services/auth.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 
-import { ErrorMessage } from '../constants/errors.enum';
+import { ErrorMessage } from '../constants/enums/errors.enum';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { InvalidTokenException } from '../exceptions/InvalidTokenException';

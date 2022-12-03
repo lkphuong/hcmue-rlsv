@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -26,11 +27,15 @@ import { SemesterService } from '../services/semester.service';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
+
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { SemesterResponse } from '../interfaces/semester_response.interface';
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
+import { Role } from '../../auth/constants/enums/role.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
 import {
@@ -108,6 +113,8 @@ export class SemesterController {
    * @page semesters page
    */
   @Post('/')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async createSemester(
     @Body() params: SemesterDto,
@@ -177,6 +184,8 @@ export class SemesterController {
    * @page semesters page
    */
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async unlinkSemester(
     @Param('id') id: number,

@@ -10,7 +10,7 @@ export const MTable = ({ data }) => {
 			<Table stickyHeader>
 				<TableHead>
 					<TableRow>
-						<TableCell align='center'>Username</TableCell>
+						<TableCell align='center'>Họ và tên</TableCell>
 						<TableCell align='center'>Khoa</TableCell>
 						<TableCell align='center'>Lớp</TableCell>
 						<TableCell align='center'>Phân quyền</TableCell>
@@ -20,7 +20,7 @@ export const MTable = ({ data }) => {
 				<TableBody>
 					{data?.length > 0 &&
 						data.map((row, index) => (
-							<MRow key={row.id + index} index={index} data={row} />
+							<MRow key={row?.user_id} index={index} data={row} />
 						))}
 				</TableBody>
 			</Table>

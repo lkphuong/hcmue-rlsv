@@ -1,13 +1,19 @@
-import React, { useRef } from 'react';
+import React, { useMemo, useRef } from 'react';
 
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import { Settings } from '@mui/icons-material';
+
+import { ROLES } from '_constants/variables';
 
 import { MMenuRole } from '../../MMenuRole';
 
 export const MRow = ({ data }) => {
 	//#region Data
 	const menuRef = useRef();
+
+	const role = useMemo(() => {
+		return ROLES.find((e) => e.id === data.role).name || '';
+	}, [data.role]);
 	//#endregion
 
 	//#region Event
@@ -18,10 +24,10 @@ export const MRow = ({ data }) => {
 	return (
 		<>
 			<TableRow>
-				<TableCell align='center'>{data.username}</TableCell>
-				<TableCell align='center'>{data.department}</TableCell>
-				<TableCell align='center'>{data.class}</TableCell>
-				<TableCell align='center'>{data.role.name}</TableCell>
+				<TableCell align='center'>{data?.name}</TableCell>
+				<TableCell align='center'>{data?.department.name}</TableCell>
+				<TableCell align='center'>{data?.classes?.name}</TableCell>
+				<TableCell align='center'>{role}</TableCell>
 				<TableCell className='sticky sticky-right'>
 					<Tooltip title='Phân quyền'>
 						<IconButton onClick={onClick}>
@@ -31,7 +37,13 @@ export const MRow = ({ data }) => {
 				</TableCell>
 			</TableRow>
 
-			<MMenuRole id={data.id} role={data.role.id} ref={menuRef} />
+			<MMenuRole
+				id={data.user_id}
+				role={Number(data.role)}
+				department={data?.department.id}
+				classes={data?.classes.id}
+				ref={menuRef}
+			/>
 		</>
 	);
 	//#endregion

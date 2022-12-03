@@ -1,11 +1,16 @@
-/* eslint-disable no-unused-vars */
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { createContext, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
 import { MFilter, MTable } from '_modules/role/components';
+
+import { getStudentsRole } from '_api/roles.api';
+import { getClasses } from '_api/classes.api';
+
+import { isSuccess, isEmpty } from '_func/';
 
 const DEPARTMENTS = [
 	{ id: 1, name: 'CNTT' },
@@ -14,104 +19,52 @@ const DEPARTMENTS = [
 	{ id: 4, name: 'Sử' },
 ];
 
-const CLASSES = [
-	{ id: 1, name: 'CNTT.A' },
-	{ id: 2, name: 'CNTT.B' },
-	{ id: 3, name: 'CNTT.C' },
-	{ id: 4, name: 'CNTT.D' },
-];
-
-const DATA = [
-	{
-		id: 1,
-		username: 'CamGiang',
-		department: 'CNTT',
-		class: 'CNTT1',
-		role: {
-			id: 0,
-			name: 'Sinh viên',
-		},
-	},
-	{
-		id: 2,
-		username: 'CamGiang',
-		department: 'CNTT',
-		class: 'CNTT1',
-		role: {
-			id: 0,
-			name: 'Sinh viên',
-		},
-	},
-	{
-		id: 3,
-		username: 'PhucDH',
-		department: 'CNTT',
-		class: 'CNTT1',
-		role: {
-			id: 3,
-			name: 'Admin',
-		},
-	},
-	{
-		id: 4,
-		username: 'PhuongLK',
-		department: 'CNTT',
-		class: 'CNTT1',
-		role: {
-			id: 2,
-			name: 'Trưởng khoa',
-		},
-	},
-	{
-		id: 5,
-		username: 'CamGiang',
-		department: 'CNTT',
-		class: 'CNTT1',
-		role: {
-			id: 0,
-			name: 'Sinh viên',
-		},
-	},
-	{
-		id: 6,
-		username: 'CamGiang',
-		department: 'CNTT',
-		class: 'CNTT1',
-		role: {
-			id: 0,
-			name: 'Sinh viên',
-		},
-	},
-];
+export const ConfigRoleContext = createContext();
 
 const RolePage = memo(() => {
 	//#region Data
-	const [data, setData] = useState([]);
+	const [data, setData] = useState();
+
+	const [classes, setClasses] = useState([]);
+
+	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
 	const [filter, setFilter] = useState({
-		department_id: 1,
-		class_id: 1,
+		department: '5c35a6785081842fda2067b5',
+		academic_id: academic_years[0].id,
+		classes: '5c662569957ddb191891289a',
 		input: '',
 		page: 1,
-		pages: 1,
+		pages: 0,
 	});
+
+	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dataTable = useMemo(() => data?.data || [], [data]);
 	//endregion
 
 	//#region Event
 	const getData = useCallback(async () => {
 		try {
-			// let _filter = { ...filter };
-			// if (_filter.input === '') delete _filter.input;
-			// const res = await getStatistic(_filter);
-			// if (isSuccess(res)) setData(res.data);
-			// else if (isEmpty(res)) setData([]);
+			let _filter = { ...filter };
+
+			if (_filter.input === '') delete _filter.input;
+
+			const res = await getStudentsRole(_filter);
+
+			if (isSuccess(res)) {
+				setData(res.data);
+			} else if (isEmpty(res)) setData(null);
 		} catch (error) {
 			throw error;
 		}
 	}, [filter]);
 
-	const onChangeFilter = (value) => {
-		setFilter({ ...value, page: 1, pages: 0 });
+	const getClassData = async (department_id, academic_year_id) => {
+		const res = await getClasses({ department_id, academic_year_id });
+
+		if (isSuccess(res)) setClasses(res.data);
+		else if (isEmpty(res)) setClasses([]);
 	};
 
 	const onPageChange = (event, value) => {
@@ -121,22 +74,38 @@ const RolePage = memo(() => {
 	//#endregion
 
 	useEffect(() => {
+		if (filter.department_id && filter.academic_id) {
+			getClassData(filter.department_id, filter.academic_id);
+		}
+	}, [filter.department_id, filter.academic_id]);
+
+	useEffect(() => {
 		getData();
 	}, [getData]);
+
+	useEffect(() => {
+		setPaginate({
+			page: data?.page || 1,
+			pages: data?.pages || 0,
+		});
+	}, [data]);
 
 	//#region Render
 	return (
 		<Box>
-			<MFilter
-				filter={filter}
-				onChangeFilter={onChangeFilter}
-				classes={CLASSES}
-				departments={DEPARTMENTS}
-			/>
+			<ConfigRoleContext.Provider value={{ getData }}>
+				<MFilter
+					filter={filter}
+					onChangeFilter={setFilter}
+					departments={DEPARTMENTS}
+					academic_years={academic_years}
+					classes={classes}
+				/>
 
-			<MTable data={DATA} />
+				<MTable data={dataTable} />
 
-			<CPagination page={filter.page} pages={filter.pages} onChange={onPageChange} />
+				<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
+			</ConfigRoleContext.Provider>
 		</Box>
 	);
 	//#endregion

@@ -51,3 +51,10 @@ export const CATEGORY = [
 	{ id: 1, name: 'Range value' },
 	{ id: 2, name: 'Per unit' },
 ];
+
+export const ROLES = [
+	{ id: 0, name: 'SINH VIÊN' },
+	{ id: 1, name: 'CÁN BỘ LỚP' },
+	{ id: 2, name: 'KHOA' },
+	{ id: 3, name: 'ADMIN' },
+];

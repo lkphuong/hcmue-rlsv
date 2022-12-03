@@ -57,3 +57,8 @@ export const OPTIONS = {
 	CREATE_SEMESTERS: '/semesters',
 	DELETE_SEMESTERS: '/semesters',
 };
+
+export const ROLES = {
+	GET_STUDENT: '/roles/users',
+	UPDATE_ROLE: '/roles/users',
+};

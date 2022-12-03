@@ -14,33 +14,25 @@ import {
 
 import { Request } from 'express';
 
-import { generateFailedResponse } from '../utils';
-import { sprintf } from '../../../utils';
+import { createSemester, unlinkSemester } from '../funcs';
+import { generateSemestersResponse } from '../utils';
+import { isDuplicated, isUsed, validateSemesterId } from '../validations/index';
 
-import { SemesterEntity } from '../../../entities/semester.entity';
-
-import {
-  validateDuplicateSemester,
-  validateSemesterHasForm,
-  validateSemesterId,
-} from '../validations/index';
+import { SemesterDto } from '../dtos/semester.dto';
 
 import { LogService } from '../../log/services/log.service';
 import { SemesterService } from '../services/semester.service';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
-import { UnknownException } from '../../../exceptions/UnknownException';
-
-import { generateData2Array, generateData2Object } from '../transform';
-
-import { SemesterDto } from '../dtos/semester.dto';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { SemesterResponse } from '../interfaces/semester_response.interface';
+
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
 import { Levels } from '../../../constants/enums/level.enum';
-import { ErrorMessage } from '../constants/enums/errors.enum';
+
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
@@ -55,32 +47,31 @@ export class SemesterController {
 
   /**
    * @method GET
-   * @url /api/classes/:department_id
+   * @url /api/semesters
    * @access private
-   * @description danh sách lớp theo khoa
-   * @return HttpResponse<SemesterEntity[]> | null | HttpException
-   * @page semesters
+   * @description Hiển thị danh sách học kỳ
+   * @return HttpResponse<SemesterResponse> | HttpException | null
+   * @page semesters page
    */
-  @Get()
+  @Get('/')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getSemesters(
     @Req() req: Request,
-  ): Promise<HttpResponse<SemesterResponse[]> | null | HttpException> {
+  ): Promise<HttpResponse<SemesterResponse> | HttpException | null> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ' - ' + null);
+      console.log(req.method + ' - ' + req.url);
 
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
+      //#region Get semesters
       const semesters = await this._semesterService.getSemesters();
+      //#endregion
 
       if (semesters && semesters.length > 0) {
-        return {
-          data: generateData2Array(semesters),
-          errorCode: 0,
-          message: null,
-          errors: null,
-        };
+        //#region Generate response
+        return generateSemestersResponse(semesters, req);
+        //#endregion
       } else {
         //#region throw HandlerException
         throw new HandlerException(
@@ -114,9 +105,9 @@ export class SemesterController {
    * @param name
    * @description Tạo mới học kì
    * @return HttpResponse<SemesterResponse> | HttpException
-   * @page semesters
+   * @page semesters page
    */
-  @Post()
+  @Post('/')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async createSemester(
     @Body() params: SemesterDto,
@@ -124,13 +115,15 @@ export class SemesterController {
   ): Promise<HttpResponse<SemesterResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ' - ' + null);
+      console.log(
+        req.method + ' - ' + req.url + ' - ' + JSON.stringify(params),
+      );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ params: params }),
+        JSON.stringify(params),
       );
 
       //#region Get jwt payload
@@ -141,34 +134,24 @@ export class SemesterController {
       const { name } = params;
       //#endregion
 
-      //#region validation
-      const valid = await validateDuplicateSemester(
-        name,
-        this._semesterService,
-        req,
-      );
+      //#region Validation
+      const valid = await isDuplicated(name, this._semesterService, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
-      //#region Create Semester
-      const semester = new SemesterEntity();
-      semester.name = name;
-      semester.active = true;
-      semester.created_at = new Date();
-      semester.created_by = user_id;
+      //#region Create semester
+      const result = await createSemester(
+        name,
+        user_id,
+        this._semesterService,
+        req,
+      );
 
-      const result = await this._semesterService.add(semester);
+      //#region Generate response
+      if (result instanceof HttpException) throw result;
+      else return result;
       //#endregion
-
-      if (result) {
-        return {
-          data: generateData2Object(result),
-          errorCode: 0,
-          message: null,
-          errors: null,
-        };
-      } else {
-      }
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -191,7 +174,7 @@ export class SemesterController {
    * @param id
    * @description Xóa học kì
    * @return HttpResponse<SemesterResponse> | HttpException
-   * @page semesters
+   * @page semesters page
    */
   @Delete(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -210,7 +193,7 @@ export class SemesterController {
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ academic_year: id }),
+        JSON.stringify({ semester_id: id }),
       );
 
       //#region Get jwt payload
@@ -218,49 +201,29 @@ export class SemesterController {
       //#endregion
 
       //#region Validation
-      //#region Validate ID
-      const valid_id = validateSemesterId(id, req);
-      if (valid_id instanceof HttpException) throw valid_id;
+      //#region Validate semester_id
+      let valid = validateSemesterId(id, req);
+      if (valid instanceof HttpException) throw valid;
       //#endregion
 
-      //#region Validate semester of form
-      const valid = await validateSemesterHasForm(
-        id,
-        this._semesterService,
-        req,
-      );
+      //#region Validate check if semester has used in any form
+      valid = await isUsed(id, this._semesterService, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
       //#endregion
 
       //#region Unlink semester
-      const semester = await this._semesterService.getSemesterById(id);
-      if (semester) {
-        const result = await this._semesterService.unlink(id, user_id);
-        if (result) {
-          return {
-            data: generateData2Object(semester),
-            errorCode: 0,
-            message: null,
-            errors: null,
-          };
-        } else {
-          throw generateFailedResponse(
-            req,
-            ErrorMessage.OPERATOR_SEMESTER_ERROR,
-          );
-        }
-      } else {
-        //#region throw HandleException
-        throw new UnknownException(
-          id,
-          DATABASE_EXIT_CODE.UNKNOW_VALUE,
-          req.method,
-          req.url,
-          sprintf(ErrorMessage.SEMESTER_NOT_FOUND_ERROR, id),
-        );
-        //#endregion
-      }
+      const result = await unlinkSemester(
+        id,
+        user_id,
+        this._semesterService,
+        req,
+      );
+
+      //#region Generate response
+      if (result instanceof HttpException) throw result;
+      else return result;
+      //#endregion
       //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');

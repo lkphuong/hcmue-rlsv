@@ -13,9 +13,9 @@ export class SemesterDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),
   })
-  @LengthValidator(1, 500, {
+  @LengthValidator(1, 255, {
     message: (arg) =>
-      generateValidationMessage(arg, '[Học kì] độ dài tối đa 500 kí tự.'),
+      generateValidationMessage(arg, '[Học kì] độ dài tối đa 255 kí tự.'),
   })
   name: string;
 }

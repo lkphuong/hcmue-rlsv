@@ -25,13 +25,13 @@ export class SemesterService {
         .leftJoinAndSelect(
           'semester.forms',
           'form',
-          'form.semester_id = semester.id AND form.deleted = 0',
+          `form.semester_id = semester.id AND 
+          form.deleted = 0`,
         )
         .where('semester.id = :id', { id })
         .andWhere('semester.deleted = :deleted', { deleted: false });
 
       const semester = await conditions.getOne();
-
       return semester || null;
     } catch (e) {
       this._logger.writeLog(
@@ -89,11 +89,10 @@ export class SemesterService {
     try {
       const conditions = this._semesterRepository
         .createQueryBuilder('semester')
-        .where('semester.name = :name', { name })
+        .where('LOWER(semester.name) = :name', { name: name.toLowerCase() })
         .andWhere('semester.deleted = :deleted', { deleted: false });
 
       const semester = await conditions.getOne();
-
       return semester || null;
     } catch (e) {
       this._logger.writeLog(
@@ -114,8 +113,8 @@ export class SemesterService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
-      semester = await manager.save(semester);
 
+      semester = await manager.save(semester);
       return semester || null;
     } catch (e) {
       this._logger.writeLog(
@@ -137,6 +136,7 @@ export class SemesterService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
+
       const result = await manager.update(
         SemesterEntity,
         { id: semester_id },

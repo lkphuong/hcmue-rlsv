@@ -13,27 +13,23 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 
-import { generateFailedResponse } from '../utils';
-import { sprintf } from 'src/utils';
+import { createAcademic, unlinkAcademic } from '../funcs';
+import { generateAcademicsResponse } from '../utils';
 
-import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import {
+  isDuplicated,
+  isUsed,
+  validateAcademicYearId,
+  validateYears,
+} from '../validations';
 
 import { AcademicYearDto } from '../dtos/academic_year.dto';
 
-import {
-  validateAcademicYearHasForm,
-  validateAcademicYearId,
-  validateDuplicateAcademicYear,
-  validateTimeAcademicYear,
-} from '../validations';
-
-import { generateData2Array, generateData2Object } from '../transform';
-
-import { LogService } from '../../log/services/log.service';
 import { AcademicYearService } from '../services/academic_year.service';
+import { LogService } from '../../log/services/log.service';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
-import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { AcademicYearResponse } from '../interfaces/academic_year_response.interface';
 
@@ -41,7 +37,7 @@ import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
 import { Levels } from '../../../constants/enums/level.enum';
-import { ErrorMessage } from '../constants/enums/errors.enum';
+
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
@@ -63,29 +59,28 @@ export class AcademicYearController {
    * @url /api/academic-years/
    * @access private
    * @description Hiển thị danh sách niên khóa
-   * @return HttpResponse<SemesterEntity[]> | null | HttpException
+   * @return HttpResponse<AcademicYearResponse> | HttpException | null
    * @page academic-years
    */
-  @Get()
+  @Get('/')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getAcademicYears(
     @Req() req: Request,
-  ): Promise<HttpResponse<AcademicYearResponse[]> | null | HttpException> {
+  ): Promise<HttpResponse<AcademicYearResponse> | HttpException | null> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ' - ' + null);
+      console.log(req.method + ' - ' + req.url);
 
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
+      //#region Get academic-years
       const academic_years = await this._academicYearService.getAcademicYears();
+      //#endregion
 
       if (academic_years && academic_years.length > 0) {
-        return {
-          data: generateData2Array(academic_years),
-          errorCode: 0,
-          message: null,
-          errors: null,
-        };
+        //#region Generate response
+        return generateAcademicsResponse(academic_years, req);
+        //#endregion
       } else {
         //#region throw HandlerException
         throw new HandlerException(
@@ -120,23 +115,25 @@ export class AcademicYearController {
    * @param to
    * @description Tạo mới niên khóa
    * @return HttpResponse<AcademicYearResponse> | HttpException
-   * @page academic-years
+   * @page academic-years page
    */
-  @Post()
+  @Post('/')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async createAcademicYear(
+  async createAcademic(
     @Body() params: AcademicYearDto,
     @Req() req: Request,
   ): Promise<HttpResponse<AcademicYearResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ' - ' + null);
+      console.log(
+        req.method + ' - ' + req.url + ' - ' + JSON.stringify(params),
+      );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ params: params }),
+        JSON.stringify(params),
       );
 
       //#region Get jwt payload
@@ -148,45 +145,31 @@ export class AcademicYearController {
       //#endregion
 
       //#region Validation
-      let valid: HttpException | null = null;
-      //#region  Validate time
-      valid = validateTimeAcademicYear(from, to, req);
+      //#region  Validate years
+      let valid = validateYears(from, to, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
+
       //#region Validate name
-      valid = await validateDuplicateAcademicYear(
+      valid = await isDuplicated(from, to, this._academicYearService, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Create academic-year
+      const result = await createAcademic(
         from,
         to,
+        user_id,
         this._academicYearService,
         req,
       );
-      if (valid instanceof HttpException) throw valid;
+
+      //#region Generate response
+      if (result instanceof HttpException) throw result;
+      else return result;
       //#endregion
       //#endregion
-
-      //#region Create Academic Year
-      const academic_service = new AcademicYearEntity();
-      academic_service.name = `${from}-${to}`;
-      academic_service.active = true;
-      academic_service.created_at = new Date();
-      academic_service.created_by = user_id;
-
-      const result = await this._academicYearService.add(academic_service);
-      //#endregion
-
-      if (result) {
-        return {
-          data: generateData2Object(result),
-          errorCode: 0,
-          message: null,
-          errors: null,
-        };
-      } else {
-        throw generateFailedResponse(
-          req,
-          ErrorMessage.OPERATOR_ACADEMIC_YEAR_ERROR,
-        );
-      }
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -209,11 +192,11 @@ export class AcademicYearController {
    * @param id
    * @description Xóa niên khóa
    * @return HttpResponse<AcademicYearResponse> | HttpException
-   * @page academic-years
+   * @page academic-years page
    */
   @Delete(':id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async unlinkAcademicYear(
+  async unlinkAcademic(
     @Param('id') id: number,
     @Req() req: Request,
   ): Promise<HttpResponse<AcademicYearResponse> | HttpException> {
@@ -221,14 +204,14 @@ export class AcademicYearController {
       console.log('----------------------------------------------------------');
       console.log(
         req.method + ' - ' + req.url,
-        JSON.stringify({ academic_year: id }),
+        JSON.stringify({ academic_id: id }),
       );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ academic_year: id }),
+        JSON.stringify({ academic_id: id }),
       );
 
       //#region Get jwt payload
@@ -236,53 +219,29 @@ export class AcademicYearController {
       //#endregion
 
       //#region Validation
-
-      //#region Validate ID
-      const valid_id = validateAcademicYearId(id, req);
-      if (valid_id instanceof HttpException) throw valid_id;
+      //#region Validate academic_id
+      let valid = validateAcademicYearId(id, req);
+      if (valid instanceof HttpException) throw valid;
       //#endregion
 
-      //#region Validate academic of form
-      const valid = await validateAcademicYearHasForm(
-        id,
-        this._academicYearService,
-        req,
-      );
+      //#region Validate check if academic-year has used in any form
+      valid = await isUsed(id, this._academicYearService, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
       //#endregion
 
-      //#region  Unlink academic year
-      const academic_year = await this._academicYearService.getAcademicYearById(
+      //#region  Unlink academic-year
+      const result = await unlinkAcademic(
         id,
+        user_id,
+        this._academicYearService,
+        req,
       );
 
-      if (academic_year) {
-        const result = await this._academicYearService.unlink(id, user_id);
-        if (result) {
-          return {
-            data: generateData2Object(academic_year),
-            errorCode: 0,
-            message: null,
-            errors: null,
-          };
-        } else {
-          throw generateFailedResponse(
-            req,
-            ErrorMessage.OPERATOR_ACADEMIC_YEAR_ERROR,
-          );
-        }
-      } else {
-        //#region throw HandleException
-        throw new UnknownException(
-          id,
-          DATABASE_EXIT_CODE.UNKNOW_VALUE,
-          req.method,
-          req.url,
-          sprintf(ErrorMessage.ACADEMIC_YEAR_NOT_FOUND_ERROR, id),
-        );
-        //#endregion
-      }
+      //#region Generate response
+      if (result instanceof HttpException) throw result;
+      else return result;
+      //#endregion
       //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');

@@ -17,7 +17,5 @@ export const modules = [
 ];
 
 export const controllers = [];
-
 export const providers = [UserService];
-
 export const exporteds = [UserService];

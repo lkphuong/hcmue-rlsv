@@ -86,6 +86,7 @@ export class FormService {
       const forms = await conditions
         .orderBy('form.created_at', 'DESC')
         .getMany();
+
       return forms || null;
     } catch (e) {
       this._logger.writeLog(

@@ -7,4 +7,4 @@ import { controllers, exporteds, modules, providers } from './class.imports';
   providers: providers,
   exports: exporteds,
 })
-export class ClassModuel {}
+export class ClassModule {}

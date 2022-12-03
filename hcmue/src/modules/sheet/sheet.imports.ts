@@ -6,7 +6,7 @@ import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 import { UserModule } from '../user/user.module';
 import { AcademicYearModule } from '../academic-year/academic_year.module';
-import { ClassModuel } from '../class/class.module';
+import { ClassModule } from '../class/class.module';
 import { EvaluationModule } from '../evaluation/evaluation.module';
 import { HeaderModule } from '../header/header.modules';
 import { KModule } from '../k/k.module';
@@ -26,7 +26,7 @@ export const modules = [
   TypeOrmModule.forFeature([SheetEntity]),
   LogModule,
   AcademicYearModule,
-  ClassModuel,
+  ClassModule,
   DepartmentModule,
   EvaluationModule,
   FormModule,

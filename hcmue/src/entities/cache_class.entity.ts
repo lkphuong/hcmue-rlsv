@@ -57,7 +57,7 @@ export class CacheClassEntity extends RootEntity {
       referencedColumnName: 'id',
     },
   ])
-  level: LevelEntity;
+  level: LevelEntity | null;
 
   // Tổng số đánh giá theo xếp loại
   @Column('int', {

@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+
+import { convertString2ObjectId } from '../../../utils';
 
 import { LogService } from '../../log/services/log.service';
 
 import { ClassDocument, Class } from '../../../schemas/class.schema';
 
-import { convertString2ObjectId } from 'src/utils';
-
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+
 @Injectable()
 export class ClassService {
   constructor(
@@ -17,6 +18,24 @@ export class ClassService {
     private readonly _classModel: Model<ClassDocument>,
     private _logger: LogService,
   ) {}
+
+  async getClasses(ids: Types.ObjectId[]): Promise<Class[] | null> {
+    try {
+      const results = await this._classModel.find({
+        _id: { $in: ids },
+      });
+
+      return results || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ClassService.getClasses()',
+        e,
+      );
+      return null;
+    }
+  }
 
   async getClassesByDepartmentId(
     department_id: string,

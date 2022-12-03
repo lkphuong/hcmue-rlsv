@@ -1,5 +1,4 @@
 # Các table phase-1
-
 - academic_year_classes
 - academic_years
 - approvals
@@ -20,16 +19,20 @@
 - titles
 
 # Các trigger được thêm vào
+- tg_add_sheets_tbl (tự động insert to "approvals" trạng thái đánh giá của sinh viên, lớp & khoa theo "sheet_id")
 
-- tg_add_sheets_tbl
+- tg_update_sheets_tbl (tính tổng xếp loại sinh viên theo niên khóa, học kì, khoa & lớp)
 
 # Các store_procedures được thêm vào
+- sp_generate_headers (clone headers from source_form to target_form)
 
-- sp_generate_headers
-- sp_generate_items
-- sp_generate_options
-- sp_generate_titles
-- sp_multiple_approval
+- sp_generate_titles (clone titles from source_form to target_form)
+
+- sp_generate_items (clone items from source_form to target_form)
+
+- sp_generate_options (clone options from source_form to target_form)
+
+- sp_multiple_approval (cập nhật điểm đánh giá của lớp (hoặc sinh viên) qua điểm đánh giá của khoa cùng lúc nhiều phiếu (chỉ áp dụng đối với tài khoản của khoa))
 
 # docker build --no-cache -t hoanglong1011/hcmue:1.1 -t hoanglong1011/hcmue:latest .
 

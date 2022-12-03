@@ -11,11 +11,12 @@ import { SharedModule } from './modules/shared/shared.module';
 
 import { AcademicYearModule } from './modules/academic-year/academic_year.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { ClassModuel } from './modules/class/class.module';
+import { ClassModule } from './modules/class/class.module';
 import { EvaluationModule } from './modules/evaluation/evaluation.module';
 import { FormModule } from './modules/form/form.module';
 import { HeaderModule } from './modules/header/header.modules';
 import { LevelModule } from './modules/level/level.module';
+import { ReportModule } from './modules/report/report.module';
 import { RoleModule } from './modules/role/role.module';
 import { SemesterModule } from './modules/semester/semester.module';
 import { SheetModule } from './modules/sheet/sheet.module';
@@ -41,15 +42,15 @@ export const modules = [
     inject: [ConfigurationService],
     useFactory: mongoFactory,
   }),
-
-  LogModule,
   AcademicYearModule,
   AuthModule,
-  ClassModuel,
+  ClassModule,
   EvaluationModule,
   FormModule,
   HeaderModule,
   LevelModule,
+  LogModule,
+  ReportModule,
   RoleModule,
   SemesterModule,
   SheetModule,

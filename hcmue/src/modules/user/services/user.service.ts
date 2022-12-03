@@ -308,11 +308,37 @@ export class UserService {
 
   async getUserById(id: string): Promise<User | null> {
     try {
-      const user = await this._userModule.findOne({
-        _id: convertString2ObjectId(id),
-      });
+      const users = await this._userModule
+        .aggregate<User>([
+          {
+            $match: { _id: convertString2ObjectId(id) },
+          },
+          {
+            $lookup: {
+              from: 'department',
+              localField: 'departmentId',
+              foreignField: '_id',
+              as: 'department',
+            },
+          },
+          {
+            $unwind: '$department',
+          },
+          {
+            $lookup: {
+              from: 'class',
+              localField: 'classId',
+              foreignField: '_id',
+              as: 'class',
+            },
+          },
+          {
+            $unwind: '$class',
+          },
+        ])
+        .exec();
 
-      return user || null;
+      return users && users.length > 0 ? users[0] : null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

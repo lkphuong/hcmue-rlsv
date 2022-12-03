@@ -87,13 +87,13 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { Role } from '../../auth/constants/enums/role.enum';
+import { FormStatus } from '../constants/enums/statuses.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import { FormStatus } from '../constants/enums/statuses.enum';
 
 @Controller('forms')
 export class FormController {

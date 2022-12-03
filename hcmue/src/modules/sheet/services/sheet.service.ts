@@ -20,6 +20,38 @@ export class SheetService {
     private _logger: LogService,
   ) {}
 
+  // async getSheets(
+  //   department_id: string,
+  //   class_id: string,
+  //   semester_id: number,
+  //   academic_id: number,
+  //   status?: number,
+  // ): Promise<SheetEntity[] | null> {
+  //   try {
+  //     const conditions = this._sheetRepository
+  //       .createQueryBuilder('sheet')
+  //       .innerJoin('sheet.semester', 'semester')
+  //       .innerJoin('sheet.academic_year', 'academic_year')
+  //       .leftJoinAndSelect('sheet.level', 'level')
+  //       .where('semester.id = :semester_id', { semester_id })
+  //       .andWhere('academic_year.id = :academic_id', { academic_id })
+  //       .andWhere('sheet.department_id = :department_id', { department_id })
+  //       .andWhere('sheet.class_id = :class_id', { class_id })
+  //       .andWhere('sheet.deleted = :deleted', { deleted: false })
+  //       .andWhere('semester.deleted = :deleted', { deleted: false })
+  //       .where(
+  //         new Brackets((qb) => {
+  //           qb.where('level.deleted = :deleted', { deleted: null });
+  //           qb.orWhere('level.deleted IS NULL');
+  //         }),
+  //       )
+
+  //       if(status) {
+  //         conditions = conditions.andWhere()
+  //       }
+  //   } catch (e) {}
+  // }
+
   async getSheetsByUserId(user_id: string): Promise<SheetEntity[] | null> {
     try {
       const conditions = await this._sheetRepository
@@ -80,8 +112,6 @@ export class SheetService {
         .andWhere('sheet.deleted = :deleted', { deleted: false });
 
       const status = this.generateStatus(role);
-      console.log('role: ', role);
-      console.log('status: ', status);
       conditions = conditions.andWhere('sheet.status >= :status', { status });
 
       const sheets = await conditions

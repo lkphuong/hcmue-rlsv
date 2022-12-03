@@ -326,7 +326,7 @@ export class UserService {
           },
           {
             $lookup: {
-              from: 'class',
+              from: 'classs',
               localField: 'classId',
               foreignField: '_id',
               as: 'class',
@@ -337,6 +337,8 @@ export class UserService {
           },
         ])
         .exec();
+
+      console.log('user: ', users);
 
       return users && users.length > 0 ? users[0] : null;
     } catch (e) {

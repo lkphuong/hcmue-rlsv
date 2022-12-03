@@ -143,6 +143,7 @@ export class SheetController {
 
       //#region Get sheet
       const sheet = await this._sheetService.getSheetById(id);
+      console.log('sheet: ', sheet);
       //#endregion
       if (sheet) {
         //#region Generate response
@@ -358,7 +359,7 @@ export class SheetController {
       //#region Get sheets by user
       const sheets = await this._sheetService.getSheetsByUserId(user_id);
       //#endregion
-
+      console.log('sheet: ', sheets);
       if (sheets && sheets.length > 0) {
         //#region Generate response
         return generateUserSheetsResponse(sheets, req);

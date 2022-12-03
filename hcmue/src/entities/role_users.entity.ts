@@ -23,6 +23,20 @@ export class RoleUsersEntity extends RootEntity {
   })
   user_id: string;
 
+  @Column('varchar', {
+    name: 'class_id',
+    nullable: false,
+    length: 24,
+  })
+  class_id: string;
+
+  @Column('varchar', {
+    name: 'department_id',
+    nullable: false,
+    length: 24,
+  })
+  department_id: string;
+
   @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn([
     {

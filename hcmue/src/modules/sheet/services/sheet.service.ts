@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { SheetEntity } from '../../../entities/sheet.entity';
 
@@ -26,9 +26,14 @@ export class SheetService {
         .createQueryBuilder('sheet')
         .innerJoinAndSelect('sheet.semester', 'semester')
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
-        .innerJoinAndSelect('sheet.level', 'level')
-        .where('sheet.user_id = :user_id', { user_id })
-        .andWhere('level.deleted = :deleted', { deleted: false })
+        .leftJoinAndSelect('sheet.level', 'level')
+        .where(
+          new Brackets((qb) => {
+            qb.where('level.deleted = :deleted', { deleted: null });
+            qb.orWhere('level.deleted IS NULL');
+          }),
+        )
+        .andWhere('sheet.user_id = :user_id', { user_id })
         .andWhere('academic_year.deleted = :deleted', { deleted: false })
         .andWhere('semester.deleted = :deleted', { deleted: false })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
@@ -60,13 +65,14 @@ export class SheetService {
         .createQueryBuilder('sheet')
         .innerJoin('sheet.semester', 'semester')
         .innerJoin('sheet.academic_year', 'academic_year')
-        .leftJoinAndSelect(
-          'sheet.level',
-          'level',
-          `level.id = sheet.level_id AND 
-          level.deleted = 0`,
+        .leftJoinAndSelect('sheet.level', 'level')
+        .where(
+          new Brackets((qb) => {
+            qb.where('level.deleted = :deleted', { deleted: null });
+            qb.orWhere('level.deleted IS NULL');
+          }),
         )
-        .where('academic_year.id = :academic_id', { academic_id })
+        .andWhere('academic_year.id = :academic_id', { academic_id })
         .andWhere('semester.id = :semester_id', { semester_id })
         .andWhere('sheet.class_id = :class_id', { class_id })
         .andWhere('academic_year.deleted = :deleted', { deleted: false })
@@ -99,7 +105,7 @@ export class SheetService {
         .createQueryBuilder('sheet')
         .innerJoinAndSelect('sheet.semester', 'semester')
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
-        .innerJoinAndSelect('sheet.level', 'level')
+        .leftJoinAndSelect('sheet.level', 'level')
         .innerJoinAndSelect('sheet.form', 'form')
         .leftJoinAndSelect(
           'form.headers',
@@ -107,7 +113,13 @@ export class SheetService {
           'headers.form_id = form.id AND headers.deleted = :deleted',
           { deleted: false },
         )
-        .where('sheet.id = :id', { id })
+        .where(
+          new Brackets((qb) => {
+            qb.where('level.deleted = :deleted', { deleted: null });
+            qb.orWhere('level.deleted IS NULL');
+          }),
+        )
+        .andWhere('sheet.id = :id', { id })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
 
       const sheet = await conditions.getOne();
@@ -139,6 +151,40 @@ export class SheetService {
         Levels.ERROR,
         Methods.INSERT,
         'SheetService.update()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async unapproved(
+    sheet_id: number,
+    user_id: string,
+    manager?: EntityManager,
+  ): Promise<boolean | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const result = await manager.update(
+        SheetEntity,
+        { id: sheet_id },
+        {
+          status: 5,
+          graded: 0,
+          level: null,
+          updated_at: new Date(),
+          updated_by: user_id,
+        },
+      );
+
+      return result.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'SheetService.unapproved()',
         e,
       );
       return null;

@@ -1,10 +1,11 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
-import { IsNumberValidator } from '../../../validators/number.validator';
+import { BetweenValidator } from 'src/validators/between.validator';
 import { MinValidator } from '../../../validators/min.validator';
+import { IsNumberValidator } from '../../../validators/number.validator';
 
 export class ClassMarkDtos {
   @IsNotEmpty({
@@ -83,6 +84,22 @@ export class UpdateClassMarkDto {
   })
   role_id: number;
 
+  @IsOptional()
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Bạn vui lòng chọn [trạng thái phê duyệt].',
+      ),
+  })
+  @Transform((params) => parseInt(params.value) ?? 1)
+  @BetweenValidator(0, 1, {
+    message: (arg) =>
+      generateValidationMessage(arg, '[Trạng thái phê duyệt] bằng 0 hoặc 1.'),
+  })
+  graded: number;
+
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => ItemsDto)
   data: ItemsDto[];

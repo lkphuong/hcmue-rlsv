@@ -193,10 +193,12 @@ export const generateData2Object = async (
           id: convertObjectId2String(k._id),
           name: k.name,
         },
-        level: {
-          id: sheet.level.id,
-          name: sheet.level.name,
-        },
+        level: sheet.level
+          ? {
+              id: sheet.level.id,
+              name: sheet.level.name,
+            }
+          : null,
         status: sheet.status,
         sum_of_personal_marks: sheet.sum_of_personal_marks,
         sum_of_class_marks: sheet.sum_of_class_marks,

@@ -83,7 +83,9 @@ export class FormService {
         .andWhere('semester.deleted = :deleted', { deleted: false })
         .andWhere('form.deleted = :deleted', { deleted: false });
 
-      const forms = await conditions.getMany();
+      const forms = await conditions
+        .orderBy('form.created_at', 'DESC')
+        .getMany();
       return forms || null;
     } catch (e) {
       this._logger.writeLog(

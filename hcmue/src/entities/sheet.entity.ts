@@ -96,6 +96,14 @@ export class SheetEntity extends RootEntity {
   })
   status: number;
 
+  // 0. Không xếp loại | 1, Xếp loại
+  @Column('tinyint', {
+    name: 'graded',
+    nullable: false,
+    default: 0,
+  })
+  graded: number;
+
   @Column('int', {
     name: 'sum_of_personal_marks',
     nullable: true,

@@ -204,7 +204,7 @@ export const generateClassMarks = async (
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Get params
-  const { role_id } = params;
+  const { role_id, graded } = params;
   //#endregion
 
   //#region Validation
@@ -219,72 +219,11 @@ export const generateClassMarks = async (
   //#endregion
   //#endregion
 
-  // Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
-  await query_runner.connect();
+  if (!graded) {
+    //#region Update not approval sheet
+    const result = await sheet_service.unapproved(sheet_id, user_id);
 
-  try {
-    // Start transaction
-    await query_runner.startTransaction();
-
-    //#region Update sheet
-    sheet = await generateUpdateSheet(
-      user_id,
-      SheetCategory.CLASS,
-      SheetStatus.WAITING_DEPARTMENT,
-      params,
-      sheet,
-      header_service,
-      level_service,
-      sheet_service,
-      query_runner,
-      req,
-    );
-    //#endregion
-
-    if (sheet instanceof HttpException) throw sheet;
-    else if (sheet) {
-      //#region Update class evaluation
-      const evaluations = await generateUpdateClassEvaluation(
-        sheet_id,
-        user_id,
-        params,
-        sheet,
-        evaluation_service,
-        header_service,
-        item_service,
-        option_service,
-        query_runner,
-        req,
-      );
-
-      //#region throw HandlerException
-      if (evaluations instanceof HttpException) throw evaluations;
-      else if (evaluations) sheet.evaluations = evaluations;
-      else {
-        throw generateFailedResponse(
-          req,
-          ErrorMessage.OPERATOR_EVALUATION_ERROR,
-        );
-      }
-      //#endregion
-      //#endregion
-
-      //#region Update sheet relation
-      // sheet = await query_runner.manager.save(sheet);
-      // if (!sheet) {
-      //   //#region throw HandlerException
-      //   throw new HandlerException(
-      //     DATABASE_EXIT_CODE.OPERATOR_ERROR,
-      //     req.method,
-      //     req.url,
-      //     ErrorMessage.OPERATOR_SHEET_ERROR,
-      //     HttpStatus.EXPECTATION_FAILED,
-      //   );
-      //   //#endregion
-      // }
-      //#endregion
-
+    if (result) {
       //#region Generate response
       return await generateSuccessResponse(
         sheet,
@@ -292,35 +231,118 @@ export const generateClassMarks = async (
         department_service,
         k_service,
         user_service,
-        query_runner,
+        null,
         req,
       );
       //#endregion
     } else {
-      //#region throw HandlerException
-      throw generateFailedResponse(req, ErrorMessage.OPERATOR_SHEET_ERROR);
-      //#endregion
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_EVALUATION_ERROR);
     }
-  } catch (err) {
-    // Rollback transaction
-    await query_runner.rollbackTransaction();
+    //#endregion
+  } else {
+    // Make the QueryRunner
+    const query_runner = data_source.createQueryRunner();
+    await query_runner.connect();
 
-    console.log('--------------------------------------------------------');
-    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+    try {
+      // Start transaction
+      await query_runner.startTransaction();
 
-    if (err instanceof HttpException) return err;
-    else {
-      //#region throw HandlerException
-      return new HandlerException(
-        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-        req.method,
-        req.url,
+      //#region Update sheet
+      sheet = await generateUpdateSheet(
+        user_id,
+        SheetCategory.CLASS,
+        SheetStatus.WAITING_DEPARTMENT,
+        params,
+        sheet,
+        header_service,
+        level_service,
+        sheet_service,
+        query_runner,
+        req,
       );
       //#endregion
+
+      if (sheet instanceof HttpException) throw sheet;
+      else if (sheet) {
+        //#region Update class evaluation
+        const evaluations = await generateUpdateClassEvaluation(
+          sheet_id,
+          user_id,
+          params,
+          sheet,
+          evaluation_service,
+          header_service,
+          item_service,
+          option_service,
+          query_runner,
+          req,
+        );
+
+        //#region throw HandlerException
+        if (evaluations instanceof HttpException) throw evaluations;
+        else if (evaluations) sheet.evaluations = evaluations;
+        else {
+          throw generateFailedResponse(
+            req,
+            ErrorMessage.OPERATOR_EVALUATION_ERROR,
+          );
+        }
+        //#endregion
+        //#endregion
+
+        //#region Update sheet relation
+        // sheet = await query_runner.manager.save(sheet);
+        // if (!sheet) {
+        //   //#region throw HandlerException
+        //   throw new HandlerException(
+        //     DATABASE_EXIT_CODE.OPERATOR_ERROR,
+        //     req.method,
+        //     req.url,
+        //     ErrorMessage.OPERATOR_SHEET_ERROR,
+        //     HttpStatus.EXPECTATION_FAILED,
+        //   );
+        //   //#endregion
+        // }
+        //#endregion
+
+        //#region Generate response
+        return await generateSuccessResponse(
+          sheet,
+          class_service,
+          department_service,
+          k_service,
+          user_service,
+          query_runner,
+          req,
+        );
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw generateFailedResponse(req, ErrorMessage.OPERATOR_SHEET_ERROR);
+        //#endregion
+      }
+    } catch (err) {
+      // Rollback transaction
+      await query_runner.rollbackTransaction();
+
+      console.log('--------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) return err;
+      else {
+        //#region throw HandlerException
+        return new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+        //#endregion
+      }
+    } finally {
+      // Release transaction
+      await query_runner.release();
     }
-  } finally {
-    // Release transaction
-    await query_runner.release();
   }
 };
 
@@ -342,7 +364,7 @@ export const generateDepartmentMarks = async (
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Get params
-  const { role_id } = params;
+  const { role_id, graded } = params;
   //#endregion
 
   //#region Validation
@@ -357,72 +379,11 @@ export const generateDepartmentMarks = async (
   //#endregion
   //#endregion
 
-  // Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
-  await query_runner.connect();
+  if (!graded) {
+    //#region Update not approval sheet
+    const result = await sheet_service.unapproved(sheet_id, user_id);
 
-  try {
-    // Start transaction
-    await query_runner.startTransaction();
-
-    //#region Update sheet
-    sheet = await generateUpdateSheet(
-      user_id,
-      SheetCategory.DEPARTMENT,
-      SheetStatus.SUCCESS,
-      params,
-      sheet,
-      header_service,
-      level_service,
-      sheet_service,
-      query_runner,
-      req,
-    );
-    //#endregion
-
-    if (sheet instanceof HttpException) throw sheet;
-    else if (sheet) {
-      //#region Update department evaluation
-      const evaluations = await generateUpdateDepartmentEvaluation(
-        sheet_id,
-        user_id,
-        params,
-        sheet,
-        evaluation_service,
-        header_service,
-        item_service,
-        option_service,
-        query_runner,
-        req,
-      );
-
-      //#region throw HandlerException
-      if (evaluations instanceof HttpException) throw evaluations;
-      else if (evaluations) sheet.evaluations = evaluations;
-      else {
-        throw generateFailedResponse(
-          req,
-          ErrorMessage.OPERATOR_EVALUATION_ERROR,
-        );
-      }
-      //#endregion
-      //#endregion
-
-      //#region Update sheet relation
-      // sheet = await query_runner.manager.save(sheet);
-      // if (!sheet) {
-      //   //#region throw HandlerException
-      //   throw new HandlerException(
-      //     DATABASE_EXIT_CODE.OPERATOR_ERROR,
-      //     req.method,
-      //     req.url,
-      //     ErrorMessage.OPERATOR_SHEET_ERROR,
-      //     HttpStatus.EXPECTATION_FAILED,
-      //   );
-      //   //#endregion
-      // }
-      //#endregion
-
+    if (result) {
       //#region Generate response
       return await generateSuccessResponse(
         sheet,
@@ -430,35 +391,118 @@ export const generateDepartmentMarks = async (
         department_service,
         k_service,
         user_service,
-        query_runner,
+        null,
         req,
       );
       //#endregion
     } else {
-      //#region throw HandlerException
-      throw generateFailedResponse(req, ErrorMessage.OPERATOR_SHEET_ERROR);
-      //#endregion
+      throw generateFailedResponse(req, ErrorMessage.OPERATOR_EVALUATION_ERROR);
     }
-  } catch (err) {
-    // Rollback transaction
-    await query_runner.rollbackTransaction();
+    //#endregion
+  } else {
+    // Make the QueryRunner
+    const query_runner = data_source.createQueryRunner();
+    await query_runner.connect();
 
-    console.log('--------------------------------------------------------');
-    console.log(req.method + ' - ' + req.url + ': ' + err.message);
+    try {
+      // Start transaction
+      await query_runner.startTransaction();
 
-    if (err instanceof HttpException) return err;
-    else {
-      //#region throw HandlerException
-      return new HandlerException(
-        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-        req.method,
-        req.url,
+      //#region Update sheet
+      sheet = await generateUpdateSheet(
+        user_id,
+        SheetCategory.DEPARTMENT,
+        SheetStatus.SUCCESS,
+        params,
+        sheet,
+        header_service,
+        level_service,
+        sheet_service,
+        query_runner,
+        req,
       );
       //#endregion
+
+      if (sheet instanceof HttpException) throw sheet;
+      else if (sheet) {
+        //#region Update department evaluation
+        const evaluations = await generateUpdateDepartmentEvaluation(
+          sheet_id,
+          user_id,
+          params,
+          sheet,
+          evaluation_service,
+          header_service,
+          item_service,
+          option_service,
+          query_runner,
+          req,
+        );
+
+        //#region throw HandlerException
+        if (evaluations instanceof HttpException) throw evaluations;
+        else if (evaluations) sheet.evaluations = evaluations;
+        else {
+          throw generateFailedResponse(
+            req,
+            ErrorMessage.OPERATOR_EVALUATION_ERROR,
+          );
+        }
+        //#endregion
+        //#endregion
+
+        //#region Update sheet relation
+        // sheet = await query_runner.manager.save(sheet);
+        // if (!sheet) {
+        //   //#region throw HandlerException
+        //   throw new HandlerException(
+        //     DATABASE_EXIT_CODE.OPERATOR_ERROR,
+        //     req.method,
+        //     req.url,
+        //     ErrorMessage.OPERATOR_SHEET_ERROR,
+        //     HttpStatus.EXPECTATION_FAILED,
+        //   );
+        //   //#endregion
+        // }
+        //#endregion
+
+        //#region Generate response
+        return await generateSuccessResponse(
+          sheet,
+          class_service,
+          department_service,
+          k_service,
+          user_service,
+          query_runner,
+          req,
+        );
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw generateFailedResponse(req, ErrorMessage.OPERATOR_SHEET_ERROR);
+        //#endregion
+      }
+    } catch (err) {
+      // Rollback transaction
+      await query_runner.rollbackTransaction();
+
+      console.log('--------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) return err;
+      else {
+        //#region throw HandlerException
+        return new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+        //#endregion
+      }
+    } finally {
+      // Release transaction
+      await query_runner.release();
     }
-  } finally {
-    // Release transaction
-    await query_runner.release();
   }
 };
 

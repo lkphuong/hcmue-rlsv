@@ -84,7 +84,7 @@ export interface SheetDetailsResponse extends MarkResponse {
   semester: BaseResponse;
   academic: BaseResponse;
   k: BaseResponse;
-  level: BaseResponse;
+  level?: BaseResponse;
   status: number;
   headers: BaseResponse[];
 }

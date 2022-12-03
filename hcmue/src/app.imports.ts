@@ -16,6 +16,7 @@ import { EvaluationModule } from './modules/evaluation/evaluation.module';
 import { FormModule } from './modules/form/form.module';
 import { HeaderModule } from './modules/header/header.modules';
 import { LevelModule } from './modules/level/level.module';
+import { RoleModule } from './modules/role/role.module';
 import { SemesterModule } from './modules/semester/semester.module';
 import { SheetModule } from './modules/sheet/sheet.module';
 import { TitleModule } from './modules/title/title.module';
@@ -45,12 +46,13 @@ export const modules = [
   AcademicYearModule,
   AuthModule,
   ClassModuel,
-  LevelModule,
-  SemesterModule,
-  SheetModule,
-  UserModule,
   EvaluationModule,
   FormModule,
   HeaderModule,
+  LevelModule,
+  RoleModule,
+  SemesterModule,
+  SheetModule,
   TitleModule,
+  UserModule,
 ];

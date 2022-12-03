@@ -34,7 +34,7 @@ export const convertString2Boolean = (raw: string) => {
   return raw === 'true' || raw === '1';
 };
 
-export const convertObjectId2String = (raw: Types.ObjectId) => {
+export const convertObjectId2String = (raw: any) => {
   return raw.toString();
 };
 

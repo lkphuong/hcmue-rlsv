@@ -79,7 +79,6 @@ export class ClassController {
       const academic_year =
         await this._academicYearService.getClassesByAcademic(academic_year_id);
       //#endregion
-
       if (
         academic_year &&
         academic_year.classes &&

@@ -80,7 +80,8 @@ export class SheetService {
         .andWhere('sheet.deleted = :deleted', { deleted: false });
 
       const status = this.generateStatus(role);
-
+      console.log('role: ', role);
+      console.log('status: ', status);
       conditions = conditions.andWhere('sheet.status >= :status', { status });
 
       const sheets = await conditions
@@ -115,7 +116,7 @@ export class SheetService {
         )
         .where(
           new Brackets((qb) => {
-            qb.where('level.deleted = :deleted', { deleted: null });
+            qb.where('level.deleted = :deleted', { deleted: false });
             qb.orWhere('level.deleted IS NULL');
           }),
         )
@@ -171,7 +172,7 @@ export class SheetService {
         SheetEntity,
         { id: sheet_id },
         {
-          status: 5,
+          status: SheetStatus.SUCCESS,
           graded: 0,
           level: null,
           updated_at: new Date(),
@@ -192,8 +193,10 @@ export class SheetService {
   }
 
   generateStatus = (role: RoleCode) => {
+    console.log('roleee: ', role);
     switch (role) {
-      case RoleCode.ADMIN | RoleCode.STUDENT:
+      case RoleCode.ADMIN:
+      case RoleCode.STUDENT:
         return SheetStatus.WAITING_STUDENT;
       case RoleCode.CLASS:
         return SheetStatus.WAITING_CLASS;

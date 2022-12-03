@@ -22,6 +22,22 @@ export class DepartmentService {
     private _logger: LogService,
   ) {}
 
+  async getDepartments(): Promise<Department[] | null> {
+    try {
+      const departments = await this._departmentModel.find();
+
+      return departments || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'DepartmentService.getDepartments()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getDepartmentById(department_id: string): Promise<Department | null> {
     try {
       const department = await this._departmentModel.findOne({

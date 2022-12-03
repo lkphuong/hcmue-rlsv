@@ -10,6 +10,19 @@ import { IsNumberValidator } from '../../../validators/number.validator';
 export class ClassMarkDtos {
   @IsNotEmpty({
     message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [hạng mục đánh giá].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [hạng mục đánh giá] tối thiểu bằng 0.',
+      ),
+  })
+  header_id: number;
+
+  @IsNotEmpty({
+    message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [nội dung chấm điểm].'),
   })
   @MinValidator(0, {
@@ -53,24 +66,14 @@ export class ClassMarkDtos {
       ),
   })
   class_mark_level: number;
-}
 
-export class ItemsDto {
-  @IsNotEmpty({
+  @IsOptional()
+  @Transform((params) => params.value ?? 0)
+  @BetweenValidator(0, 1, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng chọn [hạng mục đánh giá].'),
+      generateValidationMessage(arg, 'Giá trị [deleted] không hợp lệ.'),
   })
-  @MinValidator(0, {
-    message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [hạng mục đánh giá] tối thiểu bằng 0.',
-      ),
-  })
-  header_id: number;
-  @ValidateNested({ each: true })
-  @Type(() => ClassMarkDtos)
-  items: ClassMarkDtos[];
+  deleted?: number = 0;
 }
 
 export class UpdateClassMarkDto {
@@ -97,10 +100,10 @@ export class UpdateClassMarkDto {
     message: (arg) =>
       generateValidationMessage(arg, '[Trạng thái phê duyệt] bằng 0 hoặc 1.'),
   })
-  graded: number;
+  graded?: number = 1;
 
   @IsOptional()
   @ValidateNested({ each: true })
-  @Type(() => ItemsDto)
-  data: ItemsDto[];
+  @Type(() => ClassMarkDtos)
+  data: ClassMarkDtos[];
 }

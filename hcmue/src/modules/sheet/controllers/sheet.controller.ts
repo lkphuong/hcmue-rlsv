@@ -444,14 +444,10 @@ export class SheetController {
       );
       //#endregion
 
-      if (sheets && sheets.length > 0) {
+      const users = await this._userService.getUsersByClass(class_id, input);
+      if (sheets && sheets.length > 0 && users) {
         //#region Generate response
-        return await generateClassSheetsResponse(
-          input,
-          sheets,
-          this._userService,
-          req,
-        );
+        return await generateClassSheetsResponse(sheets, users, req);
         //#endregion
       } else {
         //#region throw HandlerException

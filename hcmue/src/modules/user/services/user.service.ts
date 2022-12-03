@@ -173,6 +173,7 @@ export class UserService {
     try {
       let result;
       if (input) {
+        console.log('check 2');
         result = await this._userModule.aggregate([
           {
             $match: {
@@ -188,28 +189,6 @@ export class UserService {
                   },
                 },
               ],
-              // $and: [
-              //   {
-              //     classId: convertString2ObjectId(class_id),
-              //   },
-              //   {
-              //     departmentId: convertString2ObjectId(department_id),
-              //   },
-              //   {
-              //     $or: [
-              //       {
-              //         username: {
-              //           $regex: new RegExp(input, 'i'),
-              //         },
-              //       },
-              //       {
-              //         fullname: {
-              //           $regex: new RegExp(input, 'i'),
-              //         },
-              //       },
-              //     ],
-              //   },
-              // ],
             },
           },
           {
@@ -234,11 +213,11 @@ export class UserService {
             $count: 'count',
           },
         ]);
-
-        const count = result[0].count ?? 0;
-
-        return count || null;
       }
+
+      const count = result[0].count ?? 0;
+
+      return count || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
@@ -263,6 +242,64 @@ export class UserService {
         Levels.ERROR,
         Methods.SELECT,
         'UserService.getUserByInput()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getUsersByClass(
+    class_id: string,
+    input?: string,
+  ): Promise<User[] | null> {
+    try {
+      let users: User[] | null = null;
+      if (input) {
+        users = await this._userModule.aggregate([
+          {
+            $match: {
+              $and: [
+                {
+                  classId: convertString2ObjectId(class_id),
+                },
+                {
+                  $or: [
+                    {
+                      username: {
+                        $regex: new RegExp(input, 'i'),
+                      },
+                    },
+                    {
+                      fullname: {
+                        $regex: new RegExp(input, 'i'),
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ]);
+      } else {
+        users = await this._userModule.aggregate([
+          {
+            $match: {
+              $and: [
+                {
+                  classId: convertString2ObjectId(class_id),
+                },
+              ],
+            },
+          },
+        ]);
+      }
+
+      return users || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.getUsersByClass()',
         e,
       );
       return null;

@@ -30,6 +30,7 @@ export const generateClasses2Array = async (
   academic_year_classes: AcademicYearClassesEntity[] | null,
   class_service: ClassService,
 ) => {
+  console.log('academic_year_classes: ', academic_year_classes);
   if (academic_year_classes && academic_year_classes.length > 0) {
     const payload: ClassResponse[] = [];
 

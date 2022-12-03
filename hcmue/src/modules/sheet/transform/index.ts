@@ -20,6 +20,7 @@ import {
 } from '../interfaces/sheet_response.interface';
 
 import { convertObjectId2String } from '../../../utils';
+import { mapUserForSheet } from '../utils';
 
 export const generateUserSheets = (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -57,27 +58,20 @@ export const generateUserSheets = (sheets: SheetEntity[] | null) => {
 };
 
 export const generateClassSheets = async (
+  users: User[] | null,
   sheets: SheetEntity[] | null,
-  user_service: UserService,
-  input?: string,
 ) => {
   if (sheets && sheets.length > 0) {
     const payload: ClassSheetsResponse[] = [];
-    for (const sheet of sheets) {
-      let result: User = null;
-      if (input) {
-        result = await user_service.getUserByInput(sheet.user_id, input);
-      } else {
-        result = await user_service.getUserById(sheet.user_id);
-      }
-
-      if (result) {
+    for (const user of users) {
+      const sheet = mapUserForSheet(convertObjectId2String(user._id), sheets);
+      if (sheet) {
         const item: ClassSheetsResponse = {
           id: sheet.id,
           user: {
-            id: convertObjectId2String(result._id),
-            fullname: result.fullname,
-            std_code: result.username,
+            id: convertObjectId2String(user._id),
+            fullname: user.fullname,
+            std_code: user.username,
           },
           level: sheet.level
             ? {

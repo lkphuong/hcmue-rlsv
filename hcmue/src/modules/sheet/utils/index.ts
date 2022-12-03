@@ -2,7 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
-import { returnObjects } from '../../../utils';
+import { convertObjectId2String, returnObjects } from '../../../utils';
 
 import { AcademicYearClassesEntity } from '../../../entities/academic_year_classes.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
@@ -32,6 +32,7 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import { User } from 'src/schemas/user.schema';
 
 export const generateClassesResponse = async (
   department_id: string,
@@ -68,17 +69,16 @@ export const generateUserSheetsResponse = (
 };
 
 export const generateClassSheetsResponse = async (
-  input: string,
   sheets: SheetEntity[],
-  user_service: UserService,
+  users: User[],
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', sheets);
+  //console.log('data: ', sheets);
 
   // Transform SheetEntity to ClassSheetsResponse
-  const payload = await generateClassSheets(sheets, user_service, input);
+  const payload = await generateClassSheets(users, sheets);
 
   // Returns data
   return returnObjects(payload);
@@ -192,4 +192,36 @@ export const generateEvaluationsResponse = (
     message: null,
     errors: null,
   };
+};
+
+export const groupItemsByHeader = <T>(
+  data: T[] | null,
+  key: number | string,
+) => {
+  if (data) {
+    const items = data.reduce((r, a) => {
+      r[a[key]] = [...(r[a[key]] || []), a];
+      return r;
+    }, {});
+
+    const results = Object.keys(items).map((key) => [Number(key), items[key]]);
+
+    return results;
+  }
+
+  return null;
+};
+
+export const mapUserForSheet = (
+  user_id: string,
+  sheets: SheetEntity[] | null,
+) => {
+  if (sheets) {
+    const result = sheets.find(
+      (e) => e.user_id == convertObjectId2String(user_id),
+    );
+
+    if (result) return result;
+  }
+  return null;
 };

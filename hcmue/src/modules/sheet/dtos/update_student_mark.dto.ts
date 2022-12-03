@@ -1,12 +1,26 @@
-import { Type } from 'class-transformer';
+import { Transform, Type } from 'class-transformer';
 import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
+import { BetweenValidator } from '../../../validators/between.validator';
 import { IsNumberValidator } from '../../../validators/number.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class StudentMarkDtos {
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [hạng mục đánh giá].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [hạng mục đánh giá] tối thiểu bằng 0.',
+      ),
+  })
+  header_id: number;
+
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [nội dung chấm điểm].'),
@@ -49,24 +63,14 @@ export class StudentMarkDtos {
       ),
   })
   personal_mark_level: number;
-}
 
-export class ItemsDto {
-  @IsNotEmpty({
+  @IsOptional()
+  @Transform((params) => params.value ?? 0)
+  @BetweenValidator(0, 1, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng chọn [hạng mục đánh giá].'),
+      generateValidationMessage(arg, 'Giá trị [deleted] không hợp lệ.'),
   })
-  @MinValidator(0, {
-    message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [hạng mục đánh giá] tối thiểu bằng 0.',
-      ),
-  })
-  header_id: number;
-  @ValidateNested({ each: true })
-  @Type(() => StudentMarkDtos)
-  items: StudentMarkDtos[];
+  deleted?: number = 0;
 }
 
 export class UpdateStudentMarkDto {
@@ -81,6 +85,6 @@ export class UpdateStudentMarkDto {
   role_id: number;
 
   @ValidateNested({ each: true })
-  @Type(() => ItemsDto)
-  data: ItemsDto[];
+  @Type(() => StudentMarkDtos)
+  data: StudentMarkDtos[];
 }

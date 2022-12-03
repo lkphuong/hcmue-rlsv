@@ -56,6 +56,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
+import { validateUserId } from '../validations';
 
 @Controller('roles')
 export class RoleController {
@@ -100,6 +101,9 @@ export class RoleController {
       if (pages === 0) {
         //#region
         const count = await this._userService.count(classes, department, input);
+
+        console.log('count: ', count);
+
         if (count > 0) pages = Math.ceil(count / itemsPerPage);
         //#endregion
       }
@@ -183,6 +187,11 @@ export class RoleController {
         req.url,
         JSON.stringify({ user_id: id, ...params }),
       );
+
+      //#region Validate id
+      const valid = validateUserId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
 
       //#region Get data jwt payload
       const { user_id } = req.user as JwtPayload;

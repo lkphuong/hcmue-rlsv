@@ -72,10 +72,7 @@ export class AcademicYearService {
     try {
       let conditions = await this._academicYearRepository
         .createQueryBuilder('academic_year')
-        .innerJoinAndSelect(
-          'academic_year.academic_year_classes',
-          'academic_year_classes',
-        )
+        .innerJoinAndSelect('academic_year.classes', 'academic_year_classes')
         .where('academic_year_classes.academic_year_id = :academic_year_id', {
           academic_year_id,
         })
@@ -90,6 +87,8 @@ export class AcademicYearService {
           { class_id },
         );
       }
+
+      console.log('sql: ', conditions.getSql());
 
       const academic_year = await conditions.getOne();
       return academic_year || null;

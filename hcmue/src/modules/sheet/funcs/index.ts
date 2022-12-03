@@ -1,9 +1,13 @@
-import { HttpException, HttpStatus } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
 import { sprintf } from '../../../utils';
-import { generateFailedResponse, generateSuccessResponse } from '../utils';
+import {
+  generateFailedResponse,
+  generateSuccessResponse,
+  groupItemsByHeader,
+} from '../utils';
 import { validateMark, validateSheet, validateTime } from '../validations';
 
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
@@ -14,7 +18,10 @@ import {
   UpdateClassMarkDto,
 } from '../dtos/update_class_mark.dto';
 
-import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
+import {
+  UpdateDepartmentMarkDto,
+  DepartmentMarkDtos,
+} from '../dtos/update_department_mark.dto';
 
 import {
   StudentMarkDtos,
@@ -37,6 +44,7 @@ import { SheetDetailsResponse } from '../interfaces/sheet_response.interface';
 
 import { SheetCategory } from '../constants/enums/categories.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { GROUP_KEY } from '../constants';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
@@ -46,6 +54,7 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { OptionEntity } from 'src/entities/option.entity';
 
 export const generatePersonalMarks = async (
   sheet_id: number,
@@ -522,17 +531,21 @@ export const generateUpdateStudentEvaluation = async (
 
   //#region Get params
   const { data } = params;
+  const arr_items = groupItemsByHeader(data, GROUP_KEY);
   //#endregion
 
-  for await (const i of data) {
+  for await (const item of arr_items) {
     //#region Validate Header
-    const header = await header_service.getHeaderById(i.header_id);
+    const header = await header_service.getHeaderById(item[0]);
     if (header) {
-      for await (const j of i.items) {
+      for await (const j of item[1]) {
         const item = await item_service.getItemById(j.item_id);
         if (item) {
           //#region Get option
-          const option = await option_service.getOptionById(j.option_id ?? 0);
+          let option: OptionEntity | null = null;
+          if (j.option_id) {
+            option = await option_service.getOptionById(j.option_id ?? 0);
+          }
           //#endregion
 
           //#region Validate mark evaluation
@@ -551,15 +564,25 @@ export const generateUpdateStudentEvaluation = async (
             j.item_id,
           );
           if (evaluation) {
-            //#region Update evaluation
-            evaluation.sheet = sheet;
-            evaluation.item = item;
-            evaluation.option = option ?? null;
-            evaluation.personal_mark_level = j.personal_mark_level;
-            evaluation.updated_at = new Date();
-            evaluation.updated_by = user_id;
-            evaluations.push(evaluation);
-            //#endregion
+            if (j.deleted) {
+              //#region Check deleted
+              evaluation.deleted = true;
+              evaluation.deleted_at = new Date();
+              evaluation.deleted_by = user_id;
+
+              evaluations.push(evaluation);
+              //#endregion
+            } else {
+              //#region Update evaluation
+              evaluation.sheet = sheet;
+              evaluation.item = item;
+              evaluation.option = option ?? null;
+              evaluation.personal_mark_level = j.personal_mark_level;
+              evaluation.updated_at = new Date();
+              evaluation.updated_by = user_id;
+              evaluations.push(evaluation);
+              //#endregion
+            }
           } else {
             //#region Create evaluation
             const evaluation = new EvaluationEntity();
@@ -587,11 +610,11 @@ export const generateUpdateStudentEvaluation = async (
     } else {
       //#region throw HandlerException
       return new UnknownException(
-        i.header_id,
+        item[0].header_id,
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, i.header_id),
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, item[0].header_id),
       );
       //#endregion
     }
@@ -620,17 +643,21 @@ export const generateUpdateClassEvaluation = async (
 
   //#region Get params
   const { data } = params;
+  const arr_items = groupItemsByHeader(data, GROUP_KEY);
   //#endregion
 
-  for await (const i of data) {
+  for await (const item of arr_items) {
     //#region Validate Header
-    const header = await header_service.getHeaderById(i.header_id);
+    const header = await header_service.getHeaderById(item[0]);
     if (header) {
-      for await (const j of i.items) {
+      for await (const j of item[1]) {
         const item = await item_service.getItemById(j.item_id);
         if (item) {
           //#region Get option
-          const option = await option_service.getOptionById(j.option_id ?? 0);
+          let option: OptionEntity | null = null;
+          if (j.option_id) {
+            option = await option_service.getOptionById(j.option_id ?? 0);
+          }
           //#endregion
 
           //#region Validate mark evaluation
@@ -649,15 +676,25 @@ export const generateUpdateClassEvaluation = async (
             j.item_id,
           );
           if (evaluation) {
-            //#region Update evaluation
-            evaluation.sheet = sheet;
-            evaluation.item = item;
-            evaluation.option = option ?? null;
-            evaluation.class_mark_level = j.class_mark_level;
-            evaluation.updated_at = new Date();
-            evaluation.updated_by = user_id;
-            evaluations.push(evaluation);
-            //#endregion
+            if (j.deleted) {
+              //#region Check deleted
+              evaluation.deleted = true;
+              evaluation.deleted_at = new Date();
+              evaluation.deleted_by = user_id;
+
+              evaluations.push(evaluation);
+              //#endregion
+            } else {
+              //#region Update evaluation
+              evaluation.sheet = sheet;
+              evaluation.item = item;
+              evaluation.option = option ?? null;
+              evaluation.class_mark_level = j.class_mark_level;
+              evaluation.updated_at = new Date();
+              evaluation.updated_by = user_id;
+              evaluations.push(evaluation);
+              //#endregion
+            }
           } else {
             //#region Create evaluation
             const evaluation = new EvaluationEntity();
@@ -685,11 +722,11 @@ export const generateUpdateClassEvaluation = async (
     } else {
       //#region throw HandlerException
       return new UnknownException(
-        i.header_id,
+        item[0].header_id,
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, i.header_id),
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, item[0].header_id),
       );
       //#endregion
     }
@@ -719,17 +756,21 @@ export const generateUpdateDepartmentEvaluation = async (
 
   //#region Get params
   const { data } = params;
+  const arr_items = groupItemsByHeader(data, GROUP_KEY);
   //#endregion
 
-  for await (const i of data) {
+  for await (const item of arr_items) {
     //#region Validate Header
-    const header = await header_service.getHeaderById(i.header_id);
+    const header = await header_service.getHeaderById(item[0]);
     if (header) {
-      for await (const j of i.items) {
+      for await (const j of item[1]) {
         const item = await item_service.getItemById(j.item_id);
         if (item) {
           //#region Get option
-          const option = await option_service.getOptionById(j.option_id ?? 0);
+          let option: OptionEntity | null = null;
+          if (j.option_id) {
+            option = await option_service.getOptionById(j.option_id ?? 0);
+          }
           //#endregion
 
           //#region Validate mark evaluation
@@ -748,15 +789,25 @@ export const generateUpdateDepartmentEvaluation = async (
             j.item_id,
           );
           if (evaluation) {
-            //#region Update evaluation
-            evaluation.sheet = sheet;
-            evaluation.item = item;
-            evaluation.option = option ?? null;
-            evaluation.department_mark_level = j.department_mark_level;
-            evaluation.updated_at = new Date();
-            evaluation.updated_by = user_id;
-            evaluations.push(evaluation);
-            //#endregion
+            if (j.deleted) {
+              //#region Check deleted
+              evaluation.deleted = true;
+              evaluation.deleted_at = new Date();
+              evaluation.deleted_by = user_id;
+
+              evaluations.push(evaluation);
+              //#endregion
+            } else {
+              //#region Update evaluation
+              evaluation.sheet = sheet;
+              evaluation.item = item;
+              evaluation.option = option ?? null;
+              evaluation.department_mark_level = j.department_mark_level;
+              evaluation.updated_at = new Date();
+              evaluation.updated_by = user_id;
+              evaluations.push(evaluation);
+              //#endregion
+            }
           } else {
             //#region Create evaluation
             const evaluation = new EvaluationEntity();
@@ -784,11 +835,11 @@ export const generateUpdateDepartmentEvaluation = async (
     } else {
       //#region throw HandlerException
       return new UnknownException(
-        i.header_id,
+        item[0].header_id,
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, i.header_id),
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, item[0].header_id),
       );
       //#endregion
     }
@@ -816,21 +867,32 @@ export const generateUpdateSheet = async (
 ): Promise<SheetEntity | HttpException> => {
   //#region Get params
   const { data } = params;
+  let arr_items;
+  if (data instanceof StudentMarkDtos) {
+    arr_items = groupItemsByHeader(data as StudentMarkDtos[], GROUP_KEY);
+  } else if (data instanceof ClassMarkDtos) {
+    arr_items = groupItemsByHeader(data as ClassMarkDtos[], GROUP_KEY);
+  } else {
+    arr_items = groupItemsByHeader(data as DepartmentMarkDtos[], GROUP_KEY);
+  }
   //#endregion
 
   //#region Calculate sum of marks
   let sum_of_marks = 0;
-  for (const item of data) {
-    const header = await header_service.getHeaderById(item.header_id);
+  for (const item of arr_items) {
+    const header = await header_service.getHeaderById(item[0]);
     if (header) {
       let sum_of_mark_items = 0;
-      for (const j of item.items) {
-        if (j instanceof StudentMarkDtos) {
-          sum_of_mark_items += j.personal_mark_level;
-        } else if (j instanceof ClassMarkDtos) {
-          sum_of_mark_items += j.class_mark_level;
-        } else sum_of_mark_items += j.department_mark_level;
+      for (const j of item[1]) {
+        if (!j.deleted) {
+          if (j instanceof StudentMarkDtos) {
+            sum_of_mark_items += j.personal_mark_level;
+          } else if (j instanceof ClassMarkDtos) {
+            sum_of_mark_items += j.class_mark_level;
+          } else sum_of_mark_items += j.department_mark_level;
+        }
       }
+
       sum_of_mark_items =
         header.max_mark > sum_of_mark_items
           ? sum_of_mark_items
@@ -840,15 +902,16 @@ export const generateUpdateSheet = async (
     } else {
       //#region throw HandlerException
       return new UnknownException(
-        item.header_id,
+        item[0],
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, item.header_id),
+        sprintf(ErrorMessage.HEADER_NOT_FOUND_ERROR, item[0]),
       );
       //#endregion
     }
   }
+
   //#endregion
   //#region Get level in mark range
   const level = await getLevel(sum_of_marks, level_service, req);

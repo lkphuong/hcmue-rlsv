@@ -2,17 +2,18 @@ import React, { memo, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { TableCell, TableRow } from '@mui/material';
+import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
 import { STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
+import { HistoryEdu } from '@mui/icons-material';
 
 const Row = memo(({ classId, data, index }) => {
 	//#region Data
 	const navigate = useNavigate();
 
 	const status = useMemo(
-		() => STATUS.find((e) => e.value.toString() === data?.status)?.name || null,
+		() => STATUS.find((e) => e.value.toString() === (data?.status).toString())?.name || null,
 		[data?.status]
 	);
 	//#endregion
@@ -23,7 +24,7 @@ const Row = memo(({ classId, data, index }) => {
 
 	//#region Render
 	return (
-		<TableRow hover onClick={onEdit} sx={{ cursor: 'pointer' }}>
+		<TableRow hover>
 			<TableCell align='center'>{index + 1}</TableCell>
 			<TableCell align='center'>{data.user.fullname}</TableCell>
 			<TableCell align='center'>{data.user.std_code}</TableCell>
@@ -32,6 +33,13 @@ const Row = memo(({ classId, data, index }) => {
 			<TableCell align='center'>{data.sum_of_department_marks}</TableCell>
 			<TableCell align='center'>{data.level.name}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
+			<TableCell>
+				<Tooltip title='Chấm điểm'>
+					<IconButton onClick={onEdit}>
+						<HistoryEdu />
+					</IconButton>
+				</Tooltip>
+			</TableCell>
 		</TableRow>
 	);
 	//#endregion

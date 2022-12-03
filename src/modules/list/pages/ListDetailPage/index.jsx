@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 
 import { useParams } from 'react-router-dom';
 
@@ -40,7 +40,7 @@ const ListDetailPage = () => {
 			<Typography
 				borderRadius={1}
 				p={2}
-				mt={2}
+				mb={2}
 				fontWeight={700}
 				fontSize={20}
 				sx={{ backgroundColor: 'rgba(0 0 0 / 15%)' }}
@@ -48,7 +48,9 @@ const ListDetailPage = () => {
 				{`${data?.user?.fullname} - ${data?.user?.std_code}`}
 			</Typography>
 
-			<Box mt={1}>{data && <Form data={data} status={data?.status} />}</Box>
+			<Paper className='paper-wrapper'>
+				<Box p={1.5}>{data && <Form data={data} status={data?.status} />}</Box>
+			</Paper>
 		</Box>
 	);
 	//#endregion

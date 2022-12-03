@@ -37,6 +37,7 @@ const ListStudents = ({ data }) => {
 							<TableCell align='center'>Điểm khoa chấm</TableCell>
 							<TableCell align='center'>Xếp loại</TableCell>
 							<TableCell align='center'>Trạng thái</TableCell>
+							<TableCell width={50} />
 						</TableRow>
 					</TableHead>
 					<TableBody>

@@ -19,6 +19,13 @@ export class CacheClassEntity extends RootEntity {
   id: number;
 
   @Column('varchar', {
+    name: 'department_id',
+    nullable: false,
+    length: 24,
+  })
+  department_id: string;
+
+  @Column('varchar', {
     name: 'class_id',
     nullable: false,
     length: 24,

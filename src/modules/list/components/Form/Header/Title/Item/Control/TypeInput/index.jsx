@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Grid, Typography } from '@mui/material';
 
@@ -9,8 +9,6 @@ import { CInput } from '_controls/';
 
 const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark }) => {
 	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-
 	const [score, setScore] = useState(initialMark);
 
 	const dispatch = useDispatch();
@@ -26,7 +24,7 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 
 		const markObj = {
 			item_id: Number(item_id),
-			personal_mark_level: value,
+			department_mark_level: value,
 		};
 
 		setScore(value);
@@ -40,7 +38,7 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 
 		const markObj = {
 			item_id: Number(item_id),
-			personal_mark_level: value,
+			department_mark_level: value,
 		};
 
 		setScore(value);
@@ -57,33 +55,30 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 					&#41;&nbsp;
 				</Typography>
 			</Grid>
-
 			<Grid item xs={1.2} textAlign='center'>
-				{category === 1 ? (
-					<CInput
-						disabled={role_id !== 0}
-						fullWidth
-						type='number'
-						inputProps={{ min, max, style: { textAlign: 'center' } }}
-						onChange={onChangeRange(id, min, max)}
-						value={score}
-					/>
-				) : (
-					<CInput
-						disabled={role_id !== 0}
-						fullWidth
-						type='number'
-						inputProps={{ step: mark, style: { textAlign: 'center' } }}
-						onChange={onChangeMark(id, mark)}
-						value={score}
-					/>
-				)}
+				<Typography>{currentMark.personal_mark_level}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
 				<Typography>{currentMark.class_mark_level}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.department_mark_level}</Typography>
+				{category === 1 ? (
+					<CInput
+						fullWidth
+						type='number'
+						inputProps={{ min, max }}
+						onChange={onChangeRange(id, min, max)}
+						value={score}
+					/>
+				) : (
+					<CInput
+						fullWidth
+						type='number'
+						inputProps={{ step: mark }}
+						onChange={onChangeMark(id, mark)}
+						value={score}
+					/>
+				)}
 			</Grid>
 		</>
 	);

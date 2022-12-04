@@ -1,95 +1,109 @@
-import React, { memo, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import React, { memo, useContext, useMemo } from 'react';
 
-import { Checkbox, Grid } from '@mui/material';
+import { DepartmentMarksContext } from '_modules/list/components/Form';
 
-import { actions } from '_slices/mark.slice';
+import TypeInput from './TypeInput';
+import TypeCheckbox from './TypeCheckbox';
+import TypeSelect from './TypeSelect';
 
-import { CInput } from '_controls/';
+const Control = memo(
+	({ id, min, max, mark, control, category, unit, options, required, headerId }) => {
+		//#region Data
+		const { status, itemsMark } = useContext(DepartmentMarksContext);
 
-const Control = memo(({ id, min, max, initialMark, control, currentMark }) => {
-	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
+		const currentMark = useMemo(() => {
+			if (!itemsMark?.length)
+				return {
+					personal_mark_level: 0,
+					class_mark_level: 0,
+					department_mark_level: 0,
+				};
 
-	const [mark, setMark] = useState(initialMark);
+			const foundItem = itemsMark.find((e) => e.item.id?.toString() === id?.toString());
 
-	const dispatch = useDispatch();
-	//#endregion
+			if (!foundItem)
+				return {
+					personal_mark_level: 0,
+					class_mark_level: 0,
+					department_mark_level: 0,
+				};
 
-	//#region Event
-	const onCheck = (item_id, mark) => (e) => {
-		const markObj = {
-			item_id,
-			department_mark_level: e.target.checked ? mark : 0,
-		};
+			return {
+				personal_mark_level: foundItem.personal_mark_level,
+				class_mark_level: foundItem.class_mark_level,
+				department_mark_level: foundItem.department_mark_level,
+			};
+		}, [id, itemsMark]);
 
-		setMark(e.target.checked ? mark : 0);
-		dispatch(actions.updateMarks(markObj));
-	};
+		const initialMark = useMemo(() => {
+			if (status === 4) {
+				return currentMark.personal_mark_level;
+			}
+			if (status < 4) {
+				return currentMark.class_mark_level;
+			} else {
+				return currentMark.department_mark_level;
+			}
+		}, [
+			currentMark.class_mark_level,
+			currentMark.department_mark_level,
+			currentMark.personal_mark_level,
+			status,
+		]);
 
-	const onChange = (item_id, min, max) => (e) => {
-		let value = Number(e.target.value);
-		if (isNaN(value)) value = 0;
-		if (value > max) value = max;
-		if (value < min) value = min;
+		const renderControl = useMemo(() => {
+			switch (control) {
+				case 0:
+					return (
+						<TypeInput
+							id={id}
+							min={min}
+							max={max}
+							mark={mark}
+							unit={unit}
+							category={category}
+							initialMark={initialMark}
+							currentMark={currentMark}
+							header_id={headerId}
+						/>
+					);
+				case 1:
+					return (
+						<TypeCheckbox
+							id={id}
+							mark={mark}
+							unit={unit}
+							initialMark={initialMark}
+							currentMark={currentMark}
+							header_id={headerId}
+						/>
+					);
+				case 2:
+					return (
+						<TypeSelect
+							item_id={id}
+							required={required}
+							options={options}
+							initialMark={initialMark}
+							currentMark={currentMark}
+							header_id={headerId}
+						/>
+					);
+				default:
+					break;
+			}
+		}, [control]);
+		//#endregion
 
-		const markObj = {
-			item_id,
-			department_mark_level: value,
-		};
+		//#region Event
 
-		setMark(value);
-		dispatch(actions.updateMarks(markObj));
-	};
-	//#endregion
+		//#endregion
 
-	//#region Render
-	return control === 1 ? (
-		<>
-			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox disabled={role_id !== 0} checked={currentMark.personal_mark_level > 0} />
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox disabled={role_id !== 1} checked={currentMark.class_mark_level > 0} />
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox disabled={role_id !== 2} onChange={onCheck(id, min)} checked={!!mark} />
-			</Grid>
-		</>
-	) : (
-		<>
-			<Grid item xs={1.2} textAlign='center'>
-				<CInput
-					disabled={role_id !== 0}
-					fullWidth
-					type='number'
-					inputProps={{ min, max }}
-					value={currentMark.personal_mark_level}
-				/>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				<CInput
-					disabled={role_id !== 1}
-					fullWidth
-					type='number'
-					inputProps={{ min, max }}
-					value={currentMark.class_mark_level}
-				/>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				<CInput
-					disabled={role_id !== 2}
-					fullWidth
-					type='number'
-					inputProps={{ min, max }}
-					onChange={onChange(id, min, max)}
-					value={mark}
-				/>
-			</Grid>
-		</>
-	);
+		//#region Render
+		return <>{renderControl}</>;
 
-	//#endregion
-});
+		//#endregion
+	}
+);
 
 export default Control;

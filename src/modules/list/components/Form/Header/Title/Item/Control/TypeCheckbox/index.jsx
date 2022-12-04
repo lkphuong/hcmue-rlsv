@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Checkbox, Grid, Typography } from '@mui/material';
 
@@ -7,8 +7,6 @@ import { actions } from '_slices/mark.slice';
 
 const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
 	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-
 	const [score, setScore] = useState(initialMark);
 
 	const dispatch = useDispatch();
@@ -18,7 +16,7 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
 	const onCheck = (item_id, mark) => (e) => {
 		const markObj = {
 			item_id: Number(item_id),
-			personal_mark_level: e.target.checked ? mark : 0,
+			department_mark_level: e.target.checked ? mark : 0,
 		};
 
 		setScore(e.target.checked ? mark : 0);
@@ -37,13 +35,13 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
 			</Grid>
 
 			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox disabled={role_id !== 0} onChange={onCheck(id, mark)} checked={!!score} />
+				<Typography>{currentMark.personal_mark_level}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.class_mark_level} </Typography>
+				<Typography>{currentMark.class_mark_level}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.department_mark_level}</Typography>
+				<Checkbox onChange={onCheck(id, mark)} checked={!!score} />
 			</Grid>
 		</>
 	);

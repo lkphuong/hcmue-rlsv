@@ -65,7 +65,13 @@ const Header = memo(({ data, index, sheetId }) => {
 				<Collapse in={open} timeout='auto'>
 					{titles.length > 0 &&
 						titles.map((e, i) => (
-							<Title key={i} data={e} sheetId={sheetId} index={i + 1} />
+							<Title
+								key={i}
+								data={e}
+								sheetId={sheetId}
+								index={i + 1}
+								headerId={data.id}
+							/>
 						))}
 				</Collapse>
 			</Grid>

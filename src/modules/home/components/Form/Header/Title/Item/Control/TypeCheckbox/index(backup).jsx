@@ -40,10 +40,13 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
 				<Checkbox disabled={role_id !== 0} onChange={onCheck(id, mark)} checked={!!score} />
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.class_mark_level} </Typography>
+				<Checkbox disabled={role_id !== 1} checked={currentMark.class_mark_level > 0} />
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.department_mark_level}</Typography>
+				<Checkbox
+					disabled={role_id !== 2}
+					checked={currentMark.department_mark_level > 0}
+				/>
 			</Grid>
 		</>
 	);

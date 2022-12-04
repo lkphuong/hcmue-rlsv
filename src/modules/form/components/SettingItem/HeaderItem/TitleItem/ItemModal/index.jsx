@@ -31,18 +31,11 @@ const ItemModal = memo(
 
 		const resolver = useResolver(validationItem);
 
-		const {
-			control,
-			handleSubmit,
-			reset,
-			formState: { errors },
-		} = useForm({
+		const { control, handleSubmit, reset } = useForm({
 			defaultValues: initialItem,
 			mode: 'all',
 			resolver,
 		});
-
-		console.log(errors);
 
 		const {
 			field: { onChange: onChangeOption },

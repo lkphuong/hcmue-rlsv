@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Checkbox, Grid, Typography } from '@mui/material';
 
@@ -7,8 +7,6 @@ import { actions } from '_slices/mark.slice';
 
 const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
 	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-
 	const [score, setScore] = useState(initialMark);
 
 	const dispatch = useDispatch();
@@ -37,16 +35,13 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
 			</Grid>
 
 			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox disabled={role_id !== 0} checked={currentMark.personal_mark_level > 0} />
+				<Typography>{currentMark.personal_mark_level}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox disabled={role_id !== 1} onChange={onCheck(id, mark)} checked={!!score} />
+				<Checkbox onChange={onCheck(id, mark)} checked={!!score} />
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox
-					disabled={role_id !== 2}
-					checked={currentMark.department_mark_level > 0}
-				/>
+				<Typography>{currentMark.department_mark_level}</Typography>
 			</Grid>
 		</>
 	);

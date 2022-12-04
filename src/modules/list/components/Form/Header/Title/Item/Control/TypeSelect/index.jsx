@@ -18,7 +18,7 @@ const TypeSelect = ({ item_id, initialMark, currentMark, options, required, head
 	const onChangeSelect = (value) => {
 		const markObj = {
 			item_id,
-			class_mark_level: value?.mark,
+			department_mark_level: value?.mark,
 			option_id: Number(value?.id),
 			header_id,
 		};
@@ -37,6 +37,9 @@ const TypeSelect = ({ item_id, initialMark, currentMark, options, required, head
 				<Typography>{currentMark.personal_mark_level || 0}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
+				<Typography>{currentMark.class_mark_level || 0}</Typography>
+			</Grid>
+			<Grid item xs={1.2} textAlign='center'>
 				<CAutocomplete
 					disableClearable={required}
 					options={options}
@@ -50,9 +53,6 @@ const TypeSelect = ({ item_id, initialMark, currentMark, options, required, head
 						</Box>
 					)}
 				/>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.department_mark_level || 0}</Typography>
 			</Grid>
 		</>
 	);

@@ -10,7 +10,7 @@ import { getItemsByTitleId } from '_api/form.api';
 
 import Item from './Item';
 
-const Title = memo(({ data, index, sheetId }) => {
+const Title = memo(({ data, headerId }) => {
 	//#region Data
 	const [items, setItems] = useState([]);
 
@@ -49,7 +49,8 @@ const Title = memo(({ data, index, sheetId }) => {
 					</Typography>
 				</Grid>
 
-				{items.length > 0 && items.map((e, i) => <Item key={i} data={e} />)}
+				{items.length > 0 &&
+					items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
 			</Grid>
 			<Divider sx={{ my: 2 }} />
 		</>

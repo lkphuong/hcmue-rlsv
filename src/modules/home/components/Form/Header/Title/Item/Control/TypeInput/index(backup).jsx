@@ -7,11 +7,35 @@ import { actions } from '_slices/mark.slice';
 
 import { CInput } from '_controls/';
 
+// const validationSchema = yup.object({
+// 	mark: yup.number(),
+// 	category: yup.number(),
+// 	score: yup
+// 		.number('Nhập số')
+// 		.typeError('Nhập số')
+// 		.required('Vui lòng nhập điểm')
+// 		.when('category', {
+// 			is: (value) => value === 2,
+// 			then: yup
+// 				.number('Nhập số')
+// 				.typeError('Nhập số')
+// 				.required('Vui lòng nhập điểm')
+// 				.test('wrong', 'Phải là bội số', (value, context) => {
+// 					const { parent } = context;
+
+// 					if (value % parent.mark === 0) return true;
+// 					else return false;
+// 				}),
+// 		}),
+// });
+
 const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark }) => {
 	//#region Data
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const [score, setScore] = useState(initialMark);
+
+	// const resolver = useResolver(validationSchema);
 
 	const dispatch = useDispatch();
 	//#endregion
@@ -64,7 +88,7 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 						disabled={role_id !== 0}
 						fullWidth
 						type='number'
-						inputProps={{ min, max, style: { textAlign: 'center' } }}
+						inputProps={{ min, max }}
 						onChange={onChangeRange(id, min, max)}
 						value={score}
 					/>
@@ -73,17 +97,29 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 						disabled={role_id !== 0}
 						fullWidth
 						type='number'
-						inputProps={{ step: mark, style: { textAlign: 'center' } }}
+						inputProps={{ step: mark }}
 						onChange={onChangeMark(id, mark)}
 						value={score}
 					/>
 				)}
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.class_mark_level}</Typography>
+				<CInput
+					disabled={role_id !== 1}
+					fullWidth
+					type='number'
+					inputProps={{ min, max }}
+					value={currentMark.class_mark_level}
+				/>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.department_mark_level}</Typography>
+				<CInput
+					disabled={role_id !== 2}
+					fullWidth
+					type='number'
+					inputProps={{ min, max }}
+					value={currentMark.department_mark_level}
+				/>
 			</Grid>
 		</>
 	);

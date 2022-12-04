@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Grid, Typography } from '@mui/material';
 
@@ -7,35 +7,9 @@ import { actions } from '_slices/mark.slice';
 
 import { CInput } from '_controls/';
 
-// const validationSchema = yup.object({
-// 	mark: yup.number(),
-// 	category: yup.number(),
-// 	score: yup
-// 		.number('Nhập số')
-// 		.typeError('Nhập số')
-// 		.required('Vui lòng nhập điểm')
-// 		.when('category', {
-// 			is: (value) => value === 2,
-// 			then: yup
-// 				.number('Nhập số')
-// 				.typeError('Nhập số')
-// 				.required('Vui lòng nhập điểm')
-// 				.test('wrong', 'Phải là bội số', (value, context) => {
-// 					const { parent } = context;
-
-// 					if (value % parent.mark === 0) return true;
-// 					else return false;
-// 				}),
-// 		}),
-// });
-
 const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark }) => {
 	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-
 	const [score, setScore] = useState(initialMark);
-
-	// const resolver = useResolver(validationSchema);
 
 	const dispatch = useDispatch();
 	//#endregion
@@ -83,18 +57,11 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 			</Grid>
 
 			<Grid item xs={1.2} textAlign='center'>
-				<CInput
-					disabled={role_id !== 0}
-					fullWidth
-					type='number'
-					inputProps={{ min, max }}
-					value={currentMark.personal_mark_level}
-				/>
+				<Typography>{currentMark.personal_mark_level}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
 				{category === 1 ? (
 					<CInput
-						disabled={role_id !== 1}
 						fullWidth
 						type='number'
 						inputProps={{ min, max }}
@@ -103,7 +70,6 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 					/>
 				) : (
 					<CInput
-						disabled={role_id !== 1}
 						fullWidth
 						type='number'
 						inputProps={{ step: mark }}
@@ -113,13 +79,7 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 				)}
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				<CInput
-					disabled={role_id !== 2}
-					fullWidth
-					type='number'
-					inputProps={{ min, max }}
-					value={currentMark.department_mark_level}
-				/>
+				<Typography>{currentMark.department_mark_level}</Typography>
 			</Grid>
 		</>
 	);

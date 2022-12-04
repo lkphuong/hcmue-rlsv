@@ -27,7 +27,7 @@ const Item = memo(({ data, headerId }) => {
 			</Grid>
 
 			<Control
-				id={data.id}
+				id={Number(data.id)}
 				min={data.from_mark}
 				max={data.to_mark}
 				mark={data.mark}
@@ -35,6 +35,8 @@ const Item = memo(({ data, headerId }) => {
 				category={data.category}
 				unit={data.unit}
 				options={data.options || []}
+				required={data.required}
+				headerId={Number(headerId)}
 			/>
 		</>
 	);

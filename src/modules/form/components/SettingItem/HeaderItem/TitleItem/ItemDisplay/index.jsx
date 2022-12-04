@@ -50,14 +50,14 @@ const ItemDisplay = memo(({ data, refetch }) => {
 			</Grid>
 			{data.control !== 2 ? (
 				<Grid item xs={3} md={2} textAlign='center'>
-					{data.category === 1
-						? `Từ ${data.from_mark} đến ${data.to_mark}`
-						: `${data.mark}`}
+					{data?.category === 1
+						? `Từ ${data?.from_mark} đến ${data?.to_mark}`
+						: `${data?.mark}`}
 					&nbsp;
-					{data.unit}
+					{data?.unit}
 				</Grid>
 			) : (
-				data.options.map((option) => (
+				data?.options?.map((option) => (
 					<Grid key={option.id} item xs={12}>
 						<Box ml={8}>
 							&#187;&nbsp;{option.content} {option.mark} Điểm

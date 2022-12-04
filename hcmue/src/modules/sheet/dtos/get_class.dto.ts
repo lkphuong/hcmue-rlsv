@@ -3,7 +3,7 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
-import { LengthValidator } from '../../../validators/length.validator';
+import { IsObjectIdValidator } from '../../../validators/objectId.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class GetClassDto {
@@ -37,9 +37,8 @@ export class GetClassDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
-  @LengthValidator(1, 24, {
-    message: (arg) =>
-      generateValidationMessage(arg, '[Lớp] độ dài tối đa 24 kí tự.'),
+  @IsObjectIdValidator({
+    message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
   class_id: string;
 }

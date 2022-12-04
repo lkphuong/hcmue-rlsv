@@ -36,24 +36,21 @@ export const createRoleUser = async (
 
     if (role.code !== RoleCode.ADMIN && role.code !== RoleCode.STUDENT) {
       //#region Role = RoleCode.CLASS | RoleCode.DEPARTMENT
-      const user = await role_user_service.getRoleUserByRoleId(role.id);
-      if (user) {
-        const success = await role_user_service.buklUnlink(
-          role.code,
-          role.id,
-          department_id,
-          class_id,
-          query_runner.manager,
-        );
+      const success = await role_user_service.buklUnlink(
+        role.code,
+        role.id,
+        department_id,
+        class_id,
+        query_runner.manager,
+      );
 
-        if (!success) {
-          //#region throw HandlerException
-          throw generateFailedResponse(
-            req,
-            ErrorMessage.OPERATOR_ROLE_USER_ERROR,
-          );
-          //#endregion
-        }
+      if (!success) {
+        //#region throw HandlerException
+        throw generateFailedResponse(
+          req,
+          ErrorMessage.OPERATOR_ROLE_USER_ERROR,
+        );
+        //#endregion
       }
       //#endregion
     }

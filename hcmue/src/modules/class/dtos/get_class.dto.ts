@@ -1,9 +1,9 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
-import { LengthValidator } from 'src/validators/length.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
+import { IsObjectIdValidator } from '../../../validators/objectId.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class GetClassDto {
@@ -14,9 +14,8 @@ export class GetClassDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [khoa].'),
   })
-  @LengthValidator(1, 24, {
-    message: (arg) =>
-      generateValidationMessage(arg, '[Khoa] độ dài tối đa 24 kí tự.'),
+  @IsObjectIdValidator({
+    message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
   department_id: string;
 

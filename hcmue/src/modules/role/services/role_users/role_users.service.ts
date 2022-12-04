@@ -41,12 +41,23 @@ export class RoleUsersService {
     }
   }
 
-  async getRoleUserByRoleId(role_id: number): Promise<RoleUsersEntity | null> {
+  async getRoleUserByRoleId(
+    department_id: string,
+    role_id: number,
+    class_id?: string,
+  ): Promise<RoleUsersEntity | null> {
     try {
-      const conditions = this._roleUserRepository
+      let conditions = this._roleUserRepository
         .createQueryBuilder('role_user')
         .where('role_user.role_id = :role_id', { role_id })
+        .andWhere('role_user.department_id = :department_id', { department_id })
         .andWhere('role_user.deleted = :deleted', { deleted: false });
+
+      if (class_id) {
+        conditions = conditions.andWhere('role_user.class_id = :class_id', {
+          class_id,
+        });
+      }
 
       const role_user = await conditions.getOne();
       return role_user || null;
@@ -139,16 +150,35 @@ export class RoleUsersService {
 
       let result: DeleteResult | null = null;
       if (role_code === RoleCode.DEPARTMENT) {
-        result = await manager.delete(RoleUsersEntity, {
-          department_id: department_id,
-          role: role_id,
-        });
-      } else if (role_code !== RoleCode.ADMIN) {
-        result = await manager.delete(RoleUsersEntity, {
-          department_id: department_id,
-          class_id: class_id,
-          role: role_id,
-        });
+        //#region RoleCode.DEPARTMENT
+        const role_user = await this.getRoleUserByRoleId(
+          department_id,
+          role_id,
+        );
+
+        if (role_user) {
+          result = await manager.delete(RoleUsersEntity, {
+            department_id: department_id,
+            role: role_id,
+          });
+        } else return true;
+        //#endregion
+      } else if (role_code === RoleCode.CLASS) {
+        //#region RoleCode.CLASS
+        const role_user = await this.getRoleUserByRoleId(
+          department_id,
+          role_id,
+          class_id,
+        );
+
+        if (role_user) {
+          result = await manager.delete(RoleUsersEntity, {
+            department_id: department_id,
+            class_id: class_id,
+            role: role_id,
+          });
+        } else return true;
+        //#endregion
       }
 
       return result.affected > 0;

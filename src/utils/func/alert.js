@@ -69,14 +69,32 @@ export const alert = {
 			}
 		});
 	},
-	question: ({ onConfirm } = {}) => {
+	question: ({ onConfirm, title, text, ...props } = {}) => {
 		Swal.fire({
-			title: 'Xác nhận?',
-			text: 'Bạn có muốn tạo ra 1 biểu mẫu mới tương tự?',
+			title: title || 'Xác nhận?',
+			text: text || 'Bạn có muốn tạo ra 1 biểu mẫu mới tương tự?',
 			showCancelButton: true,
 			icon: 'question',
 			confirmButtonText: 'Đồng ý',
 			cancelButtonText: 'Hủy bỏ',
+			customClass: {
+				container: 'my-swal',
+			},
+			...props,
+		}).then((result) => {
+			if (result.isConfirmed) {
+				onConfirm();
+			}
+		});
+	},
+	confirmMark: ({ onConfirm, fullname, mark, level } = {}) => {
+		Swal.fire({
+			title: 'Cập nhật điểm thành công',
+			html: `Tổng điểm của <b>${fullname}</b> là <b>${mark}</b> <br>Xếp loại <b>${level}</b>`,
+			showCancelButton: true,
+			icon: 'success',
+			confirmButtonText: 'Xong',
+			cancelButtonText: 'Điều chỉnh',
 			customClass: {
 				container: 'my-swal',
 			},

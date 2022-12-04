@@ -61,11 +61,18 @@ const Form = ({ data, status }) => {
 			const res = await updateDepartmentSheets(data.id, body);
 
 			if (isSuccess(res)) {
-				dispatch(actions.clearMarks());
+				const { data } = res;
 
-				alert.success({ title: 'Cập nhật điểm thành công!' });
+				alert.confirmMark({
+					onConfirm: () => {
+						dispatch(actions.clearMarks());
 
-				navigate(`${ROUTES.LIST}/${data.id}`, { replace: true });
+						navigate(`${ROUTES.LIST}/${data.class.id}`, { replace: true });
+					},
+					fullname: data?.user?.fullname,
+					mark: data?.sum_of_department_marks,
+					level: data?.level?.name,
+				});
 			} else {
 				alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
 			}

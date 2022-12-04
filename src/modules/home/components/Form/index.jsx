@@ -61,11 +61,18 @@ const Form = ({ data }) => {
 			const res = await updateStudentSheets(data.id, body);
 
 			if (isSuccess(res)) {
-				dispatch(actions.clearMarks());
+				const { data } = res;
 
-				alert.success({ title: 'Cập nhật điểm thành công!' });
+				alert.confirmMark({
+					onConfirm: () => {
+						dispatch(actions.clearMarks());
 
-				navigate(ROUTES.MY_SCORE, { replace: true });
+						navigate(ROUTES.MY_SCORE, { replace: true });
+					},
+					fullname: data?.user?.fullname,
+					mark: data?.sum_of_personal_marks,
+					level: data?.level?.name,
+				});
 			} else {
 				alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
 			}

@@ -31,7 +31,7 @@ const Row = memo(({ classId, data, index }) => {
 			<TableCell align='center'>{data.sum_of_personal_marks}</TableCell>
 			<TableCell align='center'>{data.sum_of_class_marks}</TableCell>
 			<TableCell align='center'>{data.sum_of_department_marks}</TableCell>
-			<TableCell align='center'>{data.level.name}</TableCell>
+			<TableCell align='center'>{data?.level?.name}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell>
 				<Tooltip title='Chấm điểm'>

@@ -1,26 +1,43 @@
 import { Types } from 'mongoose';
 
-import { convertString2ObjectId } from '../../../utils';
+import { convertString2Float, convertString2ObjectId } from '../../../utils';
 
 import { CacheClassEntity } from '../../../entities/cache_class.entity';
 import { LevelEntity } from '../../../entities/level.entity';
 
 import { ClassService } from '../../class/services/class.service';
+import { SheetService } from '../../sheet/services/sheet.service';
 
 import {
+  ClassResponse,
   LevelResponse,
   ReportResponse,
 } from '../interfaces/report-response.interface';
 
 import { NO_LEVEL } from '../constants';
+import { SheetStatus } from 'src/modules/sheet/constants/enums/status.enum';
 
 export const generateCacheClassesResponse = async (
+  academic_id: number,
+  class_id: string,
+  department_id: string,
+  semester_id: number,
   cache_classes: CacheClassEntity[] | null,
   levels: LevelEntity[],
   class_service: ClassService,
+  sheet_service: SheetService,
 ) => {
   if (cache_classes) {
-    const payload: ReportResponse[] = [];
+    const report_response: ReportResponse = {
+      classes: [],
+      sum_of_levels: [],
+      sum_of_std_in_classes: 0,
+    };
+
+    let sum_of_std = 0;
+    let sum_of_levels = generateLevelsResponse(levels);
+
+    const class_response: ClassResponse[] = [];
     const class_ids: Types.ObjectId[] = [];
     const data: Map<string, LevelResponse[]> = new Map();
 
@@ -31,12 +48,13 @@ export const generateCacheClassesResponse = async (
 
       if (data.has(cache_class.class_id)) {
         items = data.get(cache_class.class_id);
-        items = generateLevelResponse(items, cache_class);
+        items = generateLocalLevelResponse(items, cache_class);
       } else {
         items = generateLevelsResponse(levels);
-        items = generateLevelResponse(items, cache_class);
+        items = generateLocalLevelResponse(items, cache_class);
       }
 
+      sum_of_levels = generateGlobalLevelResponse(sum_of_levels, cache_class);
       data.set(cache_class.class_id, items);
     }
     //#endregion
@@ -48,22 +66,42 @@ export const generateCacheClassesResponse = async (
         const levels = data.get(key);
         const $class = classes.find((c) => c._id.toString() === key);
 
-        payload.push({
+        //#region Get num_of_std by class
+        const num_of_std = await sheet_service.countSheets(
+          academic_id,
+          key,
+          department_id,
+          semester_id,
+          SheetStatus.ALL,
+        );
+
+        sum_of_std += convertString2Float(num_of_std.toString());
+        //#endregion
+
+        //#region Push data to class_response
+        class_response.push({
           id: $class._id.toString(),
           name: $class.name,
           levels: levels,
+          num_of_std: num_of_std,
         });
+        //#endregion
       }
     }
     //#endregion
 
-    return payload;
+    report_response.classes = class_response;
+    report_response.sum_of_levels = sum_of_levels;
+    report_response.sum_of_std_in_classes = sum_of_std;
+
+    return report_response;
   }
 
   return null;
 };
 
 export const generateLevelsResponse = (levels: LevelEntity[]) => {
+  //#region Generate level reponse from levels
   const items: LevelResponse[] = levels.map((level) => {
     const item: LevelResponse = {
       id: level.id,
@@ -73,11 +111,20 @@ export const generateLevelsResponse = (levels: LevelEntity[]) => {
 
     return item;
   });
+  //#endregion
+
+  //#region Add extra default level when graded = 0 (Không xếp loại)
+  items.push({
+    id: '0',
+    name: NO_LEVEL,
+    count: 0,
+  });
+  //#endregion
 
   return items;
 };
 
-export const generateLevelResponse = (
+export const generateLocalLevelResponse = (
   items: LevelResponse[],
   cache_class: CacheClassEntity,
 ) => {
@@ -95,6 +142,19 @@ export const generateLevelResponse = (
           name: NO_LEVEL,
           count: cache_class.amount,
         };
+  }
+
+  return items;
+};
+
+export const generateGlobalLevelResponse = (
+  items: LevelResponse[],
+  cache_class: CacheClassEntity,
+) => {
+  const level_id = cache_class.level ? cache_class.level.id.toString() : '0';
+  const index = items.findIndex((item) => item.id.toString() === level_id);
+  if (index !== -1) {
+    items[index].count = items[index].count + cache_class.amount;
   }
 
   return items;

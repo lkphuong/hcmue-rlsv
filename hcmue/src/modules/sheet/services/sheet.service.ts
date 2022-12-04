@@ -250,7 +250,7 @@ export class SheetService {
     class_id: string,
     department_id: string,
     semester_id: number,
-    status?: number,
+    status: SheetStatus,
     user_ids?: string[],
   ): Promise<number> {
     try {
@@ -262,8 +262,8 @@ export class SheetService {
         .select('COUNT(DISTINCT sheet.id)', 'count')
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic_year.id = :academic_id', { academic_id })
-        .andWhere('sheet.department_id = :department_id', { department_id })
         .andWhere('sheet.class_id = :class_id', { class_id })
+        .andWhere('sheet.department_id = :department_id', { department_id })
         .andWhere('sheet.deleted = :deleted', { deleted: false })
         .andWhere('semester.deleted = :deleted', { deleted: false })
         .andWhere(
@@ -282,6 +282,7 @@ export class SheetService {
           `sheet.user_id IN (${generateStringObjectID(user_ids)})`,
         );
       }
+
       const { count } = await conditions.getRawOne();
       return count;
     } catch (e) {

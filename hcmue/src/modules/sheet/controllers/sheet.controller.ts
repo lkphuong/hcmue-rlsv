@@ -54,7 +54,6 @@ import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
 import { UpdateStudentMarkDto } from '../dtos/update_student_mark.dto';
 import { GetSheetsByAdminDto } from '../dtos/get_sheets_admin.dto';
 
-import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { ClassService } from '../../class/services/class.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { DepartmentService } from '../../department/services/department.service';
@@ -86,13 +85,13 @@ import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { Role } from '../../auth/constants/enums/role.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
@@ -101,7 +100,6 @@ import {
 @Controller('sheets')
 export class SheetController {
   constructor(
-    private readonly _academicYearService: AcademicYearService,
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
     private readonly _evaluationService: EvaluationService,
@@ -273,7 +271,7 @@ export class SheetController {
    */
   @Get('items/:id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async getEvaluationsBySheet(
+  async heet(
     @Param('id') id: number,
     @Req() req: Request,
   ): Promise<HttpResponse<EvaluationsResponse> | HttpException> {

@@ -11,6 +11,7 @@ import { DepartmentModule } from '../department/department.module';
 import { LevelModule } from '../level/level.module';
 import { ReportController } from './controllers/report.controller';
 import { SemesterModule } from '../semester/semester.module';
+import { SheetModule } from '../sheet/sheet.module';
 import { UserModule } from '../user/user.module';
 
 import { CacheClassService } from './services/cache-class.service';
@@ -24,6 +25,7 @@ export const modules = [
   DepartmentModule,
   LevelModule,
   SemesterModule,
+  SheetModule,
   UserModule,
 ];
 

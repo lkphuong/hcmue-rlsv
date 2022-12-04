@@ -28,6 +28,7 @@ import { DepartmentService } from 'src/modules/department/services/department.se
 import { LevelService } from '../../level/services/level.service';
 import { LogService } from '../../log/services/log.service';
 import { SemesterService } from '../../semester/services/semester.service';
+import { SheetService } from '../../sheet/services/sheet.service';
 import { UserService } from '../../user/services/user.service';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
@@ -54,6 +55,7 @@ export class ReportController {
     private readonly _departmentService: DepartmentService,
     private readonly _levelService: LevelService,
     private readonly _semesterService: SemesterService,
+    private readonly _sheetService: SheetService,
     private readonly _userService: UserService,
     private _logger: LogService,
   ) {
@@ -170,9 +172,14 @@ export class ReportController {
       if (cache_classes && cache_classes.length > 0) {
         //#region Generate response
         return await generateReportsResponse(
+          academic_id,
+          class_id,
+          department_id,
+          semester_id,
           cache_classes,
           levels,
           this._classService,
+          this._sheetService,
           req,
         );
         //#endregion

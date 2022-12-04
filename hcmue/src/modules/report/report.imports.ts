@@ -8,6 +8,7 @@ import { SharedModule } from '../shared/shared.module';
 import { AcademicYearModule } from '../academic-year/academic_year.module';
 import { ClassModule } from '../class/class.module';
 import { DepartmentModule } from '../department/department.module';
+import { LevelModule } from '../level/level.module';
 import { ReportController } from './controllers/report.controller';
 import { SemesterModule } from '../semester/semester.module';
 import { UserModule } from '../user/user.module';
@@ -21,6 +22,7 @@ export const modules = [
   AcademicYearModule,
   ClassModule,
   DepartmentModule,
+  LevelModule,
   SemesterModule,
   UserModule,
 ];

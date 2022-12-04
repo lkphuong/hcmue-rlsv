@@ -48,7 +48,6 @@ export class CacheClassService {
           class_id,
         });
       }
-
       const cache_classes = await conditions.getMany();
       return cache_classes || null;
     } catch (e) {

@@ -25,6 +25,7 @@ import { AcademicYearService } from '../../academic-year/services/academic_year.
 import { CacheClassService } from '../services/cache-class.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from 'src/modules/department/services/department.service';
+import { LevelService } from '../../level/services/level.service';
 import { LogService } from '../../log/services/log.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { UserService } from '../../user/services/user.service';
@@ -51,6 +52,7 @@ export class ReportController {
     private readonly _cacheClassService: CacheClassService,
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
+    private readonly _levelService: LevelService,
     private readonly _semesterService: SemesterService,
     private readonly _userService: UserService,
     private _logger: LogService,
@@ -152,6 +154,10 @@ export class ReportController {
       //#endregion
       //#endregion
 
+      //#region Get levels
+      const levels = await this._levelService.getLevels();
+      //#endregion
+
       //#region Get reports
       const cache_classes = await this._cacheClassService.getCacheClasses(
         academic_id,
@@ -165,6 +171,7 @@ export class ReportController {
         //#region Generate response
         return await generateReportsResponse(
           cache_classes,
+          levels,
           this._classService,
           req,
         );

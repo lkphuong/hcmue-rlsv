@@ -1,4 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { forwardRef } from '@nestjs/common';
 
 import { RoleEntity } from '../../entities/role.entity';
 import { RoleUsersEntity } from '../../entities/role_users.entity';
@@ -14,7 +15,6 @@ import { RoleController } from './controllers/role.controller';
 
 import { RoleService } from './services/role/role.service';
 import { RoleUsersService } from './services/role_users/role_users.service';
-import { forwardRef } from '@nestjs/common';
 
 export const modules = [
   SharedModule,

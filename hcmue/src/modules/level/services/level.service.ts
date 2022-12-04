@@ -17,6 +17,24 @@ export class LevelService {
     private _logger: LogService,
   ) {}
 
+  async getLevels(): Promise<LevelEntity[] | null> {
+    try {
+      const conditions = this._levelRepository
+        .createQueryBuilder('level')
+        .where('level.deleted = :deleted', { deleted: false });
+
+      const levels = await conditions.getMany();
+      return levels || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'LevelService.getLevels()',
+        e,
+      );
+    }
+  }
+
   async getLevelByMark(mark: number): Promise<LevelEntity | null> {
     try {
       const conditions = this._levelRepository

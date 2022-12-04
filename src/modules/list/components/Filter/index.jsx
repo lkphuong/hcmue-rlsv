@@ -4,12 +4,15 @@ import { Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/mat
 
 import { CAutocomplete, CInput } from '_controls/';
 
-const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
+const Filter = ({ filter, onChangeFilter, semesters, academic_years, classes }) => {
 	//#region Data
 	const [input, setInput] = useState('');
 	//#endregion
 
 	//#region Event
+	const handleChangeStringId = (key) => (value) =>
+		onChangeFilter((prev) => ({ ...prev, [key]: value?.id }));
+
 	const handleChangeFilter = (key) => (value) =>
 		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
 
@@ -38,10 +41,9 @@ const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
 												Lớp
 											</Typography>
 											<CAutocomplete
-												disableClearable
-												value={filter.semester_id}
-												onChange={handleChangeFilter('semester_id')}
-												options={semesters}
+												value={filter.class_id}
+												onChange={handleChangeStringId('class_id')}
+												options={classes}
 												display='name'
 												renderOption={(props, option) => (
 													<Box component='li' key={option.id} {...props}>

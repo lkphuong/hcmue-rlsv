@@ -1,2 +1,2 @@
-export * from './ListClasses';
 export * from './Filter';
+export * from './ListStudents';

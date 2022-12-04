@@ -4,12 +4,24 @@ import { Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/mat
 
 import { CAutocomplete, CInput } from '_controls/';
 
-export const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
+import { STATUS } from '_constants/variables';
+
+export const Filter = ({
+	filter,
+	onChangeFilter,
+	semesters,
+	academic_years,
+	departments,
+	classes,
+}) => {
 	//#region Data
 	const [input, setInput] = useState('');
 	//#endregion
 
 	//#region Event
+	const handleChangeStringId = (key) => (value) =>
+		onChangeFilter((prev) => ({ ...prev, [key]: value?.id }));
+
 	const handleChangeFilter = (key) => (value) =>
 		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
 
@@ -22,12 +34,39 @@ export const Filter = ({ filter, onChangeFilter, semesters, academic_years }) =>
 	return (
 		<>
 			<Box mb={1.5}>
-				<Container maxWidth='md'>
+				<Container maxWidth='lg'>
 					<Paper className='paper-filter'>
 						<Box p={1.5}>
 							<Grid container>
-								<Grid item xs={12} xl={4}>
-									<Box p={2}>
+								<Grid item xs={12} md={6} lg={3}>
+									<Box p={1}>
+										<Stack>
+											<Typography
+												fontWeight={500}
+												fontSize={16}
+												pl={1}
+												mb={0.7}
+											>
+												Khoa
+											</Typography>
+											<CAutocomplete
+												disableClearable
+												value={filter.department_id}
+												onChange={handleChangeStringId('department_id')}
+												options={departments}
+												display='name'
+												renderOption={(props, option) => (
+													<Box component='li' key={option.id} {...props}>
+														{option.name}
+													</Box>
+												)}
+											/>
+										</Stack>
+									</Box>
+								</Grid>
+								<Grid item xs={0} md={6} lg={9} />
+								<Grid item xs={12} md={6} lg={3}>
+									<Box p={1}>
 										<Stack>
 											<Typography
 												fontWeight={500}
@@ -39,9 +78,9 @@ export const Filter = ({ filter, onChangeFilter, semesters, academic_years }) =>
 											</Typography>
 											<CAutocomplete
 												disableClearable
-												value={filter.semester_id}
-												onChange={handleChangeFilter('semester_id')}
-												options={semesters}
+												value={filter.class_id}
+												onChange={handleChangeStringId('class_id')}
+												options={classes}
 												display='name'
 												renderOption={(props, option) => (
 													<Box component='li' key={option.id} {...props}>
@@ -52,8 +91,8 @@ export const Filter = ({ filter, onChangeFilter, semesters, academic_years }) =>
 										</Stack>
 									</Box>
 								</Grid>
-								<Grid item xs={12} xl={4}>
-									<Box p={2}>
+								<Grid item xs={12} md={6} lg={3}>
+									<Box p={1}>
 										<Stack>
 											<Typography
 												fontWeight={500}
@@ -78,8 +117,8 @@ export const Filter = ({ filter, onChangeFilter, semesters, academic_years }) =>
 										</Stack>
 									</Box>
 								</Grid>
-								<Grid item xs={12} xl={4}>
-									<Box p={2}>
+								<Grid item xs={12} md={6} lg={3}>
+									<Box p={1}>
 										<Stack>
 											<Typography
 												fontWeight={500}
@@ -95,6 +134,32 @@ export const Filter = ({ filter, onChangeFilter, semesters, academic_years }) =>
 												onChange={handleChangeFilter('academic_id')}
 												options={academic_years}
 												display='name'
+												renderOption={(props, option) => (
+													<Box component='li' key={option.id} {...props}>
+														{option.name}
+													</Box>
+												)}
+											/>
+										</Stack>
+									</Box>
+								</Grid>
+								<Grid item xs={12} md={6} lg={3}>
+									<Box p={1}>
+										<Stack>
+											<Typography
+												fontWeight={500}
+												fontSize={16}
+												pl={1}
+												mb={0.7}
+											>
+												Trạng thái phiếu
+											</Typography>
+											<CAutocomplete
+												value={filter.status}
+												onChange={handleChangeFilter('status')}
+												options={STATUS}
+												display='name'
+												placeholder='Tất cả'
 												renderOption={(props, option) => (
 													<Box component='li' key={option.id} {...props}>
 														{option.name}

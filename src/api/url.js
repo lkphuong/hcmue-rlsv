@@ -15,6 +15,7 @@ export const SHEETS = {
 	UPDATE_CLASS_SHEET: '/sheets/class',
 	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/department',
 	UPDATE_DEPARTMENT_SHEET: '/sheets/department',
+	ADMIN_GET_SHEET: '/sheets/admin',
 };
 
 export const FORMS = {
@@ -45,7 +46,7 @@ export const FORMS = {
 };
 
 export const CLASSES = {
-	GET_CLASSES: '/classes/all',
+	GET_CLASSES: '/classes',
 };
 
 export const OPTIONS = {

@@ -56,8 +56,8 @@ const RolePage = memo(() => {
 		}
 	}, [filter]);
 
-	const getClassData = async (department_id, academic_year_id) => {
-		const res = await getClasses({ department_id, academic_year_id });
+	const getClassData = async (department_id) => {
+		const res = await getClasses(department_id);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);

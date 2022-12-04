@@ -17,8 +17,9 @@ import { alert } from '_func/alert';
 
 import { ERRORS } from '_constants/messages';
 
-import { CreateModal } from '..';
 import { actions } from '_slices/form.slice';
+
+import { CreateModal } from '..';
 
 const SettingHeader = memo(({ updateStep }) => {
 	//#region Data

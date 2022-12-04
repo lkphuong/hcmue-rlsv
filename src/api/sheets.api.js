@@ -37,3 +37,7 @@ export const getDepartmentSheets = (id, params = { semester_id: 0, academic_id: 
 export const updateDepartmentSheets = (id, body = { role_id: 0, data: [] }) => {
 	return put(`${SHEETS.UPDATE_DEPARTMENT_SHEET}/${id}`, body);
 };
+
+export const getAdminSheets = (body) => {
+	return post(SHEETS.ADMIN_GET_SHEET, body);
+};

@@ -51,6 +51,7 @@ const ListPage = () => {
 				onChangeFilter={setBody}
 				semesters={semesters}
 				academic_years={academic_years}
+				classes={classes}
 			/>
 
 			<ListClasses data={classes} />

@@ -1,7 +1,7 @@
-import { post } from '_axios/request';
+import { get } from '_axios/request';
 
 import { CLASSES } from './url';
 
-export const getClasses = (body) => {
-	return post(CLASSES.GET_CLASSES, body);
+export const getClasses = (department_id) => {
+	return get(`${CLASSES.GET_CLASSES}/${department_id}`);
 };

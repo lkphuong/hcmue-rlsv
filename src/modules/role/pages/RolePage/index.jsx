@@ -7,17 +7,10 @@ import { CPagination } from '_controls/';
 
 import { MFilter, MTable } from '_modules/role/components';
 
-import { getStudentsRole } from '_api/roles.api';
 import { getClasses } from '_api/classes.api';
+import { getStudentsRole } from '_api/user.api';
 
 import { isSuccess, isEmpty } from '_func/';
-
-const DEPARTMENTS = [
-	{ id: 1, name: 'CNTT' },
-	{ id: 2, name: 'Toán' },
-	{ id: 3, name: 'Văn' },
-	{ id: 4, name: 'Sử' },
-];
 
 export const ConfigRoleContext = createContext();
 
@@ -31,9 +24,9 @@ const RolePage = memo(() => {
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
 	const [filter, setFilter] = useState({
-		department: '5c35a6785081842fda2067b5',
+		department_id: departments[0].id,
 		academic_id: academic_years[0].id,
-		classes: '5c662569957ddb191891289a',
+		class_id: '5c662569957ddb191891289a',
 		input: '',
 		page: 1,
 		pages: 0,
@@ -98,7 +91,7 @@ const RolePage = memo(() => {
 				<MFilter
 					filter={filter}
 					onChangeFilter={setFilter}
-					departments={DEPARTMENTS}
+					departments={departments}
 					academic_years={academic_years}
 					classes={classes}
 				/>

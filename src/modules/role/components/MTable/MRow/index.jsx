@@ -40,8 +40,8 @@ export const MRow = ({ data }) => {
 			<MMenuRole
 				id={data.user_id}
 				role={Number(data.role)}
-				department={data?.department.id}
-				classes={data?.classes.id}
+				department_id={data?.department.id}
+				class_id={data?.classes.id}
 				ref={menuRef}
 			/>
 		</>

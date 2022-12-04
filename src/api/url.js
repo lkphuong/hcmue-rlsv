@@ -58,9 +58,12 @@ export const OPTIONS = {
 	DELETE_SEMESTERS: '/semesters',
 };
 
+export const USERS = {
+	GET_STUDENT: '/users',
+};
+
 export const ROLES = {
-	GET_STUDENT: '/roles/users',
-	UPDATE_ROLE: '/roles/users',
+	UPDATE_ROLE: '/roles',
 };
 
 export const DEPARTMENTS = {

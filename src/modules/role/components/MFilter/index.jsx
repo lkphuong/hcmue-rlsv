@@ -34,8 +34,8 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 									</Typography>
 									<CAutocomplete
 										disableClearable
-										value={filter.department}
-										onChange={handleChangeFilter('department')}
+										value={filter.department_id}
+										onChange={handleChangeFilter('department_id')}
 										options={departments}
 										display='name'
 										placeholder='ALL'
@@ -78,8 +78,8 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 									</Typography>
 									<CAutocomplete
 										disableClearable
-										value={filter.classes}
-										onChange={handleChangeFilter('classes')}
+										value={filter.class_id}
+										onChange={handleChangeFilter('class_id')}
 										options={classes}
 										display='name'
 										renderOption={(props, option) => (

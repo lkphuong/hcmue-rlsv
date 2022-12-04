@@ -14,7 +14,7 @@ import { ConfigRoleContext } from '_modules/role/pages/RolePage';
 
 import './index.scss';
 
-export const MMenuRole = forwardRef(({ id, role, department, classes }, ref) => {
+export const MMenuRole = forwardRef(({ id, role, department_id, class_id }, ref) => {
 	//#region Data
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
@@ -33,8 +33,8 @@ export const MMenuRole = forwardRef(({ id, role, department, classes }, ref) => 
 
 	const onClick = async () => {
 		const body = {
-			department,
-			classes,
+			department_id,
+			class_id,
 			role_id: Number(value),
 		};
 

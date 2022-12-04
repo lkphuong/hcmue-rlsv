@@ -73,3 +73,7 @@ export const DEPARTMENTS = {
 export const REPORTS = {
 	GET_REPORTS: '/reports',
 };
+
+export const LEVELS = {
+	GET_LEVELS: '/levels',
+};

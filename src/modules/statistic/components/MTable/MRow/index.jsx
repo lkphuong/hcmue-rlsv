@@ -32,13 +32,12 @@ const MRow = ({ data, index, previewClass }) => {
 			<TableCell align='center' className='border-right'>
 				{count}
 			</TableCell>
-			<TableCell align='center'>{data.perfect}</TableCell>
-			<TableCell align='center'>{data.well}</TableCell>
-			<TableCell align='center'>{data.good}</TableCell>
-			<TableCell align='center'>{data.medium}</TableCell>
-			<TableCell align='center'>{data.low}</TableCell>
-			<TableCell align='center'>{data.bad}</TableCell>
-			<TableCell align='center'>{data.underated}</TableCell>
+			{data?.levels?.length > 0 &&
+				data.levels.map((level) => (
+					<TableCell key={level.id} align='center'>
+						{level.count}
+					</TableCell>
+				))}
 		</TableRow>
 	);
 

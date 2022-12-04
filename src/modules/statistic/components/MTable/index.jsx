@@ -11,28 +11,46 @@ import {
 	TableRow,
 } from '@mui/material';
 
+import { getLevels } from '_api/level.api';
+
+import { isSuccess, isEmpty } from '_func/';
+
 import MRow from './MRow';
 import MFooter from './MFooter';
 
-const MTable = ({ data, onClick }) => {
+const MTable = ({ data, onClick, departmentName }) => {
 	//#region Data
 	const [height, setHeight] = useState(0);
 
+	const [levels, setLevels] = useState([]);
+
 	const heightRef = useRef(null);
+
+	//#endregion
+
+	//#region Event
+	const getLevelsColumns = async () => {
+		const res = await getLevels();
+
+		if (isSuccess(res)) setLevels(res.data);
+		else if (isEmpty(res)) setLevels([]);
+	};
+	//#endregion
 
 	useEffect(() => {
 		setHeight(heightRef.current.clientHeight);
 	});
-	//#endregion
 
-	//#region Event
-
-	//#endregion
+	useEffect(() => {
+		getLevelsColumns();
+	}, []);
 
 	//#region Render
 	return (
 		<Box>
-			<CardHeader title='DANH SÁCH THỐNG KÊ PHIẾU CHẤM ĐIỂM RÈN LUYỆN CỦA KHOA' />
+			<CardHeader
+				title={`Danh sách thống kê phiếu chấm điểm rèn luyện của khoa: ${departmentName}`}
+			/>
 			<TableContainer className='c-table'>
 				<Table stickyHeader className='statistic-table'>
 					<TableHead>
@@ -56,62 +74,18 @@ const MTable = ({ data, onClick }) => {
 							</TableCell>
 						</TableRow>
 						<TableRow>
-							<TableCell
-								align='center'
-								width={100}
-								className='border-left'
-								sx={{ top: height + 1 }}
-							>
-								Xuất sắc
-							</TableCell>
-							<TableCell
-								align='center'
-								width={100}
-								className='border-left'
-								sx={{ top: height + 1 }}
-							>
-								Tốt
-							</TableCell>
-							<TableCell
-								align='center'
-								width={100}
-								className='border-left'
-								sx={{ top: height + 1 }}
-							>
-								Khá
-							</TableCell>
-							<TableCell
-								align='center'
-								width={100}
-								className='border-left'
-								sx={{ top: height + 1 }}
-							>
-								Trung bình
-							</TableCell>
-							<TableCell
-								align='center'
-								width={100}
-								className='border-left'
-								sx={{ top: height + 1 }}
-							>
-								Yếu
-							</TableCell>
-							<TableCell
-								align='center'
-								width={100}
-								className='border-left'
-								sx={{ top: height + 1 }}
-							>
-								Kém
-							</TableCell>
-							<TableCell
-								align='center'
-								width={100}
-								className='border-left'
-								sx={{ top: height + 1 }}
-							>
-								Không xếp loại
-							</TableCell>
+							{levels.length > 0 &&
+								levels.map((level) => (
+									<TableCell
+										key={level.id}
+										align='center'
+										width={100}
+										className='border-left'
+										sx={{ top: height + 1 }}
+									>
+										{level.name}
+									</TableCell>
+								))}
 						</TableRow>
 					</TableHead>
 					<TableBody>

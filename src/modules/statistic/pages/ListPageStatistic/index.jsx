@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
@@ -114,6 +114,13 @@ const ListPageStatistic = () => {
 		department_id: departments[0]?.id,
 		class_id: '',
 	});
+
+	const departmentName = useMemo(
+		() =>
+			departments.find((e) => e.id.toString() === filter.department_id.toString())?.name ||
+			'',
+		[departments, filter.department_id]
+	);
 	//#endregion
 
 	//#region Event
@@ -162,7 +169,7 @@ const ListPageStatistic = () => {
 			/>
 
 			{!classData ? (
-				<MTable data={data} onClick={viewClass} />
+				<MTable data={data} onClick={viewClass} departmentName={departmentName} />
 			) : (
 				<MClassTable
 					classData={classData}

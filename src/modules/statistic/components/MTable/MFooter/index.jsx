@@ -4,6 +4,7 @@ import { TableCell, TableFooter, TableRow } from '@mui/material';
 
 const MFooter = ({ data }) => {
 	//#region Data
+
 	const summary = useMemo(() => {
 		return data.reduce(
 			(prev, cur) => ({

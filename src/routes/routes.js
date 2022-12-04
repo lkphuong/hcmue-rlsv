@@ -22,6 +22,8 @@ import { RolePage } from '_modules/role/pages';
 
 import { ConfigPage } from '_modules/config/pages';
 
+import { ListPageAdmin } from '_modules/manager/pages';
+
 export const browserRouter = [
 	{
 		path: ROUTES.HOME,
@@ -123,7 +125,7 @@ export const browserRouter = [
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.NOTES.key}>
-						<div>quản lý phiếu đánh giá</div>
+						<ListPageAdmin />
 					</CPermission>
 				),
 			},

@@ -43,3 +43,22 @@ export const updateHeaderIdInArr = (header_id, item_id, arr) => {
 
 	return newArr;
 };
+
+//Phân trang cho array object, chunk: limit
+// Trả về object {data,pages}
+export const splitIntoChunk = (arr = [], chunk = 10) => {
+	const newArr = [...arr];
+
+	const data = {};
+	const pages = Math.ceil(arr.length / chunk);
+
+	let index = 1;
+	while (newArr.length > 0) {
+		let tempArray;
+		tempArray = newArr.splice(0, chunk);
+		data[index] = tempArray;
+		index += 1;
+	}
+
+	return { data, pages };
+};

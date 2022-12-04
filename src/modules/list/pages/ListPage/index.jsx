@@ -54,7 +54,7 @@ const ListPage = () => {
 				classes={classes}
 			/>
 
-			<ListClasses data={classes} />
+			{classes?.length > 0 && <ListClasses data={classes} />}
 		</Box>
 	);
 	//#endregion

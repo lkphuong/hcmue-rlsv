@@ -56,7 +56,7 @@ const MClassTable = memo(({ classData, academic_id, semester_id }) => {
 
 	//#region Event
 	const getClassData = async () => {
-		const res = await getClassSheets(Number(classData?.id), { academic_id, semester_id });
+		const res = await getClassSheets(classData?.id, { academic_id, semester_id });
 
 		setData(res.data);
 	};
@@ -84,10 +84,12 @@ const MClassTable = memo(({ classData, academic_id, semester_id }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{FAKE_DATA?.length > 0 &&
-							FAKE_DATA.map((row, index) => (
+						{data?.length > 0 &&
+							data.map((row, index) => (
 								<TableRow key={row.id}>
-									<TableCell align='center'>{index + 1}</TableCell>
+									<TableCell align='center' height={50}>
+										{index + 1}
+									</TableCell>
 									<TableCell align='left'>{row?.user?.fullname}</TableCell>
 									<TableCell align='center'>{row?.user?.std_code}</TableCell>
 									<TableCell align='center'>
@@ -97,7 +99,9 @@ const MClassTable = memo(({ classData, academic_id, semester_id }) => {
 									<TableCell align='center'>
 										{row?.sum_of_department_marks}
 									</TableCell>
-									<TableCell align='center'>{row?.level?.name}</TableCell>
+									<TableCell align='center'>
+										{row?.level?.name || 'Chưa đánh giá'}
+									</TableCell>
 								</TableRow>
 							))}
 					</TableBody>

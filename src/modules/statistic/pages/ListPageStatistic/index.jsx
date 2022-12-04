@@ -11,91 +11,6 @@ import { isSuccess, isEmpty } from '_func/';
 import { getClasses } from '_api/classes.api';
 import { getRerorts } from '_api/reports.api';
 
-const CLASSES = [
-	{ id: 1, name: 'CNTT.A' },
-	{ id: 2, name: 'CNTT.B' },
-	{ id: 3, name: 'CNTT.C' },
-	{ id: 4, name: 'CNTT.D' },
-];
-
-const DATA = [
-	{
-		id: 1,
-		class: {
-			id: 1,
-			name: 'CNTT 1',
-		},
-		count: 80,
-		perfect: 5,
-		well: 30,
-		good: 35,
-		medium: 5,
-		low: 5,
-		bad: 0,
-		underated: 2,
-	},
-	{
-		id: 2,
-		class: {
-			id: 2,
-			name: 'CNTT 2',
-		},
-		count: 80,
-		perfect: 5,
-		well: 30,
-		good: 35,
-		medium: 5,
-		low: 5,
-		bad: 0,
-		underated: 2,
-	},
-	{
-		id: 3,
-		class: {
-			id: 3,
-			name: 'CNTT 3',
-		},
-		count: 80,
-		perfect: 5,
-		well: 30,
-		good: 35,
-		medium: 5,
-		low: 5,
-		bad: 0,
-		underated: 2,
-	},
-	{
-		id: 4,
-		class: {
-			id: 4,
-			name: 'CNTT 4',
-		},
-		count: 80,
-		perfect: 5,
-		well: 30,
-		good: 35,
-		medium: 5,
-		low: 5,
-		bad: 0,
-		underated: 2,
-	},
-	{
-		id: 5,
-		class: {
-			id: 5,
-			name: 'CNTT 5',
-		},
-		count: 80,
-		perfect: 5,
-		well: 30,
-		good: 35,
-		medium: 5,
-		low: 5,
-		bad: 0,
-		underated: 2,
-	},
-];
-
 const ListPageStatistic = () => {
 	//#region Data
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
@@ -133,12 +48,12 @@ const ListPageStatistic = () => {
 		else if (isEmpty(res)) setData([]);
 	}, [filter]);
 
-	const viewClass = (classInfo) => () => {
-		setClassData(classInfo);
+	const viewClass = (id, name) => () => {
+		setClassData({ id, name });
 	};
 
-	const getClassData = async (department_id, academic_year_id) => {
-		const res = await getClasses({ department_id, academic_year_id });
+	const getClassData = async (department_id) => {
+		const res = await getClasses(department_id);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);
@@ -147,10 +62,10 @@ const ListPageStatistic = () => {
 	//#endregion
 
 	useEffect(() => {
-		if (filter.department_id && filter.academic_id) {
-			getClassData(filter.department_id, filter.academic_id);
+		if (filter.department_id) {
+			getClassData(filter.department_id);
 		}
-	}, [filter.department_id, filter.academic_id]);
+	}, [filter.department_id]);
 
 	useEffect(() => {
 		getData();

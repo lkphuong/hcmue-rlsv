@@ -1,34 +1,34 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { TableCell, TableFooter, TableRow } from '@mui/material';
 
 const MFooter = ({ data }) => {
 	//#region Data
 
-	const summary = useMemo(() => {
-		return data.reduce(
-			(prev, cur) => ({
-				total: prev.total + cur.count,
-				perfect: prev.perfect + cur.perfect,
-				well: prev.well + cur.well,
-				good: prev.good + cur.good,
-				medium: prev.medium + cur.medium,
-				low: prev.low + cur.low,
-				bad: prev.bad + cur.bad,
-				underated: prev.underated + cur.underated,
-			}),
-			{
-				perfect: 0,
-				well: 0,
-				good: 0,
-				medium: 0,
-				low: 0,
-				bad: 0,
-				underated: 0,
-				total: 0,
-			}
-		);
-	}, [data]);
+	// const summary = useMemo(() => {
+	// 	return data?.reduce(
+	// 		(prev, cur) => ({
+	// 			total: prev.total + cur.count,
+	// 			perfect: prev.perfect + cur.perfect,
+	// 			well: prev.well + cur.well,
+	// 			good: prev.good + cur.good,
+	// 			medium: prev.medium + cur.medium,
+	// 			low: prev.low + cur.low,
+	// 			bad: prev.bad + cur.bad,
+	// 			underated: prev.underated + cur.underated,
+	// 		}),
+	// 		{
+	// 			perfect: 0,
+	// 			well: 0,
+	// 			good: 0,
+	// 			medium: 0,
+	// 			low: 0,
+	// 			bad: 0,
+	// 			underated: 0,
+	// 			total: 0,
+	// 		}
+	// 	);
+	// }, [data]);
 	//#endregion
 
 	//#region Event
@@ -47,13 +47,11 @@ const MFooter = ({ data }) => {
 				>
 					Tổng cộng
 				</TableCell>
-				<TableCell align='center'>{summary.perfect}</TableCell>
-				<TableCell align='center'>{summary.well}</TableCell>
-				<TableCell align='center'>{summary.good}</TableCell>
-				<TableCell align='center'>{summary.medium}</TableCell>
-				<TableCell align='center'>{summary.low}</TableCell>
-				<TableCell align='center'>{summary.bad}</TableCell>
-				<TableCell align='center'>{summary.underated}</TableCell>
+				{data?.sum_of_levels?.map((e) => (
+					<TableCell key={e.id} align='center'>
+						{e?.count}
+					</TableCell>
+				))}
 			</TableRow>
 			<TableRow>
 				<TableCell
@@ -64,13 +62,12 @@ const MFooter = ({ data }) => {
 				>
 					Tỷ lệ phần trăm %
 				</TableCell>
-				<TableCell align='center'>{(summary.perfect / summary.total) * 100}%</TableCell>
-				<TableCell align='center'>{(summary.well / summary.total) * 100}%</TableCell>
-				<TableCell align='center'>{(summary.good / summary.total) * 100}%</TableCell>
-				<TableCell align='center'>{(summary.medium / summary.total) * 100}%</TableCell>
-				<TableCell align='center'>{(summary.low / summary.total) * 100}%</TableCell>
-				<TableCell align='center'>{(summary.bad / summary.total) * 100}%</TableCell>
-				<TableCell align='center'>{(summary.underated / summary.total) * 100}%</TableCell>
+				{data?.sum_of_levels?.map((e) => (
+					<TableCell key={e.id} align='center'>{`${(
+						(e?.count / data?.sum_of_std_in_classes) *
+						100
+					).toFixed(2)}%`}</TableCell>
+				))}
 			</TableRow>
 		</TableFooter>
 	);

@@ -9,7 +9,7 @@ const MRow = ({ data, index, previewClass }) => {
 	const count = useMemo(() => {
 		if (!data?.levels?.length) return 0;
 
-		return data.levels.reduce((prev, cur) => prev + cur?.count, 0);
+		return data?.levels?.reduce((prev, cur) => prev + cur?.count, 0);
 	}, []);
 	//#endregion
 
@@ -24,7 +24,7 @@ const MRow = ({ data, index, previewClass }) => {
 				<Link
 					underline='hover'
 					sx={{ cursor: 'pointer' }}
-					onClick={previewClass(data?.class)}
+					onClick={previewClass(data?.id, data?.name)}
 				>
 					{data?.name}
 				</Link>

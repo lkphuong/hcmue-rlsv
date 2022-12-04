@@ -86,11 +86,19 @@ const MTable = ({ data, onClick, departmentName }) => {
 										{level.name}
 									</TableCell>
 								))}
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
+								Không xếp loại
+							</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{data?.length > 0 &&
-							data.map((row, index) => (
+						{data?.classes?.length > 0 &&
+							data.classes.map((row, index) => (
 								<MRow
 									key={row.id}
 									index={index}

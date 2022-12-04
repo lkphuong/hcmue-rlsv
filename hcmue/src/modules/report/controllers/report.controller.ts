@@ -64,6 +64,10 @@ export class ReportController {
    * @method POST
    * @url /api/reports
    * @access private
+   * @param academic_id
+   * @param semester_id
+   * @param department_id
+   * @param class_id?
    * @description Hiển thị thống kê phiếu
    * @return HttpResponse<ReportResponse> | HttpException | null
    * @page reports page

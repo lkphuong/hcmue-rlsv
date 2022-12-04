@@ -63,7 +63,7 @@ export class UserController {
    * @page roles page
    */
   @HttpCode(HttpStatus.OK)
-  @Post('users')
+  @Post('/')
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

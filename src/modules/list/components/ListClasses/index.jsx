@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Grid, List, ListItem } from '@mui/material';
 
@@ -10,12 +10,13 @@ import { ArrowForwardIos } from '@mui/icons-material';
 
 import { splitIntoChunk } from '_func/';
 
-import './index.scss';
 import { CPagination } from '_controls/';
+
+import './index.scss';
 
 const ListClasses = ({ data }) => {
 	//#region Data
-	const dataPage = splitIntoChunk(data);
+	const dataPage = useMemo(() => splitIntoChunk(data), [data]);
 
 	const [curData, setCurData] = useState(dataPage.data[1]);
 
@@ -29,6 +30,11 @@ const ListClasses = ({ data }) => {
 		setPaginate((prev) => ({ ...prev, page: value }));
 	};
 	//#endregion
+
+	useEffect(() => {
+		setCurData(dataPage.data[1]);
+		setPaginate({ page: 1, pages: dataPage.pages });
+	}, [dataPage]);
 
 	//#region Render
 	return (

@@ -21,6 +21,7 @@ import {
 
 import { convertObjectId2String } from '../../../utils';
 import { mapUserForSheet } from '../utils';
+import { Class } from 'src/schemas/class.schema';
 
 export const generateUserSheets = (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -95,32 +96,18 @@ export const generateClassSheets = async (
   return null;
 };
 
-export const generateClasses2Array = async (
-  department_id: string,
-  academic_year_classes: AcademicYearClassesEntity[] | null,
-  class_service: ClassService,
-) => {
-  if (academic_year_classes && academic_year_classes.length > 0) {
+export const generateClasses2Array = async (classes: Class[]) => {
+  if (classes && classes.length > 0) {
     const payload: BaseResponse[] = [];
 
-    for (const academic_year_class of academic_year_classes) {
+    for (const $class of classes) {
       //#region Get class by class_id
-      const result = await class_service.getClassById(
-        academic_year_class.class_id,
-        department_id,
-      );
+      const item: BaseResponse = {
+        id: convertObjectId2String($class._id),
+        name: $class.name,
+      };
+      payload.push(item);
       //#endregion
-
-      if (result) {
-        //#region Generate class response
-        const item: BaseResponse = {
-          id: convertObjectId2String(result._id),
-          name: result.name,
-        };
-
-        payload.push(item);
-        //#endregion
-      }
     }
 
     return payload;
@@ -278,6 +265,42 @@ export const generateEvaluationsArray = (
       };
 
       payload.push(item);
+    }
+
+    return payload;
+  }
+
+  return null;
+};
+
+export const generateAdminSheets = (
+  sheets: SheetEntity[] | null,
+  users: User[] | null,
+) => {
+  if (sheets && sheets.length > 0 && users && users.length > 0) {
+    const payload: ClassSheetsResponse[] = [];
+    for (const sheet of sheets) {
+      const user = users.find(
+        (e) => convertObjectId2String(e._id) == sheet.user_id,
+      );
+      if (user) {
+        const item: ClassSheetsResponse = {
+          id: sheet.id,
+          level: sheet.level
+            ? { id: sheet.level.id, name: sheet.level.name }
+            : null,
+          status: sheet.status,
+          sum_of_class_marks: sheet.sum_of_class_marks,
+          sum_of_department_marks: sheet.sum_of_department_marks,
+          sum_of_personal_marks: sheet.sum_of_personal_marks,
+          user: {
+            id: convertObjectId2String(user._id),
+            fullname: user.fullname,
+            std_code: user.username,
+          },
+        };
+        payload.push(item);
+      }
     }
 
     return payload;

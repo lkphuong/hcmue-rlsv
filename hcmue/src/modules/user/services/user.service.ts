@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 
 import {
   generateCountUserPipeline,
   generateGetUserByIdPipeline,
+  generateGetUserByUserIds,
   generateGetUsersByClassPipeline,
   generateGetUsersPagingPipeline,
 } from '../pipelines';
@@ -110,6 +111,23 @@ export class UserService {
         Levels.ERROR,
         Methods.SELECT,
         'UserService.getUserById()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getUserByIds(user_ids: Types.ObjectId[]): Promise<User[] | null> {
+    try {
+      const pipeline = generateGetUserByUserIds(user_ids);
+      const users = await this._userModule.aggregate<User>(pipeline).exec();
+
+      return users || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.getUserByIds()',
         e,
       );
       return null;

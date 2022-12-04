@@ -28,9 +28,12 @@ import {
   generateClassSheetsResponse,
   generateEvaluationsResponse,
   generateItemsResponse,
+  generateResponses,
   generateSheet,
   generateUserSheetsResponse,
 } from '../utils';
+
+import { convertString2ObjectId } from '../../../utils';
 
 import {
   validateClassId,
@@ -49,9 +52,11 @@ import { GetSheetsByClassDto } from '../dtos/get_sheets_by_class.dto';
 import { UpdateClassMarkDto } from '../dtos/update_class_mark.dto';
 import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
 import { UpdateStudentMarkDto } from '../dtos/update_student_mark.dto';
+import { GetSheetsByAdminDto } from '../dtos/get_sheets_admin.dto';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { ClassService } from '../../class/services/class.service';
+import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
 import { HeaderService } from '../../header/services/header.service';
@@ -64,6 +69,7 @@ import { SheetService } from '../services/sheet.service';
 import { UserService } from '../../user/services/user.service';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { HttpPagingResponse } from '../../../interfaces/http-paging-response.interface';
 
 import {
   SheetDetailsResponse,
@@ -77,12 +83,13 @@ import {
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
-import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.guard';
-import { Roles } from 'src/modules/auth/decorators/roles.decorator';
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 
-import { Role } from 'src/modules/auth/constants/enums/role.enum';
+import { Configuration } from '../../shared/constants/configuration.enum';
+import { Role } from '../../auth/constants/enums/role.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
@@ -106,6 +113,7 @@ export class SheetController {
     private readonly _sheetService: SheetService,
     private readonly _userService: UserService,
     private readonly _dataSource: DataSource,
+    private readonly _configurationService: ConfigurationService,
     private readonly _logger: LogService,
   ) {
     // Due to transient scope, SheetController has its own unique instance of LogService,
@@ -396,6 +404,190 @@ export class SheetController {
 
   /**
    * @method Post
+   * @url /api/sheets/admin/
+   * @access private
+   * @param pages
+   * @param pages
+   * @param department_id
+   * @param class_id
+   * @param semester_id
+   * @param academic_id
+   * @param status
+   * @param input
+   * @description Hiển thị danh sách phiếu đánh giá theo lớp
+   * @return  HttpResponse<ClassSheetsResponse> | HttpException
+   * @page sheets page
+   */
+  @Post('admin')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getSheets(
+    @Body() params: GetSheetsByAdminDto,
+    @Req() req: Request,
+  ): Promise<HttpPagingResponse<ClassSheetsResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      //#region Get params
+      const {
+        academic_id,
+        class_id,
+        department_id,
+        semester_id,
+        input,
+        page,
+        status,
+      } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
+      );
+      //#endregion
+
+      //#region Validation
+      //
+      //#endregion
+
+      if (input) {
+        //#region Get pages
+        if (pages === 0) {
+          //#region Count
+          const count = await this._sheetService.countSheets(
+            academic_id,
+            class_id,
+            department_id,
+            semester_id,
+            status,
+          );
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+        //#endregion
+
+        //#region Get User from Mongodb
+        const users = await this._userService.getUsersPaging(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          class_id,
+          department_id,
+          input,
+        );
+        //#endregion
+
+        if (users && users.length > 0) {
+          const user_ids = users.map((user) => {
+            return user._id;
+          });
+          //#region Get Sheets by user_ids
+          const sheets = await this._sheetService.getSheetsByUserIds(
+            academic_id,
+            class_id,
+            department_id,
+            semester_id,
+            status,
+            user_ids,
+          );
+          //#endregion
+          if (sheets && sheets.length > 0) {
+            //#region
+            return generateResponses(pages, page, users, sheets, req);
+            //#endregion
+          }
+        }
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      } else {
+        //#region Get pages
+        if (pages === 0) {
+          //#region Count
+          const count = await this._sheetService.countSheets(
+            academic_id,
+            class_id,
+            department_id,
+            semester_id,
+            status,
+          );
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+        //#endregion
+
+        //#region Get Sheets
+        const sheets = await this._sheetService.getSheetsPaging(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          department_id,
+          class_id,
+          academic_id,
+          semester_id,
+          status,
+        );
+        //#endregion
+        if (sheets && sheets.length > 0) {
+          const user_ids = sheets.map((sheet) => {
+            return convertString2ObjectId(sheet.user_id);
+          });
+
+          const users = await this._userService.getUserByIds(user_ids);
+
+          if (users && users.length > 0) {
+            // generate reponse
+            return generateResponses(pages, page, users, sheets, req);
+            //#endregion
+          }
+        }
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method Post
    * @url /api/sheets/class/:class_id
    * @access private
    * @param class_id
@@ -491,6 +683,7 @@ export class SheetController {
    * @page sheets page
    */
   @Post('department/:department_id')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -522,29 +715,19 @@ export class SheetController {
       //#endregion
 
       //#region Get params
-      const { academic_id, class_id } = params;
+      const { class_id } = params;
       //#endregion
 
       //#region Get classess
-      const academic_year =
-        await this._academicYearService.getClassesByAcademic(
-          academic_id,
-          class_id,
-        );
+      const $class = await this._classService.getClassesByDepartmentId(
+        department_id,
+        class_id,
+      );
       //#endregion
 
-      if (
-        academic_year &&
-        academic_year.classes &&
-        academic_year.classes.length > 0
-      ) {
+      if ($class && $class.length > 0) {
         //#region Generate response
-        return await generateClassesResponse(
-          department_id,
-          academic_year.classes,
-          this._classService,
-          req,
-        );
+        return await generateClassesResponse($class, req);
         //#endregion
       } else {
         //#region throw HandlerException

@@ -39,13 +39,27 @@ export class ClassService {
 
   async getClassesByDepartmentId(
     department_id: string,
+    class_id?: string,
   ): Promise<Class[] | null> {
     try {
-      const classes = await this._classModel.find({
-        departmentId: convertString2ObjectId(department_id),
-      });
+      let $class: Class[] = null;
 
-      return classes || null;
+      if (!class_id) {
+        $class = await this._classModel
+          .find({
+            departmentId: convertString2ObjectId(department_id),
+          })
+          .sort({ name: -1 });
+      } else {
+        $class = await this._classModel
+          .find({
+            departmentId: convertString2ObjectId(department_id),
+            _id: convertString2ObjectId(class_id),
+          })
+          .sort({ name: -1 });
+      }
+
+      return $class || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

@@ -1,17 +1,15 @@
-import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { ItemEntity } from '../../../entities/item.entity';
 import { OptionEntity } from '../../../entities/option.entity';
+import { TitleEntity } from '../../../entities/title.entity';
 
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
-import { TitleEntity } from 'src/entities/title.entity';
 
-@Injectable()
 export class ItemService {
   constructor(
     @InjectRepository(ItemEntity)
@@ -36,7 +34,7 @@ export class ItemService {
         .leftJoinAndSelect(
           'item.evaluations',
           'evaluation',
-          'evaluation.item_id = item.id AND evaluation.deleted = false',
+          'evaluation.item_id = item.id AND evaluation.deleted = 0',
         )
         .where('item.title = :title_id', { title_id })
         .andWhere('item.deleted = :deleted', { deleted: false })

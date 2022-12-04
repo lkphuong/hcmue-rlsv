@@ -2,12 +2,18 @@ import { HttpStatus } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
-import { convertObjectId2String, returnObjects } from '../../../utils';
+import {
+  convertObjectId2String,
+  returnObjects,
+  returnObjectsWithPaging,
+} from '../../../utils';
 
 import { AcademicYearClassesEntity } from '../../../entities/academic_year_classes.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
+
+import { User } from '../../../schemas/user.schema';
 
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
@@ -17,9 +23,11 @@ import { UserService } from '../../user/services/user.service';
 import {
   ApproveAllResponse,
   BaseResponse,
+  ClassSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 
 import {
+  generateAdminSheets,
   generateClasses2Array,
   generateClassSheets,
   generateData2Object,
@@ -32,23 +40,17 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
-import { User } from 'src/schemas/user.schema';
+import { Class } from 'src/schemas/class.schema';
 
 export const generateClassesResponse = async (
-  department_id: string,
-  data: AcademicYearClassesEntity[] | null,
-  class_service: ClassService,
+  data: Class[] | null,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', data);
 
-  const classes = await generateClasses2Array(
-    department_id,
-    data,
-    class_service,
-  );
+  const classes = await generateClasses2Array(data);
 
   // Returns object
   return returnObjects<BaseResponse>(classes);
@@ -224,4 +226,26 @@ export const mapUserForSheet = (
     if (result) return result;
   }
   return null;
+};
+
+export const generateResponses = async (
+  pages: number,
+  page: number,
+  users: User[],
+  sheets: SheetEntity[],
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', users);
+
+  // Transform UserSchema and SheetEntity class to ClassSheetsResponse class
+  const payload = await generateAdminSheets(sheets, users);
+
+  // Returns objects
+  return returnObjectsWithPaging<ClassSheetsResponse>(pages, page, payload);
+};
+
+export const generateStringObjectID = (arr_object: string[]) => {
+  return arr_object.map((value) => `"${value}"`).join(',');
 };

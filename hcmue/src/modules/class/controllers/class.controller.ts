@@ -7,6 +7,8 @@ import {
   UsePipes,
   ValidationPipe,
   Body,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -19,7 +21,6 @@ import { ClassResponse } from '../interfaces/class_response.interface';
 
 import { LogService } from '../../log/services/log.service';
 
-import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { ClassService } from '../services/class.service';
 
 import { ErrorMessage } from '../constants/errors.enum';
@@ -35,7 +36,6 @@ import {
 @Controller('classes')
 export class ClassController {
   constructor(
-    private readonly _academicYearService: AcademicYearService,
     private readonly _classService: ClassService,
     private _logger: LogService,
   ) {
@@ -45,19 +45,18 @@ export class ClassController {
   }
 
   /**
-   * @method POST
+   * @method Get
    * @url /api/classes/all
    * @access private
    * @param department_id
-   * @param academic_year_id
-   * @description Hiển thị danh sách lớp theo khoa thuộc niên khóa
+   * @description Hiển thị danh sách lớp theo khoa
    * @return HttpResponse<ClassResponse> | HttpException | null
    * @page Any page
    */
-  @Post('all')
+  @Get(':department_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassesByDepartment(
-    @Body() params: GetClassDto,
+    @Param() params: GetClassDto,
     @Req() req: Request,
   ): Promise<HttpResponse<ClassResponse> | null | HttpException> {
     try {
@@ -72,25 +71,17 @@ export class ClassController {
       );
 
       //#region Get params
-      const { academic_year_id, department_id } = params;
+      const { department_id } = params;
       //#endregion
 
       //#region Get classes
-      const academic_year =
-        await this._academicYearService.getClassesByAcademic(academic_year_id);
+      const $class = await this._classService.getClassesByDepartmentId(
+        department_id,
+      );
       //#endregion
-      if (
-        academic_year &&
-        academic_year.classes &&
-        academic_year.classes.length > 0
-      ) {
+      if ($class && $class.length > 0) {
         //#region Generate response
-        return await generateClassesResponse(
-          department_id,
-          academic_year.classes,
-          this._classService,
-          req,
-        );
+        return await generateClassesResponse($class, req);
         //#endregion
       } else {
         //#region throw HandlerException

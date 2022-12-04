@@ -1,4 +1,4 @@
-import { PipelineStage } from 'mongoose';
+import { PipelineStage, Types } from 'mongoose';
 import { convertString2ObjectId } from '../../../utils';
 
 export const generateCountUserPipeline = (
@@ -277,4 +277,20 @@ export const generateGetUserByIdPipeline = (id: string) => {
   ];
 
   return pipeline;
+};
+
+export const generateGetUserByUserIds = (user_id: Types.ObjectId[]) => {
+  //#region Create conditions
+  const matchs: PipelineStage[] = [
+    {
+      $match: {
+        _id: {
+          $in: user_id,
+        },
+      },
+    },
+  ];
+  //#endregion
+
+  return matchs;
 };

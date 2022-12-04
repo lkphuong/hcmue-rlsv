@@ -122,6 +122,6 @@ export const validateUser = async (
       //#endregion
     }
 
-    return user;
+    return user[0];
   }
 };

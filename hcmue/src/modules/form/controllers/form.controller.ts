@@ -717,7 +717,6 @@ export class FormController {
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  @HttpCode(HttpStatus.OK)
   async createHeader(
     @Body() params: HeaderDto,
     @Req() req: Request,

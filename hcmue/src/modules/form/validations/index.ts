@@ -293,7 +293,11 @@ export const valiadteTitle = async (
 };
 
 export const validateTime = (start: string, end: string, req: Request) => {
-  if (new Date(start) > new Date(end)) {
+  if (
+    new Date(start) > new Date(end) ||
+    new Date(start) < new Date() ||
+    new Date(end) < new Date()
+  ) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,

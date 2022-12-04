@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  HttpCode,
   HttpException,
   HttpStatus,
   Post,
   Req,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -34,17 +36,21 @@ import { UserService } from '../../user/services/user.service';
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { ReportResponse } from '../interfaces/report-response.interface';
 
+import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
+
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 import { Levels } from '../../../constants/enums/level.enum';
 
+import { Role } from '../../auth/constants/enums/role.enum';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { ErrorMessage } from '../constants/enums/errors.enum';
 
 @Controller('reports')
 export class ReportController {
@@ -77,6 +83,9 @@ export class ReportController {
    * @page reports page
    */
   @Post('/')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getReports(
     @Body() params: GetReportsByClassDto,

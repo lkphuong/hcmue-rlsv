@@ -9,6 +9,7 @@ import {
   Body,
   Get,
   Param,
+  HttpCode,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -54,6 +55,7 @@ export class ClassController {
    * @page Any page
    */
   @Get(':department_id')
+  @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassesByDepartment(
     @Param() params: GetClassDto,

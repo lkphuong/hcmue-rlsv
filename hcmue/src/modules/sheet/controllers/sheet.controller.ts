@@ -25,7 +25,6 @@ import {
 import {
   generateApproveAllResponse,
   generateClassesResponse,
-  generateClassSheetsResponse,
   generateEvaluationsResponse,
   generateItemsResponse,
   generateResponses,
@@ -96,6 +95,7 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { SheetStatus } from '../constants/enums/status.enum';
 
 @Controller('sheets')
 export class SheetController {
@@ -466,12 +466,10 @@ export class SheetController {
         //#region Get pages
         if (pages === 0) {
           //#region Count
-          const count = await this._sheetService.countSheets(
-            academic_id,
+          const count = await this._userService.count(
             class_id,
             department_id,
-            semester_id,
-            status,
+            input,
           );
 
           if (count > 0) pages = Math.ceil(count / itemsPerPage);
@@ -602,7 +600,7 @@ export class SheetController {
     @Param('class_id') class_id: string,
     @Body() params: GetSheetsByClassDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<ClassSheetsResponse> | HttpException> {
+  ): Promise<HttpPagingResponse<ClassSheetsResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -626,26 +624,104 @@ export class SheetController {
       //#endregion
 
       //#region Get params
-      const { role } = req.user as JwtPayload;
-      const { academic_id, semester_id } = params;
-      const input = params.input ?? null;
-      //#endregion
-
-      //#region Get sheets by class
-      const sheets = await this._sheetService.getSheetsByClassId(
-        academic_id,
-        class_id,
-        semester_id,
-        role,
+      const { academic_id, department_id, input, page, semester_id } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
       );
       //#endregion
 
-      const users = await this._userService.getUsersByClass(class_id, input);
-      if (sheets && sheets.length > 0 && users) {
-        //#region Generate response
-        return await generateClassSheetsResponse(sheets, users, req);
+      if (input) {
+        //#region Get pages
+        if (pages === 0) {
+          //#region Count
+          const count = await this._userService.count(
+            class_id,
+            department_id,
+            input,
+          );
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+        //#endregion
+
+        //#region Get User from Mongodb
+        const users = await this._userService.getUsersPaging(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          class_id,
+          department_id,
+          input,
+        );
+        //#endregion
+
+        if (users && users.length > 0) {
+          //#region Get Sheets by user_ids
+          const sheets = await this._sheetService.getSheetsByUserIds(
+            academic_id,
+            class_id,
+            department_id,
+            semester_id,
+            SheetStatus.ALL,
+          );
+          //#endregion
+          if (sheets && sheets.length > 0) {
+            //#region
+            return generateResponses(pages, page, users, sheets, req);
+            //#endregion
+          }
+        }
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
         //#endregion
       } else {
+        //#region Get pages
+        if (pages === 0) {
+          //#region Count
+          const count = await this._sheetService.countSheets(
+            academic_id,
+            class_id,
+            department_id,
+            semester_id,
+            SheetStatus.ALL,
+          );
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+        //#endregion
+
+        //#region Get Sheets
+        const sheets = await this._sheetService.getSheetsPaging(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          department_id,
+          class_id,
+          academic_id,
+          semester_id,
+          SheetStatus.ALL,
+        );
+        //#endregion
+        if (sheets && sheets.length > 0) {
+          const user_ids = sheets.map((sheet) => {
+            return convertString2ObjectId(sheet.user_id);
+          });
+
+          const users = await this._userService.getUserByIds(user_ids);
+
+          if (users && users.length > 0) {
+            // generate reponse
+            return generateResponses(pages, page, users, sheets, req);
+            //#endregion
+          }
+        }
         //#region throw HandlerException
         throw new HandlerException(
           DATABASE_EXIT_CODE.NO_CONTENT,
@@ -920,6 +996,75 @@ export class SheetController {
 
   /**
    * @method PUT
+   * @url /api/department/multi-approval
+   * @access private
+   * @description Khoa cập nhật kết quả cho nhiều sinh viên
+   * @return HttpResponse<ApproveAllResponse> | HttpException
+   * @page sheets page
+   */
+  @Put('department/approve-all')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async approveAll(
+    @Body() params: ApproveAllDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<ApproveAllResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify(params),
+      );
+
+      //#region Get params
+      const { role_id, sheet_ids } = params;
+      //#endregion
+
+      const { role } = req.user as JwtPayload;
+
+      //#region  Validate role
+      const valid = await validateRole(role_id, role, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      const success = await this._evaluationService.bulkApprove(sheet_ids);
+      if (success) {
+        //#region Generate response
+        return generateApproveAllResponse(sheet_ids, success);
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_EVALUATION_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
    * @url /api/department/:id
    * @access private
    * @description Khoa cập nhật kết quả phiếu rèn luyện
@@ -985,75 +1130,6 @@ export class SheetController {
       if (sheet instanceof HttpException) throw sheet;
       else return sheet;
       //#endregion
-    } catch (err) {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) throw err;
-      else {
-        throw new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-      }
-    }
-  }
-
-  /**
-   * @method PUT
-   * @url /api/department/multi-approval
-   * @access private
-   * @description Khoa cập nhật kết quả cho nhiều sinh viên
-   * @return HttpResponse<ApproveAllResponse> | HttpException
-   * @page sheets page
-   */
-  @Put('department/approve-all')
-  @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN, Role.DEPARTMENT)
-  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async approveAll(
-    @Body() params: ApproveAllDto,
-    @Req() req: Request,
-  ): Promise<HttpResponse<ApproveAllResponse> | HttpException> {
-    try {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
-
-      this._logger.writeLog(
-        Levels.LOG,
-        req.method,
-        req.url,
-        JSON.stringify(params),
-      );
-
-      //#region Get params
-      const { role_id, sheet_ids } = params;
-      //#endregion
-
-      const { role } = req.user as JwtPayload;
-
-      //#region  Validate role
-      const valid = await validateRole(role_id, role, req);
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
-
-      const success = await this._evaluationService.bulkApprove(sheet_ids);
-      if (success) {
-        //#region Generate response
-        return generateApproveAllResponse(sheet_ids, success);
-        //#endregion
-      } else {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_EVALUATION_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-        //#endregion
-      }
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

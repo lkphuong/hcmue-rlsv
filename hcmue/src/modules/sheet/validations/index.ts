@@ -3,6 +3,8 @@ import { Request } from 'express';
 
 import { isEmpty } from 'class-validator';
 
+import { isValidObjectId } from 'mongoose';
+
 import { convertString2Date, sprintf } from '../../../utils';
 
 import { FormEntity } from '../../../entities/form.entity';
@@ -29,6 +31,14 @@ export const validateClassId = (id: string, req: Request) => {
       ErrorMessage.CLASS_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
+  } else if (!isValidObjectId(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_FORMAT,
+      req.method,
+      req.url,
+      ErrorMessage.ID_NAN_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   return null;
@@ -41,6 +51,14 @@ export const validateDepartmentId = (id: string, req: Request) => {
       req.method,
       req.url,
       ErrorMessage.DEPARTMENT_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (!isValidObjectId(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_FORMAT,
+      req.method,
+      req.url,
+      ErrorMessage.ID_NAN_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   }
@@ -77,6 +95,14 @@ export const validateUserId = (id: string, req: Request) => {
       req.method,
       req.url,
       ErrorMessage.USER_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (!isValidObjectId(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_FORMAT,
+      req.method,
+      req.url,
+      ErrorMessage.ID_NAN_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   }

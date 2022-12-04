@@ -77,8 +77,18 @@ export const createForm = async (
   if (valid instanceof HttpException) return valid;
   //#endregion
 
+  //#region Valiate student_end -> class_start
+  valid = validateTime(student.end, classes.start, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
   //#region Validate class times
   valid = validateTime(classes.start, classes.end, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
+  //#region Validate class_end -> department_start
+  valid = validateTime(classes.end, department.start, req);
   if (valid instanceof HttpException) return valid;
   //#endregion
 
@@ -382,8 +392,18 @@ export const updateForm = async (
   if (valid instanceof HttpException) return valid;
   //#endregion
 
+  //#region Valiate student_end -> class_start
+  valid = validateTime(student.end, classes.start, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
   //#region Validate class times
   valid = validateTime(classes.start, classes.end, req);
+  if (valid instanceof HttpException) return valid;
+  //#endregion
+
+  //#region Validate class_end -> department_start
+  valid = validateTime(classes.end, department.start, req);
   if (valid instanceof HttpException) return valid;
   //#endregion
 
@@ -1067,8 +1087,16 @@ export const generateCreateItem = async (
   query_runner: QueryRunner,
 ) => {
   //#region Get params
-  const { content, control, unit, category, from_mark, required, to_mark } =
-    params;
+  const {
+    content,
+    control,
+    unit,
+    category,
+    from_mark,
+    required,
+    to_mark,
+    mark,
+  } = params;
   //#endregion
 
   let item = new ItemEntity();
@@ -1080,6 +1108,7 @@ export const generateCreateItem = async (
   item.content = content;
   item.from_mark = from_mark;
   item.to_mark = to_mark;
+  item.mark = mark;
   item.category = category;
   item.unit = unit;
   item.required = required;
@@ -1101,8 +1130,16 @@ export const generateUpdateItem = async (
   query_runner: QueryRunner,
 ) => {
   //#region Get params
-  const { content, control, unit, category, from_mark, required, to_mark } =
-    params;
+  const {
+    content,
+    control,
+    unit,
+    category,
+    from_mark,
+    required,
+    to_mark,
+    mark,
+  } = params;
   //#endregion
 
   item.form = form;
@@ -1112,6 +1149,7 @@ export const generateUpdateItem = async (
   item.content = content;
   item.from_mark = from_mark;
   item.to_mark = to_mark;
+  item.mark = mark;
   item.category = category;
   item.unit = unit;
   item.required = required;

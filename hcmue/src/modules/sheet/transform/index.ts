@@ -145,62 +145,68 @@ export const generateData2Object = async (
     const k = await k_service.getKById(sheet.k);
     //#endregion
 
-    if (department && user && classes && k) {
-      const headers: BaseResponse[] = [];
-      const payload: SheetDetailsResponse = {
-        id: sheet.id,
-        department: {
-          id: convertObjectId2String(department._id),
-          name: department.name,
-        },
-        class: {
-          id: convertObjectId2String(classes._id),
-          name: classes.name,
-        },
-        user: {
-          id: convertObjectId2String(user._id),
-          fullname: user.fullname,
-          std_code: user.username,
-        },
-        semester: {
-          id: sheet.semester.id,
-          name: sheet.semester.name,
-        },
-        academic: {
-          id: sheet.semester.id,
-          name: sheet.academic_year.name,
-        },
-        k: {
-          id: convertObjectId2String(k._id),
-          name: k.name,
-        },
-        level: sheet.level
-          ? {
-              id: sheet.level.id,
-              name: sheet.level.name,
-            }
-          : null,
-        status: sheet.status,
-        sum_of_personal_marks: sheet.sum_of_personal_marks,
-        sum_of_class_marks: sheet.sum_of_class_marks,
-        sum_of_department_marks: sheet.sum_of_department_marks,
-        headers: headers,
-      };
+    const headers: BaseResponse[] = [];
+    const payload: SheetDetailsResponse = {
+      id: sheet.id,
+      department: department
+        ? {
+            id: convertObjectId2String(department._id),
+            name: department.name,
+          }
+        : null,
+      class: classes
+        ? {
+            id: convertObjectId2String(classes._id),
+            name: classes.name,
+          }
+        : null,
+      user: user
+        ? {
+            id: convertObjectId2String(user._id),
+            fullname: user.fullname,
+            std_code: user.username,
+          }
+        : null,
+      semester: {
+        id: sheet.semester.id,
+        name: sheet.semester.name,
+      },
+      academic: {
+        id: sheet.semester.id,
+        name: sheet.academic_year.name,
+      },
+      k: k
+        ? {
+            id: convertObjectId2String(k._id),
+            name: k.name,
+          }
+        : null,
+      level: sheet.level
+        ? {
+            id: sheet.level.id,
+            name: sheet.level.name,
+          }
+        : null,
+      status: sheet.status,
+      sum_of_personal_marks: sheet.sum_of_personal_marks,
+      sum_of_class_marks: sheet.sum_of_class_marks,
+      sum_of_department_marks: sheet.sum_of_department_marks,
+      headers: headers,
+    };
 
-      //#region Get headers
-      if (sheet?.form?.headers && sheet?.form?.headers.length > 0) {
-        for (const header of sheet.form.headers) {
-          const item: BaseResponse = {
-            id: header.id,
-            name: header.name,
-          };
-          payload.headers.push(item);
-        }
+    //#region Get headers
+    if (sheet?.form?.headers && sheet?.form?.headers.length > 0) {
+      for (const header of sheet.form.headers) {
+        const item: BaseResponse = {
+          id: header.id,
+          name: header.name,
+        };
+        payload.headers.push(item);
       }
-      //#endregion
-
-      return payload;
     }
+    //#endregion
+
+    return payload;
   }
 
   return null;

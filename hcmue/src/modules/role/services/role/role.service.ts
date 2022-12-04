@@ -24,7 +24,6 @@ export class RoleService {
         .andWhere('role.deleted = :deleted', { deleted: false });
 
       const role = await conditions.getOne();
-
       return role || null;
     } catch (e) {
       this._logger.writeLog(

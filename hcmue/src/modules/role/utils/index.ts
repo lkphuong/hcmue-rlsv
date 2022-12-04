@@ -1,58 +1,36 @@
-import { Request } from 'express';
-import {
-  convertObjectId2String,
-  returnObjectsWithPaging,
-} from '../../../utils';
-
-import { RoleUsersEntity } from '../../../entities/role_users.entity';
-
-import { generateUsersArray } from '../transform';
-
-import { UserResponse } from '../interfaces/user_response.interface';
-import { HandlerException } from 'src/exceptions/HandlerException';
-import { SERVER_EXIT_CODE } from 'src/constants/enums/error-code.enum';
 import { HttpStatus } from '@nestjs/common';
+import { Request } from 'express';
+import { QueryRunner } from 'typeorm';
+
+import { generateRoleUser } from '../transform';
+
+import { RoleEntity } from '../../../entities/role.entity';
+
 import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
 
-export const mapRoleForUser = (
-  user_id: string,
-  roles: RoleUsersEntity[] | null,
-) => {
-  if (roles) {
-    const result = roles.find(
-      (e) => e.user_id == convertObjectId2String(user_id),
-    );
+import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
-    if (result && result.role) {
-      return result.role.code;
-    }
-    return 0;
-  }
-  return 0;
-};
-
-export const generateUserIds = (users: any) => {
-  return users.map((item) => {
-    return convertObjectId2String(item._id);
-  });
-};
-
-export const generateResponses = async (
-  pages: number,
-  page: number,
-  users: any,
-  role_users: RoleUsersEntity[],
+export const generateSuccessResponse = async (
+  role: RoleEntity,
+  query_runner: QueryRunner,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', users);
+  console.log('data: ', role);
 
-  // Transform users schema class to UserResponse class
-  const payload = await generateUsersArray(users, role_users);
+  // Transform RoleEntity class to RoleResponse class
+  const payload = await generateRoleUser(role);
 
-  // Returns objects
-  return returnObjectsWithPaging<UserResponse>(pages, page, payload);
+  if (query_runner) await query_runner.commitTransaction();
+
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
 };
 
 export const generateFailedResponse = (req: Request, message?: string) => {

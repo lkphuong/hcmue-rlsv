@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-
 import { controllers, exporteds, modules, providers } from './user.imports';
 
 @Module({

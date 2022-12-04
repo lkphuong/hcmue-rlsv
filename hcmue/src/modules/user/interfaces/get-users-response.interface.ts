@@ -10,8 +10,3 @@ export interface UserResponse {
   classes: BaseMongoResponse;
   role: number;
 }
-
-export interface RoleUserResponse {
-  id: number;
-  name: string;
-}

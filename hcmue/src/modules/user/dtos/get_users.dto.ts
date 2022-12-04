@@ -3,7 +3,8 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
-import { LengthValidator } from 'src/validators/length.validator';
+import { IsObjectIdValidator } from '../../../validators/objectId.validator';
+import { LengthValidator } from '../../../validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class GetUsersDto {
@@ -34,11 +35,10 @@ export class GetUsersDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
   })
-  @LengthValidator(1, 24, {
-    message: (arg) =>
-      generateValidationMessage(arg, '[Khoa] độ dài tối đa 24 kí tự.'),
+  @IsObjectIdValidator({
+    message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  department: string;
+  department_id: string;
 
   @Transform((params) =>
     params.value ? params.value.toString().trim() : params.value,
@@ -47,11 +47,10 @@ export class GetUsersDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
-  @LengthValidator(1, 24, {
-    message: (arg) =>
-      generateValidationMessage(arg, '[Lớp] độ dài tối đa 24 kí tự.'),
+  @IsObjectIdValidator({
+    message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  classes: string;
+  class_id: string;
 
   @IsOptional()
   @Transform((params) =>

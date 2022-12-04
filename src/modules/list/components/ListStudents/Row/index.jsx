@@ -2,13 +2,13 @@ import React, { memo, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
+import { Checkbox, IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
+import { HistoryEdu } from '@mui/icons-material';
 
 import { STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
-import { HistoryEdu } from '@mui/icons-material';
 
-const Row = memo(({ classId, data, index }) => {
+const Row = memo(({ classId, data, index, onSelect, selected }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -19,12 +19,18 @@ const Row = memo(({ classId, data, index }) => {
 	//#endregion
 
 	//#region Event
-	const onEdit = () => navigate(`${ROUTES.LIST}/${classId}/${data?.id}`);
+	const onEdit = (e) => {
+		e.stopPropagation();
+		navigate(`${ROUTES.LIST}/${classId}/${data?.id}`);
+	};
 	//#endregion
 
 	//#region Render
 	return (
-		<TableRow hover>
+		<TableRow hover onClick={onSelect} selected={selected}>
+			<TableCell width={50} align='center'>
+				<Checkbox checked={selected} onChange={onSelect} />
+			</TableCell>
 			<TableCell align='center'>{index + 1}</TableCell>
 			<TableCell align='center'>{data.user.fullname}</TableCell>
 			<TableCell align='center'>{data.user.std_code}</TableCell>

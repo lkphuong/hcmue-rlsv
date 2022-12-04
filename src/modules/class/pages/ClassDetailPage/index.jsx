@@ -2,19 +2,22 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { Box, Paper, Typography } from '@mui/material';
 
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Form } from '_modules/class/components';
 
 import { getSheetById } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 const ClassDetailPage = () => {
 	//#region Data
 	const { sheet_id } = useParams();
 
 	const [data, setData] = useState(null);
+
+	const navigate = useNavigate();
 	//#endregion
 
 	//#region Event
@@ -23,7 +26,15 @@ const ClassDetailPage = () => {
 		try {
 			const res = await getSheetById(sheet_id);
 
-			if (isSuccess(res)) setData(res.data);
+			if (isSuccess(res)) {
+				if (res.data === null) {
+					alert.fail({
+						text: 'Tài khoản này không thuộc sinh viên để chấm điểm cá nhân.',
+					});
+					navigate(-1);
+				}
+				setData(res.data);
+			}
 		} catch (error) {
 			throw error;
 		}
@@ -35,7 +46,7 @@ const ClassDetailPage = () => {
 	}, [getForm]);
 
 	//#region Render
-	return (
+	return data ? (
 		<Box>
 			<Typography
 				borderRadius={1}
@@ -52,7 +63,10 @@ const ClassDetailPage = () => {
 				<Box p={1.5}>{data && <Form data={data} status={data?.status} />}</Box>
 			</Paper>
 		</Box>
+	) : (
+		<></>
 	);
+
 	//#endregion
 };
 

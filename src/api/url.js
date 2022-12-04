@@ -16,6 +16,7 @@ export const SHEETS = {
 	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/department',
 	UPDATE_DEPARTMENT_SHEET: '/sheets/department',
 	ADMIN_GET_SHEET: '/sheets/admin',
+	APPROVE_ALL: '/sheets/department/approve-all',
 };
 
 export const FORMS = {

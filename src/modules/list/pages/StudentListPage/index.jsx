@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
-
-import { Box, Typography } from '@mui/material';
-
 import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
+
+import { Box, Typography } from '@mui/material';
 
 import { Filter, ListStudents } from '_modules/list/components';
 
@@ -62,7 +61,7 @@ const StudentListPage = () => {
 				Lớp CNTT
 			</Typography>
 
-			<ListStudents data={data} />
+			<ListStudents data={data} refetch={getData} />
 		</Box>
 	);
 };

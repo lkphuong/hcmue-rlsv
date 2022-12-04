@@ -9,6 +9,9 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 	//#endregion
 
 	//#region Event
+	const handleChangeStringId = (key) => (value) =>
+		onChangeFilter((prev) => ({ ...prev, [key]: value?.id, page: 1, pages: 0 }));
+
 	const handleChangeFilter = (key) => (value) =>
 		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
 
@@ -35,7 +38,7 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 									<CAutocomplete
 										disableClearable
 										value={filter.department_id}
-										onChange={handleChangeFilter('department_id')}
+										onChange={handleChangeStringId('department_id')}
 										options={departments}
 										display='name'
 										placeholder='ALL'
@@ -79,7 +82,7 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 									<CAutocomplete
 										disableClearable
 										value={filter.class_id}
-										onChange={handleChangeFilter('class_id')}
+										onChange={handleChangeStringId('class_id')}
 										options={classes}
 										display='name'
 										renderOption={(props, option) => (

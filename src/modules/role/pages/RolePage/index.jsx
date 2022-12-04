@@ -16,17 +16,17 @@ export const ConfigRoleContext = createContext();
 
 const RolePage = memo(() => {
 	//#region Data
+	const departments = useSelector((state) => state.options.departments, shallowEqual);
+	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+
 	const [data, setData] = useState();
 
 	const [classes, setClasses] = useState([]);
 
-	const departments = useSelector((state) => state.options.departments, shallowEqual);
-	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
-
 	const [filter, setFilter] = useState({
 		department_id: departments[0].id,
 		academic_id: academic_years[0].id,
-		class_id: '5c662569957ddb191891289a',
+		class_id: null,
 		input: '',
 		page: 1,
 		pages: 0,
@@ -39,6 +39,8 @@ const RolePage = memo(() => {
 
 	//#region Event
 	const getData = useCallback(async () => {
+		if (!(filter.department_id && filter.class_id)) return;
+
 		try {
 			let _filter = { ...filter };
 

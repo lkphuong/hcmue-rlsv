@@ -69,3 +69,7 @@ export const ROLES = {
 export const DEPARTMENTS = {
 	GET_ALL: '/departments',
 };
+
+export const REPORTS = {
+	GET_REPORTS: '/reports',
+};

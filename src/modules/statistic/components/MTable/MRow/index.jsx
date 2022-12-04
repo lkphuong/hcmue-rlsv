@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { Link, TableCell, TableRow } from '@mui/material';
 
@@ -6,6 +6,11 @@ import './index.scss';
 
 const MRow = ({ data, index, previewClass }) => {
 	//#region Data
+	const count = useMemo(() => {
+		if (!data?.levels?.length) return 0;
+
+		return data.levels.reduce((prev, cur) => prev + cur?.count, 0);
+	}, []);
 	//#endregion
 
 	//#region Event
@@ -21,11 +26,11 @@ const MRow = ({ data, index, previewClass }) => {
 					sx={{ cursor: 'pointer' }}
 					onClick={previewClass(data?.class)}
 				>
-					{data?.class?.name}
+					{data?.name}
 				</Link>
 			</TableCell>
 			<TableCell align='center' className='border-right'>
-				{data.count}
+				{count}
 			</TableCell>
 			<TableCell align='center'>{data.perfect}</TableCell>
 			<TableCell align='center'>{data.well}</TableCell>

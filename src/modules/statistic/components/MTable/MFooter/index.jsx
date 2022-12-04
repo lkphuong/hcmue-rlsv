@@ -36,7 +36,7 @@ const MFooter = ({ data }) => {
 
 	//#region Render
 	return (
-		<TableFooter>
+		<TableFooter sx={{ position: 'sticky', bottom: 0 }}>
 			<TableRow>
 				<TableCell
 					colSpan={3}

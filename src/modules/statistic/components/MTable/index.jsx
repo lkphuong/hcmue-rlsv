@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import {
 	Box,
@@ -16,7 +16,13 @@ import MFooter from './MFooter';
 
 const MTable = ({ data, onClick }) => {
 	//#region Data
+	const [height, setHeight] = useState(0);
 
+	const heightRef = useRef(null);
+
+	useEffect(() => {
+		setHeight(heightRef.current.clientHeight);
+	});
 	//#endregion
 
 	//#region Event
@@ -40,30 +46,70 @@ const MTable = ({ data, onClick }) => {
 							<TableCell rowSpan={2} align='center' className='border-right'>
 								Sĩ số
 							</TableCell>
-							<TableCell colSpan={7} align='center' className='border-left'>
+							<TableCell
+								colSpan={7}
+								align='center'
+								className='border-left'
+								ref={heightRef}
+							>
 								Xếp loại
 							</TableCell>
 						</TableRow>
 						<TableRow>
-							<TableCell align='center' width={100} className='border-left'>
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
 								Xuất sắc
 							</TableCell>
-							<TableCell align='center' width={100} className='border-left'>
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
 								Tốt
 							</TableCell>
-							<TableCell align='center' width={100} className='border-left'>
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
 								Khá
 							</TableCell>
-							<TableCell align='center' width={100} className='border-left'>
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
 								Trung bình
 							</TableCell>
-							<TableCell align='center' width={100} className='border-left'>
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
 								Yếu
 							</TableCell>
-							<TableCell align='center' width={100} className='border-left'>
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
 								Kém
 							</TableCell>
-							<TableCell align='center' width={100} className='border-left'>
+							<TableCell
+								align='center'
+								width={100}
+								className='border-left'
+								sx={{ top: height + 1 }}
+							>
 								Không xếp loại
 							</TableCell>
 						</TableRow>

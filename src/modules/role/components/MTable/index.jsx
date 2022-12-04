@@ -18,10 +18,17 @@ export const MTable = ({ data }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.length > 0 &&
+					{data?.length > 0 ? (
 						data.map((row, index) => (
 							<MRow key={row?.user_id} index={index} data={row} />
-						))}
+						))
+					) : (
+						<TableRow>
+							<TableCell height={300} colSpan='100%' align='center'>
+								Không có dữ liệu hiển thị
+							</TableCell>
+						</TableRow>
+					)}
 				</TableBody>
 			</Table>
 		</TableContainer>

@@ -2,11 +2,14 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Paper } from '@mui/material';
+import { Box } from '@mui/material';
 
 import { Filter, MClassTable, MTable } from '_modules/statistic/components';
 
 import { isSuccess, isEmpty } from '_func/';
+
+import { getClasses } from '_api/classes.api';
+import { getRerorts } from '_api/reports.api';
 
 const CLASSES = [
 	{ id: 1, name: 'CNTT.A' },
@@ -95,37 +98,52 @@ const DATA = [
 
 const ListPageStatistic = () => {
 	//#region Data
+	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
-	// const classes = useSelector((state) => state.options.classes, shallowEqual);
-
-	const [classData, setClassData] = useState(null);
 
 	const [data, setData] = useState([]);
 
-	const [body, setBody] = useState({
-		class_id: 0,
-		semester_id: semesters[0]?.id,
+	const [classes, setClasses] = useState([]);
+
+	const [classData, setClassData] = useState(null);
+
+	const [filter, setFilter] = useState({
 		academic_id: academic_years[0]?.id,
+		semester_id: semesters[0]?.id,
+		department_id: departments[0]?.id,
+		class_id: '',
 	});
 	//#endregion
 
 	//#region Event
 	const getData = useCallback(async () => {
 		setClassData(null);
-		try {
-			// const res = await getStatistic(body);
-			// if (isSuccess(res)) setData(res.data);
-			// else if (isEmpty(res)) setData([]);
-		} catch (error) {
-			throw error;
-		}
-	}, [body]);
+
+		const res = await getRerorts(filter);
+
+		if (isSuccess(res)) setData(res.data);
+		else if (isEmpty(res)) setData([]);
+	}, [filter]);
 
 	const viewClass = (classInfo) => () => {
 		setClassData(classInfo);
 	};
+
+	const getClassData = async (department_id, academic_year_id) => {
+		const res = await getClasses({ department_id, academic_year_id });
+
+		if (isSuccess(res)) setClasses(res.data);
+		else if (isEmpty(res)) setClasses([]);
+	};
+
 	//#endregion
+
+	useEffect(() => {
+		if (filter.department_id && filter.academic_id) {
+			getClassData(filter.department_id, filter.academic_id);
+		}
+	}, [filter.department_id, filter.academic_id]);
 
 	useEffect(() => {
 		getData();
@@ -135,21 +153,22 @@ const ListPageStatistic = () => {
 	return (
 		<Box>
 			<Filter
-				filter={body}
-				onChangeFilter={setBody}
+				filter={filter}
+				onChangeFilter={setFilter}
+				departments={departments}
 				semesters={semesters}
-				// classes={classes}
-				classes={CLASSES}
+				classes={classes}
 				academic_years={academic_years}
 			/>
 
 			{!classData ? (
-				<MTable data={DATA} onClick={viewClass} />
+				<MTable data={data} onClick={viewClass} />
 			) : (
 				<MClassTable
 					classData={classData}
-					academic_id={body?.academic_id}
-					semester_id={body?.semester_id}
+					academic_id={filter?.academic_id}
+					semester_id={filter?.semester_id}
+					onBack={() => setClassData(null)}
 				/>
 			)}
 		</Box>

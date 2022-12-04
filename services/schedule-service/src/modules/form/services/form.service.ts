@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { EntityManager, Repository } from 'typeorm';
 
 import { FormEntity } from '../../../entities/form.entity';
 
@@ -40,6 +40,26 @@ export class FormService {
         'FormService.getFormPublished()',
         e,
       );
+      return null;
+    }
+  }
+
+  async update(
+    form_id: number,
+    status: number,
+    manager?: EntityManager,
+  ): Promise<boolean | null> {
+    try {
+      const result = await manager.update(
+        FormEntity,
+        { id: form_id },
+        { status: status },
+      );
+
+      return result.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(Levels.ERROR, Methods.UPDATE, 'FormService', e);
+
       return null;
     }
   }

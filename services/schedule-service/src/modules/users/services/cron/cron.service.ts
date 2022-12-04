@@ -27,6 +27,7 @@ import {
   SheetPayload,
   SPayload,
 } from '../../interfaces/payloads/sheet_payload.interface';
+import { FormStatus } from '../../../form/constants/emuns/form_status.enum';
 
 let CRON_JOB_TIME = GENERATE_CREATE_SHEETS_CRON_JOB_TIME;
 
@@ -65,21 +66,33 @@ export class CronService {
           );
 
           const pages = Math.ceil(count / itemsPerPage);
-
           //#endregion
 
-          for (let i = 0; i < pages; i++) {
-            const users = await this._userService.getUsersPaging(
-              i * itemsPerPage,
-              itemsPerPage,
-            );
+          //#region Update Form PUBLISHED -> IN_PROGRESS
+          let success = await this._formService.update(
+            form.id,
+            FormStatus.IN_PROGRESS,
+          );
+          //#endregion
 
-            let flag = false;
-            if (i + 1 === pages) {
-              flag = true;
+          if (success) {
+            for (let i = 0; i < pages; i++) {
+              const users = await this._userService.getUsersPaging(
+                i * itemsPerPage,
+                itemsPerPage,
+              );
+
+              let flag = false;
+              if (i + 1 === pages) {
+                flag = true;
+              }
+              const results = await generateSheet2Array(form, flag, users);
+              this.send(results);
             }
-            const results = await generateSheet2Array(form, flag, users);
-            this.send(results);
+
+            //#region Update Form IN_PROGRESS -> DONE
+            success = await this._formService.update(form.id, FormStatus.DONE);
+            //#endregion
           }
         } else {
           //#region Handle log

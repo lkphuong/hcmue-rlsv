@@ -69,7 +69,7 @@ export const generateLevelResponse = (
           count: cache_class.amount,
         }
       : {
-          id: 0,
+          id: '0',
           name: NO_LEVEL,
           count: cache_class.amount,
         },

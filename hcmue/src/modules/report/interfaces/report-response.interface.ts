@@ -1,5 +1,5 @@
 export interface LevelResponse {
-  id: number;
+  id: number | string;
   name: string;
   count: number;
 }

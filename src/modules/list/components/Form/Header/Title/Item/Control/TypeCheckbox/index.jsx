@@ -5,7 +5,7 @@ import { Checkbox, Grid, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
-const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
+const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id }) => {
 	//#region Data
 	const [score, setScore] = useState(initialMark);
 
@@ -17,6 +17,7 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark }) => {
 		const markObj = {
 			item_id: Number(item_id),
 			department_mark_level: e.target.checked ? mark : 0,
+			header_id,
 		};
 
 		setScore(e.target.checked ? mark : 0);

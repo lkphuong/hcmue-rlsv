@@ -7,7 +7,7 @@ import { actions } from '_slices/mark.slice';
 
 import { CInput } from '_controls/';
 
-const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark }) => {
+const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark, header_id }) => {
 	//#region Data
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
@@ -27,6 +27,7 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 		const markObj = {
 			item_id: Number(item_id),
 			personal_mark_level: value,
+			header_id,
 		};
 
 		setScore(value);
@@ -41,6 +42,7 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 		const markObj = {
 			item_id: Number(item_id),
 			personal_mark_level: value,
+			header_id,
 		};
 
 		setScore(value);

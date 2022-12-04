@@ -7,8 +7,6 @@ import { Box, Button, Grid, Paper } from '@mui/material';
 
 import { alert } from '_func/alert';
 
-import { getHeadersByFormId } from '_api/form.api';
-
 import { isSuccess } from '_func/';
 
 import { ROUTES } from '_constants/routes';
@@ -30,26 +28,12 @@ const Form = ({ data, status }) => {
 
 	const [itemsMark, setItemsMark] = useState([]);
 
-	const [headers, setHeaders] = useState([]);
-
 	const navigate = useNavigate();
 
 	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
-	const getHeaders = useCallback(async () => {
-		if (!data?.id) return navigate(-1);
-
-		try {
-			const res = await getHeadersByFormId(data.id);
-
-			if (isSuccess(res)) setHeaders(res.data);
-		} catch (error) {
-			throw error;
-		}
-	}, [data?.id, navigate]);
-
 	const getMarks = useCallback(async () => {
 		try {
 			const res = await getItemsMarks(data.id);
@@ -92,9 +76,8 @@ const Form = ({ data, status }) => {
 	//#endregion
 
 	useEffect(() => {
-		getHeaders();
 		getMarks();
-	}, [getHeaders, getMarks]);
+	}, [getMarks]);
 
 	useEffect(() => {
 		if (status === 4) {
@@ -158,8 +141,8 @@ const Form = ({ data, status }) => {
 
 			<DepartmentMarksContext.Provider value={{ status, itemsMark }}>
 				<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
-					{headers.length > 0 &&
-						headers.map((e, i) => (
+					{data?.headers?.length > 0 &&
+						data.headers.map((e, i) => (
 							<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
 						))}
 				</Grid>

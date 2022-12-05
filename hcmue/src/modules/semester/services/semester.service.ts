@@ -51,7 +51,9 @@ export class SemesterService {
         .where('semester.active = :active', { active: 1 })
         .andWhere('semester.deleted = :deleted', { deleted: 0 });
 
-      const semesters = conditions.getMany();
+      const semesters = conditions
+        .orderBy('semester.created_at', 'DESC')
+        .getMany();
       return semesters || null;
     } catch (e) {
       this._logger.writeLog(

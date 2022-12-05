@@ -181,8 +181,7 @@ export const validateOthersRole = async (
 ) => {
   if (role !== RoleCode.ADMIN) {
     const user = await user_service.getUserById(request_id);
-
-    if (role !== RoleCode.DEPARTMENT) {
+    if (role === RoleCode.DEPARTMENT) {
       if (user && user.departmentId.toString() !== department_id) {
         //#region throw HandlerException
         return new HandlerException(
@@ -200,11 +199,12 @@ export const validateOthersRole = async (
     } else {
       if (user && user.classId.toString() !== class_id) {
         //#region throw HandlerException
+        console.log(user);
         return new HandlerException(
           VALIDATION_EXIT_CODE.INVALID_VALUE,
           req.method,
           req.url,
-          sprintf(ErrorMessage.CLASS_ROLE_INVALID_ERROR, user.class.name),
+          sprintf(ErrorMessage.CLASS_ROLE_INVALID_ERROR, user.classs.name),
           HttpStatus.BAD_REQUEST,
         );
         //#endregion

@@ -127,10 +127,10 @@ export class UserService {
     }
   }
 
-  async getUserById(id: string): Promise<User | null> {
+  async getUserById(id: string): Promise<any | null> {
     try {
       const pipeline = generateGetUserByIdPipeline(id);
-      const users = await this._userModule.aggregate<User>(pipeline).exec();
+      const users = await this._userModule.aggregate<any>(pipeline).exec();
       return users && users.length > 0 ? users[0] : null;
     } catch (e) {
       this._logger.writeLog(

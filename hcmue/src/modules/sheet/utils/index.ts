@@ -40,6 +40,8 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import { RoleCode } from 'src/constants/enums/role_enum';
+import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 
 export const generateClassesResponse = async (
   data: Class[] | null,
@@ -162,12 +164,16 @@ export const generateSheet = async (
   return returnObjects(payload);
 };
 
-export const generateItemsResponse = (items: ItemEntity[], req: Request) => {
+export const generateItemsResponse = (
+  role: number,
+  items: ItemEntity[],
+  req: Request,
+) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', items);
 
-  const payload = generateItemsArray(items);
+  const payload = generateItemsArray(role, items);
 
   return {
     data: payload,
@@ -178,6 +184,7 @@ export const generateItemsResponse = (items: ItemEntity[], req: Request) => {
 };
 
 export const generateEvaluationsResponse = (
+  role: number,
   evaluations: EvaluationEntity[],
   req: Request,
 ) => {
@@ -185,7 +192,7 @@ export const generateEvaluationsResponse = (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', evaluations);
 
-  const payload = generateEvaluationsArray(evaluations);
+  const payload = generateEvaluationsArray(role, evaluations);
 
   return {
     data: payload,

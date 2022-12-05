@@ -21,13 +21,20 @@ export class EvaluationService {
   async contains(
     sheet_id: number,
     item_id: number,
+    category?: number,
   ): Promise<EvaluationEntity | null> {
     try {
-      const conditions = this._evaluationService
+      let conditions = this._evaluationService
         .createQueryBuilder('evaluation')
         .where('evaluation.sheet_id = :sheet_id', { sheet_id })
         .andWhere('evaluation.item_id = :item_id', { item_id })
         .andWhere('evaluation.deleted = :deleted ', { deleted: false });
+
+      if (category) {
+        conditions = conditions.andWhere('evaluation.category = :category', {
+          category,
+        });
+      }
 
       const evaluation = await conditions.getOne();
       return evaluation || null;

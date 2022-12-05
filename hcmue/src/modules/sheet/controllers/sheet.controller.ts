@@ -214,7 +214,7 @@ export class SheetController {
   async getItemsByTitle(
     @Param() params: GetDetailTitleDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<ItemsResponse> | HttpException> {
+  ): Promise<HttpResponse<EvaluationsResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -236,10 +236,12 @@ export class SheetController {
       const { id, title_id } = params;
       //#endregion
 
+      const { role } = req.user as JwtPayload;
+
       const title = await this._itemService.contains(title_id, id);
       if (title) {
         //#region Generate response
-        return generateItemsResponse(title, req);
+        return generateItemsResponse(role, title, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -295,6 +297,8 @@ export class SheetController {
         JSON.stringify({ sheet_id: id }),
       );
 
+      const { role } = req.user as JwtPayload;
+
       //#region Validation
       const valid = validateSheetId(id, req);
       if (valid instanceof HttpException) throw valid;
@@ -308,7 +312,7 @@ export class SheetController {
 
       if (evaluations && evaluations.length > 0) {
         //#region Generate response
-        return generateEvaluationsResponse(evaluations, req);
+        return generateEvaluationsResponse(role, evaluations, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -1149,6 +1153,7 @@ export class SheetController {
         //#endregion
       }
     } catch (err) {
+      console.log(err);
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
 

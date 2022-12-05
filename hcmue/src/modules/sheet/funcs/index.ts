@@ -56,6 +56,7 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 
 export const generatePersonalMarks = async (
   user_id: string,
@@ -491,6 +492,7 @@ export const generateUpdateStudentEvaluation = async (
           const evaluation = await evaluation_service.contains(
             sheet_id,
             j.item_id,
+            EvaluationCategory.STUDENT,
           );
           if (evaluation) {
             if (j.deleted) {
@@ -600,40 +602,43 @@ export const generateUpdateClassEvaluation = async (
           if (valid instanceof HttpException) return valid;
           //#endregion
 
-          const evaluation = await evaluation_service.contains(
+          const class_evaluation = await evaluation_service.contains(
             sheet_id,
             j.item_id,
+            EvaluationCategory.CLASS,
           );
-          if (evaluation) {
-            if (j.deleted && option) {
-              //#region Check deleted
-              evaluation.deleted = true;
-              evaluation.deleted_at = new Date();
-              evaluation.deleted_by = user_id;
 
-              evaluations.push(evaluation);
-              //#endregion
+          if (class_evaluation) {
+            //#region Update evaluation
+            if (j.deleted) {
+              class_evaluation.deleted = true;
+              class_evaluation.deleted_at = new Date();
+              class_evaluation.deleted_by = user_id;
+
+              evaluations.push(class_evaluation);
             } else {
               //#region Update evaluation
-              evaluation.sheet = sheet;
-              evaluation.item = item;
-              evaluation.option = option ?? null;
-              evaluation.class_mark_level = j.class_mark_level;
-              evaluation.updated_at = new Date();
-              evaluation.updated_by = user_id;
-              evaluations.push(evaluation);
+              class_evaluation.sheet = sheet;
+              class_evaluation.item = item;
+              class_evaluation.option = option ?? null;
+              class_evaluation.class_mark_level = j.class_mark_level;
+              class_evaluation.updated_at = new Date();
+              class_evaluation.updated_by = user_id;
+              evaluations.push(class_evaluation);
               //#endregion
             }
+            //#endregion
           } else {
             //#region Create evaluation
-            const evaluation = new EvaluationEntity();
-            evaluation.sheet = sheet;
-            evaluation.item = item;
-            evaluation.option = option;
-            evaluation.class_mark_level = j.class_mark_level;
-            evaluation.created_at = new Date();
-            evaluation.created_by = user_id;
-            evaluations.push(evaluation);
+            const new_evaluation = new EvaluationEntity();
+            new_evaluation.sheet = sheet;
+            new_evaluation.item = item;
+            new_evaluation.option = option ?? null;
+            new_evaluation.category = EvaluationCategory.CLASS;
+            new_evaluation.class_mark_level = j.class_mark_level;
+            new_evaluation.created_at = new Date();
+            new_evaluation.created_by = user_id;
+            evaluations.push(new_evaluation);
             //#endregion
           }
         } else {
@@ -643,7 +648,7 @@ export const generateUpdateClassEvaluation = async (
             DATABASE_EXIT_CODE.UNKNOW_VALUE,
             req.method,
             req.url,
-            sprintf(ErrorMessage.EVALUATION_NOT_FOUND_ERROR, j.item_id),
+            sprintf(ErrorMessage.ITEM_NOT_FOUND_ERROR, j.item_id),
           );
           //#endregion
         }
@@ -713,40 +718,44 @@ export const generateUpdateDepartmentEvaluation = async (
           if (valid instanceof HttpException) return valid;
           //#endregion
 
-          const evaluation = await evaluation_service.contains(
+          const department_evaluation = await evaluation_service.contains(
             sheet_id,
             j.item_id,
+            EvaluationCategory.DEPARTMENT,
           );
-          if (evaluation) {
-            if (j.deleted) {
-              //#region Check deleted
-              evaluation.deleted = true;
-              evaluation.deleted_at = new Date();
-              evaluation.deleted_by = user_id;
 
-              evaluations.push(evaluation);
+          if (department_evaluation) {
+            if (j.deleted) {
+              //#region delete evaluation
+              department_evaluation.deleted = true;
+              department_evaluation.deleted_at = new Date();
+              department_evaluation.deleted_by = user_id;
+
+              evaluations.push(department_evaluation);
               //#endregion
             } else {
               //#region Update evaluation
-              evaluation.sheet = sheet;
-              evaluation.item = item;
-              evaluation.option = option ?? null;
-              evaluation.department_mark_level = j.department_mark_level;
-              evaluation.updated_at = new Date();
-              evaluation.updated_by = user_id;
-              evaluations.push(evaluation);
+              department_evaluation.sheet = sheet;
+              department_evaluation.item = item;
+              department_evaluation.option = option ?? null;
+              department_evaluation.department_mark_level =
+                j.department_mark_level;
+              department_evaluation.updated_at = new Date();
+              department_evaluation.updated_by = user_id;
+              evaluations.push(department_evaluation);
               //#endregion
             }
           } else {
             //#region Create evaluation
-            const evaluation = new EvaluationEntity();
-            evaluation.sheet = sheet;
-            evaluation.item = item;
-            evaluation.option = option;
-            evaluation.department_mark_level = j.department_mark_level;
-            evaluation.created_at = new Date();
-            evaluation.created_by = user_id;
-            evaluations.push(evaluation);
+            const new_evaluation = new EvaluationEntity();
+            new_evaluation.sheet = sheet;
+            new_evaluation.item = item;
+            new_evaluation.option = option ?? null;
+            new_evaluation.category = EvaluationCategory.DEPARTMENT;
+            new_evaluation.department_mark_level = j.department_mark_level;
+            new_evaluation.created_at = new Date();
+            new_evaluation.created_by = user_id;
+            evaluations.push(new_evaluation);
             //#endregion
           }
         } else {

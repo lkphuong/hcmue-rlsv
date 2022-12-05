@@ -51,7 +51,9 @@ export class AcademicYearService {
         .where('academic_year.active = :active', { active: 1 })
         .andWhere('academic_year.deleted = :deleted', { deleted: 0 });
 
-      const academic_years = conditions.getMany();
+      const academic_years = conditions
+        .orderBy('academic_year.created_at', 'DESC')
+        .getMany();
       return academic_years || null;
     } catch (e) {
       this._logger.writeLog(
@@ -87,8 +89,6 @@ export class AcademicYearService {
           { class_id },
         );
       }
-
-      console.log('sql: ', conditions.getSql());
 
       const academic_year = await conditions.getOne();
       return academic_year || null;

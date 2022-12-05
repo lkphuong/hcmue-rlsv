@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, EntityManager, Repository } from 'typeorm';
+import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { ItemEntity } from '../../../entities/item.entity';
 import { OptionEntity } from '../../../entities/option.entity';
@@ -26,19 +26,31 @@ export class ItemService {
       const conditions = this._itemRepository
         .createQueryBuilder('item')
         .leftJoinAndSelect(
-          'item.options',
-          'option',
-          'option.item_id = item.id AND option.deleted = :deleted',
-          { deleted: false },
-        )
-        .leftJoinAndSelect(
           'item.evaluations',
           'evaluation',
-          'evaluation.item_id = item.id AND evaluation.deleted = 0',
+          'evaluation.item_id = item.id AND evaluation.deleted = 0 AND evaluation.sheet_id = :sheet_id',
+          { sheet_id },
         )
-        .where('item.title = :title_id', { title_id })
-        .andWhere('item.deleted = :deleted', { deleted: false })
-        .andWhere('evaluation.sheet_id = :sheet_id', { sheet_id });
+        .innerJoinAndSelect('evaluation.option', 'option')
+        .innerJoinAndMapOne(
+          'item.title',
+          TitleEntity,
+          'title',
+          `title.form_id = item.form_id AND 
+          title.ref = item.parent_ref`,
+        )
+        .leftJoinAndMapMany(
+          'item.options',
+          OptionEntity,
+          'options',
+          `item.form_id = options.form_id AND 
+          item.ref = options.parent_ref AND 
+          options.delete_flag = 0`,
+        )
+        .where('title.id = :title_id', { title_id })
+        .andWhere('option.deleted = :deleted', { deleted: false })
+        .andWhere('title.deleted = :deleted', { deleted: false })
+        .andWhere('item.deleted = :deleted', { deleted: false });
 
       const item = await conditions.getMany();
       return item || null;

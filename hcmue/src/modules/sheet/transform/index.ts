@@ -24,6 +24,9 @@ import {
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 
+import { RoleCode } from '../../../constants/enums/role_enum';
+import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
+
 export const generateAdminSheets = async (
   sheets: SheetEntity[] | null,
   users: User[] | null,
@@ -275,65 +278,209 @@ export const generateData2Object = async (
   return null;
 };
 
-export const generateItemsArray = (items: ItemEntity[] | null) => {
+export const generateItemsArray = (
+  role: number,
+  items: ItemEntity[] | null,
+) => {
   if (items) {
-    const payload: ItemsResponse[] = [];
+    const payload: EvaluationsResponse[] = [];
 
-    for (const item of items) {
-      const result: ItemsResponse = {
-        id: item.evaluations[0].id,
-        item: {
-          id: item.id,
-          content: item.content,
-        },
-        options: [],
-        personal_mark_level: item.evaluations[0].personal_mark_level,
-        class_mark_level: item.evaluations[0].class_mark_level,
-        department_mark_level: item.evaluations[0].department_mark_level,
-      };
+    switch (role) {
+      case RoleCode.STUDENT:
+        for (const item of items) {
+          const evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.STUDENT,
+          );
+          const result: EvaluationsResponse = {
+            id: evaluation.id,
+            item: {
+              id: item.id,
+              content: item.content,
+            },
+            options: evaluation.option
+              ? {
+                  id: evaluation.option.id,
+                  content: evaluation.option.content,
+                }
+              : null,
+            personal_mark_level: evaluation.personal_mark_level,
+            class_mark_level: evaluation.class_mark_level,
+            department_mark_level: evaluation.department_mark_level,
+          };
 
-      //#region Get options by item
-      for (const i of item.options) {
-        result.options.push({
-          id: i.id,
-          content: i.content,
-        });
-      }
-      //#endregion
+          payload.push(result);
+        }
+        return payload;
 
-      payload.push(result);
+      case RoleCode.CLASS:
+        for (const item of items) {
+          const class_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.CLASS,
+          );
+          const student_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.STUDENT,
+          );
+          const result: EvaluationsResponse = {
+            id: class_evaluation.id,
+            item: {
+              id: item.id,
+              content: item.content,
+            },
+            options: class_evaluation.option
+              ? {
+                  id: class_evaluation.option.id,
+                  content: class_evaluation.option.content,
+                }
+              : null,
+            personal_mark_level: student_evaluation.personal_mark_level,
+            class_mark_level: class_evaluation.class_mark_level,
+            department_mark_level: class_evaluation.department_mark_level,
+          };
+          payload.push(result);
+        }
+        return payload;
+
+      case RoleCode.DEPARTMENT:
+      case RoleCode.ADMIN:
+        for (const item of items) {
+          const department_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.DEPARTMENT,
+          );
+          const class_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.CLASS,
+          );
+          const student_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.STUDENT,
+          );
+
+          if (department_evaluation) {
+            const result: EvaluationsResponse = {
+              id: department_evaluation.id,
+              item: {
+                id: item.id,
+                content: item.content,
+              },
+              options: department_evaluation.option
+                ? {
+                    id: department_evaluation.option.id,
+                    content: department_evaluation.option.content,
+                  }
+                : null,
+              personal_mark_level: student_evaluation.personal_mark_level ?? 0,
+              class_mark_level: class_evaluation.class_mark_level ?? 0,
+              department_mark_level:
+                department_evaluation.department_mark_level ?? 0,
+            };
+            payload.push(result);
+          } else return null;
+        }
+
+        return payload;
     }
-
-    return payload;
   }
 
   return null;
 };
 
 export const generateEvaluationsArray = (
+  role: number,
   evaluations: EvaluationEntity[] | null,
 ) => {
   if (evaluations) {
     const payload: EvaluationsResponse[] = [];
+    switch (role) {
+      case RoleCode.ADMIN:
+      case RoleCode.DEPARTMENT:
+        for (const evaluation of evaluations) {
+          if (evaluation.category === EvaluationCategory.DEPARTMENT) {
+            const class_evaluation = evaluations.find(
+              (e) =>
+                e.category === EvaluationCategory.CLASS &&
+                e.item.id == evaluation.item.id,
+            );
 
-    for (const evaluation of evaluations) {
-      const item: EvaluationsResponse = {
-        id: evaluation.id,
-        item: {
-          id: evaluation.item.id,
-          content: evaluation.item.content,
-        },
+            const student_evaluation = evaluations.find(
+              (e) =>
+                e.category === EvaluationCategory.STUDENT &&
+                e.item.id == evaluation.item.id,
+            );
 
-        options: evaluation.option
-          ? { id: evaluation.option.id, content: evaluation.option.content }
-          : null,
+            if (class_evaluation && student_evaluation) {
+              const result: EvaluationsResponse = {
+                id: evaluation.id,
+                item: {
+                  id: evaluation.item.id,
+                  content: evaluation.item.content,
+                },
+                options: evaluation.option
+                  ? {
+                      id: evaluation.option.id,
+                      content: evaluation.option.content,
+                    }
+                  : null,
+                personal_mark_level:
+                  student_evaluation.personal_mark_level ?? 0,
+                class_mark_level: class_evaluation.class_mark_level ?? 0,
+                department_mark_level: evaluation.department_mark_level ?? 0,
+              };
+              payload.push(result);
+            }
+          }
+        }
+      case RoleCode.CLASS:
+        for (const evaluation of evaluations) {
+          if (evaluation.category === EvaluationCategory.CLASS) {
+            const student_evaluation = evaluations.find(
+              (e) =>
+                e.category === EvaluationCategory.STUDENT &&
+                e.item.id == evaluation.item.id,
+            );
 
-        personal_mark_level: evaluation.personal_mark_level,
-        class_mark_level: evaluation.class_mark_level,
-        department_mark_level: evaluation.department_mark_level,
-      };
+            if (student_evaluation) {
+              const result: EvaluationsResponse = {
+                id: evaluation.id,
+                item: {
+                  id: evaluation.item.id,
+                  content: evaluation.item.content,
+                },
+                options: evaluation.option
+                  ? {
+                      id: evaluation.option.id,
+                      content: evaluation.option.content,
+                    }
+                  : null,
+                personal_mark_level:
+                  student_evaluation.personal_mark_level ?? 0,
+                class_mark_level: evaluation.class_mark_level ?? 0,
+                department_mark_level: evaluation.department_mark_level ?? 0,
+              };
+              payload.push(result);
+            }
+          }
+        }
 
-      payload.push(item);
+      case RoleCode.STUDENT:
+        for (const evaluation of evaluations) {
+          if (evaluation.category === EvaluationCategory.STUDENT) {
+            const result: EvaluationsResponse = {
+              id: evaluation.id,
+              item: {
+                id: evaluation.item.id,
+                content: evaluation.item.content,
+              },
+              options: evaluation.option
+                ? {
+                    id: evaluation.option.id,
+                    content: evaluation.option.content,
+                  }
+                : null,
+              personal_mark_level: evaluation.personal_mark_level ?? 0,
+              class_mark_level: evaluation.class_mark_level ?? 0,
+              department_mark_level: evaluation.department_mark_level ?? 0,
+            };
+            payload.push(result);
+          }
+        }
     }
 
     return payload;

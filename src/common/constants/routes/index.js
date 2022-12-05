@@ -25,4 +25,7 @@ export const ROUTES = {
 	ROLE: '/admin/roles',
 
 	CONFIG: '/admin/config',
+
+	ADMIN_SHEET: '/admin/sheet',
+	ADMIN_REMAKE: '/admin/sheet/:sheet_id',
 };

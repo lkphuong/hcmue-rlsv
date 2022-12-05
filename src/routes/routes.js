@@ -22,7 +22,7 @@ import { RolePage } from '_modules/role/pages';
 
 import { ConfigPage } from '_modules/config/pages';
 
-import { ListPageAdmin } from '_modules/manager/pages';
+import { ListPageAdmin, SheetDetailPage } from '_modules/manager/pages';
 
 export const browserRouter = [
 	{
@@ -153,6 +153,15 @@ export const browserRouter = [
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
 						<ConfigPage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.ADMIN_REMAKE,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
+						<SheetDetailPage />
 					</CPermission>
 				),
 			},

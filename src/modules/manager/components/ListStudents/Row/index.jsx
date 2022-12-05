@@ -19,7 +19,7 @@ const Row = memo(({ classId, data, index }) => {
 	//#endregion
 
 	//#region Event
-	const onEdit = () => navigate(`${ROUTES.LIST}/${classId}/${data?.id}`);
+	const onEdit = () => navigate(`${ROUTES.ADMIN_SHEET}/${data?.id}`);
 	//#endregion
 
 	//#region Render

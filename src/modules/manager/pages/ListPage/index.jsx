@@ -33,7 +33,6 @@ const ListPageAdmin = () => {
 		semester_id: semesters[0]?.id,
 		academic_id: academic_years[0]?.id,
 		status: -1,
-		input: '',
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
@@ -56,7 +55,12 @@ const ListPageAdmin = () => {
 	const onPageChange = (event, value) => setFilter((prev) => ({ ...prev, page: value }));
 
 	const getData = async () => {
-		const res = await getAdminSheets(filter);
+		const _filter = { ...filter };
+		if (!_filter?.input) {
+			delete _filter?.input;
+		}
+
+		const res = await getAdminSheets(_filter);
 
 		if (isSuccess(res)) setData(res.data);
 	};

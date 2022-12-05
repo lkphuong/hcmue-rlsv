@@ -83,7 +83,7 @@ export class ReportController {
    * @page reports page
    */
   @Post('/')
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

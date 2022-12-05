@@ -305,7 +305,7 @@ export const createItem = async (
     await query_runner.startTransaction();
 
     //#region Create item
-    const item = await generateCreateItem(
+    let item = await generateCreateItem(
       user_id,
       params,
       form,
@@ -330,8 +330,12 @@ export const createItem = async (
 
         if (!results) {
           throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
-        }
+        } else item.options = results;
       }
+      //#endregion
+
+      //#region Update item relation
+      item = await query_runner.manager.save(item);
       //#endregion
 
       //#region Generate response
@@ -685,8 +689,12 @@ export const updateItem = async (
 
         if (!results) {
           throw generateFailedResponse(req, ErrorMessage.OPERATOR_ITEM_ERROR);
-        }
+        } else item.options = results;
       }
+      //#endregion
+
+      //#region Update Item relation
+      item = await query_runner.manager.save(item);
       //#endregion
 
       //#region Generate response

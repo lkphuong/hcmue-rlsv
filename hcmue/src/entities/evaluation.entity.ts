@@ -45,6 +45,13 @@ export class EvaluationEntity extends RootEntity {
   ])
   option: OptionEntity;
 
+  @Column('tinyint', {
+    name: 'category',
+    nullable: true,
+    default: 1,
+  })
+  category: number;
+
   @Column('float', {
     name: 'personal_mark_level',
     nullable: true,

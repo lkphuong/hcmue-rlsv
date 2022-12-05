@@ -676,7 +676,7 @@ export const generateUpdateClassEvaluation = async (
             j.item_id,
           );
           if (evaluation) {
-            if (j.deleted) {
+            if (j.deleted && option) {
               //#region Check deleted
               evaluation.deleted = true;
               evaluation.deleted_at = new Date();

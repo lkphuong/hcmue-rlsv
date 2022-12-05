@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { shallowEqual, useSelector } from 'react-redux';
 
@@ -10,30 +10,38 @@ import { getClassSheets } from '_api/sheets.api';
 import { isSuccess, isEmpty } from '_func/';
 
 import { Filter, ListStudents } from '_modules/class/components';
+import { CPagination } from '_controls/';
 
 const ClassPage = () => {
 	//#region Data
-	const { class_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { class_id, department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
 
-	const [data, setData] = useState([]);
+	const [data, setData] = useState();
 
-	const [body, setBody] = useState({
-		semester_id: semesters[0].id,
+	const dataTable = useMemo(() => data?.data || [], [data]);
+
+	const [filter, setFilter] = useState({
+		department_id,
+		semester_id: semesters[0]?.id,
 		academic_id: academic_years[0].id,
+		page: 1,
+		pages: 0,
+		input: '',
 	});
 
+	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
 	//#endregion
 
 	//#region Event
 	const getData = useCallback(async () => {
 		if (!class_id) return;
 		try {
-			const _input = body?.input;
+			const _input = filter?.input;
 
 			const res = await getClassSheets(
 				class_id,
-				_input === '' ? { ...body, input: null } : body
+				_input === '' ? { ...filter, input: null } : filter
 			);
 
 			if (isSuccess(res)) setData(res.data);
@@ -41,12 +49,21 @@ const ClassPage = () => {
 		} catch (error) {
 			throw error;
 		}
-	}, [body, class_id]);
+	}, [filter, class_id]);
+
+	const onPageChange = (event, value) => setFilter((prev) => ({ ...prev, page: value }));
 	//#endregion
 
 	useEffect(() => {
 		getData();
 	}, [getData]);
+
+	useEffect(() => {
+		setPaginate({
+			page: data?.page,
+			pages: data?.pages,
+		});
+	}, [data]);
 
 	//#region Render
 	return (
@@ -60,13 +77,15 @@ const ClassPage = () => {
 			</Box>
 
 			<Filter
-				filter={body}
-				onChangeFilter={setBody}
+				filter={filter}
+				onChangeFilter={setFilter}
 				semesters={semesters}
 				academic_years={academic_years}
 			/>
 
-			<ListStudents data={data} />
+			<ListStudents data={dataTable} refetch={getData} />
+
+			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>
 	);
 	//#endregion

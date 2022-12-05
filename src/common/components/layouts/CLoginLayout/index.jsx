@@ -24,6 +24,8 @@ export const CLoginLayout = () => {
 				return ROUTES.FORM;
 			case 2:
 				return ROUTES.LIST;
+			case 1:
+				return ROUTES.CLASS_SCORE;
 			default:
 				return ROUTES.MY_SCORE;
 		}

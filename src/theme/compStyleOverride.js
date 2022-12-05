@@ -118,6 +118,7 @@ export default function componentStyleOverrides(theme) {
 					'&::placeholder': {
 						color: theme.darkTextSecondary,
 						fontSize: '0.875rem',
+						opacity: 1,
 					},
 				},
 			},

@@ -1,5 +1,4 @@
-import React from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
@@ -23,49 +22,28 @@ import { isSuccess } from '_func/';
 
 import Row from './Row';
 
-const ListStudents = ({ data, refetch }) => {
+const ListStudents = ({ data, refetch, isSelectedAll, selected, onSelect }) => {
 	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const isSelected = useMemo(
+		() => selected && !!Object.values(selected).filter((s) => s).length,
+		[selected]
+	);
 
 	const { class_id } = useParams();
-
-	const [selected, setSelected] = React.useState([]);
 	//#endregion
 
 	//#region Event
-	const onSelectAll = (event) => {
-		if (event.target.checked) {
-			const newSelected = data.map((n) => Number(n.id));
-			setSelected(newSelected);
-			return;
-		}
-		setSelected([]);
-	};
-
-	const onSelect = (id) => (event) => {
-		const selectedIndex = selected.indexOf(id);
-		let newSelected = [];
-
-		if (selectedIndex === -1) {
-			newSelected = newSelected.concat(selected, id);
-		} else if (selectedIndex === 0) {
-			newSelected = newSelected.concat(selected.slice(1));
-		} else if (selectedIndex === selected.length - 1) {
-			newSelected = newSelected.concat(selected.slice(0, -1));
-		} else if (selectedIndex > 0) {
-			newSelected = newSelected.concat(
-				selected.slice(0, selectedIndex),
-				selected.slice(selectedIndex + 1)
-			);
-		}
-
-		setSelected(newSelected);
-	};
-
 	const onApprovalAll = () => {
 		alert.question({
 			onConfirm: async () => {
-				const res = await approveAll({ role_id, sheet_ids: [...selected] });
+				const include_ids = isSelectedAll ? [] : selected;
+
+				const body = {
+					include_ids,
+					all: isSelectedAll ? true : false,
+				};
+
+				const res = await approveAll(body);
 
 				if (isSuccess(res)) {
 					refetch();
@@ -84,17 +62,21 @@ const ListStudents = ({ data, refetch }) => {
 	//#region Render
 	return (
 		<Box>
+			<Box textAlign='left' my={1}>
+				<Button variant='contained' onClick={onApprovalAll}>
+					Duyệt tất cả
+				</Button>
+			</Box>
+
 			<TableContainer className='c-table'>
 				<Table stickyHeader>
 					<TableHead>
 						<TableRow>
 							<TableCell width={50} align='center'>
 								<Checkbox
-									onChange={onSelectAll}
-									indeterminate={
-										selected.length > 0 && selected.length < data.length
-									}
-									checked={selected.length === data.length}
+									indeterminate={isSelected && !isSelectedAll}
+									onChange={onSelect(-1)}
+									checked={isSelectedAll || isSelected}
 								/>
 							</TableCell>
 							<TableCell align='center'>STT</TableCell>
@@ -117,18 +99,12 @@ const ListStudents = ({ data, refetch }) => {
 									data={row}
 									classId={class_id}
 									onSelect={onSelect(Number(row.id))}
-									selected={selected.includes(Number(row.id))}
+									isSelected={selected?.includes(Number(row.id)) || isSelectedAll}
 								/>
 							))}
 					</TableBody>
 				</Table>
 			</TableContainer>
-
-			<Box textAlign='center' my={3}>
-				<Button variant='contained' disabled={!selected.length} onClick={onApprovalAll}>
-					Duyệt tất cả
-				</Button>
-			</Box>
 		</Box>
 	);
 	//#endregion

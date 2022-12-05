@@ -4,7 +4,15 @@ import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
-const Filter = ({ filter, onChangeFilter, departments, classes, semesters, academic_years }) => {
+const Filter = ({
+	filter,
+	onChangeFilter,
+	departments,
+	classes,
+	semesters,
+	academic_years,
+	isDepartment,
+}) => {
 	//#region Data
 	//#endregion
 
@@ -31,6 +39,7 @@ const Filter = ({ filter, onChangeFilter, departments, classes, semesters, acade
 										</Typography>
 										<CAutocomplete
 											disableClearable
+											disabled={isDepartment}
 											value={filter.department_id}
 											onChange={handleChangeStringId('department_id')}
 											options={departments}

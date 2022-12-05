@@ -41,7 +41,7 @@ const ListClasses = ({ data }) => {
 		<List>
 			{curData.length > 0 &&
 				curData.map((e, i) => (
-					<Link key={i} to={`${ROUTES.LIST}/${e.id}`}>
+					<Link key={i} to={`${ROUTES.LIST}/${e.id}/class/${e.name}`}>
 						<ListItem className='class-item' sx={{ mb: 1 }}>
 							<Grid container justifyContent='space-between' alignItems='center'>
 								<Grid item>Lớp {e.name}</Grid>

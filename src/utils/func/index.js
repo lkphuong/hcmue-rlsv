@@ -14,6 +14,10 @@ export const getCurrentState = (state) => {
 	}
 };
 
+export function isEmptyObject(obj) {
+	return obj && !Object.keys(obj).length && Object.getPrototypeOf(obj) === Object.prototype;
+}
+
 export const updateObjInArr = (obj, arr) => {
 	if (!arr.length) {
 		const newArr = [obj];

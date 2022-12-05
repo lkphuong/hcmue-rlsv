@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
@@ -16,6 +15,7 @@ const ListPageStatistic = () => {
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const { role_id, department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const [data, setData] = useState([]);
 
@@ -26,7 +26,7 @@ const ListPageStatistic = () => {
 	const [filter, setFilter] = useState({
 		academic_id: academic_years[0]?.id,
 		semester_id: semesters[0]?.id,
-		department_id: departments[0]?.id,
+		department_id: role_id === 2 ? department_id : departments[0]?.id,
 		class_id: '',
 	});
 
@@ -81,6 +81,7 @@ const ListPageStatistic = () => {
 				semesters={semesters}
 				classes={classes}
 				academic_years={academic_years}
+				isDepartment={role_id === 2}
 			/>
 
 			{!classData ? (

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ import { HistoryEdu } from '@mui/icons-material';
 import { STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
 
-const Row = memo(({ classId, data, index, onSelect, selected }) => {
+const Row = memo(({ classId, data, index, isSelected, onSelect }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -23,13 +23,33 @@ const Row = memo(({ classId, data, index, onSelect, selected }) => {
 		e.stopPropagation();
 		navigate(`${ROUTES.LIST}/${classId}/${data?.id}`);
 	};
+
+	const handleSelect = useCallback(
+		(e) => {
+			e.stopPropagation();
+
+			return onSelect(e, !isSelected);
+		},
+
+		[onSelect]
+	);
 	//#endregion
 
 	//#region Render
 	return (
-		<TableRow hover onClick={onSelect} selected={selected}>
+		<TableRow
+			hover
+			onClick={data?.status === 3 ? handleSelect : undefined}
+			selected={isSelected && data?.status === 3}
+		>
 			<TableCell width={50} align='center'>
-				<Checkbox checked={selected} onChange={onSelect} />
+				{data?.status === 3 && (
+					<Checkbox
+						checked={isSelected}
+						onChange={handleSelect}
+						onClick={(e) => e.preventDefault()}
+					/>
+				)}
 			</TableCell>
 			<TableCell align='center'>{index + 1}</TableCell>
 			<TableCell align='center'>{data.user.fullname}</TableCell>

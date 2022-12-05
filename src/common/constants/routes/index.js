@@ -10,7 +10,7 @@ export const ROUTES = {
 	CLASS_SCORE_DETAIL: '/class-score/:sheet_id',
 
 	LIST: '/list',
-	LIST_DETAIL_CLASS: '/list/:class_id',
+	LIST_DETAIL_CLASS: '/list/:class_id/class/:class_name',
 	LIST_DETAIL_STUDENT: '/list/:class_id/:sheet_id',
 
 	FORM: '/admin/forms',

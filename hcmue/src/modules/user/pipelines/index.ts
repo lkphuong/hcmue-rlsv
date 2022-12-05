@@ -212,6 +212,93 @@ export const generateGetUsersByClassPipeline = (
   return pipeline;
 };
 
+export const generateGetUsersByInputPipeline = (
+  class_id: string,
+  department_id: string,
+  input: string,
+) => {
+  //#region Where class_id & department_id
+  const $criteria: { [key: string]: any }[] = [
+    {
+      departmentId: convertString2ObjectId(department_id),
+    },
+    {
+      classId: convertString2ObjectId(class_id),
+    },
+    {
+      $or: [
+        {
+          username: {
+            $regex: new RegExp(input, 'i'),
+          },
+        },
+        {
+          fullname: {
+            $regex: new RegExp(input, 'i'),
+          },
+        },
+      ],
+    },
+  ];
+  //#endregion
+
+  //#region Create conditions
+  const matchs: PipelineStage[] = [
+    {
+      $match: {
+        $and: $criteria,
+      },
+    },
+  ];
+  //#endregion
+
+  //#region Join to classs collection
+  const class_joiner: PipelineStage[] = [
+    {
+      $lookup: {
+        from: 'classs',
+        localField: 'classId',
+        foreignField: '_id',
+        as: 'classs',
+      },
+    },
+    {
+      $unwind: {
+        path: '$classs',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ];
+  //#endregion
+
+  //#region Join to classs collection
+  const department_joiner: PipelineStage[] = [
+    {
+      $lookup: {
+        from: 'department',
+        localField: 'departmentId',
+        foreignField: '_id',
+        as: 'department',
+      },
+    },
+    {
+      $unwind: {
+        path: '$department',
+        preserveNullAndEmptyArrays: true,
+      },
+    },
+  ];
+  //#endregion
+
+  const pipeline: PipelineStage[] = [
+    ...class_joiner,
+    ...department_joiner,
+    ...matchs,
+  ];
+
+  return pipeline;
+};
+
 export const generateGetUserByIdPipeline = (id: string) => {
   //#region Create conditions
   const matchs: PipelineStage[] = [

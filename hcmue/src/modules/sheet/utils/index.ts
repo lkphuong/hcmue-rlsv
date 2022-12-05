@@ -8,12 +8,12 @@ import {
   returnObjectsWithPaging,
 } from '../../../utils';
 
-import { AcademicYearClassesEntity } from '../../../entities/academic_year_classes.entity';
+import { Class } from '../../../schemas/class.schema';
+import { User } from '../../../schemas/user.schema';
+
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
-
-import { User } from '../../../schemas/user.schema';
 
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
@@ -40,7 +40,6 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
-import { Class } from 'src/schemas/class.schema';
 
 export const generateClassesResponse = async (
   data: Class[] | null,
@@ -231,21 +230,31 @@ export const mapUserForSheet = (
 export const generateResponses = async (
   pages: number,
   page: number,
-  users: User[],
   sheets: SheetEntity[],
+  users: User[] | null,
+  user_service: UserService,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', users);
+  console.log('data: ', sheets);
 
-  // Transform UserSchema and SheetEntity class to ClassSheetsResponse class
-  const payload = await generateAdminSheets(sheets, users);
+  // Transform SheetEntity class to ClassSheetsResponse class
+  const payload = await generateAdminSheets(sheets, users, user_service);
 
   // Returns objects
   return returnObjectsWithPaging<ClassSheetsResponse>(pages, page, payload);
 };
 
-export const generateStringObjectID = (arr_object: string[]) => {
-  return arr_object.map((value) => `"${value}"`).join(',');
+export const generateObjectIDString = (object_ids: string[]) => {
+  return object_ids.map((value) => `"${value}"`).join(',');
+};
+
+export const generateObjectIdFromUsers = (users: User[]) => {
+  let user_ids: string[] = null;
+  if (users && users.length > 0) {
+    user_ids = users.map((user) => user._id.toString());
+  }
+
+  return user_ids;
 };

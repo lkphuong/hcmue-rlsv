@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
+import { generateObjectIDString } from '../utils';
+
 import { SheetEntity } from '../../../entities/sheet.entity';
 
 import { LogService } from '../../log/services/log.service';
@@ -10,7 +12,6 @@ import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
-import { generateStringObjectID } from '../utils';
 
 @Injectable()
 export class SheetService {
@@ -21,59 +22,6 @@ export class SheetService {
     private _logger: LogService,
   ) {}
 
-  async getSheetsByUserIds(
-    academic_id: number,
-    class_id: string,
-    department_id: string,
-    semester_id: number,
-    status?: number,
-    user_ids?: string[],
-  ): Promise<SheetEntity[] | null> {
-    try {
-      let conditions = this._sheetRepository
-        .createQueryBuilder('sheet')
-        .innerJoin('sheet.semester', 'semester')
-        .innerJoin('sheet.academic_year', 'academic_year')
-        .leftJoinAndSelect('sheet.level', 'level')
-        .where('semester.id = :semester_id', { semester_id })
-        .andWhere('academic_year.id = :academic_id', { academic_id })
-        .andWhere('sheet.department_id = :department_id', { department_id })
-        .andWhere('sheet.class_id = :class_id', { class_id })
-        .andWhere('sheet.deleted = :deleted', { deleted: false })
-        .andWhere('semester.deleted = :deleted', { deleted: false })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('level.deleted = :deleted', { deleted: false });
-            qb.orWhere('level.deleted IS NULL');
-          }),
-        );
-
-      if (status != SheetStatus.ALL) {
-        conditions = conditions.andWhere('sheet.status = :status', { status });
-      }
-
-      if (user_ids && user_ids.length > 0) {
-        conditions = conditions.andWhere(
-          `sheet.user_id IN (${generateStringObjectID(user_ids)})`,
-        );
-      }
-
-      const sheets = await conditions
-        .orderBy('sheet.created_at', 'DESC')
-        .getMany();
-
-      return sheets || null;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'SheetService.getSheetsByUserIds()',
-        e,
-      );
-      return null;
-    }
-  }
-
   async getSheetsPaging(
     offset: number,
     length: number,
@@ -81,36 +29,36 @@ export class SheetService {
     class_id: string,
     academic_id: number,
     semester_id: number,
-    status?: number,
+    status: number,
+    user_ids?: string[],
   ): Promise<SheetEntity[] | null> {
     try {
       let conditions = this._sheetRepository
         .createQueryBuilder('sheet')
         .innerJoin('sheet.semester', 'semester')
         .innerJoin('sheet.academic_year', 'academic_year')
-        .leftJoinAndSelect('sheet.level', 'level')
+        .leftJoinAndSelect(
+          'sheet.level',
+          'level',
+          `level.id = sheet.level AND 
+          level.deleted = 0`,
+        )
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic_year.id = :academic_id', { academic_id })
         .andWhere('sheet.department_id = :department_id', { department_id })
         .andWhere('sheet.class_id = :class_id', { class_id })
-        .andWhere('sheet.deleted = :deleted', { deleted: false })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
         .andWhere('semester.deleted = :deleted', { deleted: false })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('level.deleted = :deleted', { deleted: false });
-            qb.orWhere('level.deleted IS NULL');
-          }),
-        );
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
 
-      console.log(
-        'status: ',
-        status,
-        'status != SheetStatus.ALL',
-        status != SheetStatus.ALL,
-        SheetStatus.ALL,
-      );
       if (status != SheetStatus.ALL) {
         conditions = conditions.andWhere('sheet.status = :status', { status });
+      }
+
+      if (user_ids && user_ids.length > 0) {
+        conditions = conditions.andWhere(
+          `sheet.user_id IN (${generateObjectIDString(user_ids)})`,
+        );
       }
 
       const sheets = await conditions
@@ -279,7 +227,7 @@ export class SheetService {
 
       if (user_ids && user_ids.length > 0) {
         conditions = conditions.andWhere(
-          `sheet.user_id IN (${generateStringObjectID(user_ids)})`,
+          `sheet.user_id IN (${generateObjectIDString(user_ids)})`,
         );
       }
 
@@ -318,7 +266,7 @@ export class SheetService {
     }
   }
 
-  async unapproved(
+  async ungraded(
     sheet_id: number,
     user_id: string,
     manager?: EntityManager,

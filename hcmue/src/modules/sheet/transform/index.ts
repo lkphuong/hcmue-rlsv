@@ -1,6 +1,11 @@
+import { Types } from 'mongoose';
+
+import { convertObjectId2String, convertString2ObjectId } from '../../../utils';
+import { mapUserForSheet } from '../utils';
+
+import { Class } from '../../../schemas/class.schema';
 import { User } from '../../../schemas/user.schema';
 
-import { AcademicYearClassesEntity } from '../../../entities/academic_year_classes.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
@@ -19,9 +24,67 @@ import {
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 
-import { convertObjectId2String } from '../../../utils';
-import { mapUserForSheet } from '../utils';
-import { Class } from 'src/schemas/class.schema';
+export const generateAdminSheets = async (
+  sheets: SheetEntity[] | null,
+  users: User[] | null,
+  user_service: UserService,
+) => {
+  if (sheets && sheets.length > 0) {
+    const user_ids: Types.ObjectId[] = [];
+    const payload: ClassSheetsResponse[] = [];
+
+    //#region Loop of sheets
+    for (const sheet of sheets) {
+      user_ids.push(convertString2ObjectId(sheet.user_id));
+
+      const item: ClassSheetsResponse = {
+        id: sheet.id,
+
+        level: sheet.level
+          ? { id: sheet.level.id, name: sheet.level.name }
+          : null,
+
+        status: sheet.status,
+        sum_of_class_marks: sheet.sum_of_class_marks,
+        sum_of_department_marks: sheet.sum_of_department_marks,
+        sum_of_personal_marks: sheet.sum_of_personal_marks,
+        user: {
+          id: sheet.user_id,
+          fullname: null,
+          std_code: null,
+        },
+      };
+
+      payload.push(item);
+    }
+    //#endregion
+
+    //#region Get users
+    if (!users) users = await user_service.getUserByIds(user_ids);
+    if (users && users.length > 0) {
+      //#region Map user to each of item in payload
+      payload.map((item) => {
+        const user = users.find(
+          (e) => convertObjectId2String(e._id) == item.user.id,
+        );
+
+        if (user) {
+          item.user = {
+            ...item.user,
+            fullname: user.fullname,
+            std_code: user.username,
+          };
+        }
+      });
+      //#endregion
+    }
+    //#endregion
+
+    return payload;
+  }
+
+  return null;
+};
 
 export const generateUserSheets = (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -271,42 +334,6 @@ export const generateEvaluationsArray = (
       };
 
       payload.push(item);
-    }
-
-    return payload;
-  }
-
-  return null;
-};
-
-export const generateAdminSheets = (
-  sheets: SheetEntity[] | null,
-  users: User[] | null,
-) => {
-  if (sheets && sheets.length > 0 && users && users.length > 0) {
-    const payload: ClassSheetsResponse[] = [];
-    for (const sheet of sheets) {
-      const user = users.find(
-        (e) => convertObjectId2String(e._id) == sheet.user_id,
-      );
-      if (user) {
-        const item: ClassSheetsResponse = {
-          id: sheet.id,
-          level: sheet.level
-            ? { id: sheet.level.id, name: sheet.level.name }
-            : null,
-          status: sheet.status,
-          sum_of_class_marks: sheet.sum_of_class_marks,
-          sum_of_department_marks: sheet.sum_of_department_marks,
-          sum_of_personal_marks: sheet.sum_of_personal_marks,
-          user: {
-            id: convertObjectId2String(user._id),
-            fullname: user.fullname,
-            std_code: user.username,
-          },
-        };
-        payload.push(item);
-      }
     }
 
     return payload;

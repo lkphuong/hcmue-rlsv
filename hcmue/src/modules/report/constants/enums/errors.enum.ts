@@ -7,5 +7,5 @@ export enum ErrorMessage {
   DEPARTMENT_NOT_FOUND_ERROR = '[Khoa] không tồn tại (id: %s)',
   SEMESTER_NOT_FOUND_ERROR = '[Học kì] không tồn tại (id: %s)',
 
-  ROLE_INVALID_ERROR = 'Bạn không thể xem [thống kế phiếu] của khoa khác (khoa: %s)',
+  ROLE_INVALID_ERROR = 'Bạn không thể xem [thống kế phiếu] của khoa khác (khoa: %s).',
 }

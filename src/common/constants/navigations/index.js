@@ -96,7 +96,7 @@ export const NAVIGATIONS = [
 				id: 'admin-note',
 				title: 'Quản lý danh sách phiếu',
 				type: 'item',
-				path: '/admin/notes',
+				path: '/admin/sheets',
 				entity: ENTITY_KEY.NOTES.key,
 				breadcrumbs: false,
 			},

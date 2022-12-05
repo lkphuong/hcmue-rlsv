@@ -67,7 +67,7 @@ export const Form = ({ data, status }) => {
 					onConfirm: () => {
 						dispatch(actions.clearMarks());
 
-						navigate(`${ROUTES.NOTE}`, { replace: true });
+						navigate(`${ROUTES.ADMIN_SHEET}`, { replace: true });
 					},
 					fullname: data?.user?.fullname,
 					mark: data?.sum_of_department_marks,

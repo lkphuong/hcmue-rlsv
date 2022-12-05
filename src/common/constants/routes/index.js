@@ -18,14 +18,12 @@ export const ROUTES = {
 	FORM_CREATE_HEADERS: '/admin/forms/create/:form_id',
 	FORM_UPDATE: '/admin/forms/update/:form_id',
 
-	NOTE: '/admin/notes',
-
 	STATISTIC: '/statistic',
 
 	ROLE: '/admin/roles',
 
 	CONFIG: '/admin/config',
 
-	ADMIN_SHEET: '/admin/sheet',
-	ADMIN_REMAKE: '/admin/sheet/:sheet_id',
+	ADMIN_SHEET: '/admin/sheets',
+	ADMIN_REMAKE: '/admin/sheets/:sheet_id',
 };

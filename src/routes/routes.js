@@ -121,7 +121,7 @@ export const browserRouter = [
 				),
 			},
 			{
-				path: ROUTES.NOTE,
+				path: ROUTES.ADMIN_SHEET,
 				errorElement: <CErrorPage />,
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.NOTES.key}>

@@ -61,8 +61,7 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end))
-						return false;
+					if (dayjs(value).isAfter(parent.end)) return false;
 
 					return true;
 				})
@@ -74,8 +73,7 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isBefore(parent.start) || dayjs(value).isSame(parent.start))
-						return false;
+					if (dayjs(value).isBefore(parent.start)) return false;
 
 					return true;
 				})
@@ -92,8 +90,7 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end))
-						return false;
+					if (dayjs(value).isAfter(parent.end)) return false;
 
 					return true;
 				})
@@ -105,8 +102,7 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isBefore(parent.start) || dayjs(value).isSame(parent.start))
-						return false;
+					if (dayjs(value).isBefore(parent.start)) return false;
 
 					return true;
 				})
@@ -123,8 +119,7 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end))
-						return false;
+					if (dayjs(value).isAfter(parent.end)) return false;
 
 					return true;
 				})
@@ -136,8 +131,7 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isBefore(parent.start) || dayjs(value).isSame(parent.start))
-						return false;
+					if (dayjs(value).isBefore(parent.start)) return false;
 
 					return true;
 				})

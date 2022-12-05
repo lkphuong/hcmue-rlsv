@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { memo, useState, useEffect } from 'react';
+import React, { memo, useState, useEffect, useMemo } from 'react';
 
 import {
 	Box,
@@ -13,63 +13,51 @@ import {
 } from '@mui/material';
 
 import { getClassSheets } from '_api/sheets.api';
+import { CPagination } from '_controls/';
 
-const FAKE_DATA = [
-	{
-		id: 1,
-		user: { fullname: 'Đặng Hoàng Phúc', std_code: '41.01.104.094' },
-		level: { name: 'Khá' },
-		sum_of_personal_marks: 70,
-		sum_of_class_marks: 65,
-		sum_of_department_marks: 80,
-	},
-	{
-		id: 2,
-		user: { fullname: 'Đặng Hoàng Phúc', std_code: '41.01.104.094' },
-		level: { name: 'Khá' },
-		sum_of_personal_marks: 70,
-		sum_of_class_marks: 65,
-		sum_of_department_marks: 80,
-	},
-	{
-		id: 3,
-		user: { fullname: 'Đặng Hoàng Phúc', std_code: '41.01.104.094' },
-		level: { name: 'Khá' },
-		sum_of_personal_marks: 70,
-		sum_of_class_marks: 65,
-		sum_of_department_marks: 80,
-	},
-	{
-		id: 4,
-		user: { fullname: 'Đặng Hoàng Phúc', std_code: '41.01.104.094' },
-		level: { name: 'Khá' },
-		sum_of_personal_marks: 70,
-		sum_of_class_marks: 65,
-		sum_of_department_marks: 80,
-	},
-];
-
-const MClassTable = memo(({ classData, academic_id, semester_id }) => {
+const MClassTable = memo(({ classData, academic_id, semester_id, department_id }) => {
 	//#region Data
-	const [data, setData] = useState([]);
+	const [data, setData] = useState();
+
+	const tableData = useMemo(() => data?.data || [], [data]);
+
+	const [filter, setFilter] = useState({
+		academic_id,
+		semester_id,
+		department_id,
+		page: 1,
+		pages: 0,
+	});
+
+	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
 	//#endregion
 
 	//#region Event
 	const getClassData = async () => {
-		const res = await getClassSheets(classData?.id, { academic_id, semester_id });
+		const res = await getClassSheets(classData?.id, filter);
 
 		setData(res.data);
 	};
+
+	const onPageChange = (event, value) => setFilter((prev) => ({ ...prev, page: value }));
 	//#endregion
 
 	useEffect(() => {
 		getClassData();
-	}, [classData?.id, academic_id, semester_id]);
+	}, [classData?.id, filter]);
+
+	useEffect(() => {
+		setPaginate({
+			page: data?.page,
+			pages: data?.pages,
+		});
+	}, [data]);
 
 	//#region Render
 	return (
 		<Box>
 			<CardHeader title={`DANH SÁCH SINH VIÊN LỚP ${classData.name}`} />
+
 			<TableContainer className='c-table'>
 				<Table stickyHeader>
 					<TableHead>
@@ -84,8 +72,8 @@ const MClassTable = memo(({ classData, academic_id, semester_id }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{data?.length > 0 &&
-							data.map((row, index) => (
+						{tableData?.length > 0 &&
+							tableData.map((row, index) => (
 								<TableRow key={row.id}>
 									<TableCell align='center' height={50}>
 										{index + 1}
@@ -107,6 +95,8 @@ const MClassTable = memo(({ classData, academic_id, semester_id }) => {
 					</TableBody>
 				</Table>
 			</TableContainer>
+
+			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>
 	);
 	//#endregion

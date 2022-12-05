@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box, Button, Container, Grid } from '@mui/material';
+import { Box, Button, Container } from '@mui/material';
 
 import { getFormById, getHeadersByFormId, publishForm, unpublishForm } from '_api/form.api';
 
@@ -13,7 +13,7 @@ import { actions } from '_slices/form.slice';
 
 import HeaderItem from './HeaderItem';
 
-const SettingTitle = memo(({ updateStep }) => {
+const SettingTitle = memo(() => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 	const status = useSelector((state) => state.form.status, shallowEqual);
@@ -37,8 +37,6 @@ const SettingTitle = memo(({ updateStep }) => {
 			throw error;
 		}
 	};
-
-	const handleBack = () => updateStep((prev) => prev - 1);
 
 	const handlePublish = () => {
 		alert.warning({
@@ -98,24 +96,6 @@ const SettingTitle = memo(({ updateStep }) => {
 
 				{headers.length > 0 && headers.map((e) => <HeaderItem key={e.id} data={e} />)}
 			</Container>
-
-			<Grid container mt={4} spacing={2} alignItems='center' justifyContent='center'>
-				<Grid item>
-					<Button sx={{ maxWidth: 100 }} variant='contained' onClick={handleBack}>
-						Trở lại
-					</Button>
-				</Grid>
-				<Grid item>
-					<Button
-						// disabled={headers.length < 1}
-						sx={{ maxWidth: 100 }}
-						variant='contained'
-						onClick={() => updateStep((prev) => prev + 1)}
-					>
-						Tiếp tục
-					</Button>
-				</Grid>
-			</Grid>
 		</Box>
 	);
 	//#endregion

@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box, Button, Container, Grid } from '@mui/material';
+import { Box, Button, Container } from '@mui/material';
 
 import { getFormById, getHeadersByFormId, publishForm, unpublishForm } from '_api/form.api';
 
@@ -37,8 +37,6 @@ const SettingItem = memo(({ updateStep }) => {
 			throw error;
 		}
 	};
-
-	const handleBack = () => updateStep((prev) => prev - 1);
 
 	const handlePublish = () => {
 		alert.warning({
@@ -98,23 +96,6 @@ const SettingItem = memo(({ updateStep }) => {
 
 				{headers.length > 0 && headers.map((e) => <HeaderItem key={e.id} data={e} />)}
 			</Container>
-
-			<Grid container mt={4} spacing={2} alignItems='center' justifyContent='center'>
-				<Grid item>
-					<Button sx={{ maxWidth: 100 }} variant='contained' onClick={handleBack}>
-						Trở lại
-					</Button>
-				</Grid>
-				<Grid item>
-					<Button
-						sx={{ maxWidth: 140 }}
-						variant='contained'
-						onClick={() => updateStep((prev) => prev + 1)}
-					>
-						Lưu biểu mẫu
-					</Button>
-				</Grid>
-			</Grid>
 		</Box>
 	);
 	//#endregion

@@ -10,6 +10,10 @@ export const createForm = (body = {}) => {
 	return post(FORMS.CREATE_FORM, body);
 };
 
+export const updateForm = (id, body) => {
+	return put(`${FORMS.UPDATE_FORM}/${id}`, body);
+};
+
 export const createHeader = (body = {}) => {
 	return post(FORMS.CREATE_HEADER, body);
 };

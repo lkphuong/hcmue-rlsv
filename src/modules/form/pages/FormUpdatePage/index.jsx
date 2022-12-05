@@ -9,6 +9,7 @@ import {
 	CardContent,
 	Grid,
 	Paper,
+	Stack,
 	Step,
 	StepLabel,
 	Stepper,
@@ -22,7 +23,7 @@ import { ROUTES } from '_constants/routes';
 import { actions } from '_slices/form.slice';
 
 import { usePrompt } from '_hooks/';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, ArrowForward } from '@mui/icons-material';
 
 const SettingTime = lazy(() => import('_modules/form/components/SettingTime'));
 const SettingHeader = lazy(() => import('_modules/form/components/SettingHeader'));
@@ -65,8 +66,11 @@ const FormUpdatePage = () => {
 		}
 	}, [step]);
 	//#endregion
-	//#region Event
 
+	//#region Event
+	const onBack = () => setStep((prev) => prev - 1);
+
+	const onForward = () => setStep((prev) => prev + 1);
 	//#endregion
 
 	useEffect(() => {
@@ -83,7 +87,7 @@ const FormUpdatePage = () => {
 
 	usePrompt(
 		'Các thao tác đang điều chỉnh có thể mất khi bạn chuyển trang.',
-		true,
+		false,
 		actions.clearForm()
 	);
 
@@ -146,6 +150,46 @@ const FormUpdatePage = () => {
 							</Typography>
 
 							{currentStage}
+
+							<Stack direction='row' spacing={1.5} justifyContent='center'>
+								<ButtonBase onClick={onBack}>
+									<Avatar
+										variant='rounded'
+										sx={{
+											...theme.typography.commonAvatar,
+											...theme.typography.mediumAvatar,
+											transition: 'all .2s ease-in-out',
+											background: theme.palette.secondary.light,
+											color: theme.palette.secondary.dark,
+											'&:hover': {
+												background: theme.palette.secondary.dark,
+												color: theme.palette.secondary.light,
+											},
+										}}
+									>
+										<ArrowBack />
+									</Avatar>
+								</ButtonBase>
+
+								<ButtonBase onClick={onForward}>
+									<Avatar
+										variant='rounded'
+										sx={{
+											...theme.typography.commonAvatar,
+											...theme.typography.mediumAvatar,
+											transition: 'all .2s ease-in-out',
+											background: theme.palette.secondary.light,
+											color: theme.palette.secondary.dark,
+											'&:hover': {
+												background: theme.palette.secondary.dark,
+												color: theme.palette.secondary.light,
+											},
+										}}
+									>
+										<ArrowForward />
+									</Avatar>
+								</ButtonBase>
+							</Stack>
 						</CardContent>
 					</Paper>
 				</Grid>

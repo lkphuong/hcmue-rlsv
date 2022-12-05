@@ -11,7 +11,7 @@ import { CAutocomplete } from '_controls/';
 
 import { isSuccess } from '_func/';
 
-import { createForm, getFormById } from '_api/form.api';
+import { createForm, getFormById, updateForm } from '_api/form.api';
 
 import { useResolver } from '_hooks/';
 
@@ -25,7 +25,7 @@ import { ERRORS } from '_constants/messages';
 
 import { RangeControl } from './RangeControl';
 
-const SettingTime = memo(({ updateStep }) => {
+const SettingTime = memo(() => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
@@ -48,11 +48,6 @@ const SettingTime = memo(({ updateStep }) => {
 
 	//#region Event
 	const onSubmit = async (values) => {
-		if (form_id) {
-			updateStep(1);
-			return;
-		}
-
 		const body = {
 			...values,
 			student: {
@@ -69,7 +64,7 @@ const SettingTime = memo(({ updateStep }) => {
 			},
 		};
 
-		const res = await createForm(body);
+		const res = form_id ? await updateForm(form_id, body) : await createForm(body);
 
 		if (isSuccess(res)) {
 			alert.success({ text: 'Cập nhật thời gian phát hành thành công' });
@@ -77,7 +72,6 @@ const SettingTime = memo(({ updateStep }) => {
 			const { id } = res.data;
 
 			dispatch(actions.setFormId(Number(id)));
-			updateStep(1);
 		} else {
 			alert.fail({ text: res?.message || ERRORS.FAIL });
 		}
@@ -86,8 +80,6 @@ const SettingTime = memo(({ updateStep }) => {
 	const handleChangeSelect = (CallbackUpdateForm) => (value) => {
 		CallbackUpdateForm(value?.id);
 	};
-
-	const handleBack = () => updateStep((prev) => prev - 1);
 
 	const disableDates = (disableKey) => (date) => {
 		return (
@@ -138,6 +130,7 @@ const SettingTime = memo(({ updateStep }) => {
 										fieldState: { error },
 									}) => (
 										<CAutocomplete
+											disableClearable
 											onChange={handleChangeSelect(onChange)}
 											onBlur={onBlur}
 											value={value}
@@ -166,6 +159,7 @@ const SettingTime = memo(({ updateStep }) => {
 										fieldState: { error },
 									}) => (
 										<CAutocomplete
+											disableClearable
 											onChange={handleChangeSelect(onChange)}
 											onBlur={onBlur}
 											value={value}
@@ -219,18 +213,8 @@ const SettingTime = memo(({ updateStep }) => {
 							justifyContent='center'
 						>
 							<Grid item>
-								<Button
-									sx={{ maxWidth: 100 }}
-									type='button'
-									variant='contained'
-									onClick={handleBack}
-								>
-									Trở lại
-								</Button>
-							</Grid>
-							<Grid item>
-								<Button sx={{ maxWidth: 100 }} type='submit' variant='contained'>
-									Tiếp tục
+								<Button sx={{ maxWidth: 200 }} type='submit' variant='contained'>
+									Cập nhật thời gian
 								</Button>
 							</Grid>
 						</Grid>

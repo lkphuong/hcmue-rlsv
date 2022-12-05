@@ -21,7 +21,7 @@ import { actions } from '_slices/form.slice';
 
 import { CreateModal } from '..';
 
-const SettingHeader = memo(({ updateStep }) => {
+const SettingHeader = memo(() => {
 	//#region Data
 	const createRef = useRef();
 
@@ -49,8 +49,6 @@ const SettingHeader = memo(({ updateStep }) => {
 			throw error;
 		}
 	};
-
-	const handleBack = () => updateStep((prev) => prev - 1);
 
 	const openCreate = () => createRef.current.open();
 
@@ -172,24 +170,6 @@ const SettingHeader = memo(({ updateStep }) => {
 					</Grid>
 				</Grid>
 			</Container>
-
-			<Grid container mt={4} spacing={2} alignItems='center' justifyContent='center'>
-				<Grid item>
-					<Button sx={{ maxWidth: 100 }} variant='contained' onClick={handleBack}>
-						Trở lại
-					</Button>
-				</Grid>
-				<Grid item>
-					<Button
-						disabled={headers.length < 1}
-						sx={{ maxWidth: 100 }}
-						variant='contained'
-						onClick={() => updateStep((prev) => prev + 1)}
-					>
-						Tiếp tục
-					</Button>
-				</Grid>
-			</Grid>
 
 			<CreateModal ref={createRef} refetch={getHeaders} />
 		</Box>

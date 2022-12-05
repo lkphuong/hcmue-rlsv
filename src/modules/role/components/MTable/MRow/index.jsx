@@ -38,10 +38,10 @@ export const MRow = ({ data }) => {
 			</TableRow>
 
 			<MMenuRole
-				id={data.user_id}
-				role={Number(data.role)}
-				department_id={data?.department.id}
-				class_id={data?.classes.id}
+				id={data?.user_id}
+				role={Number(data?.role)}
+				department_id={data?.department?.id}
+				class_id={data?.classes?.id}
 				ref={menuRef}
 			/>
 		</>

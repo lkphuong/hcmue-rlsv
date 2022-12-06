@@ -40,7 +40,7 @@ const STATUS = {
 				color: 'rgb(18 196 5)',
 				backgroundColor: 'rgb(3 186 28 / 10%)',
 			}}
-			label='Đã phát hành'
+			label='Chờ phát hành'
 		/>
 	),
 	2: (
@@ -50,7 +50,7 @@ const STATUS = {
 				color: 'rgb(255, 163, 25)',
 				backgroundColor: 'rgba(255, 163, 25, 0.1)',
 			}}
-			label='Đang xử lý'
+			label='Đang phát hành'
 		/>
 	),
 	3: (

@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
 
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Controller, useForm, useWatch } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
 
@@ -40,10 +40,6 @@ const SettingTime = memo(() => {
 		mode: 'all',
 		resolver,
 	});
-
-	const studentEnd = useWatch({ control, name: 'student.end' });
-	const classEnd = useWatch({ control, name: 'classes.end' });
-
 	//#endregion
 
 	//#region Event
@@ -79,12 +75,6 @@ const SettingTime = memo(() => {
 
 	const handleChangeSelect = (CallbackUpdateForm) => (value) => {
 		CallbackUpdateForm(value?.id);
-	};
-
-	const disableDates = (disableKey) => (date) => {
-		return (
-			dayjs(date).isBefore(dayjs(disableKey.$d)) || dayjs(date).isSame(dayjs(disableKey.$d))
-		);
 	};
 	//#endregion
 
@@ -190,19 +180,9 @@ const SettingTime = memo(() => {
 						name='student'
 					/>
 
-					<RangeControl
-						control={control}
-						label='Thời gian lớp chấm'
-						name='classes'
-						shouldDisableDate={disableDates(studentEnd)}
-					/>
+					<RangeControl control={control} label='Thời gian lớp chấm' name='classes' />
 
-					<RangeControl
-						control={control}
-						label='Thời gian khoa chấm'
-						name='department'
-						shouldDisableDate={disableDates(classEnd)}
-					/>
+					<RangeControl control={control} label='Thời gian khoa chấm' name='department' />
 
 					<Grid item xs={12} textAlign='center'>
 						<Grid

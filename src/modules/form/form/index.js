@@ -41,6 +41,7 @@ export const initialItem = {
 };
 //#endregion
 
+const MIN_DATE = dayjs();
 //#region Validation
 export const validationSchema = yup.object({
 	academic_id: yup
@@ -56,6 +57,7 @@ export const validationSchema = yup.object({
 		.shape({
 			start: yup
 				.date('Định dạng ngày không hợp lệ.')
+				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
 				.typeError('Định dạng ngày không hợp lệ.')
 				.nullable()
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
@@ -68,6 +70,7 @@ export const validationSchema = yup.object({
 				.required('Chọn ngày sinh viên bắt đầu chấm điểm.'),
 			end: yup
 				.date('Định dạng ngày không hợp lệ.')
+				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
 				.typeError('Định dạng ngày không hợp lệ.')
 				.nullable()
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
@@ -85,6 +88,7 @@ export const validationSchema = yup.object({
 		.shape({
 			start: yup
 				.date('Định dạng ngày không hợp lệ.')
+				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
 				.typeError('Định dạng ngày không hợp lệ.')
 				.nullable()
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
@@ -97,6 +101,7 @@ export const validationSchema = yup.object({
 				.required('Chọn ngày lớp bắt đầu chấm điểm.'),
 			end: yup
 				.date('Định dạng ngày không hợp lệ.')
+				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
 				.typeError('Định dạng ngày không hợp lệ.')
 				.nullable()
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
@@ -114,6 +119,7 @@ export const validationSchema = yup.object({
 		.shape({
 			start: yup
 				.date('Định dạng ngày không hợp lệ.')
+				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
 				.typeError('Định dạng ngày không hợp lệ.')
 				.nullable()
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
@@ -126,6 +132,7 @@ export const validationSchema = yup.object({
 				.required('Chọn ngày khoa bắt đầu chấm điểm.'),
 			end: yup
 				.date('Định dạng ngày không hợp lệ.')
+				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
 				.typeError('Định dạng ngày không hợp lệ.')
 				.nullable()
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {

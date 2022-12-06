@@ -131,6 +131,7 @@ export class FormController {
    * @page forms page
    */
   @Post('all')
+  @HttpCode(HttpStatus.OK)
   @Roles(Role.ADMIN)
   @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

@@ -4,3 +4,4 @@ export * from './CAutocomplete';
 export * from './CPermission';
 export * from './CSelect';
 export * from './CDatePicker';
+export * from './CUpload';

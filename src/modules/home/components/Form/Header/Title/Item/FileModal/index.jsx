@@ -1,6 +1,7 @@
 import { forwardRef, useState, useImperativeHandle } from 'react';
 
 import { Box, Grow, Modal, Paper } from '@mui/material';
+import { CUpload } from '_controls/';
 
 export const FileModal = forwardRef(({ props }, ref) => {
 	//#region Data
@@ -22,18 +23,7 @@ export const FileModal = forwardRef(({ props }, ref) => {
 				<Box className='center' borderRadius={3}>
 					<Paper>
 						<Box p={4} minWidth={330}>
-							<Box width='100%' component='label'>
-								<Box
-									height={150}
-									width='100%'
-									position='relative'
-									border='2px dashed black'
-									borderRadius={2}
-									sx={{ cursor: 'pointer' }}
-								>
-									<input type='file' accept='.pdf,image/*' hidden />
-								</Box>
-							</Box>
+							<CUpload />
 						</Box>
 					</Paper>
 				</Box>

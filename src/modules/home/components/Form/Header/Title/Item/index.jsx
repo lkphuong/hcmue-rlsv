@@ -1,18 +1,23 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Grid, Typography } from '@mui/material';
+import { Box, Button, Grid, Typography } from '@mui/material';
+import { FolderOpen } from '@mui/icons-material';
 
 import { actions } from '_slices/mark.slice';
 
+import { FileModal } from './FileModal';
 import Control from './Control';
 
 const Item = memo(({ data, headerId }) => {
 	//#region Data
 	const dispatch = useDispatch();
+
+	const fileRef = useRef();
 	//#endregion
 
 	//#region Event
+	const openModal = () => fileRef.current.open();
 	//#endregion
 
 	useEffect(() => {
@@ -24,6 +29,18 @@ const Item = memo(({ data, headerId }) => {
 		<>
 			<Grid item xs={6.4}>
 				<Typography>- {data.content}</Typography>
+
+				<Box mt={1} ml={1.5}>
+					<Button
+						variant='contained'
+						size='small'
+						endIcon={<FolderOpen />}
+						sx={{ textTransform: 'none', backgroundColor: '#f7c12c', color: 'black' }}
+						onClick={openModal}
+					>
+						Minh chứng
+					</Button>
+				</Box>
 			</Grid>
 
 			<Control
@@ -38,6 +55,8 @@ const Item = memo(({ data, headerId }) => {
 				required={data.required}
 				headerId={Number(headerId)}
 			/>
+
+			<FileModal ref={fileRef} />
 		</>
 	);
 	//#endregion

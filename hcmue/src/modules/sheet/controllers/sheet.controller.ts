@@ -1048,6 +1048,76 @@ export class SheetController {
 
   /**
    * @method PUT
+   * @url /api/department/multi-approval
+   * @access private
+   * @description Khoa cập nhật kết quả cho nhiều sinh viên
+   * @return HttpResponse<ApproveAllResponse> | HttpException
+   * @page sheets page
+   */
+  @Put('department/approve-all')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async approveAll(
+    @Body() params: ApproveAllDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<ApproveAllResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify(params),
+      );
+
+      //#region Get params
+      const { all, academic_id, department_id, semester_id } = params;
+      let { include_ids } = params;
+      //#endregion
+
+      if (all) {
+        include_ids = await this._sheetService.contains(
+          department_id,
+          academic_id,
+          semester_id,
+        );
+      }
+      const success = await this._evaluationService.bulkApprove(include_ids);
+      if (success) {
+        //#region Generate response
+        return generateApproveAllResponse(include_ids, success);
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_EVALUATION_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
    * @url /api/department/:id
    * @access private
    * @description Khoa cập nhật kết quả phiếu rèn luyện
@@ -1154,68 +1224,6 @@ export class SheetController {
       }
     } catch (err) {
       console.log(err);
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-      if (err instanceof HttpException) throw err;
-      else {
-        throw new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-      }
-    }
-  }
-
-  /**
-   * @method PUT
-   * @url /api/department/multi-approval
-   * @access private
-   * @description Khoa cập nhật kết quả cho nhiều sinh viên
-   * @return HttpResponse<ApproveAllResponse> | HttpException
-   * @page sheets page
-   */
-  @Put('department/approve-all')
-  @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN, Role.DEPARTMENT)
-  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async approveAll(
-    @Body() params: ApproveAllDto,
-    @Req() req: Request,
-  ): Promise<HttpResponse<ApproveAllResponse> | HttpException> {
-    try {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
-
-      this._logger.writeLog(
-        Levels.LOG,
-        req.method,
-        req.url,
-        JSON.stringify(params),
-      );
-
-      //#region Get params
-      const { sheet_ids } = params;
-      //#endregion
-
-      const success = await this._evaluationService.bulkApprove(sheet_ids);
-      if (success) {
-        //#region Generate response
-        return generateApproveAllResponse(sheet_ids, success);
-        //#endregion
-      } else {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_EVALUATION_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-        //#endregion
-      }
-    } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
 

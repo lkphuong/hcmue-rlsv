@@ -159,10 +159,10 @@ export class EvaluationService {
       }
 
       const results = await manager.query(
-        `CALL sp_multiple_approval (${sheet_ids.toString()})`,
+        `CALL sp_multiple_approval ('${sheet_ids.toString()}')`,
       );
 
-      return results.affectedRows > 0;
+      return results[0][0].success ?? 0;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

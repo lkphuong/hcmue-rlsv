@@ -22,6 +22,37 @@ export class SheetService {
     private _logger: LogService,
   ) {}
 
+  async contains(
+    department_id: string,
+    academic_id: number,
+    semester_id: number,
+  ): Promise<number[] | null> {
+    try {
+      const conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .select('sheet.id', 'id')
+        .where('sheet.department_id = :department_id', { department_id })
+        .andWhere('sheet.academic_id = :academic_id', { academic_id })
+        .andWhere('sheet.semester_id = :semester_id', { semester_id })
+        .andWhere('sheet.status = :status', {
+          status: SheetStatus.WAITING_DEPARTMENT,
+        })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      const sheet_ids = await conditions.getRawMany<number>();
+
+      return sheet_ids || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.contains()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getSheetsPaging(
     offset: number,
     length: number,

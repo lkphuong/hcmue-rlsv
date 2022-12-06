@@ -11,7 +11,7 @@ import {
 	Paper,
 	Stack,
 	Step,
-	StepLabel,
+	StepButton,
 	Stepper,
 	Tooltip,
 	Typography,
@@ -71,6 +71,8 @@ const FormUpdatePage = () => {
 	const onBack = () => setStep((prev) => prev - 1);
 
 	const onForward = () => setStep((prev) => prev + 1);
+
+	const onStepChange = (step) => () => setStep(step);
 	//#endregion
 
 	useEffect(() => {
@@ -137,10 +139,12 @@ const FormUpdatePage = () => {
 				<Grid item xs={12}>
 					<Paper className='paper-wrapper'>
 						<CardContent sx={{ backgroundColor: 'rgb(247 246 255)' }}>
-							<Stepper activeStep={step} alternativeLabel>
-								{STEPS.map((label) => (
-									<Step key={label}>
-										<StepLabel>{label}</StepLabel>
+							<Stepper nonLinear activeStep={step} alternativeLabel>
+								{STEPS.map((label, index) => (
+									<Step key={label} completed>
+										<StepButton onClick={onStepChange(index)}>
+											{label}
+										</StepButton>
 									</Step>
 								))}
 							</Stepper>
@@ -151,7 +155,7 @@ const FormUpdatePage = () => {
 
 							{currentStage}
 
-							<Stack direction='row' spacing={1.5} justifyContent='center'>
+							<Stack direction='row' spacing={1.5} justifyContent='center' mt={2}>
 								<ButtonBase onClick={onBack}>
 									<Avatar
 										variant='rounded'

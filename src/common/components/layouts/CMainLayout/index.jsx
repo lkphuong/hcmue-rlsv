@@ -4,9 +4,6 @@ import { Navigate, Outlet } from 'react-router-dom';
 
 import { styled, useTheme } from '@mui/material/styles';
 import { AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material';
-import { ChevronRight } from '@mui/icons-material';
-
-import Breadcrumbs from 'src/ui-component/extended/Breadcrumbs';
 
 import { drawerWidth } from '_store/constant';
 import { actions } from '_slices/menu.slice';
@@ -143,7 +140,6 @@ export const CMainLayout = () => {
 			<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
 			<Main theme={theme} open={leftDrawerOpened}>
-				<Breadcrumbs separator={ChevronRight} icon title rightAlign />
 				<Outlet />
 			</Main>
 		</Box>

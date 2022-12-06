@@ -143,7 +143,7 @@ const FormCreatePage = () => {
 
 							{currentStage}
 
-							<Stack direction='row' spacing={1.5} justifyContent='center'>
+							<Stack direction='row' spacing={1.5} justifyContent='center' mt={2}>
 								<ButtonBase onClick={onBack}>
 									<Avatar
 										variant='rounded'

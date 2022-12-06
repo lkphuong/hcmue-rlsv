@@ -8,6 +8,7 @@ import {
 	Chip,
 	ClickAwayListener,
 	Divider,
+	Fade,
 	List,
 	ListItemButton,
 	ListItemText,
@@ -17,9 +18,6 @@ import {
 	Typography,
 } from '@mui/material';
 import { Face4, Settings } from '@mui/icons-material';
-
-import MainCard from 'src/ui-component/cards/MainCard';
-import Transitions from 'src/ui-component/extended/Transitions';
 
 import { tryLogout } from '_axios/';
 
@@ -127,16 +125,10 @@ const CProfile = () => {
 				}}
 			>
 				{({ TransitionProps }) => (
-					<Transitions in={open} {...TransitionProps}>
-						<Paper>
+					<Fade in={open} {...TransitionProps}>
+						<Paper sx={{ boxShadow: '0 0 4px 2px rgba(0 0 0 / 20%)' }}>
 							<ClickAwayListener onClickAway={handleClose}>
-								<MainCard
-									border={false}
-									elevation={16}
-									content={false}
-									boxShadow
-									shadow={theme.shadows[16]}
-								>
+								<Paper>
 									<Box sx={{ p: 2, pb: 0 }}>
 										<Stack>
 											<Typography
@@ -158,8 +150,8 @@ const CProfile = () => {
 											component='nav'
 											sx={{
 												width: '100%',
-												maxWidth: 350,
-												minWidth: 300,
+												maxWidth: 300,
+												minWidth: 200,
 												backgroundColor: theme.palette.background.paper,
 												borderRadius: '10px',
 												[theme.breakpoints.down('md')]: {
@@ -186,10 +178,10 @@ const CProfile = () => {
 											</Link>
 										</List>
 									</Box>
-								</MainCard>
+								</Paper>
 							</ClickAwayListener>
 						</Paper>
-					</Transitions>
+					</Fade>
 				)}
 			</Popper>
 		</>

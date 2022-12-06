@@ -1,7 +1,7 @@
 import React, { memo, useState, useEffect, useRef } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { AddCircleOutline, ExpandMore, RemoveCircleOutline } from '@mui/icons-material';
+import { AddCircleOutline, Edit, ExpandMore, RemoveCircleOutline } from '@mui/icons-material';
 import {
 	Accordion,
 	AccordionDetails,
@@ -62,6 +62,10 @@ const HeaderItem = memo(({ data }) => {
 			},
 		});
 	};
+
+	const handleEdit = (data) => () => {
+		createRef.current.open(data);
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -98,14 +102,16 @@ const HeaderItem = memo(({ data }) => {
 											py={1.5}
 											px={1}
 											border='1px solid #d2d2d2'
-											sx={{
-												borderBottomLeftRadius: 20,
-												borderTopRightRadius: 20,
-											}}
+											borderRadius={1}
 											fontWeight={600}
 										>
 											{`${title.name} `}
 										</Box>
+									</Grid>
+									<Grid item xs='auto'>
+										<IconButton onClick={handleEdit(title)}>
+											<Edit />
+										</IconButton>
 									</Grid>
 								</Grid>
 							</Grid>

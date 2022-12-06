@@ -26,6 +26,10 @@ export const createTitle = (body = {}) => {
 	return post(FORMS.CREATE_TITLE, body);
 };
 
+export const updateTitle = (id, body) => {
+	return put(`${FORMS.UPDATE_TITLE}/${id}`, body);
+};
+
 export const createItem = (body = {}) => {
 	return post(FORMS.CREATE_ITEM, body);
 };

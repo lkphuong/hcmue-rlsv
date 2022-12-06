@@ -39,7 +39,7 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 	const handleOpen = () => setOpen(true);
 
 	const handleClose = () => {
-		reset();
+		reset(initialHeader);
 		setHeaderId(null);
 		setOpen(false);
 	};

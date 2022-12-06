@@ -11,7 +11,7 @@ import { initialTitle, validationTitle } from '_modules/form/form';
 
 import { CInput } from '_controls/';
 
-import { createTitle } from '_api/form.api';
+import { createTitle, updateTitle } from '_api/form.api';
 
 import { isSuccess } from '_func/';
 
@@ -21,24 +21,28 @@ import { ERRORS } from '_constants/messages';
 
 export const TitleModal = forwardRef(({ refetch, header_id }, ref) => {
 	//#region Data
+	const [open, setOpen] = useState(false);
+	const [titleId, setTitleId] = useState(null);
+
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
 	const resolver = useResolver(validationTitle);
 
-	const [open, setOpen] = useState(false);
-
-	const { control, handleSubmit, reset } = useForm({
+	const { control, handleSubmit, reset, getValues } = useForm({
 		defaultValues: initialTitle,
 		mode: 'all',
 		resolver,
 	});
 	//#endregion
 
+	console.log(getValues());
+
 	//#region Event
 	const handleOpen = () => setOpen(true);
 
 	const handleClose = () => {
-		reset();
+		reset(initialTitle);
+		setTitleId(null);
 		setOpen(false);
 	};
 
@@ -49,7 +53,7 @@ export const TitleModal = forwardRef(({ refetch, header_id }, ref) => {
 			...values,
 		};
 
-		const res = await createTitle(body);
+		const res = titleId ? await updateTitle(titleId, body) : await createTitle(body);
 
 		if (isSuccess(res)) {
 			refetch();
@@ -64,7 +68,17 @@ export const TitleModal = forwardRef(({ refetch, header_id }, ref) => {
 	//#endregion
 
 	useImperativeHandle(ref, () => ({
-		open: () => handleOpen(),
+		open: (editData) => {
+			if (editData) {
+				const { id } = editData;
+
+				setTitleId(id);
+
+				reset(editData);
+			}
+
+			handleOpen();
+		},
 	}));
 
 	//#region Render

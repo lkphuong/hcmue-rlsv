@@ -28,14 +28,12 @@ export const TitleModal = forwardRef(({ refetch, header_id }, ref) => {
 
 	const resolver = useResolver(validationTitle);
 
-	const { control, handleSubmit, reset, getValues } = useForm({
+	const { control, handleSubmit, reset } = useForm({
 		defaultValues: initialTitle,
 		mode: 'all',
 		resolver,
 	});
 	//#endregion
-
-	console.log(getValues());
 
 	//#region Event
 	const handleOpen = () => setOpen(true);

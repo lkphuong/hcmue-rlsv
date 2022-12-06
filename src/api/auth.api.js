@@ -13,3 +13,7 @@ export const login = (body) => {
 export const logout = () => {
 	return get(AUTH.LOGOUT);
 };
+
+export const refreshToken = (refresh_token) => {
+	return post(AUTH.REFETCH_TOKEN, refresh_token);
+};

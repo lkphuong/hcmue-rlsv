@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/material';
 
@@ -6,6 +6,8 @@ import { CAutocomplete, CInput } from '_controls/';
 
 export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_years, classes }) => {
 	//#region Data
+	const searchRef = useRef();
+
 	const [input, setInput] = useState('');
 	//#endregion
 
@@ -16,6 +18,10 @@ export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_year
 	const handleChangeInput = (event) => setInput(event.target.value);
 
 	const handleSearch = () => onChangeFilter((prev) => ({ ...prev, input, page: 1, pages: 0 }));
+
+	const onKeyPress = (e) => {
+		if (e.key === 'Enter') searchRef.current.click();
+	};
 	//#endregion
 
 	//#region Render
@@ -91,10 +97,11 @@ export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_year
 						onChange={handleChangeInput}
 						placeholder='Nhập Tên hoặc MSSV'
 						isSearch
+						onKeyPress={onKeyPress}
 					/>
 				</Grid>
 				<Grid item>
-					<Button variant='contained' onClick={handleSearch}>
+					<Button variant='contained' onClick={handleSearch} ref={searchRef}>
 						Tìm kiếm
 					</Button>
 				</Grid>

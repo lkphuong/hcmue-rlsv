@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Box, Button, Grid, Paper, Stack, Typography } from '@mui/material';
 
@@ -15,6 +15,8 @@ export const Filter = ({
 	classes,
 }) => {
 	//#region Data
+	const searchRef = useRef();
+
 	const [input, setInput] = useState('');
 	//#endregion
 
@@ -28,6 +30,10 @@ export const Filter = ({
 	const handleChangeInput = (event) => setInput(event.target.value);
 
 	const handleSearch = () => onChangeFilter((prev) => ({ ...prev, input }));
+
+	const onKeyPress = (e) => {
+		if (e.key === 'Enter') searchRef.current.click();
+	};
 	//#endregion
 
 	//#region Render
@@ -155,10 +161,11 @@ export const Filter = ({
 						onChange={handleChangeInput}
 						placeholder='Nhập Tên hoặc MSSV'
 						isSearch
+						onKeyPress={onKeyPress}
 					/>
 				</Grid>
 				<Grid item>
-					<Button variant='contained' onClick={handleSearch}>
+					<Button variant='contained' onClick={handleSearch} ref={searchRef}>
 						Tìm kiếm
 					</Button>
 				</Grid>

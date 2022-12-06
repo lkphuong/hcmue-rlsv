@@ -12,6 +12,8 @@ import { actions } from '_slices/auth.slice';
 import { actions as actionsForm } from '_slices/form.slice';
 
 import { updateAbility } from '_func/permissions';
+import { post } from './request';
+import { AUTH } from '_api/url';
 
 const apiInstance = axios.create({
 	baseURL: process.env.REACT_APP_API_URL,
@@ -21,6 +23,48 @@ const apiInstance = axios.create({
 	timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 
+let isRefetching = false;
+
+const _queue = [];
+
+const handleRefetch = async (response) => {
+	if (!isRefetching) {
+		isRefetching = true;
+
+		try {
+			const res = await refresh();
+
+			const { data } = res;
+
+			isRefetching = false;
+
+			const { refresh_token, access_token } = data;
+
+			store.dispatch(actions.setToken({ refresh_token, access_token }));
+
+			setAuthToken(access_token);
+
+			_queue.forEach(({ resolve }) => resolve());
+
+			return apiInstance({
+				...response.config,
+				headers: {
+					Authorization: `Bearer ${access_token}`,
+				},
+			});
+		} catch (error) {
+			_queue.forEach(({ reject }) => reject(error));
+
+			return Promise.reject(error);
+		}
+	} else {
+		// save to use later when refetching done
+		return new Promise((resolve, reject) => _queue.push({ resolve, reject }))
+			.then(() => null)
+			.catch((error) => Promise.reject(error));
+	}
+};
+
 apiInstance.interceptors.request.use(
 	(config) => config,
 	(error) => Promise.reject(error)
@@ -28,7 +72,7 @@ apiInstance.interceptors.request.use(
 
 apiInstance.interceptors.response.use(
 	(response) => {
-		if (response.status === 205) return console.log('Refetch');
+		if (response.status === 205) return handleRefetch(response);
 
 		if (response.data instanceof Blob) return { data: response.data, status: response.status };
 
@@ -91,6 +135,12 @@ export const getProfile = async (token) => {
 	} catch (error) {
 		tryLogout();
 	}
+};
+
+const refresh = () => {
+	const refresh_token = window.localStorage.getItem('refresh_token');
+
+	return post(AUTH.REFETCH_TOKEN, refresh_token);
 };
 
 export const tryLogout = async () => {

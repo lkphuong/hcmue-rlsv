@@ -7,11 +7,11 @@ import { Box, Button, Grow, Modal, Paper, Stack, Typography } from '@mui/materia
 
 import { useResolver } from '_hooks/';
 
-import { initialHeader, validationHeader } from '_modules/form/form';
+import { initialTitle, validationTitle } from '_modules/form/form';
 
 import { CInput } from '_controls/';
 
-import { createHeader, updateHeader } from '_api/form.api';
+import { createTitle } from '_api/form.api';
 
 import { isSuccess } from '_func/';
 
@@ -19,17 +19,16 @@ import { alert } from '_func/alert';
 
 import { ERRORS } from '_constants/messages';
 
-const CreateModal = forwardRef(({ refetch }, ref) => {
+export const TitleModal = forwardRef(({ refetch, header_id }, ref) => {
 	//#region Data
-	const [open, setOpen] = useState(false);
-	const [headerId, setHeaderId] = useState(null);
-
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
-	const resolver = useResolver(validationHeader);
+	const resolver = useResolver(validationTitle);
+
+	const [open, setOpen] = useState(false);
 
 	const { control, handleSubmit, reset } = useForm({
-		defaultValues: initialHeader,
+		defaultValues: initialTitle,
 		mode: 'all',
 		resolver,
 	});
@@ -40,19 +39,22 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 
 	const handleClose = () => {
 		reset();
-		setHeaderId(null);
 		setOpen(false);
 	};
 
 	const onSubmit = async (values) => {
-		const res = headerId
-			? await updateHeader(headerId, { form_id, ...values })
-			: await createHeader({ form_id, ...values });
+		const body = {
+			form_id,
+			header_id: Number(header_id),
+			...values,
+		};
+
+		const res = await createTitle(body);
 
 		if (isSuccess(res)) {
 			refetch();
 
-			alert.success({ text: 'Cập nhật danh mục thành công.' });
+			alert.success({ text: 'Cập nhật tiêu chí đánh giá thành công.' });
 
 			handleClose();
 		} else {
@@ -62,17 +64,7 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 	//#endregion
 
 	useImperativeHandle(ref, () => ({
-		open: (editData) => {
-			if (editData) {
-				const { id } = editData;
-
-				setHeaderId(id);
-
-				reset(editData);
-			}
-
-			handleOpen();
-		},
+		open: () => handleOpen(),
 	}));
 
 	//#region Render
@@ -89,7 +81,7 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 									justifyContent='space-between'
 									mb={2}
 								>
-									<Typography mr={1.5}>Danh mục</Typography>
+									<Typography mr={1.5}>Tiêu chí</Typography>
 									<Controller
 										control={control}
 										name='name'
@@ -109,40 +101,13 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 										)}
 									/>
 								</Stack>
-								<Stack
-									direction='row'
-									alignItems='center'
-									justifyContent='space-between'
-									mb={2}
-								>
-									<Typography mr={1.5}>Điểm tối đa</Typography>
-									<Controller
-										control={control}
-										name='max_mark'
-										render={({
-											field: { name, onBlur, onChange, ref, value },
-											fieldState: { error },
-										}) => (
-											<CInput
-												type='number'
-												name={name}
-												inputRef={ref}
-												onBlur={onBlur}
-												onChange={onChange}
-												value={value}
-												error={!!error}
-												helperText={error?.message}
-											/>
-										)}
-									/>
-								</Stack>
 
 								<Button
 									sx={{ maxWidth: 150, margin: 'auto' }}
 									type='submit'
 									variant='contained'
 								>
-									Lưu danh mục
+									Lưu tiêu chí
 								</Button>
 							</Stack>
 						</form>
@@ -154,4 +119,4 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 	//#endregion
 });
 
-export default CreateModal;
+export default TitleModal;

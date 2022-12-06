@@ -18,6 +18,10 @@ export const createHeader = (body = {}) => {
 	return post(FORMS.CREATE_HEADER, body);
 };
 
+export const updateHeader = (id, body) => {
+	return put(`${FORMS.UPDATE_HEADER}/${id}`, body);
+};
+
 export const createTitle = (body = {}) => {
 	return post(FORMS.CREATE_TITLE, body);
 };

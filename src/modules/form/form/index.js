@@ -65,7 +65,7 @@ export const validationSchema = yup.object({
 
 					return true;
 				})
-				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
+				.required('Chọn ngày sinh viên bắt đầu chấm điểm.'),
 			end: yup
 				.date('Định dạng ngày không hợp lệ.')
 				.typeError('Định dạng ngày không hợp lệ.')
@@ -77,9 +77,9 @@ export const validationSchema = yup.object({
 
 					return true;
 				})
-				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
+				.required('Chọn ngày sinh viên kết thúc chấm điểm.'),
 		})
-		.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
+		.required('Vui lòng chọn thời gian sinh viên chấm điểm.'),
 	classes: yup
 		.object()
 		.shape({
@@ -94,7 +94,7 @@ export const validationSchema = yup.object({
 
 					return true;
 				})
-				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
+				.required('Chọn ngày lớp bắt đầu chấm điểm.'),
 			end: yup
 				.date('Định dạng ngày không hợp lệ.')
 				.typeError('Định dạng ngày không hợp lệ.')
@@ -106,9 +106,9 @@ export const validationSchema = yup.object({
 
 					return true;
 				})
-				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
+				.required('Chọn ngày lớp kết thúc chấm điểm.'),
 		})
-		.required('Vui lòng chọn thời gian lớp chấm điểm'),
+		.required('Vui lòng chọn thời gian lớp chấm điểm.'),
 	department: yup
 		.object()
 		.shape({
@@ -123,7 +123,7 @@ export const validationSchema = yup.object({
 
 					return true;
 				})
-				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
+				.required('Chọn ngày khoa bắt đầu chấm điểm.'),
 			end: yup
 				.date('Định dạng ngày không hợp lệ.')
 				.typeError('Định dạng ngày không hợp lệ.')
@@ -135,9 +135,9 @@ export const validationSchema = yup.object({
 
 					return true;
 				})
-				.required('Vui lòng chọn thời gian sinh viên chấm điểm'),
+				.required('Chọn ngày khoa kết thúc chấm điểm.'),
 		})
-		.required('Vui lòng chọn thời gian khoa chấm điểm'),
+		.required('Vui lòng chọn thời gian khoa chấm điểm.'),
 });
 
 export const validationHeader = yup.object({

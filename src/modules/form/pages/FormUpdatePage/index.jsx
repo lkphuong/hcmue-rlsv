@@ -87,7 +87,7 @@ const FormUpdatePage = () => {
 
 	usePrompt(
 		'Các thao tác đang điều chỉnh có thể mất khi bạn chuyển trang.',
-		false,
+		true,
 		actions.clearForm()
 	);
 

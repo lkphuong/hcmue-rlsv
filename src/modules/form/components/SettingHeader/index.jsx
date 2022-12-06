@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Button, Container, Grid, IconButton, Typography } from '@mui/material';
-import { AddCircleOutline, RemoveCircleOutline } from '@mui/icons-material';
+import { AddCircleOutline, Edit, RemoveCircleOutline } from '@mui/icons-material';
 
 import {
 	deleteHeader,
@@ -99,6 +99,10 @@ const SettingHeader = memo(() => {
 			title: status === 0 ? 'Phát hành' : 'Hủy phát hành',
 		});
 	};
+
+	const handleEdit = (data) => () => {
+		createRef.current.open(data);
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -143,14 +147,20 @@ const SettingHeader = memo(() => {
 										<Box
 											py={1.5}
 											px={1}
-											border='1px solid black'
+											border='1px solid #d2d2d2'
 											fontWeight={600}
+											borderRadius={1}
 										>
 											{`${header.name} `}
 											<Typography component='span'>
 												(Tối đa {header.max_mark} điểm)
 											</Typography>
 										</Box>
+									</Grid>
+									<Grid item xs='auto'>
+										<IconButton onClick={handleEdit(header)}>
+											<Edit />
+										</IconButton>
 									</Grid>
 								</Grid>
 							</Grid>

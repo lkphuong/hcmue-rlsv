@@ -40,6 +40,7 @@ const STEPS = [
 const FormCreatePage = () => {
 	//#region Data
 	const _step = useSelector((state) => state.form.step, shallowEqual);
+	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
 	const [step, setStep] = useState(_step || 0);
 
@@ -85,7 +86,7 @@ const FormCreatePage = () => {
 
 	usePrompt(
 		'Các thao tác đang điều chỉnh có thể mất khi bạn chuyển trang.',
-		false,
+		true,
 		actions.clearForm()
 	);
 
@@ -162,7 +163,7 @@ const FormCreatePage = () => {
 									</Avatar>
 								</ButtonBase>
 
-								<ButtonBase onClick={onForward}>
+								<ButtonBase onClick={onForward} disabled={!form_id}>
 									<Avatar
 										variant='rounded'
 										sx={{

@@ -14,6 +14,17 @@ export default function componentStyleOverrides(theme) {
 				},
 			},
 		},
+		MuiButtonBase: {
+			styleOverrides: {
+				root: {
+					'&.Mui-disabled': {
+						'& .MuiAvatar-root': {
+							color: 'rgba(0, 0, 0, 0.26)!important',
+						},
+					},
+				},
+			},
+		},
 		MuiPaper: {
 			defaultProps: {
 				elevation: 0,
@@ -233,6 +244,15 @@ export default function componentStyleOverrides(theme) {
 					},
 					'&.Mui-completed': {
 						fontWeight: 600,
+					},
+				},
+			},
+		},
+		MuiAccordion: {
+			styleOverrides: {
+				root: {
+					'&::before': {
+						height: 0,
 					},
 				},
 			},

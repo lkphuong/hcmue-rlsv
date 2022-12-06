@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { FormEntity } from '../../../entities/form.entity';
 
@@ -16,6 +16,7 @@ export class FormService {
   constructor(
     @InjectRepository(FormEntity)
     private readonly _formRepository: Repository<FormEntity>,
+    private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
@@ -44,12 +45,15 @@ export class FormService {
     }
   }
 
-  async update(
+  async updateForm(
     form_id: number,
     status: number,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
       const result = await manager.update(
         FormEntity,
         { id: form_id },

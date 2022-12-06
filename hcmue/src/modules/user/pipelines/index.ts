@@ -115,12 +115,12 @@ export const generateGetUsersPagingPipeline = (
         from: 'classs',
         localField: 'classId',
         foreignField: '_id',
-        as: 'classs',
+        as: 'class',
       },
     },
     {
       $unwind: {
-        path: '$classs',
+        path: '$class',
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -259,12 +259,12 @@ export const generateGetUsersByInputPipeline = (
         from: 'classs',
         localField: 'classId',
         foreignField: '_id',
-        as: 'classs',
+        as: 'class',
       },
     },
     {
       $unwind: {
-        path: '$classs',
+        path: '$class',
         preserveNullAndEmptyArrays: true,
       },
     },
@@ -317,12 +317,12 @@ export const generateGetUserByIdPipeline = (id: string) => {
         from: 'classs',
         localField: 'classId',
         foreignField: '_id',
-        as: 'classs',
+        as: 'class',
       },
     },
     {
       $unwind: {
-        path: '$classs',
+        path: '$class',
         preserveNullAndEmptyArrays: true,
       },
     },

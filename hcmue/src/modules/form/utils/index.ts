@@ -13,6 +13,8 @@ import {
   generateTitlesArray,
 } from '../transform';
 
+import { FormResponse } from '../interfaces/form-response.interface';
+
 import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
 import { ItemEntity } from '../../../entities/item.entity';
@@ -22,8 +24,11 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import { returnObjectsWithPaging } from 'src/utils';
 
 export const generateFormsResponse = async (
+  pages: number,
+  page: number,
   forms: FormEntity[],
   req: Request,
 ) => {
@@ -35,12 +40,7 @@ export const generateFormsResponse = async (
   const payload = await generateFormsArray(forms);
 
   // Returns objects
-  return {
-    data: payload,
-    errorCode: 0,
-    message: null,
-    errors: null,
-  };
+  return returnObjectsWithPaging<FormResponse>(pages, page, payload);
 };
 
 export const generateFormResponse = async (

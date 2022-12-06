@@ -46,9 +46,12 @@ import {
 
 import {
   isAnyPublished,
+  valiadteTitle,
+  validateForm,
   validateFormId,
   validateFormPubishStatus,
   validateFormUnPubishStatus,
+  validateHeader,
   validateHeaderId,
   validateItemDto,
   validateItemId,
@@ -57,10 +60,12 @@ import {
 
 import { HeaderDto } from '../dtos/header.dto';
 import { FormDto } from '../dtos/form.dto';
+import { GetFormDto } from '../dtos/get_form.dto';
 import { TitleDto } from '../dtos/title.dto';
 import { ItemDto } from '../dtos/item.dto';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
+import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { FormService } from '../services/form.service';
 import { HeaderService } from '../../header/services/header.service';
 import { ItemService } from '../../item/services/item.service';
@@ -69,6 +74,7 @@ import { OptionService } from '../../option/services/option.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { TitleService } from '../../title/services/title.service';
 
+import { HttpPagingResponse } from '../../../interfaces/http-paging-response.interface';
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import {
   BaseResponse,
@@ -82,14 +88,16 @@ import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from '../../../exceptions/UnknownException';
 
+import { Configuration } from '../../shared/constants/configuration.enum';
 import { Role } from '../../auth/constants/enums/role.enum';
-import { FormStatus } from '../constants/enums/statuses.enum';
-import { Levels } from '../../../constants/enums/level.enum';
 
+import { FormStatus } from '../constants/enums/statuses.enum';
+import { ErrorMessage } from '../constants/enums/errors.enum';
+
+import { Levels } from '../../../constants/enums/level.enum';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
@@ -105,6 +113,7 @@ export class FormController {
     private readonly _optionService: OptionService,
     private readonly _semesterService: SemesterService,
     private readonly _titleService: TitleService,
+    private readonly _configurationService: ConfigurationService,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {
@@ -121,24 +130,62 @@ export class FormController {
    * @return HttpResponse<FormResponse> | HttpException | null
    * @page forms page
    */
-  @Get('/')
+  @Post('all')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getForms(
+    @Body() params: GetFormDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<FormResponse> | HttpException> {
+  ): Promise<HttpPagingResponse<FormResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + '');
+      console.log(
+        req.method + ' - ' + req.url + JSON.stringify({ params: params }),
+      );
 
-      this._logger.writeLog(Levels.LOG, req.method, req.url, null);
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      //#region Get params
+      const { academic_id, page, semester_id, status } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
+      );
+      //#endregion
+
+      //#region Get pages
+      if (pages == 0) {
+        //#region Count
+        const count = await this._formService.countForms(
+          academic_id,
+          semester_id,
+          status,
+        );
+
+        if (count > 0) pages = Math.ceil(count / itemsPerPage);
+        //#endregion
+      }
+      //#endregion
 
       //#region Get forms
-      const forms = await this._formService.getForms();
+      const forms = await this._formService.getForms(
+        (page - 1) * itemsPerPage,
+        itemsPerPage,
+        academic_id,
+        semester_id,
+        status,
+      );
       //#endregion
 
       if (forms && forms.length > 0) {
         //#region Generate response
-        return await generateFormsResponse(forms, req);
+        return await generateFormsResponse(pages, page, forms, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -176,6 +223,8 @@ export class FormController {
    * @page forms page
    */
   @Get(':id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   @HttpCode(HttpStatus.OK)
   async getFormById(
@@ -448,8 +497,15 @@ export class FormController {
       );
 
       //#region Validation
+      //#region Validate FormId
       const valid = validateFormId(form_id, req);
       if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Validate Form
+      const form = await validateForm(form_id, this._formService, req);
+      if (form instanceof HttpException) throw form;
+      //#endregion
       //#endregion
 
       //#region Get headers
@@ -520,8 +576,14 @@ export class FormController {
       );
 
       //#region Validation
+      //#region Validate headerId
       const valid = validateHeaderId(header_id, req);
       if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#region Validate Header
+      const header = await validateHeader(header_id, this._headerService, req);
+      if (header instanceof HttpException) throw header;
+      //#endregion
       //#endregion
 
       //#region Get titles
@@ -592,8 +654,14 @@ export class FormController {
       );
 
       //#region Validation
+      //#region Validate TitleId
       const valid = validateTitleId(title_id, req);
       if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#region Validate Title
+      const title = await valiadteTitle(title_id, this._titleService, req);
+      if (title instanceof HttpException) throw title;
+      //#endregion
       //#endregion
 
       //#region Get items

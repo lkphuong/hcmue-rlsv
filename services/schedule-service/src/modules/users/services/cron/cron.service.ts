@@ -69,11 +69,13 @@ export class CronService {
           //#endregion
 
           //#region Update Form PUBLISHED -> IN_PROGRESS
-          let success = await this._formService.update(
+          let success = await this._formService.updateForm(
             form.id,
             FormStatus.IN_PROGRESS,
           );
           //#endregion
+
+          console.log('success: ', success);
 
           if (success) {
             for (let i = 0; i < pages; i++) {
@@ -82,6 +84,7 @@ export class CronService {
                 itemsPerPage,
               );
 
+              console.log('user: ', users);
               let flag = false;
               if (i + 1 === pages) {
                 flag = true;
@@ -91,7 +94,10 @@ export class CronService {
             }
 
             //#region Update Form IN_PROGRESS -> DONE
-            success = await this._formService.update(form.id, FormStatus.DONE);
+            success = await this._formService.updateForm(
+              form.id,
+              FormStatus.DONE,
+            );
             //#endregion
           }
         } else {

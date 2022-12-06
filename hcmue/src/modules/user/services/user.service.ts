@@ -41,7 +41,7 @@ export class UserService {
         pipeline,
       );
 
-      const count = result[0].count ?? 0;
+      const count = result[0]?.count ?? 0;
       return count || null;
     } catch (e) {
       this._logger.writeLog(

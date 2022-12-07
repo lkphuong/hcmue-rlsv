@@ -15,6 +15,7 @@ import { AcademicYearEntity } from './academic_year.entity';
 import { LevelEntity } from './level.entity';
 import { FormEntity } from './form.entity';
 import { ApprovalEntity } from './approval.entity';
+import { FileEntity } from './file.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -133,4 +134,7 @@ export class SheetEntity extends RootEntity {
 
   @OneToMany(() => ApprovalEntity, (approval) => approval.sheet)
   approvals: ApprovalEntity[];
+
+  @OneToMany(() => FileEntity, (file) => file.sheet)
+  files: FileEntity[];
 }

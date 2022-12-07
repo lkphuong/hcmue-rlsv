@@ -1,8 +1,9 @@
 import { MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { ValidationArguments } from 'class-validator';
-
+import { Request } from 'express';
 import { Types } from 'mongoose';
 
+import * as fs from 'fs';
 import * as moment from 'moment';
 
 import { VerifyTokenMiddleware } from '../modules/auth/middlewares/auth.middleware';
@@ -10,7 +11,11 @@ import { VerifyTokenMiddleware } from '../modules/auth/middlewares/auth.middlewa
 import { HttpPagingResponse } from '../interfaces/http-paging-response.interface';
 import { HttpResponse } from '../interfaces/http-response.interface';
 
-import { APP_PREFIX } from '../constants';
+import { UPLOAD_DEST } from '../constants';
+import { ConfigurationService } from 'src/modules/shared/services/configuration/configuration.service';
+import { LogService } from 'src/modules/log/services/log.service';
+import { Configuration } from 'src/modules/shared/constants/configuration.enum';
+import { Levels } from 'src/constants/enums/level.enum';
 
 export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
   consumer
@@ -42,11 +47,20 @@ export const convertString2ObjectId = (raw: string) => {
   return new Types.ObjectId(raw);
 };
 
-export const generateRedisKeyFromUrl = (url: string, payload: any) => {
-  const path = `${APP_PREFIX}-${url.substring(1).split('/').join('-')}`;
-  const encode = payload ? JSON.stringify(payload) : null;
+export const removeFile = (
+  url,
+  configuration_service: ConfigurationService,
+  log_service: LogService,
+  req: Request,
+) => {
+  const root = configuration_service.get(Configuration.MULTER_DEST);
 
-  return path + (encode ? '-' + encode : '');
+  url = url.replace(UPLOAD_DEST, root);
+  fs.unlink(url, (err) => {
+    if (err) {
+      log_service.writeLog(Levels.ERROR, req.method, req.url, err.message);
+    }
+  });
 };
 
 export const generateValidationMessage = (

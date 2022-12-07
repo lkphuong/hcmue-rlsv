@@ -215,6 +215,35 @@ export const validateOthersRole = async (
   return null;
 };
 
+export const validateOthersDepartment = async (
+  role: number,
+  department_id: string,
+  user_id: string,
+  user_service: UserService,
+  req: Request,
+) => {
+  const user = await user_service.getUserById(user_id);
+
+  if (role !== RoleCode.ADMIN) {
+    if (user && user.departmentId.toString() !== department_id) {
+      //#region throw HandlerException
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.INVALID_VALUE,
+        req.method,
+        req.url,
+        sprintf(
+          ErrorMessage.DEPARTMENT_ROLE_INVALID_ERROR,
+          user.department.name,
+        ),
+        HttpStatus.BAD_REQUEST,
+      );
+      //#endregion
+    }
+  }
+
+  return null;
+};
+
 export const validateClass = async (
   class_id: string,
   department_id: string,

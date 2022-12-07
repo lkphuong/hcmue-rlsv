@@ -19,7 +19,6 @@ import {
   BaseResponse,
   ClassSheetsResponse,
   EvaluationsResponse,
-  ItemsResponse,
   SheetDetailsResponse,
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
@@ -238,7 +237,7 @@ export const generateData2Object = async (
         name: sheet.semester.name,
       },
       academic: {
-        id: sheet.semester.id,
+        id: sheet.academic_year.id,
         name: sheet.academic_year.name,
       },
       k: k

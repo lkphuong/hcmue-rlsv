@@ -23,4 +23,22 @@ export default {
   ACCESS_TOKEN_EXPIRESIN: '1d',
   REFRESH_TOKEN_EXPIRESIN: '30 days',
   ITEMS_PER_PAGE: 10,
+
+  BASE_URL: 'http://103.154.176.80:3020/',
+
+  MAX_FILE_SIZE_NAME: '10MiB',
+  MAX_FILE_SIZE_VALUE: 10 * 1024 * 1024,
+  MAX_FIELD_SIZE_VALUE: 1 * 1024 * 1024,
+  EXTENSION_NAMES: 'pdf, jpg, jpeg, png',
+  EXTENSION_VALUES: [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'application/pdf',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  ],
+
+  STATIC_PATH: '../../../static',
+  MULTER_DEST: './static/uploads',
 };

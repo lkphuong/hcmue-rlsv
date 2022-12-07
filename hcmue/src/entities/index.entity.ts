@@ -3,6 +3,7 @@ import { AcademicYearClassesEntity } from './academic_year_classes.entity';
 import { ApprovalEntity } from './approval.entity';
 import { CacheClassEntity } from './cache_class.entity';
 import { EvaluationEntity } from './evaluation.entity';
+import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
 import { HeaderEntity } from './header.entity';
 import { ItemEntity } from './item.entity';
@@ -23,6 +24,7 @@ const entities = [
   ApprovalEntity,
   CacheClassEntity,
   EvaluationEntity,
+  FileEntity,
   FormEntity,
   HeaderEntity,
   ItemEntity,

@@ -27,7 +27,7 @@ export const BACKGROUND_JOB_QUEUE = 'asset_background_job_queue';
 export const COMPOSER_QUEUE = 'asset_composer_queue';
 export const NOTIFICATION_QUEUE = 'asset_notification_queue';
 
-export const APP_PREFIX = 'assets';
+export const APP_PREFIX = 'hcmue';
 export const UPLOAD_DEST = 'uploads';
 
 export const LOG_PATH = './logs';

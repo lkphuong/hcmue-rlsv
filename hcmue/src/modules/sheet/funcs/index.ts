@@ -60,6 +60,7 @@ import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum'
 
 export const generatePersonalMarks = async (
   user_id: string,
+  role_id: number,
   params: UpdateStudentMarkDto,
   sheet: SheetEntity,
   class_service: ClassService,
@@ -75,10 +76,6 @@ export const generatePersonalMarks = async (
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
-  //#region Get params
-  const { role_id } = params;
-  //#endregion
-
   //#region Validation
   //#region Validate evaluate time
   const valid = await validateTime(sheet.form, role_id, req);
@@ -179,6 +176,7 @@ export const generatePersonalMarks = async (
 
 export const generateClassMarks = async (
   user_id: string,
+  role_id: number,
   params: UpdateClassMarkDto,
   sheet: SheetEntity,
   class_service: ClassService,
@@ -194,10 +192,6 @@ export const generateClassMarks = async (
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
-  //#region Get params
-  const { role_id } = params;
-  //#endregion
-
   //#region Validation
   //#region Validate evaluate time
   const valid = await validateTime(sheet.form, role_id, req);
@@ -297,6 +291,7 @@ export const generateClassMarks = async (
 
 export const generateDepartmentMarks = async (
   user_id: string,
+  role_id: number,
   params: UpdateDepartmentMarkDto,
   sheet: SheetEntity,
   class_service: ClassService,
@@ -312,10 +307,6 @@ export const generateDepartmentMarks = async (
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
-  //#region Get params
-  const { role_id } = params;
-  //#endregion
-
   //#region Validation
   //#region Validate evaluate time
   const valid = await validateTime(sheet.form, role_id, req);

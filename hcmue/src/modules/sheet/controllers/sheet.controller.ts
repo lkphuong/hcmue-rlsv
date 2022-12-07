@@ -40,6 +40,7 @@ import {
   validateClass,
   validateDepartment,
   validateDepartmentId,
+  validateOthersDepartment,
   validateOthersRole,
   validateSheet,
   validateSheetId,
@@ -887,6 +888,7 @@ export class SheetController {
       //#region Update student sheet
       const result = await generatePersonalMarks(
         request_id,
+        role,
         params,
         sheet,
         this._classService,
@@ -990,6 +992,7 @@ export class SheetController {
         //#region Graded & update class marks
         const result = await generateClassMarks(
           request_id,
+          role,
           params,
           sheet,
           this._classService,
@@ -1072,9 +1075,24 @@ export class SheetController {
         JSON.stringify(params),
       );
 
+      //#region Get params jwt
+      const { user_id, role } = req.user as JwtPayload;
+      //#endregion
+
       //#region Get params
       const { all, academic_id, department_id, semester_id } = params;
       let { include_ids } = params;
+      //#endregion
+
+      //#region Validation
+      const valid = await validateOthersDepartment(
+        role,
+        department_id,
+        user_id,
+        this._userService,
+        req,
+      );
+      if (valid instanceof HttpException) throw valid;
       //#endregion
 
       if (all) {
@@ -1181,6 +1199,7 @@ export class SheetController {
         //#region Graded & update department marks
         const result = await generateDepartmentMarks(
           request_id,
+          role,
           params,
           sheet,
           this._classService,

@@ -3,8 +3,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { FileEntity } from './file.entity';
 
 import { ItemEntity } from './item.entity';
 import { OptionEntity } from './option.entity';
@@ -72,4 +74,7 @@ export class EvaluationEntity extends RootEntity {
     default: null,
   })
   department_mark_level: number;
+
+  @OneToMany(() => FileEntity, (file) => file.evaluation)
+  files: FileEntity[];
 }

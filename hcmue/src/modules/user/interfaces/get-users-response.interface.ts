@@ -5,6 +5,7 @@ export interface BaseMongoResponse {
 
 export interface UserResponse {
   user_id: string;
+  std_code: string;
   name: string;
   department: BaseMongoResponse;
   classes: BaseMongoResponse;

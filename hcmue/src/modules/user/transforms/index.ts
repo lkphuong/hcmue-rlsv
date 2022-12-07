@@ -15,6 +15,7 @@ export const generateUsersArray = async (
     for await (const user of users) {
       const item: UserResponse = {
         user_id: user._id.toString(),
+        std_code: user.username,
         name: user.fullname,
 
         department: user.department

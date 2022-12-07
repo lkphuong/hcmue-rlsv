@@ -140,7 +140,7 @@ export const getProfile = async (token) => {
 const refresh = () => {
 	const refresh_token = window.localStorage.getItem('refresh_token');
 
-	return post(AUTH.REFETCH_TOKEN, refresh_token);
+	return post(AUTH.REFETCH_TOKEN, { refresh_token });
 };
 
 export const tryLogout = async () => {

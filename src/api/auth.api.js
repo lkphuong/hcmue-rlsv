@@ -14,6 +14,6 @@ export const logout = () => {
 	return get(AUTH.LOGOUT);
 };
 
-export const refreshToken = (token) => {
-	return post(AUTH.REFETCH_TOKEN, { refresh_token: token });
+export const refreshToken = (refresh_token) => {
+	return post(AUTH.REFETCH_TOKEN, refresh_token);
 };

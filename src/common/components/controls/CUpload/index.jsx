@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
+import { TransitionGroup } from 'react-transition-group';
 
-import { Box, List, Typography } from '@mui/material';
+import { Box, Grow, List, Typography } from '@mui/material';
 import { CloudUploadOutlined } from '@mui/icons-material';
 
 import { alert } from '_func/alert';
@@ -128,9 +129,15 @@ export const CUpload = () => {
 
 			{fileList.length > 0 && (
 				<List sx={{ p: 0 }}>
-					{fileList.map((file, index) => (
-						<CFileItem key={index} file={file} onDelete={onDelete(index)} />
-					))}
+					<TransitionGroup>
+						{fileList.map((file, index) => (
+							<Grow key={index}>
+								<div>
+									<CFileItem file={file} onDelete={onDelete(index)} />
+								</div>
+							</Grow>
+						))}
+					</TransitionGroup>
 				</List>
 			)}
 		</>

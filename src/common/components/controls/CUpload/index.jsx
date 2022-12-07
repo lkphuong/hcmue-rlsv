@@ -1,33 +1,41 @@
 import React, { useRef, useState } from 'react';
 
-import { Box, CardMedia, IconButton, List, ListItem, Stack, Typography } from '@mui/material';
-import { CloudUploadOutlined, DeleteForever } from '@mui/icons-material';
+import { Box, List, Typography } from '@mui/material';
+import { CloudUploadOutlined } from '@mui/icons-material';
 
-import pdf from '_assets/images/file-pdf.png';
-import blank from '_assets/images/file.png';
-import image from '_assets/images/file-image.png';
+import { alert } from '_func/alert';
+
+import { CFileItem } from './CFileItem';
 
 import './index.scss';
 
-const FILE_IMAGE = {
-	image: image,
-	application: pdf,
-	other: blank,
-};
+const MAX_FILES = 5;
+
+const MAX_FILE_SIZE = 10485760;
 
 export const CUpload = () => {
 	//#region Data
+	const inputRef = useRef(null);
+
 	const wrapperRef = useRef();
 
 	const [fileList, setFileList] = useState([]);
 	//#endregion
 
 	//#region Event
-	const onChange = (e) => {
-		const newFile = e.target.files[0];
+	const checkFile = (file) => {
+		if (file) {
+			if (file.size > MAX_FILE_SIZE) {
+				alert.fail({ text: 'Dung lượng file tối đa 10Mb.' });
+				return;
+			} else if (file.type === 'application/pdf' || file.type.split('/')[0] === 'image') {
+				inputRef.current.value = null;
 
-		if (newFile) {
-			setFileList((prev) => [...prev, newFile]);
+				setFileList((prev) => [...prev, file]);
+			} else {
+				alert.fail({ text: 'Định dạng file không hợp lệ (.pdf, hoặc image/*).' });
+				return;
+			}
 		}
 	};
 
@@ -44,17 +52,31 @@ export const CUpload = () => {
 		e.preventDefault();
 	};
 
+	const onChange = (e) => {
+		if (fileList.length >= MAX_FILES) {
+			alert.fail({ text: `Tối đa ${MAX_FILES} files minh chứng.` });
+			return;
+		}
+
+		const newFile = e.target.files[0];
+
+		checkFile(newFile);
+	};
+
 	const onDrop = (e) => {
 		e.stopPropagation();
 		e.preventDefault();
 
 		wrapperRef.current.classList.remove('dragover');
 
+		if (fileList.length >= MAX_FILES) {
+			alert.fail({ text: `Tối đa ${MAX_FILES} files minh chứng.` });
+			return;
+		}
+
 		const newFile = e?.dataTransfer?.files[0];
 
-		if (newFile) {
-			setFileList((prev) => [...prev, newFile]);
-		}
+		checkFile(newFile);
 	};
 
 	const onDelete = (index) => () => {
@@ -96,7 +118,7 @@ export const CUpload = () => {
 					border='3px dashed #a1a0a0'
 					sx={{ inset: 0, backgroundColor: 'transparent', cursor: 'pointer' }}
 				>
-					<input type='file' onChange={onChange} hidden />
+					<input type='file' ref={inputRef} onChange={onChange} hidden />
 				</Box>
 				<Box textAlign='center' fontWeight={600} p={1.1}>
 					<CloudUploadOutlined sx={{ fontSize: '3rem' }} color='primary' />
@@ -105,45 +127,9 @@ export const CUpload = () => {
 			</Box>
 
 			{fileList.length > 0 && (
-				<List>
+				<List sx={{ p: 0 }}>
 					{fileList.map((file, index) => (
-						<ListItem
-							key={index}
-							sx={{
-								p: 1,
-								display: 'flex',
-								justifyContent: 'space-between',
-								backgroundColor: 'rgb(175 205 255 / 20%)',
-								borderRadius: '10px',
-								marginBottom: '8px',
-							}}
-						>
-							<Stack sx={{ height: '40px' }} direction='row' alignItems='center'>
-								<CardMedia
-									sx={{ width: 'auto', height: '100%' }}
-									component='img'
-									width='auto'
-									height='100%'
-									src={FILE_IMAGE[file.type.split('/')[0]] || FILE_IMAGE['other']}
-								/>
-								<Typography
-									ml={0.8}
-									maxWidth={140}
-									fontWeight={500}
-									textOverflow='ellipsis'
-									whiteSpace='nowrap'
-									overflow='hidden'
-								>
-									{file.name}
-								</Typography>
-							</Stack>
-
-							<Box>
-								<IconButton color='error' onClick={onDelete(index)}>
-									<DeleteForever />
-								</IconButton>
-							</Box>
-						</ListItem>
+						<CFileItem key={index} file={file} onDelete={onDelete(index)} />
 					))}
 				</List>
 			)}

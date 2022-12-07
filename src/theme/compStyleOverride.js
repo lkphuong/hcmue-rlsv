@@ -360,5 +360,12 @@ export default function componentStyleOverrides(theme) {
 				selectionFollowsFocus: true,
 			},
 		},
+		MuiModal: {
+			styleOverrides: {
+				backdrop: {
+					backgroundColor: 'rgb(182 182 182 / 50%)',
+				},
+			},
+		},
 	};
 }

@@ -51,18 +51,22 @@ const Header = memo(({ data, index, sheetId }) => {
 				alignItems='center'
 				justifyContent='center'
 				fontWeight={600}
+				mb={1}
+				sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}
 			>
 				{index}
 			</Grid>
-			<Grid item xs={11}>
+			<Grid item xs={11} mb={1} sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}>
 				<Stack direction='row' justifyContent='space-between' alignItems='center'>
-					<Typography fontWeight={600} fontStyle='italic'>{`${data.name}`}</Typography>
+					<Typography fontWeight={600} fontSize={20}>{`${data.name}`}</Typography>
 					<IconButton onClick={toggle}>
 						{open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
 					</IconButton>
 				</Stack>
+			</Grid>
 
-				<Collapse in={open} timeout='auto'>
+			<Collapse in={open} timeout='auto' sx={{ width: '100%' }}>
+				<Grid container>
 					{titles.length > 0 &&
 						titles.map((e, i) => (
 							<Title
@@ -73,8 +77,8 @@ const Header = memo(({ data, index, sheetId }) => {
 								headerId={data.id}
 							/>
 						))}
-				</Collapse>
-			</Grid>
+				</Grid>
+			</Collapse>
 		</>
 	);
 	//#endregion

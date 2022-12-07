@@ -1,23 +1,22 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Box, Button, Grid, Typography } from '@mui/material';
-import { FolderOpen } from '@mui/icons-material';
+import { Grid, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
-import { FileModal } from './FileModal';
+// import { FileModal } from './FileModal';
 import Control from './Control';
 
 const Item = memo(({ data, headerId }) => {
 	//#region Data
 	const dispatch = useDispatch();
 
-	const fileRef = useRef();
+	// const fileRef = useRef();
 	//#endregion
 
 	//#region Event
-	const openModal = () => fileRef.current.open();
+	// const openModal = () => fileRef.current.open();
 	//#endregion
 
 	useEffect(() => {
@@ -28,9 +27,9 @@ const Item = memo(({ data, headerId }) => {
 	return (
 		<>
 			<Grid item xs={6.4}>
-				<Typography>- {data.content}</Typography>
+				<Typography ml={2}>- {data.content}</Typography>
 
-				<Box mt={1} ml={1.5}>
+				{/* <Box mt={1} ml={1.5}>
 					<Button
 						variant='contained'
 						size='small'
@@ -40,7 +39,7 @@ const Item = memo(({ data, headerId }) => {
 					>
 						Minh chứng
 					</Button>
-				</Box>
+				</Box> */}
 			</Grid>
 
 			<Control
@@ -56,7 +55,7 @@ const Item = memo(({ data, headerId }) => {
 				headerId={Number(headerId)}
 			/>
 
-			<FileModal ref={fileRef} />
+			{/* <FileModal ref={fileRef} /> */}
 		</>
 	);
 	//#endregion

@@ -76,7 +76,13 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 						<Grid item xs={12} md={6} lg={3}>
 							<Box p={2}>
 								<Stack>
-									<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
+									<Typography
+										fontWeight={500}
+										fontSize={16}
+										pl={1}
+										mb={0.7}
+										className='required'
+									>
 										Lớp
 									</Typography>
 									<CAutocomplete

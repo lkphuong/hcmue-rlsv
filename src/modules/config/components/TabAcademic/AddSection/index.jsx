@@ -1,5 +1,5 @@
 import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useController, useForm } from 'react-hook-form';
 
 import { Box, Button, IconButton, Stack } from '@mui/material';
 import { Block } from '@mui/icons-material';
@@ -36,9 +36,17 @@ export const AddSection = ({ refetch }) => {
 		resolver,
 	});
 
+	const {
+		field: { onChange: onChangeTo },
+	} = useController({ control, name: 'to' });
 	//#endregion
 
 	//#region Event
+	const handleChange = (CallbackFunc) => (e) => {
+		CallbackFunc(e);
+		onChangeTo(dayjs(e).add(1, 'year'));
+	};
+
 	const onSubmit = async (values) => {
 		alert.loading();
 
@@ -77,7 +85,7 @@ export const AddSection = ({ refetch }) => {
 										name={name}
 										inputRef={ref}
 										value={value}
-										onChange={onChange}
+										onChange={handleChange(onChange)}
 										error={!!error}
 										helperText={error?.message}
 									/>
@@ -94,6 +102,7 @@ export const AddSection = ({ refetch }) => {
 									fieldState: { error },
 								}) => (
 									<CDatePicker
+										disabled
 										views={['year']}
 										inputFormat={'YYYY'}
 										openTo='year'

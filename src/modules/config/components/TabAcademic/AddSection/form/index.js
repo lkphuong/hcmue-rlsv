@@ -8,5 +8,5 @@ export const validationSchema = yup.object({
 
 export const initialValues = {
 	from: dayjs(),
-	to: dayjs(),
+	to: dayjs().add(1, 'year'),
 };

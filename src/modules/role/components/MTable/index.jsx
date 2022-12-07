@@ -11,6 +11,7 @@ export const MTable = ({ data }) => {
 				<TableHead>
 					<TableRow>
 						<TableCell align='center'>Họ và tên</TableCell>
+						<TableCell align='center'>Username</TableCell>
 						<TableCell align='center'>Khoa</TableCell>
 						<TableCell align='center'>Lớp</TableCell>
 						<TableCell align='center'>Phân quyền</TableCell>

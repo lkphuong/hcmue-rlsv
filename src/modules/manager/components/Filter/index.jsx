@@ -64,14 +64,20 @@ export const Filter = ({
 									</Stack>
 								</Box>
 							</Grid>
-							<Grid item xs={0} md={6} lg={9} />
 							<Grid item xs={12} md={6} lg={3}>
 								<Box p={1}>
 									<Stack>
-										<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
+										<Typography
+											fontWeight={500}
+											fontSize={16}
+											pl={1}
+											mb={0.7}
+											className='required'
+										>
 											Lớp
 										</Typography>
 										<CAutocomplete
+											placeholder='Chọn lớp để hiện phiếu'
 											disableClearable
 											value={filter.class_id}
 											onChange={handleChangeStringId('class_id')}
@@ -86,6 +92,7 @@ export const Filter = ({
 									</Stack>
 								</Box>
 							</Grid>
+							<Grid item xs={0} lg={6} />
 							<Grid item xs={12} md={6} lg={3}>
 								<Box p={1}>
 									<Stack>

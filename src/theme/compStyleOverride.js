@@ -3,6 +3,18 @@ import { Zoom } from '@mui/material';
 export default function componentStyleOverrides(theme) {
 	const bgColor = theme.colors?.grey50;
 	return {
+		MuiTypography: {
+			styleOverrides: {
+				root: {
+					'&.required': {
+						'&::after': {
+							content: "' *'",
+							color: 'red',
+						},
+					},
+				},
+			},
+		},
 		MuiButton: {
 			styleOverrides: {
 				root: {

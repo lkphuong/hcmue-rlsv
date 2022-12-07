@@ -3,5 +3,9 @@
 
 	ul.MuiPagination-ul {
 		justify-content: center;
+
+		.MuiPaginationItem-root {
+			background-color: white;
+		}
 	}
 }

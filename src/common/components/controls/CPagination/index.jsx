@@ -17,6 +17,7 @@ export const CPagination = memo(({ page, pages, onChange }) => {
 			onChange={onChange}
 			color='primary'
 			variant='outlined'
+			shape='rounded'
 		/>
 	);
 });

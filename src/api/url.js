@@ -20,7 +20,7 @@ export const SHEETS = {
 };
 
 export const FORMS = {
-	GET_FORMS: '/forms',
+	GET_FORMS: '/forms/all',
 	CREATE_FORM: '/forms',
 	UPDATE_FORM: '/forms',
 	GET_FORM_BY_ID: '/forms',

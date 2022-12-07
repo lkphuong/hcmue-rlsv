@@ -2,8 +2,8 @@ import { get, post, put, remove } from '_axios/request';
 
 import { FORMS } from './url';
 
-export const getForms = () => {
-	return get(FORMS.GET_FORMS);
+export const getForms = (body) => {
+	return post(FORMS.GET_FORMS, body);
 };
 
 export const createForm = (body = {}) => {

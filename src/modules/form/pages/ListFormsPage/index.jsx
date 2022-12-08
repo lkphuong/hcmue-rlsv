@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Paper, Typography } from '@mui/material';
 
@@ -10,14 +9,12 @@ import { ROUTES } from '_constants/routes';
 
 import { getForms } from '_api/form.api';
 
-import { isSuccess } from '_func/';
+import { isSuccess, isEmpty } from '_func/';
 
 import { CPagination } from '_controls/';
 
 const ListFormsPage = () => {
 	//#region Data
-	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
-	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 
 	const [data, setData] = useState();
 
@@ -26,8 +23,6 @@ const ListFormsPage = () => {
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
-		academic_id: academic_years[0]?.id,
-		semester_id: semesters[0]?.id,
 		status: -1,
 	});
 
@@ -36,9 +31,22 @@ const ListFormsPage = () => {
 
 	//#region Event
 	const getData = async () => {
-		const res = await getForms(filter);
+		const _filter = { ...filter };
+
+		if (!_filter?.academic_id) {
+			delete _filter.academic_id;
+		}
+		if (!_filter?.semester_id) {
+			delete _filter.semester_id;
+		}
+		if (!_filter?.status) {
+			_filter.status = -1;
+		}
+
+		const res = await getForms(_filter);
 
 		if (isSuccess(res)) setData(res.data);
+		else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
 	};
 
 	const onPageChange = (event, value) => setFilter((prev) => ({ ...prev, page: value }));
@@ -66,12 +74,7 @@ const ListFormsPage = () => {
 				</Paper>
 			</Box>
 
-			<Filter
-				filter={filter}
-				onChangeFilter={setFilter}
-				semesters={semesters}
-				academic_years={academic_years}
-			/>
+			<Filter filter={filter} onChangeFilter={setFilter} />
 
 			<Box textAlign='right' my={2}>
 				<Link to={ROUTES.FORM_CREATE}>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
@@ -6,14 +7,16 @@ import { CAutocomplete } from '_controls/';
 
 import { STATUS } from '_constants/variables';
 
-const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
+const Filter = ({ filter, onChangeFilter }) => {
 	//#region Data
+	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 	//#endregion
 
 	//#region Event
 
 	const handleChangeFilter = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
+		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
 	//#endregion
 
 	//#region Render
@@ -28,8 +31,8 @@ const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
 									Học kỳ
 								</Typography>
 								<CAutocomplete
-									disableClearable
-									value={filter.semester_id}
+									placeholder='Tất cả'
+									value={filter?.semester_id}
 									onChange={handleChangeFilter('semester_id')}
 									options={semesters}
 									display='name'
@@ -49,8 +52,8 @@ const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
 									Niên khóa
 								</Typography>
 								<CAutocomplete
-									disableClearable
-									value={filter.academic_id}
+									placeholder='Tất cả'
+									value={filter?.academic_id}
 									onChange={handleChangeFilter('academic_id')}
 									options={academic_years}
 									display='name'

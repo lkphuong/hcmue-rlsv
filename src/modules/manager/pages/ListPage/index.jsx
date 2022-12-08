@@ -56,13 +56,18 @@ const ListPageAdmin = () => {
 
 	const getData = async () => {
 		const _filter = { ...filter };
+
 		if (!_filter?.input) {
 			delete _filter?.input;
+		}
+		if (!_filter.status) {
+			_filter.status = -1;
 		}
 
 		const res = await getAdminSheets(_filter);
 
 		if (isSuccess(res)) setData(res.data);
+		else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
 	};
 	//#endregion
 

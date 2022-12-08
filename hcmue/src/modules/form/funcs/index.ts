@@ -1098,6 +1098,7 @@ export const generateCreateItem = async (
   const {
     content,
     control,
+    is_file,
     unit,
     category,
     from_mark,
@@ -1120,6 +1121,7 @@ export const generateCreateItem = async (
   item.category = category;
   item.unit = unit;
   item.required = required;
+  item.is_file = is_file;
 
   item.created_at = new Date();
   item.created_by = user_id;
@@ -1141,6 +1143,7 @@ export const generateUpdateItem = async (
   const {
     content,
     control,
+    is_file,
     unit,
     category,
     from_mark,
@@ -1161,6 +1164,7 @@ export const generateUpdateItem = async (
   item.category = category;
   item.unit = unit;
   item.required = required;
+  item.is_file = is_file;
 
   item.updated_at = new Date();
   item.updated_by = user_id;

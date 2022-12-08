@@ -8,6 +8,7 @@ import { UserModule } from '../user/user.module';
 import { AcademicYearModule } from '../academic-year/academic_year.module';
 import { ClassModule } from '../class/class.module';
 import { EvaluationModule } from '../evaluation/evaluation.module';
+import { FileModule } from '../file/file.module';
 import { HeaderModule } from '../header/header.modules';
 import { KModule } from '../k/k.module';
 import { DepartmentModule } from '../department/department.module';
@@ -29,6 +30,7 @@ export const modules = [
   ClassModule,
   DepartmentModule,
   EvaluationModule,
+  FileModule,
   FormModule,
   HeaderModule,
   KModule,

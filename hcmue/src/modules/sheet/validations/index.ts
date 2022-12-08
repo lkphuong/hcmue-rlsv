@@ -10,6 +10,8 @@ import { convertString2Date, sprintf } from '../../../utils';
 import { FormEntity } from '../../../entities/form.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 
+import { StudentFileDtos } from '../dtos/update_student_mark.dto';
+
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { SheetService } from '../services/sheet.service';
@@ -20,8 +22,10 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
+import { MAX_FILES } from '../../../constants';
 import {
   DATABASE_EXIT_CODE,
+  FILE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 
@@ -155,6 +159,7 @@ export const validateStudentRole = async (
 ) => {
   if (role === RoleCode.STUDENT) {
     const user = await user_service.getUserById(request_id);
+
     if (user._id.toString() !== user_id) {
       //#region throw HandlerException
       return new HandlerException(
@@ -204,7 +209,7 @@ export const validateOthersRole = async (
           VALIDATION_EXIT_CODE.INVALID_VALUE,
           req.method,
           req.url,
-          sprintf(ErrorMessage.CLASS_ROLE_INVALID_ERROR, user.classs.name),
+          sprintf(ErrorMessage.CLASS_ROLE_INVALID_ERROR, user.class.name),
           HttpStatus.BAD_REQUEST,
         );
         //#endregion
@@ -469,4 +474,49 @@ export const validateTime = async (
   }
 
   return null;
+};
+
+export const validateUpdateEvaluationMaxFile = (
+  files: number,
+  params: StudentFileDtos[],
+  req: Request,
+) => {
+  if (files && params) {
+    const delete_file = params.filter((e) => e.deleted === 1).length;
+    const new_file = params.length - delete_file;
+
+    const max_file = files - delete_file + new_file;
+
+    if (max_file > MAX_FILES) {
+      return new HandlerException(
+        FILE_EXIT_CODE.MAXIMUM_FILE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.MAXIMUM_FILE_ERROR, MAX_FILES),
+        HttpStatus.EXPECTATION_FAILED,
+      );
+    }
+  }
+
+  return null;
+};
+
+export const validateCreateEvaluationMaxFile = (
+  params: StudentFileDtos[],
+  req: Request,
+) => {
+  const delete_file = params.filter((e) => e.deleted === 1).length;
+  const new_file = params.length - delete_file;
+
+  const max_file = new_file - delete_file;
+
+  if (max_file > MAX_FILES) {
+    return new HandlerException(
+      FILE_EXIT_CODE.MAXIMUM_FILE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.MAXIMUM_FILE_ERROR, MAX_FILES),
+      HttpStatus.EXPECTATION_FAILED,
+    );
+  }
 };

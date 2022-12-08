@@ -9,6 +9,7 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { FileEntity } from 'src/entities/file.entity';
 
 export class ItemService {
   constructor(
@@ -28,10 +29,9 @@ export class ItemService {
         .leftJoinAndSelect(
           'item.evaluations',
           'evaluation',
-          'evaluation.item_id = item.id AND evaluation.deleted = 0 AND evaluation.sheet_id = :sheet_id',
-          { sheet_id },
+          'evaluation.item_id = item.id AND evaluation.deleted = 0',
         )
-        .innerJoinAndSelect('evaluation.option', 'option')
+        .innerJoinAndSelect('evaluation.sheet', 'sheet')
         .innerJoinAndMapOne(
           'item.title',
           TitleEntity,
@@ -48,7 +48,8 @@ export class ItemService {
           options.delete_flag = 0`,
         )
         .where('title.id = :title_id', { title_id })
-        .andWhere('option.deleted = :deleted', { deleted: false })
+        .andWhere('evaluation.sheet_id = :sheet_id', { sheet_id })
+        .andWhere('sheet.deleted = :deleted', { deleted: false })
         .andWhere('title.deleted = :deleted', { deleted: false })
         .andWhere('item.deleted = :deleted', { deleted: false });
 

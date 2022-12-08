@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 
 import { EvaluationEntity } from './evaluation.entity';
+import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
 import { OptionEntity } from './option.entity';
 import { RootEntity } from './root.entity';
@@ -95,6 +96,13 @@ export class ItemEntity extends RootEntity {
   })
   category: number;
 
+  @Column('boolean', {
+    name: 'is_file', //true: có file, false: không file
+    default: false,
+    nullable: true,
+  })
+  is_file?: boolean = true;
+
   @Column('varchar', {
     name: 'unit',
     nullable: true,
@@ -111,6 +119,9 @@ export class ItemEntity extends RootEntity {
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.item)
   evaluations: EvaluationEntity[];
+
+  @OneToMany(() => FileEntity, (file) => file.item)
+  files: FileEntity[];
 
   options: OptionEntity[] | null;
 

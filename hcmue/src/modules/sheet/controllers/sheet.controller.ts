@@ -65,6 +65,7 @@ import { ClassService } from '../../class/services/class.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
+import { FilesService } from '../../file/services/files.service';
 import { HeaderService } from '../../header/services/header.service';
 import { ItemService } from '../../item/services/item.service';
 import { KService } from '../../k/services/k.service';
@@ -110,6 +111,7 @@ export class SheetController {
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
     private readonly _evaluationService: EvaluationService,
+    private readonly _fileService: FilesService,
     private readonly _headerService: HeaderService,
     private readonly _itemService: ItemService,
     private readonly _kService: KService,
@@ -239,9 +241,10 @@ export class SheetController {
       const { role } = req.user as JwtPayload;
 
       const title = await this._itemService.contains(title_id, id);
-      if (title) {
+
+      if (title && title.length > 0) {
         //#region Generate response
-        return generateItemsResponse(role, title, req);
+        return await generateItemsResponse(role, title, this._fileService, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -312,7 +315,12 @@ export class SheetController {
 
       if (evaluations && evaluations.length > 0) {
         //#region Generate response
-        return generateEvaluationsResponse(role, evaluations, req);
+        return await generateEvaluationsResponse(
+          role,
+          evaluations,
+          this._fileService,
+          req,
+        );
         //#endregion
       } else {
         //#region throw HandlerException
@@ -894,6 +902,7 @@ export class SheetController {
         this._classService,
         this._departmentService,
         this._evaluationService,
+        this._fileService,
         this._headerService,
         this._itemService,
         this._kService,

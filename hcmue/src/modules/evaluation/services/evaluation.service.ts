@@ -75,22 +75,16 @@ export class EvaluationService {
     try {
       const conditions = this._evaluationService
         .createQueryBuilder('evaluation')
-        .innerJoin('evaluation.sheet', 'sheet')
+        .innerJoinAndSelect('evaluation.sheet', 'sheet')
         .innerJoinAndSelect('evaluation.item', 'item')
         .leftJoinAndSelect(
           'evaluation.option',
           'option',
-          'evaluation.option_id = option.id',
+          'evaluation.option_id = option.id AND option.delete_flag = 0',
         )
         .where('sheet.id = :sheet_id', { sheet_id })
         .andWhere('sheet.deleted = :deleted', { deleted: false })
-        .andWhere('item.deleted = :deleted', { deleted: false })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('option.deleted = :deleted', { deleted: false });
-            qb.orWhere('option.deleted IS NULL');
-          }),
-        );
+        .andWhere('item.deleted = :deleted', { deleted: false });
 
       const evaluations = await conditions.getMany();
       return evaluations || null;

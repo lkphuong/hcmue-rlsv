@@ -19,6 +19,7 @@ import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
 import { UserService } from '../../user/services/user.service';
+import { FilesService } from '../../file/services/files.service';
 
 import {
   ApproveAllResponse,
@@ -164,16 +165,17 @@ export const generateSheet = async (
   return returnObjects(payload);
 };
 
-export const generateItemsResponse = (
+export const generateItemsResponse = async (
   role: number,
   items: ItemEntity[],
+  file_service: FilesService,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', items);
 
-  const payload = generateItemsArray(role, items);
+  const payload = await generateItemsArray(role, items, file_service);
 
   return {
     data: payload,
@@ -183,16 +185,21 @@ export const generateItemsResponse = (
   };
 };
 
-export const generateEvaluationsResponse = (
+export const generateEvaluationsResponse = async (
   role: number,
   evaluations: EvaluationEntity[],
+  file_service: FilesService,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', evaluations);
 
-  const payload = generateEvaluationsArray(role, evaluations);
+  const payload = await generateEvaluationsArray(
+    role,
+    evaluations,
+    file_service,
+  );
 
   return {
     data: payload,

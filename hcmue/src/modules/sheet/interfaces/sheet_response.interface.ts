@@ -58,9 +58,15 @@ export interface EvaluationsResponse {
   id: number;
   item: ItemResponse;
   options?: OptionResponse | null;
+  files?: FileResponse[] | null;
   personal_mark_level: number;
   class_mark_level: number;
   department_mark_level: number;
+}
+
+export interface FileResponse {
+  id: number;
+  name: string;
 }
 
 export interface EvaluationResponse extends MarkResponse {

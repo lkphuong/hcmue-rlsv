@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { count } from 'console';
 import { Levels } from 'src/constants/enums/level.enum';
 import { Methods } from 'src/constants/enums/method.enum';
 import { FileEntity } from 'src/entities/file.entity';
@@ -29,6 +30,58 @@ export class FilesService {
         Levels.ERROR,
         Methods.SELECT,
         'FilesService.getFileById()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async countFilesByItem(
+    item_id: number,
+    sheet_id: number,
+    parent_ref: string,
+  ): Promise<number> {
+    try {
+      const conditions = this._fileRepository
+        .createQueryBuilder('file')
+        .select('COUNT(file.id)', 'count')
+        .where('file.sheet_id = :sheet_id', { sheet_id })
+        .andWhere('file.item_id = :item_id', { item_id })
+        .andWhere('file.parent_ref = :parent_ref', { parent_ref })
+        .andWhere('file.deleted = :deleted', { deleted: false });
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FilesService.countFilesByItem()',
+        e,
+      );
+    }
+  }
+
+  async getFileByEvaluation(
+    ref: string,
+    sheet_id: number,
+  ): Promise<FileEntity[] | null> {
+    try {
+      const conditions = this._fileRepository
+        .createQueryBuilder('file')
+        .where('file.parent_ref = :ref', { ref })
+        .andWhere('file.sheet_id = :sheet_id', { sheet_id })
+        .andWhere('file.deleted = :deleted', { deleted: false });
+
+      const files = await conditions.getMany();
+
+      return files || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FilesService.getFileByEvaluation()',
         e,
       );
       return null;
@@ -76,6 +129,28 @@ export class FilesService {
     }
   }
 
+  async bulkUpdate(
+    files: FileEntity[],
+    manager?: EntityManager,
+  ): Promise<FileEntity[] | null> {
+    try {
+      if (manager) {
+        manager = this._dataSource.manager;
+      }
+      files = await manager.save(files);
+
+      return files || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'FilesService.bulkUpdate()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async unlink(
     file_id: number,
     user_id: string,
@@ -101,6 +176,25 @@ export class FilesService {
         e,
       );
 
+      return null;
+    }
+  }
+
+  async bulkUnlink(files: FileEntity[], manager?: EntityManager) {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+      files = await manager.save(files);
+
+      return files || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.DELETE,
+        'FilesService.bulkUnlink()',
+        e,
+      );
       return null;
     }
   }

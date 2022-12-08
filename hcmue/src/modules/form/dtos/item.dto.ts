@@ -161,6 +161,15 @@ export class ItemDto {
   required?: boolean = true;
 
   @IsOptional()
+  @Transform((params) => params.value ?? true)
+  @ValidateIf((_object, value) => !isEmpty(value))
+  @IsBooleanValidator({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [file] không hợp lệ.'),
+  })
+  is_file?: boolean = false;
+
+  @IsOptional()
   @ValidateNested({ each: true })
   @Type(() => OptionDto)
   options: OptionDto[];

@@ -14,6 +14,7 @@ import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { KService } from '../../k/services/k.service';
 import { UserService } from '../../user/services/user.service';
+import { FilesService } from '../../file/services/files.service';
 
 import {
   BaseResponse,
@@ -277,37 +278,49 @@ export const generateData2Object = async (
   return null;
 };
 
-export const generateItemsArray = (
+export const generateItemsArray = async (
   role: number,
   items: ItemEntity[] | null,
+  file_service: FilesService,
 ) => {
   if (items) {
     const payload: EvaluationsResponse[] = [];
-
     switch (role) {
       case RoleCode.STUDENT:
         for (const item of items) {
           const evaluation = item.evaluations.find(
             (e) => e.category == EvaluationCategory.STUDENT,
           );
-          const result: EvaluationsResponse = {
-            id: evaluation.id,
-            item: {
-              id: item.id,
-              content: item.content,
-            },
-            options: evaluation.option
-              ? {
-                  id: evaluation.option.id,
-                  content: evaluation.option.content,
-                }
-              : null,
-            personal_mark_level: evaluation.personal_mark_level,
-            class_mark_level: evaluation.class_mark_level,
-            department_mark_level: evaluation.department_mark_level,
-          };
+          if (evaluation) {
+            const files = await file_service.getFileByEvaluation(
+              evaluation.ref,
+              evaluation.sheet.id,
+            );
+            const result: EvaluationsResponse = {
+              id: evaluation.id,
+              item: {
+                id: item.id,
+                content: item.content,
+              },
+              options: evaluation.option
+                ? {
+                    id: evaluation.option.id,
+                    content: evaluation.option.content,
+                  }
+                : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return { id: file.id, name: file.originalName };
+                    })
+                  : null,
+              personal_mark_level: evaluation.personal_mark_level,
+              class_mark_level: evaluation.class_mark_level,
+              department_mark_level: evaluation.department_mark_level,
+            };
 
-          payload.push(result);
+            payload.push(result);
+          }
         }
         return payload;
 
@@ -319,23 +332,35 @@ export const generateItemsArray = (
           const student_evaluation = item.evaluations.find(
             (e) => e.category == EvaluationCategory.STUDENT,
           );
-          const result: EvaluationsResponse = {
-            id: class_evaluation.id,
-            item: {
-              id: item.id,
-              content: item.content,
-            },
-            options: class_evaluation.option
-              ? {
-                  id: class_evaluation.option.id,
-                  content: class_evaluation.option.content,
-                }
-              : null,
-            personal_mark_level: student_evaluation.personal_mark_level,
-            class_mark_level: class_evaluation.class_mark_level,
-            department_mark_level: class_evaluation.department_mark_level,
-          };
-          payload.push(result);
+          if (student_evaluation && class_evaluation) {
+            const files = await file_service.getFileByEvaluation(
+              student_evaluation.ref,
+              student_evaluation.sheet.id,
+            );
+            const result: EvaluationsResponse = {
+              id: class_evaluation.id,
+              item: {
+                id: item.id,
+                content: item.content,
+              },
+              options: class_evaluation.option
+                ? {
+                    id: class_evaluation.option.id,
+                    content: class_evaluation.option.content,
+                  }
+                : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return { id: file.id, name: file.originalName };
+                    })
+                  : null,
+              personal_mark_level: student_evaluation.personal_mark_level,
+              class_mark_level: class_evaluation.class_mark_level,
+              department_mark_level: class_evaluation.department_mark_level,
+            };
+            payload.push(result);
+          }
         }
         return payload;
 
@@ -352,7 +377,12 @@ export const generateItemsArray = (
             (e) => e.category == EvaluationCategory.STUDENT,
           );
 
-          if (department_evaluation) {
+          if (department_evaluation && student_evaluation) {
+            const files = await file_service.getFileByEvaluation(
+              student_evaluation.ref,
+              student_evaluation.sheet.id,
+            );
+
             const result: EvaluationsResponse = {
               id: department_evaluation.id,
               item: {
@@ -365,13 +395,19 @@ export const generateItemsArray = (
                     content: department_evaluation.option.content,
                   }
                 : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return { id: file.id, name: file.originalName };
+                    })
+                  : null,
               personal_mark_level: student_evaluation.personal_mark_level ?? 0,
               class_mark_level: class_evaluation.class_mark_level ?? 0,
               department_mark_level:
                 department_evaluation.department_mark_level ?? 0,
             };
             payload.push(result);
-          } else return null;
+          }
         }
 
         return payload;
@@ -381,9 +417,10 @@ export const generateItemsArray = (
   return null;
 };
 
-export const generateEvaluationsArray = (
+export const generateEvaluationsArray = async (
   role: number,
   evaluations: EvaluationEntity[] | null,
+  file_service: FilesService,
 ) => {
   if (evaluations) {
     const payload: EvaluationsResponse[] = [];
@@ -405,6 +442,11 @@ export const generateEvaluationsArray = (
             );
 
             if (class_evaluation && student_evaluation) {
+              const files = await file_service.getFileByEvaluation(
+                student_evaluation.ref,
+                student_evaluation.sheet.id,
+              );
+
               const result: EvaluationsResponse = {
                 id: evaluation.id,
                 item: {
@@ -417,6 +459,12 @@ export const generateEvaluationsArray = (
                       content: evaluation.option.content,
                     }
                   : null,
+                files:
+                  files && files.length > 0
+                    ? files.map((file) => {
+                        return { id: file.id, name: file.originalName };
+                      })
+                    : null,
                 personal_mark_level:
                   student_evaluation.personal_mark_level ?? 0,
                 class_mark_level: class_evaluation.class_mark_level ?? 0,
@@ -436,6 +484,11 @@ export const generateEvaluationsArray = (
             );
 
             if (student_evaluation) {
+              const files = await file_service.getFileByEvaluation(
+                student_evaluation.ref,
+                student_evaluation.sheet.id,
+              );
+
               const result: EvaluationsResponse = {
                 id: evaluation.id,
                 item: {
@@ -448,6 +501,12 @@ export const generateEvaluationsArray = (
                       content: evaluation.option.content,
                     }
                   : null,
+                files:
+                  files && files.length > 0
+                    ? files.map((file) => {
+                        return { id: file.id, name: file.originalName };
+                      })
+                    : null,
                 personal_mark_level:
                   student_evaluation.personal_mark_level ?? 0,
                 class_mark_level: evaluation.class_mark_level ?? 0,
@@ -461,6 +520,10 @@ export const generateEvaluationsArray = (
       case RoleCode.STUDENT:
         for (const evaluation of evaluations) {
           if (evaluation.category === EvaluationCategory.STUDENT) {
+            const files = await file_service.getFileByEvaluation(
+              evaluation.ref,
+              evaluation.sheet.id,
+            );
             const result: EvaluationsResponse = {
               id: evaluation.id,
               item: {
@@ -473,6 +536,12 @@ export const generateEvaluationsArray = (
                     content: evaluation.option.content,
                   }
                 : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return { id: file.id, name: file.originalName };
+                    })
+                  : null,
               personal_mark_level: evaluation.personal_mark_level ?? 0,
               class_mark_level: evaluation.class_mark_level ?? 0,
               department_mark_level: evaluation.department_mark_level ?? 0,

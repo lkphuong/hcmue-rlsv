@@ -54,6 +54,14 @@ export const validateYears = (
       ErrorMessage.FROM_ACADEMIC_YEAR_INVALID_ERROR,
       HttpStatus.BAD_REQUEST,
     );
+  } else if (to - from > 1) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      ErrorMessage.ACADEMIC_YEAR_INVALID_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
   }
 
   return null;

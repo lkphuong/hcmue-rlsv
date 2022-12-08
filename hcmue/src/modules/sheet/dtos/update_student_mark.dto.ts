@@ -1,5 +1,11 @@
 import { Transform, Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import {
+  ArrayMaxSize,
+  ArrayNotEmpty,
+  IsNotEmpty,
+  IsOptional,
+  ValidateNested,
+} from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -7,6 +13,27 @@ import { BetweenValidator } from '../../../validators/between.validator';
 import { IsNumberValidator } from '../../../validators/number.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
+import { MAX_FILES } from '../../../constants';
+
+export class StudentFileDtos {
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng upload file [minh chứng].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị file [minh chứng] không hợp lệ.'),
+  })
+  id: number;
+
+  @IsOptional()
+  @Transform((params) => params.value ?? 0)
+  @BetweenValidator(0, 1, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [deleted] không hợp lệ.'),
+  })
+  deleted?: number = 0;
+}
 export class StudentMarkDtos {
   @IsNotEmpty({
     message: (arg) =>
@@ -63,6 +90,18 @@ export class StudentMarkDtos {
       ),
   })
   personal_mark_level: number;
+
+  @IsOptional()
+  @ArrayMaxSize(MAX_FILES, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        `File [minh chứng] vượt quá giới hạn (size: ${MAX_FILES})`,
+      ),
+  })
+  @ValidateNested({ each: true })
+  @Type(() => StudentFileDtos)
+  files: StudentFileDtos[];
 
   @IsOptional()
   @Transform((params) => params.value ?? 0)

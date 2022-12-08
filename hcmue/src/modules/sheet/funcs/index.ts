@@ -1,6 +1,8 @@
-import { HttpException } from '@nestjs/common';
+import { HttpException, HttpStatus } from '@nestjs/common';
 import { DataSource, QueryRunner } from 'typeorm';
 import { Request } from 'express';
+
+import { randomUUID } from 'crypto';
 
 import { sprintf } from '../../../utils';
 import {
@@ -8,9 +10,15 @@ import {
   generateSuccessResponse,
   groupItemsByHeader,
 } from '../utils';
-import { validateMark, validateTime } from '../validations';
+import {
+  validateMark,
+  validateUpdateEvaluationMaxFile,
+  validateTime,
+  validateCreateEvaluationMaxFile,
+} from '../validations';
 
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { FileEntity } from '../../../entities/file.entity';
 import { OptionEntity } from '../../../entities/option.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 
@@ -33,6 +41,7 @@ import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
 import { ItemService } from '../../item/services/item.service';
+import { FilesService } from '../../file/services/files.service';
 import { KService } from '../../k/services/k.service';
 import { HeaderService } from '../../header/services/header.service';
 import { LevelService } from '../../level/services/level.service';
@@ -55,6 +64,7 @@ import { GROUP_KEY } from '../constants';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
+  UNKNOW_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 
@@ -66,6 +76,7 @@ export const generatePersonalMarks = async (
   class_service: ClassService,
   department_service: DepartmentService,
   evaluation_service: EvaluationService,
+  file_service: FilesService,
   header_service: HeaderService,
   item_service: ItemService,
   k_service: KService,
@@ -115,6 +126,7 @@ export const generatePersonalMarks = async (
         params,
         result,
         evaluation_service,
+        file_service,
         header_service,
         item_service,
         option_service,
@@ -221,7 +233,6 @@ export const generateClassMarks = async (
       req,
     );
     //#endregion
-
     if (result instanceof HttpException) throw result;
     else if (result) {
       //#region Update class evaluation
@@ -442,6 +453,7 @@ export const generateUpdateStudentEvaluation = async (
   params: UpdateStudentMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
+  file_service: FilesService,
   header_service: HeaderService,
   item_service: ItemService,
   option_service: OptionService,
@@ -449,6 +461,7 @@ export const generateUpdateStudentEvaluation = async (
   req: Request,
 ): Promise<EvaluationEntity[] | HttpException> => {
   let evaluations: EvaluationEntity[] = [];
+  let files: FileEntity[] = [];
 
   //#region Get params
   const { data } = params;
@@ -486,6 +499,71 @@ export const generateUpdateStudentEvaluation = async (
             EvaluationCategory.STUDENT,
           );
           if (evaluation) {
+            //#region handle update file
+            if (j.files) {
+              if (!item.is_file) {
+                return new HandlerException(
+                  UNKNOW_EXIT_CODE.UNKNOW_ERROR,
+                  req.method,
+                  req.url,
+                  ErrorMessage.CANNOT_UPLOAD_FILE_ITEM_ERROR,
+                  HttpStatus.EXPECTATION_FAILED,
+                );
+              } else {
+                //#region Count files by evaluation_id and sheet_id
+                const count = await file_service.countFilesByItem(
+                  item.id,
+                  sheet.id,
+                  evaluation.ref,
+                );
+                //#region Maximun files
+                const valid = validateUpdateEvaluationMaxFile(
+                  count,
+                  j.files,
+                  req,
+                );
+                if (valid instanceof HttpException) return valid;
+                //#endregion
+                //#endregion
+
+                for (const _item of j.files) {
+                  const file = await file_service.getFileById(_item.id);
+                  if (file) {
+                    if (_item.deleted) {
+                      //#region Unlink file
+                      file.drafted = true;
+                      file.deleted_at = new Date();
+                      file.deleted_by = user_id;
+                      file.drafted = true;
+
+                      files.push(file);
+                      //#endregion
+                    } else {
+                      //#region Update file
+                      file.sheet = sheet;
+                      file.parent_ref = evaluation.ref;
+                      file.item = item;
+                      file.drafted = false;
+
+                      files.push(file);
+                      //#endregion
+                    }
+                  } else {
+                    //#region throw HandlerException
+                    return new UnknownException(
+                      _item.id,
+                      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+                      req.method,
+                      req.url,
+                      sprintf(ErrorMessage.FILE_NOT_FOUND_ERROR, _item.id),
+                    );
+                    //#endregion
+                  }
+                }
+              }
+            }
+            //#endregion
+
             if (j.deleted) {
               //#region Check deleted
               evaluation.deleted = true;
@@ -510,11 +588,67 @@ export const generateUpdateStudentEvaluation = async (
             const evaluation = new EvaluationEntity();
             evaluation.sheet = sheet;
             evaluation.item = item;
+            evaluation.ref = randomUUID();
             evaluation.option = option;
             evaluation.personal_mark_level = j.personal_mark_level;
             evaluation.created_at = new Date();
             evaluation.created_by = user_id;
+
             evaluations.push(evaluation);
+            //#endregion
+
+            //#region handle update file
+            if (j.files) {
+              //#region validate Max files
+              const valid = validateCreateEvaluationMaxFile(j.params, req);
+              if (valid instanceof HttpException) return valid;
+              //#endregion
+
+              if (!item.is_file) {
+                return new HandlerException(
+                  UNKNOW_EXIT_CODE.UNKNOW_ERROR,
+                  req.method,
+                  req.url,
+                  ErrorMessage.CANNOT_UPLOAD_FILE_ITEM_ERROR,
+                  HttpStatus.EXPECTATION_FAILED,
+                );
+              } else {
+                for (const _item of j.files) {
+                  const file = await file_service.getFileById(_item.id);
+                  if (file) {
+                    if (_item.deleted) {
+                      //#region Unlink file
+                      file.drafted = true;
+                      file.deleted_at = new Date();
+                      file.deleted_by = user_id;
+                      file.drafted = true;
+
+                      files.push(file);
+                      //#endregion
+                    } else {
+                      //#region Update file
+                      file.sheet = sheet;
+                      file.parent_ref = evaluation.ref;
+                      file.item = item;
+                      file.drafted = false;
+
+                      files.push(file);
+                      //#endregion
+                    }
+                  } else {
+                    //#region throw HandlerException
+                    return new UnknownException(
+                      _item.id,
+                      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+                      req.method,
+                      req.url,
+                      sprintf(ErrorMessage.FILE_NOT_FOUND_ERROR, _item.id),
+                    );
+                    //#endregion
+                  }
+                }
+              }
+            }
             //#endregion
           }
         } else {
@@ -543,10 +677,21 @@ export const generateUpdateStudentEvaluation = async (
     //#endregion
   }
 
-  //#region Update evaluation
-  evaluations = await query_runner.manager.save(evaluations);
-  //#endregion
-  return evaluations;
+  files = await file_service.bulkUpdate(files, query_runner.manager);
+  if (files) {
+    //#region Update evaluation
+    evaluations = await query_runner.manager.save(evaluations);
+    //#endregion
+    return evaluations;
+  } else {
+    return new HandlerException(
+      SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+      req.method,
+      req.url,
+      ErrorMessage.OPERATOR_SHEET_ERROR,
+      HttpStatus.EXPECTATION_FAILED,
+    );
+  }
 };
 
 export const generateUpdateClassEvaluation = async (

@@ -30,4 +30,8 @@ export enum ErrorMessage {
   STUDENT_ROLE_INVALID_ERROR = 'Bạn không thể xem [danh sách phiếu] của sinh viên khác (name: %s).',
 
   FORBIDDEN_ERROR = 'Bạn không có quyền thực hiện.',
+
+  CANNOT_UPLOAD_FILE_ITEM_ERROR = 'Bạn không thể upload file [minh chứng]. Nội dung chấm điểm chưa được cấu hình upload file.',
+  FILE_NOT_FOUND_ERROR = 'File [minh chứng] không tồn tại (id: %s).',
+  MAXIMUM_FILE_ERROR = 'File [minh chứng] vượt quá giới hạn (size: %s).',
 }

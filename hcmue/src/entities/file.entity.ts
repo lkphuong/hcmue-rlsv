@@ -5,7 +5,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { EvaluationEntity } from './evaluation.entity';
+import { ItemEntity } from './item.entity';
 
 import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
@@ -17,6 +17,15 @@ export class FileEntity extends RootEntity {
   })
   id: number;
 
+  @ManyToOne(() => ItemEntity, (item) => item.files)
+  @JoinColumn([
+    {
+      name: 'item_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  item: ItemEntity;
+
   @ManyToOne(() => SheetEntity, (sheet) => sheet.files)
   @JoinColumn([
     {
@@ -26,14 +35,12 @@ export class FileEntity extends RootEntity {
   ])
   sheet: SheetEntity;
 
-  @ManyToOne(() => EvaluationEntity, (evaluation) => evaluation.files)
-  @JoinColumn([
-    {
-      name: 'evaluation_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  evaluation: EvaluationEntity;
+  @Column('varchar', {
+    name: 'parent_ref',
+    nullable: false,
+    length: 50,
+  })
+  parent_ref: string;
 
   @Column('varchar', {
     name: 'original_name',
@@ -73,7 +80,7 @@ export class FileEntity extends RootEntity {
   @Column('boolean', {
     name: 'drafted',
     nullable: true,
-    default: 0,
+    default: true,
   })
-  drafted: boolean;
+  drafted?: boolean = true;
 }

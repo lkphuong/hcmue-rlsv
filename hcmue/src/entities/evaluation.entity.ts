@@ -3,7 +3,6 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { FileEntity } from './file.entity';
@@ -47,6 +46,13 @@ export class EvaluationEntity extends RootEntity {
   ])
   option: OptionEntity;
 
+  @Column('varchar', {
+    name: 'ref',
+    nullable: false,
+    length: 50,
+  })
+  ref: string;
+
   @Column('tinyint', {
     name: 'category',
     nullable: true,
@@ -74,7 +80,4 @@ export class EvaluationEntity extends RootEntity {
     default: null,
   })
   department_mark_level: number;
-
-  @OneToMany(() => FileEntity, (file) => file.evaluation)
-  files: FileEntity[];
 }

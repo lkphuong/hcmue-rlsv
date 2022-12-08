@@ -101,7 +101,7 @@ export class ItemEntity extends RootEntity {
     default: false,
     nullable: true,
   })
-  is_file?: boolean = true;
+  is_file?: boolean = false;
 
   @Column('varchar', {
     name: 'unit',

@@ -24,7 +24,7 @@ export const MRow = ({ data }) => {
 	return (
 		<>
 			<TableRow>
-				<TableCell align='center'>{data?.name}</TableCell>
+				<TableCell align='left'>{data?.name}</TableCell>
 				<TableCell align='center'>{data?.std_code}</TableCell>
 				<TableCell align='center'>{data?.department.name}</TableCell>
 				<TableCell align='center'>{data?.classes?.name}</TableCell>

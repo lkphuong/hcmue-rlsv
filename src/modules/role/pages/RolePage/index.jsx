@@ -1,7 +1,7 @@
 import React, { createContext, memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box } from '@mui/material';
+import { Box, Stack } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
@@ -24,7 +24,7 @@ const RolePage = memo(() => {
 	const [classes, setClasses] = useState([]);
 
 	const [filter, setFilter] = useState({
-		department_id: departments[0].id,
+		department_id: null,
 		academic_id: academic_years[0].id,
 		class_id: null,
 		input: '',
@@ -39,8 +39,6 @@ const RolePage = memo(() => {
 
 	//#region Event
 	const getData = useCallback(async () => {
-		if (!(filter.department_id && filter.class_id)) return;
-
 		try {
 			let _filter = { ...filter };
 
@@ -98,9 +96,15 @@ const RolePage = memo(() => {
 					classes={classes}
 				/>
 
-				<MTable data={dataTable} />
+				<Stack direction='column' justifyContent='space-between'>
+					<MTable data={dataTable} />
 
-				<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
+					<CPagination
+						page={paginate.page}
+						pages={paginate.pages}
+						onChange={onPageChange}
+					/>
+				</Stack>
 			</ConfigRoleContext.Provider>
 		</Box>
 	);

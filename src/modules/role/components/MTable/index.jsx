@@ -10,7 +10,7 @@ export const MTable = ({ data }) => {
 			<Table stickyHeader>
 				<TableHead>
 					<TableRow>
-						<TableCell align='center'>Họ và tên</TableCell>
+						<TableCell align='left'>Họ và tên</TableCell>
 						<TableCell align='center'>Username</TableCell>
 						<TableCell align='center'>Khoa</TableCell>
 						<TableCell align='center'>Lớp</TableCell>

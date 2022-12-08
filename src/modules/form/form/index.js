@@ -31,7 +31,7 @@ export const initialTitle = {
 export const initialItem = {
 	control: 0,
 	content: '',
-	required: true,
+	required: false,
 	from_mark: 0,
 	to_mark: 1,
 	mark: 0,

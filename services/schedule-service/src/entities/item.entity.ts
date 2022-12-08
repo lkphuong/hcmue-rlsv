@@ -8,8 +8,11 @@ import {
 } from 'typeorm';
 
 import { EvaluationEntity } from './evaluation.entity';
+import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
+import { OptionEntity } from './option.entity';
 import { RootEntity } from './root.entity';
+import { TitleEntity } from './title.entity';
 
 @Entity('items')
 export class ItemEntity extends RootEntity {
@@ -76,6 +79,15 @@ export class ItemEntity extends RootEntity {
   })
   to_mark: number;
 
+  // Điểm cho item when control = input | checkbox &&
+  // category = single-value | per unit
+  @Column('float', {
+    name: 'mark',
+    nullable: true,
+    default: 0,
+  })
+  mark: number;
+
   // 0. single value, 1. range value, 2: per unit
   @Column('tinyint', {
     name: 'category',
@@ -83,6 +95,13 @@ export class ItemEntity extends RootEntity {
     nullable: true,
   })
   category: number;
+
+  @Column('boolean', {
+    name: 'is_file', //true: có file, false: không file
+    default: false,
+    nullable: true,
+  })
+  is_file?: boolean = false;
 
   @Column('varchar', {
     name: 'unit',
@@ -100,4 +119,11 @@ export class ItemEntity extends RootEntity {
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.item)
   evaluations: EvaluationEntity[];
+
+  @OneToMany(() => FileEntity, (file) => file.item)
+  files: FileEntity[];
+
+  options: OptionEntity[] | null;
+
+  title: TitleEntity | null;
 }

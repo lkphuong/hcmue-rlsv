@@ -2,6 +2,7 @@ import { AcademicYearEntity } from './academic_year.entity';
 import { AcademicYearClassesEntity } from './academic_year_classes.entity';
 import { ApprovalEntity } from './approval.entity';
 import { EvaluationEntity } from './evaluation.entity';
+import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
 import { HeaderEntity } from './header.entity';
 import { ItemEntity } from './item.entity';
@@ -21,6 +22,7 @@ const entities = [
   AcademicYearClassesEntity,
   ApprovalEntity,
   EvaluationEntity,
+  FileEntity,
   FormEntity,
   HeaderEntity,
   ItemEntity,

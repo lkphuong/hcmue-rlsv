@@ -55,9 +55,6 @@ export class CronService {
       const count = await this._userService.countUsers();
       const form = await this._formService.getFormPublished();
 
-      console.log('count: ', count);
-      console.log('form: ', form);
-
       if (new Date() > new Date(form.student_start)) {
         if (count && form) {
           //#region
@@ -75,8 +72,6 @@ export class CronService {
           );
           //#endregion
 
-          console.log('success: ', success);
-
           if (success) {
             for (let i = 0; i < pages; i++) {
               const users = await this._userService.getUsersPaging(
@@ -84,7 +79,6 @@ export class CronService {
                 itemsPerPage,
               );
 
-              console.log('user: ', users);
               let flag = false;
               if (i + 1 === pages) {
                 flag = true;

@@ -55,5 +55,8 @@ export const MAX_PRICE = 9999999999;
 
 export const TIME_REGEX = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
 
-export const UPDATE_STATUS_SHEETS_CRON_JOB_TIME = '0 0 * * * *';
-export const GENERATE_CREATE_SHEETS_CRON_JOB_TIME = '0 0 * * * *';
+export const MULTER_DEST = '../../../../hcmue/static/uploads';
+
+export const UPDATE_STATUS_SHEETS_CRON_JOB_TIME = '0 0 * * * ';
+export const GENERATE_CREATE_SHEETS_CRON_JOB_TIME = '0 1 * * * ';
+export const UNLINK_FILES_CRON_JOB_TIME = '0 2 * * *';

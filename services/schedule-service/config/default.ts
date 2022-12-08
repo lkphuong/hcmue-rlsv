@@ -27,6 +27,9 @@ export default {
   REFRESH_TOKEN_EXPIRESIN: '30 days',
   ITEMS_PER_PAGE: 10,
 
+  MULTER_DEST: '../../../../hcmue/static/uploads',
+
   GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 * * * * *',
   UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 * * * * *',
+  UNLINK_FILES_CRON_JOB_TIME: '0 2 * * * *',
 };

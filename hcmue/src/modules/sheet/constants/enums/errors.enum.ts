@@ -12,7 +12,7 @@ export enum ErrorMessage {
   DEPARTMENT_NOT_FOUND_ERROR = 'Khoa không tồn tại (id: %s).',
   EVALUATION_NOT_FOUND_ERROR = 'Giá trị biểu mẫu không tồn tại (id: %s).',
   HEADER_NOT_FOUND_ERROR = '[Hạng mục đánh giá] không tồn tại (id: %s)',
-  ITEM_NOT_FOUND_ERROR = 'Nội dung chấm điểm không tồn tại (id: %s)',
+  ITEM_NOT_FOUND_ERROR = '[Nội dung chấm điểm] không tồn tại (id: %s)',
   LEVEL_NOT_FOUND_ERROR = 'Không tìm thấy xếp loại (điểm: %s).',
   SHEET_NOT_FOUND_ERROR = 'Phiếu không tồn tại (id: %s).',
   STUDENT_NOT_FOUND_ERROR = 'Sinh viên không tồn tại (id: %s).',
@@ -31,7 +31,10 @@ export enum ErrorMessage {
 
   FORBIDDEN_ERROR = 'Bạn không có quyền thực hiện.',
 
-  CANNOT_UPLOAD_FILE_ITEM_ERROR = 'Bạn không thể upload file [minh chứng]. Nội dung chấm điểm chưa được cấu hình upload file.',
+  CANNOT_UPLOAD_FILE_ITEM_ERROR = 'Bạn không thể upload file [minh chứng]. Nội dung chấm điểm chưa được cấu hình upload file [minh chứng].',
   FILE_NOT_FOUND_ERROR = 'File [minh chứng] không tồn tại (id: %s).',
   MAXIMUM_FILE_ERROR = 'File [minh chứng] vượt quá giới hạn (size: %s).',
+
+  OPTION_EMPTY_ERROR = 'Bạn vui lòng chọn [tùy chọn] chấm điểm cho [nội dung chấm điểm] (id: %s).',
+  ITEM_NOT_CONFIG_OPTION_ERROR = '[Nội dung chấm điểm] không được cấu hình [tùy chọn] (id: %s).',
 }

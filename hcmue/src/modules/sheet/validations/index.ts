@@ -8,6 +8,7 @@ import { isValidObjectId } from 'mongoose';
 import { convertString2Date, sprintf } from '../../../utils';
 
 import { FormEntity } from '../../../entities/form.entity';
+import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 
 import { StudentFileDtos } from '../dtos/update_student_mark.dto';
@@ -23,6 +24,7 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { MAX_FILES } from '../../../constants';
+import { ItemControl } from '../constants/enums/item_control.enums';
 import {
   DATABASE_EXIT_CODE,
   FILE_EXIT_CODE,
@@ -493,7 +495,7 @@ export const validateUpdateEvaluationMaxFile = (
         req.method,
         req.url,
         sprintf(ErrorMessage.MAXIMUM_FILE_ERROR, MAX_FILES),
-        HttpStatus.EXPECTATION_FAILED,
+        HttpStatus.BAD_REQUEST,
       );
     }
   }
@@ -516,7 +518,33 @@ export const validateCreateEvaluationMaxFile = (
       req.method,
       req.url,
       sprintf(ErrorMessage.MAXIMUM_FILE_ERROR, MAX_FILES),
-      HttpStatus.EXPECTATION_FAILED,
+      HttpStatus.BAD_REQUEST,
     );
   }
+};
+
+export const validateRequiredOption = (
+  item: ItemEntity,
+  option_id: number,
+  req: Request,
+) => {
+  if (item.control === ItemControl.SINGLE_SELECT && !option_id) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.OPTION_EMPTY_ERROR, item.id),
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (item.control !== ItemControl.SINGLE_SELECT && option_id) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.ITEM_NOT_CONFIG_OPTION_ERROR, item.id),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
 };

@@ -28,6 +28,7 @@ export class GetUsersDto {
   })
   page: number;
 
+  @IsOptional()
   @Transform((params) =>
     params.value ? params.value.toString().trim() : params.value,
   )
@@ -40,6 +41,7 @@ export class GetUsersDto {
   })
   department_id: string;
 
+  @IsOptional()
   @Transform((params) =>
     params.value ? params.value.toString().trim() : params.value,
   )

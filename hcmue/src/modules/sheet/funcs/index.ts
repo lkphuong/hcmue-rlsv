@@ -15,6 +15,7 @@ import {
   validateUpdateEvaluationMaxFile,
   validateTime,
   validateCreateEvaluationMaxFile,
+  validateRequiredOption,
 } from '../validations';
 
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
@@ -475,10 +476,15 @@ export const generateUpdateStudentEvaluation = async (
       for await (const j of item[1]) {
         const item = await item_service.getItemById(j.item_id);
         if (item) {
+          //#region Validate option
+          const valid_option = validateRequiredOption(item, j.option_id, req);
+          if (valid_option instanceof HttpException) return valid_option;
+          //#endregion
+
           //#region Get option
           let option: OptionEntity | null = null;
           if (j.option_id) {
-            option = await option_service.getOptionById(j.option_id ?? 0);
+            option = await option_service.getOptionById(j.option_id);
           }
           //#endregion
 

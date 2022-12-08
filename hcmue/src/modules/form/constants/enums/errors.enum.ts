@@ -20,6 +20,7 @@ export enum ErrorMessage {
   FORM_UNPUBLISH_STATUS_INVALID_ERROR = '[Biểu mẫu] chưa được phát hành (id: %s).',
   FORM_IN_PROGRESS_STATUS_INVALID_ERROR = '[Biểu mẫu] đang được xử lý (id: %s).',
   FORM_DONE_STATUS_INVALID_ERROR = '[Biểu mẫu] đã hoàn thành xử lý (id: %s).',
+  MAX_MARK_HEADER_BY_FORM_ERROR = 'Tổng điểm biểu mẫu không được lớn hơn 100 (mark: %s).',
 
   ACADEMIC_EXISTS_FORM_PUBLISHED_IN_SEMESTER_ERROR = 'Niên khóa [%s] đã tồn tại [biểu mẫu] được phát hành trong học kỳ [%s].',
 

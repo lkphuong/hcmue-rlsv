@@ -7,14 +7,23 @@ export const generateCountUserPipeline = (
   input?: string,
 ) => {
   //#region Where class_id & department_id
-  const $criteria: any[] = [
-    {
+  const $criteria: any[] = [];
+  //#endregion
+
+  //#region Where if department != null
+  if (department_id) {
+    $criteria.push({
       departmentId: convertString2ObjectId(department_id),
-    },
-    {
+    });
+  }
+  //#endregion
+
+  //#region Where if class_id != null
+  if (class_id) {
+    $criteria.push({
       classId: convertString2ObjectId(class_id),
-    },
-  ];
+    });
+  }
   //#endregion
 
   //#region Where if input != null
@@ -55,7 +64,12 @@ export const generateCountUserPipeline = (
   //#endregion
 
   //#region Create pipeline
-  const pipeline: PipelineStage[] = [...matchs, ...selection];
+  let pipeline: PipelineStage[] = [];
+  if ($criteria.length > 0) {
+    pipeline = [...matchs, ...selection];
+  } else {
+    pipeline = [...selection];
+  }
   //#endregion
 
   return pipeline;
@@ -69,14 +83,23 @@ export const generateGetUsersPagingPipeline = (
   input?: string,
 ) => {
   //#region Where class_id & department_id
-  const $criteria: { [key: string]: any }[] = [
-    {
+  const $criteria: { [key: string]: any }[] = [];
+  //#endregion
+
+  //#region Where if department != null
+  if (department_id) {
+    $criteria.push({
       departmentId: convertString2ObjectId(department_id),
-    },
-    {
+    });
+  }
+  //#endregion
+
+  //#region Where if class_id != null
+  if (class_id) {
+    $criteria.push({
       classId: convertString2ObjectId(class_id),
-    },
-  ];
+    });
+  }
   //#endregion
 
   //#region Where if input != null
@@ -156,13 +179,12 @@ export const generateGetUsersPagingPipeline = (
     },
   ];
   //#endregion
-
-  const pipeline: PipelineStage[] = [
-    ...class_joiner,
-    ...department_joiner,
-    ...matchs,
-    ...limits,
-  ];
+  let pipeline: PipelineStage[] = [];
+  if ($criteria.length > 0) {
+    pipeline = [...class_joiner, ...department_joiner, ...matchs, ...limits];
+  } else {
+    pipeline = [...class_joiner, ...department_joiner, ...limits];
+  }
 
   return pipeline;
 };

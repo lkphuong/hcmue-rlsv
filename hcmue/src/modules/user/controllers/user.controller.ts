@@ -94,6 +94,8 @@ export class UserController {
           input,
         );
 
+        console.log('count: ', count);
+
         if (count > 0) pages = Math.ceil(count / itemsPerPage);
       }
       //#endregion

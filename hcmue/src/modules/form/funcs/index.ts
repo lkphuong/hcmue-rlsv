@@ -19,6 +19,7 @@ import {
   validateForm,
   validateFormPubishStatus,
   validateHeader,
+  validateMaxMarkHeaderByForm,
   validateSemester,
   validateTime,
 } from '../validations';
@@ -170,6 +171,17 @@ export const createHeader = async (
   //#region Validate form
   const form = await validateForm(form_id, form_service, req);
   if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate mark mark
+  const valid_mark = await validateMaxMarkHeaderByForm(
+    null,
+    form_id,
+    max_mark,
+    header_service,
+    req,
+  );
+  if (valid_mark instanceof HttpException) throw valid_mark;
   //#endregion
   //#endregion
 
@@ -499,6 +511,17 @@ export const updateHeader = async (
   //#region Validate header
   let header = await validateHeader(header_id, header_service, req);
   if (header instanceof HttpException) return header;
+  //#endregion
+
+  //#region Validate mark mark
+  const valid_mark = await validateMaxMarkHeaderByForm(
+    header_id,
+    form_id,
+    max_mark,
+    header_service,
+    req,
+  );
+  if (valid_mark instanceof HttpException) throw valid_mark;
   //#endregion
   //#endregion
 

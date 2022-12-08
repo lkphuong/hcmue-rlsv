@@ -8,6 +8,7 @@ import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
 
 import { ItemDto } from '../dtos/item.dto';
+import { HeaderDto } from '../dtos/header.dto';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { FormService } from '../services/form.service';
@@ -458,4 +459,49 @@ export const isAnyPublished = async (
   }
 
   return null;
+};
+
+export const validateMaxMarkHeaderByForm = async (
+  header_id: number,
+  form_id: number,
+  max_mark: number,
+  header_service: HeaderService,
+  req: Request,
+) => {
+  if (header_id) {
+    //#region update Header
+    const sum = await header_service.sumMaxMarkHeaderByFormId(
+      form_id,
+      header_id,
+    );
+
+    if (sum + max_mark > 100) {
+      //#region throw HandlerException
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.INVALID_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.MAX_MARK_HEADER_BY_FORM_ERROR, sum + max_mark),
+        HttpStatus.BAD_REQUEST,
+      );
+      //#endregion
+    }
+    //#endregion
+  } else {
+    //#region Create Header
+    const sum = await header_service.sumMaxMarkHeaderByFormId(form_id);
+
+    if (sum + max_mark > 100) {
+      //#region throw HandlerException
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.INVALID_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.MAX_MARK_HEADER_BY_FORM_ERROR, sum + max_mark),
+        HttpStatus.BAD_REQUEST,
+      );
+      //#endregion
+    }
+    //#endregion
+  }
 };

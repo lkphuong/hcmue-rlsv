@@ -59,6 +59,37 @@ export class HeaderService {
     }
   }
 
+  async sumMaxMarkHeaderByFormId(
+    form_id: number,
+    header_id?: number,
+  ): Promise<number> {
+    try {
+      let conditions = this._headerRepository
+        .createQueryBuilder('header')
+        .select('SUM(header.max_mark)', 'sum')
+        .where('header.form_id = :form_id', { form_id })
+        .andWhere('header.deleted = :deleted', { deleted: false });
+
+      if (header_id && header_id != 0) {
+        conditions = conditions.andWhere('header.id != :header_id', {
+          header_id,
+        });
+      }
+
+      const { sum } = await conditions.getRawOne();
+
+      return sum || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'HeaderService.sumMaxMarkHeaderByFormId()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async add(
     header: HeaderEntity,
     manager?: EntityManager,

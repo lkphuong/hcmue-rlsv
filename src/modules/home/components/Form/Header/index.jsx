@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { Collapse, Grid, IconButton, Stack, Typography } from '@mui/material';
+import { Collapse, Grid, IconButton, Typography } from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { isSuccess } from '_func/';
@@ -51,18 +51,26 @@ const Header = memo(({ data, index, sheetId }) => {
 				alignItems='center'
 				justifyContent='center'
 				fontWeight={600}
-				mb={1}
 				sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}
 			>
 				{index}
 			</Grid>
-			<Grid item xs={11} mb={1} sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}>
-				<Stack direction='row' justifyContent='space-between' alignItems='center'>
-					<Typography fontWeight={600} fontSize={20}>{`${data.name}`}</Typography>
-					<IconButton onClick={toggle}>
-						{open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-					</IconButton>
-				</Stack>
+
+			<Grid item xs={11} sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}>
+				<Grid container alignItems='center'>
+					<Grid item xs={6.4}>
+						<Typography fontWeight={600} fontSize={20}>{`${data.name}`}</Typography>
+					</Grid>
+					<Grid item xs={2} textAlign='center'>
+						<Typography>Tối đa {data?.max_mark} điểm</Typography>
+					</Grid>
+
+					<Grid item xs={true} textAlign='right'>
+						<IconButton onClick={toggle}>
+							{open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+						</IconButton>
+					</Grid>
+				</Grid>
 			</Grid>
 
 			<Collapse in={open} timeout='auto' sx={{ width: '100%' }}>

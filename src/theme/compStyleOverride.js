@@ -244,6 +244,9 @@ export default function componentStyleOverrides(theme) {
 					marginTop: '0.2rem',
 					boxShadow: '0 0 10px 6px rgb(0 0 0 / 14%)',
 				},
+				popper: {
+					minWidth: '300px',
+				},
 			},
 		},
 		MuiStepLabel: {

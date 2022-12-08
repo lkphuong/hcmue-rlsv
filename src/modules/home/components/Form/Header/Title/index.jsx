@@ -38,21 +38,20 @@ const Title = memo(({ data, headerId }) => {
 	//#region Render
 	return (
 		<>
-			<Grid item xs={1} />
-			<Grid item xs={11} padding='10px'>
+			<Grid item xs={1} mt={1.5} borderTop='1px solid rgb(0 0 0 / 10%)' />
+			<Grid item xs={11} mt={1.5} padding='10px' borderTop='1px solid rgb(0 0 0 / 10%)'>
 				<Grid container alignItems='center' spacing={1.2}>
-					<Grid item xs={12} borderBottom='1px solid rgb(0 0 0 / 20%)'>
+					<Grid item xs={12}>
 						<Box>
 							<Typography fontWeight={500} fontStyle='oblique' fontSize={16}>
 								{data.name}
 							</Typography>
 						</Box>
 					</Grid>
-
-					{items.length > 0 &&
-						items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
 				</Grid>
 			</Grid>
+
+			{items.length > 0 && items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
 		</>
 	);
 	//#endregion

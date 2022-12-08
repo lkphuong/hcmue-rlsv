@@ -5,7 +5,7 @@ import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
-import { STATUS } from '_constants/variables';
+import { FORM_STATUS } from '_constants/variables';
 
 const Filter = ({ filter, onChangeFilter }) => {
 	//#region Data
@@ -70,12 +70,12 @@ const Filter = ({ filter, onChangeFilter }) => {
 						<Box p={1}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-									Trạng thái phiếu
+									Trạng thái biểu mẫu
 								</Typography>
 								<CAutocomplete
 									value={filter.status}
 									onChange={handleChangeFilter('status')}
-									options={STATUS}
+									options={FORM_STATUS}
 									display='name'
 									placeholder='Tất cả'
 									renderOption={(props, option) => (

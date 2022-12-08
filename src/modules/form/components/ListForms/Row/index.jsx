@@ -60,7 +60,7 @@ const STATUS = {
 				color: 'rgb(51, 194, 255)',
 				backgroundColor: 'rgba(51, 194, 255, 0.1)',
 			}}
-			label='Hoàn thành'
+			label='Đã phát hành'
 		/>
 	),
 };

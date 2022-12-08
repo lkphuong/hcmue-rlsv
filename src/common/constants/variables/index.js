@@ -21,9 +21,9 @@ export const STATUS = [
 
 export const FORM_STATUS = [
 	{ id: 0, value: 0, name: 'Nháp' },
-	{ id: 1, value: 1, name: 'Đã phát hành' },
-	{ id: 2, value: 2, name: 'Đang xử lý' },
-	{ id: 3, value: 3, name: 'Hoàn thành' },
+	{ id: 1, value: 1, name: 'Chờ phát hành' },
+	{ id: 2, value: 2, name: 'Đang phát hành' },
+	{ id: 3, value: 3, name: 'Đã phát hành' },
 ];
 
 export const HOCKY = [

@@ -2,7 +2,14 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { Collapse, Grid, IconButton, Typography } from '@mui/material';
+import {
+	Accordion,
+	AccordionDetails,
+	AccordionSummary,
+	Grid,
+	IconButton,
+	Typography,
+} from '@mui/material';
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 import { isSuccess } from '_func/';
@@ -43,50 +50,57 @@ const Header = memo(({ data, index, sheetId }) => {
 	//#region Render
 	return (
 		<>
-			<Grid
-				item
-				xs={1}
-				textAlign='center'
-				display='flex'
-				alignItems='center'
-				justifyContent='center'
-				fontWeight={600}
-				sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}
-			>
-				{index}
-			</Grid>
-
-			<Grid item xs={11} sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}>
-				<Grid container alignItems='center'>
-					<Grid item xs={6.4}>
-						<Typography fontWeight={600} fontSize={20}>{`${data.name}`}</Typography>
-					</Grid>
-					<Grid item xs={2} textAlign='center'>
-						<Typography>Tối đa {data?.max_mark} điểm</Typography>
+			<Accordion sx={{ width: '100%' }} expanded={open} onChange={toggle}>
+				<AccordionSummary sx={{ p: 0, '& .MuiAccordionSummary-content': { margin: 0 } }}>
+					<Grid
+						item
+						xs={1}
+						textAlign='center'
+						display='flex'
+						alignItems='center'
+						justifyContent='center'
+						fontWeight={600}
+						sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}
+					>
+						{index}
 					</Grid>
 
-					<Grid item xs={true} textAlign='right'>
-						<IconButton onClick={toggle}>
-							{open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-						</IconButton>
-					</Grid>
-				</Grid>
-			</Grid>
+					<Grid item xs={11} sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}>
+						<Grid container alignItems='center' spacing={1}>
+							<Grid item xs={6.4}>
+								<Typography
+									fontWeight={600}
+									fontSize={20}
+								>{`${data.name}`}</Typography>
+							</Grid>
+							<Grid item xs={2} textAlign='center'>
+								<Typography>Tối đa {data?.max_mark} điểm</Typography>
+							</Grid>
 
-			<Collapse in={open} timeout='auto' sx={{ width: '100%' }}>
-				<Grid container>
-					{titles.length > 0 &&
-						titles.map((e, i) => (
-							<Title
-								key={i}
-								data={e}
-								sheetId={sheetId}
-								index={i + 1}
-								headerId={data.id}
-							/>
-						))}
-				</Grid>
-			</Collapse>
+							<Grid item xs={true} textAlign='right'>
+								<IconButton onClick={toggle}>
+									{open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+								</IconButton>
+							</Grid>
+						</Grid>
+					</Grid>
+				</AccordionSummary>
+
+				<AccordionDetails sx={{ p: 0 }}>
+					<Grid container>
+						{titles.length > 0 &&
+							titles.map((e, i) => (
+								<Title
+									key={i}
+									data={e}
+									sheetId={sheetId}
+									index={i + 1}
+									headerId={data.id}
+								/>
+							))}
+					</Grid>
+				</AccordionDetails>
+			</Accordion>
 		</>
 	);
 	//#endregion

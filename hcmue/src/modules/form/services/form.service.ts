@@ -96,7 +96,7 @@ export class FormService {
       }
 
       if (semester_id && semester_id !== 0) {
-        conditions = conditions.andWhere('semester.id = :semester', {
+        conditions = conditions.andWhere('semester.id = :semester_id', {
           semester_id,
         });
       }
@@ -145,7 +145,7 @@ export class FormService {
       }
 
       if (semester_id && semester_id !== 0) {
-        conditions = conditions.andWhere('semester.id = :semester', {
+        conditions = conditions.andWhere('semester.id = :semester_id', {
           semester_id,
         });
       }

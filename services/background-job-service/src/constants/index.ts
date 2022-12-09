@@ -1,12 +1,6 @@
-export const AUTH_MODULE = 'AUTH_MODULE';
 export const BACKGROUND_JOB_MODULE = 'BACKGROUND_JOB_MODULE';
 export const COMPOSER_MODULE = 'COMPOSER_MODULE';
-export const NOTIFICATION_MODULE = 'NOTIFICATION_MODULE';
-export const REDIS_MODULE = 'REDIS_MODULE';
 export const SCHEDULE_MODULE = 'SCHEDULE_MODULE';
-
-export const AUTH_SERVICE_HOST = 'localhost';
-export const AUTH_SERVICE_PORT = 9092;
 
 export const BACKGROUND_JOB_SERVICE_HOST = '192.168.1.103';
 export const BACKGROUND_JOB_SERVICE_PORT = 5672;
@@ -14,20 +8,13 @@ export const BACKGROUND_JOB_SERVICE_PORT = 5672;
 export const COMPOSER_SERVICE_HOST = '192.168.1.103';
 export const COMPOSER_SERVICE_PORT = 5672;
 
-export const NOTIFICATION_SERVICE_HOST = 'localhost';
-export const NOTIFICATION_SERVICE_PORT = 5672;
-
-export const REDIS_SERVICE_HOST = 'localhost';
-export const REDIS_SERVICE_PORT = 6379;
-
 export const SCHEDULE_SERVICE_HOST = 'localhost';
 export const SCHEDULE_SERVICE_PORT = 9093;
 
 export const BACKGROUND_JOB_QUEUE = 'hcmue_background_job_queue';
 export const COMPOSER_QUEUE = 'hcmue_composer_queue';
-export const NOTIFICATION_QUEUE = 'hcmue_notification_queue';
 
-export const APP_PREFIX = 'assets';
+export const APP_PREFIX = 'hcmue';
 export const UPLOAD_DEST = 'uploads';
 
 export const LOG_PATH = './logs';

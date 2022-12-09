@@ -18,11 +18,30 @@ export default {
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
-  ACCESS_SECRET_KEY: 'hcmue-rlsv@2022',
-  REFRESH_SECRET_KEY: '@dm1nSp@ce123',
-  ACCESS_TOKEN_EXPIRESIN: '1d',
-  REFRESH_TOKEN_EXPIRESIN: '30 days',
   ITEMS_PER_PAGE: 10,
+
+  BACKGROUND_JOB_SERVICE_HOST: 'localhost',
+  BACKGROUND_JOB_SERVICE_PORT: 5672,
+
+  COMPOSER_SERVICE_HOST: 'localhost',
+  COMPOSER_SERVICE_PORT: 5672,
+
+  SCHEDULE_SERVICE_HOST: 'localhost',
+  SCHEDULE_SERVICE_PORT: 3003,
+
+  BACKGROUND_JOB_QUEUE: 'hcmue_background_job_queue',
+  COMPOSER_QUEUE: 'hcmue_composer_queue',
+
+  TTL: 120,
+  NO_ACK_QUEUE: 0,
+  PERSISTENT_QUEUE: 1,
+  PREFETCH_COUNT_QUEUE: 1,
+  DURABLE_QUEUE_OPTION: 1,
+  QUEUE_EXPIRED_ARGUMENT: 1800000,
+  QUEUE_TYPE_ARGUMENT: 'quorum',
+  MAX_LENGTH_ARGUMENT: 1000, // maximum number of messages in queu,
+  MESSAGE_TTL_ARGUMENT: 60000, // 60,
+  OVERFLOW_ARGUMENT: 'reject-publish',
 
   MAX_TIMES: 3,
 };

@@ -15,14 +15,21 @@ export default {
   MONGODB_PASSWORD: 'adminYouth2022',
   MOGODB_DATABASE_NAME: 'youth-app-product',
 
-  SCHEDULE_SERVICE_HOST: 'localhost',
-  SCHEDULE_SERVICE_PORT: 3003,
-
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
+  ITEMS_PER_PAGE: 10,
+
   MULTER_DEST: './static/uploads',
-  IMAGE_PATH: './static/resources',
+
+  BACKGROUND_JOB_SERVICE_HOST: 'localhost',
+  BACKGROUND_JOB_SERVICE_PORT: 5672,
+
+  COMPOSER_SERVICE_HOST: 'localhost',
+  COMPOSER_SERVICE_PORT: 5672,
+
+  SCHEDULE_SERVICE_HOST: 'localhost',
+  SCHEDULE_SERVICE_PORT: 3003,
 
   GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 0 0 * * *',
   UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 0 0 * * *',

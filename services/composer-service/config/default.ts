@@ -18,11 +18,5 @@ export default {
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
-  ACCESS_SECRET_KEY: 'hcmue-rlsv@2022',
-  REFRESH_SECRET_KEY: '@dm1nSp@ce123',
-  ACCESS_TOKEN_EXPIRESIN: '1d',
-  REFRESH_TOKEN_EXPIRESIN: '30 days',
-  ITEMS_PER_PAGE: 10,
-
   MAX_TIMES: 3,
 };

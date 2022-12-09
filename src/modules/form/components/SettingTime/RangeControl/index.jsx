@@ -19,7 +19,7 @@ export const RangeControl = ({ control, label, name }) => {
 			<Typography mb={0.8} fontWeight={500}>
 				{label}
 			</Typography>
-			<Stack direction={{ xs: 'column', md: 'row' }} spacing={1}>
+			<Stack direction={{ xs: 'column', sm: 'row' }} spacing={1}>
 				<MDateStart
 					control={control}
 					name={name}

@@ -18,5 +18,11 @@ export default {
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
+  BACKGROUND_JOB_MODULE: 'BACKGROUND_JOB_MODULE',
+  COMPOSER_MODULE: 'COMPOSER_MODULE',
+  SCHEDULE_MODULE: 'SCHEDULE_MODULE',
+
+  ITEMS_PER_PAGE: 10,
+
   MAX_TIMES: 3,
 };

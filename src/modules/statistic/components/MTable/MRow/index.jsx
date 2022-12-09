@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Link, TableCell, TableRow } from '@mui/material';
 
@@ -6,11 +6,6 @@ import './index.scss';
 
 const MRow = ({ data, index, previewClass }) => {
 	//#region Data
-	const count = useMemo(() => {
-		if (!data?.levels?.length) return 0;
-
-		return data?.levels?.reduce((prev, cur) => prev + cur?.count, 0);
-	}, []);
 	//#endregion
 
 	//#region Event
@@ -30,7 +25,7 @@ const MRow = ({ data, index, previewClass }) => {
 				</Link>
 			</TableCell>
 			<TableCell align='center' className='border-right'>
-				{count}
+				{data?.num_of_std}
 			</TableCell>
 			{data?.levels?.length > 0 &&
 				data.levels.map((level) => (

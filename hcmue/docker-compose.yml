@@ -30,21 +30,26 @@ services:
     image: hoanglong1011/hcmue-background:1.1
     environment:
       - NODE_ENV=development
-      - MYSQL_HOST='103.154.176.80'
+      - MYSQL_HOST=103.154.176.80
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE_NAME='hcmue_rlsv_v1'
-      - MYSQL_USERNAME='uat'
-      - MYSQL_PASSWORD='Uatvtcode@2022'
-      - MONGODB_URL='mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product'
-      - MONGODB_HOST='103.154.176.80'
+      - MYSQL_DATABASE_NAME=hcmue_rlsv_v1
+      - MYSQL_USERNAME=uat
+      - MYSQL_PASSWORD=Uatvtcode@2022
+      
+      - MONGODB_URL=mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product
+      
+      - MONGODB_HOST=103.154.176.80
       - MONGODB_PORT=27072
-      - MONGODB_USERNAME='adminYouth'
-      - MONGODB_PASSWORD='adminYouth2022'
-      - MOGODB_DATABASE_NAME='youth-app-product'
+      - MONGODB_USERNAME=adminYouth
+      - MONGODB_PASSWORD=adminYouth2022
+      - MOGODB_DATABASE_NAME=youth-app-product
+
       - BACKGROUND_JOB_SERVICE_HOST=rabbitmq
       - BACKGROUND_JOB_SERVICE_PORT=5672
+
       - COMPOSER_SERVICE_HOST=rabbitmq
       - COMPOSER_SERVICE_PORT=5672
+      
       - MAX_TIMES=3
     networks:
       - net-hcmue
@@ -80,21 +85,26 @@ services:
     image: hoanglong1011/hcmue-composer:1.1
     environment:
       - NODE_ENV=development
-      - MYSQL_HOST='103.154.176.80'
+      - MYSQL_HOST=103.154.176.80
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE_NAME='hcmue_rlsv_v1'
-      - MYSQL_USERNAME='uat'
-      - MYSQL_PASSWORD='Uatvtcode@2022'
-      - MONGODB_URL='mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product'
-      - MONGODB_HOST='103.154.176.80'
+      - MYSQL_DATABASE_NAME=hcmue_rlsv_v1
+      - MYSQL_USERNAME=uat
+      - MYSQL_PASSWORD=Uatvtcode@2022
+      
+      - MONGODB_URL=mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product
+      
+      - MONGODB_HOST=103.154.176.80
       - MONGODB_PORT=27072
-      - MONGODB_USERNAME='adminYouth'
-      - MONGODB_PASSWORD='adminYouth2022'
-      - MOGODB_DATABASE_NAME='youth-app-product'
+      - MONGODB_USERNAME=adminYouth
+      - MONGODB_PASSWORD=adminYouth2022
+      - MOGODB_DATABASE_NAME=youth-app-product
+
       - BACKGROUND_JOB_SERVICE_HOST=rabbitmq
       - BACKGROUND_JOB_SERVICE_PORT=5672
+
       - COMPOSER_SERVICE_HOST=rabbitmq
       - COMPOSER_SERVICE_PORT=5672
+
       - MAX_TIMES=3
     networks:
       - net-hcmue
@@ -129,20 +139,27 @@ services:
     container_name: hcmue-schedule-service
     image: hoanglong1011/hcmue-schedule:1.1
     environment:
-      - NODE_ENV=development
-      - MYSQL_HOST='103.154.176.80'
+      - NODE_ENV=development      
+      - MYSQL_HOST=103.154.176.80
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE_NAME='hcmue_rlsv_v1'
-      - MYSQL_USERNAME='uat'
-      - MYSQL_PASSWORD='Uatvtcode@2022'
-      - MONGODB_URL='mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product'
-      - MONGODB_HOST='103.154.176.80'
+      - MYSQL_DATABASE_NAME=hcmue_rlsv_v1
+      - MYSQL_USERNAME=uat
+      - MYSQL_PASSWORD=Uatvtcode@2022
+      
+      - MONGODB_URL=mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product
+      
+      - MONGODB_HOST=103.154.176.80
       - MONGODB_PORT=27072
-      - MONGODB_USERNAME='adminYouth'
-      - MONGODB_PASSWORD='adminYouth2022'
-      - MOGODB_DATABASE_NAME='youth-app-product'
+      - MONGODB_USERNAME=adminYouth
+      - MONGODB_PASSWORD=adminYouth2022
+      - MOGODB_DATABASE_NAME=youth-app-product
+
+      - BACKGROUND_JOB_SERVICE_HOST=rabbitmq
+      - BACKGROUND_JOB_SERVICE_PORT=5672
+
       - COMPOSER_SERVICE_HOST=rabbitmq
       - COMPOSER_SERVICE_PORT=5672
+
       - GENERATE_CREATE_SHEETS_CRON_JOB_TIME='0 0 0 * * *'
       - UPDATE_STATUS_SHEETS_CRON_JOB_TIME='0 0 0 * * *'
       - UNLINK_FILES_CRON_JOB_TIME='0 0 2 * * *'
@@ -194,7 +211,7 @@ services:
       - MONGODB_PASSWORD=adminYouth2022
       - MOGODB_DATABASE_NAME=youth-app-product
     ports:
-      - "5033:3000"
+      - "5099:3000"
     networks:
       - net-hcmue
     volumes:

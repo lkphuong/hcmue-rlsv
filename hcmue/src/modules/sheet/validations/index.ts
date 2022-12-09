@@ -119,37 +119,39 @@ export const validateUserId = (id: string, req: Request) => {
   return null;
 };
 
-export const validateMark = (
-  mark: number,
-  from_mark: number,
-  to_mark: number,
-  req: Request,
-) => {
-  if (from_mark != 0 && to_mark != 0) {
-    if (mark > to_mark || mark < from_mark) {
+export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
+  if (
+    item.control === ItemControl.INPUT ||
+    item.control === ItemControl.SINGLE_SELECT
+  ) {
+    if (mark > item.to_mark || mark < item.from_mark) {
       //#region throw HandlerException
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_FORMAT,
         req.method,
         req.url,
-        sprintf(ErrorMessage.RANGE_MARK_INVALID_FORMAT, from_mark, to_mark),
+        sprintf(
+          ErrorMessage.RANGE_MARK_INVALID_FORMAT,
+          item.from_mark,
+          item.to_mark,
+        ),
         HttpStatus.BAD_REQUEST,
       );
       //#endregion
     }
-  } else if (from_mark != 0 && from_mark < mark) {
-    //#region throw HandlerException
-    return new HandlerException(
-      VALIDATION_EXIT_CODE.INVALID_FORMAT,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.SINGLE_MARK_INVALID_FORMAT, from_mark),
-      HttpStatus.BAD_REQUEST,
-    );
-    //#endregion
+  } else if (item.control === ItemControl.CHECKBOX) {
+    if (item.mark !== mark) {
+      //#region throw HandlerException
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.INVALID_FORMAT,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.CHECKBOX_MARK_INVALID_FORMAT, item.mark),
+        HttpStatus.BAD_REQUEST,
+      );
+      //#endregion
+    }
   }
-
-  return null;
 };
 
 export const validateStudentRole = async (

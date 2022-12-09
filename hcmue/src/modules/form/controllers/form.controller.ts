@@ -183,7 +183,6 @@ export class FormController {
         status,
       );
       //#endregion
-
       if (forms && forms.length > 0) {
         //#region Generate response
         return await generateFormsResponse(pages, page, forms, req);

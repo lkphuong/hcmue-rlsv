@@ -20,6 +20,7 @@ import {
   validateFormPubishStatus,
   validateHeader,
   validateMaxMarkHeaderByForm,
+  validateRequiredOption,
   validateSemester,
   validateTime,
 } from '../validations';
@@ -293,7 +294,7 @@ export const createItem = async (
   req: Request,
 ): Promise<HttpResponse<ItemResponse> | HttpException> => {
   //#region Get params
-  const { form_id, title_id } = params;
+  const { form_id, title_id, control, options } = params;
   //#endregion
 
   //#region Validation
@@ -305,6 +306,11 @@ export const createItem = async (
   //#region Validate title
   const title = await valiadteTitle(title_id, title_service, req);
   if (title instanceof HttpException) return title;
+  //#endregion
+
+  //#region Validate required option
+  const valid_option = validateRequiredOption(control, options, req);
+  if (valid_option instanceof HttpException) return valid_option;
   //#endregion
   //#endregion
 
@@ -640,7 +646,7 @@ export const updateItem = async (
   req: Request,
 ): Promise<HttpResponse<ItemResponse> | HttpException> => {
   //#region Get params
-  const { form_id, title_id } = params;
+  const { form_id, title_id, control, options } = params;
   //#endregion
 
   //#region Validation
@@ -662,6 +668,11 @@ export const updateItem = async (
   //#region Validate item
   let item = await valiadteItem(item_id, item_service, req);
   if (item instanceof HttpException) return item;
+  //#endregion
+
+  //#region Validate require option
+  const valid_option = validateRequiredOption(control, options, req);
+  if (valid_option instanceof HttpException) return valid_option;
   //#endregion
   //#endregion
 

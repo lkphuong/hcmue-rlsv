@@ -17,7 +17,7 @@ export enum ErrorMessage {
   SHEET_NOT_FOUND_ERROR = 'Phiếu không tồn tại (id: %s).',
   STUDENT_NOT_FOUND_ERROR = 'Sinh viên không tồn tại (id: %s).',
 
-  SINGLE_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] tối đa là [%s].',
+  CHECKBOX_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] không hợp lệ. Giá trị [điểm đánh giá] phải bằng [%s].',
   RANGE_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] tối thiểu [%s] & tối đa là [%s].',
 
   OUT_OF_EVALUATE_TIME_ERROR = 'Bạn đã quá hạn đánh giá (level: %s, time: %s).',

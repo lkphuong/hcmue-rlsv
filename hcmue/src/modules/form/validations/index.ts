@@ -7,8 +7,7 @@ import { sprintf } from '../../../utils';
 import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
 
-import { ItemDto } from '../dtos/item.dto';
-import { HeaderDto } from '../dtos/header.dto';
+import { ItemDto, OptionDto } from '../dtos/item.dto';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { FormService } from '../services/form.service';
@@ -27,8 +26,8 @@ import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import { ItemControl } from 'src/modules/item/constants/enums/controls.enum';
-import { ItemCategory } from 'src/modules/item/constants/enums/categories.enum';
+import { ItemControl } from '../../item/constants/enums/controls.enum';
+import { ItemCategory } from '../../item/constants/enums/categories.enum';
 
 export const validateFormId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -504,4 +503,37 @@ export const validateMaxMarkHeaderByForm = async (
     }
     //#endregion
   }
+};
+
+export const validateRequiredOption = (
+  control: number,
+  option: OptionDto[] | null,
+  req: Request,
+) => {
+  if (
+    control === ItemControl.SINGLE_SELECT &&
+    (!option || option.length === 0)
+  ) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      ErrorMessage.OPTION_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (
+    control !== ItemControl.SINGLE_SELECT &&
+    option &&
+    option.length > 0
+  ) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      ErrorMessage.ITEM_NOT_CONFIG_OPTION_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
 };

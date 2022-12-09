@@ -489,12 +489,7 @@ export const generateUpdateStudentEvaluation = async (
           //#endregion
 
           //#region Validate mark evaluation
-          const valid = validateMark(
-            j.personal_mark_level,
-            item.from_mark,
-            item.to_mark,
-            req,
-          );
+          const valid = validateMark(item, j.personal_mark_level, req);
 
           if (valid instanceof HttpException) return valid;
           //#endregion
@@ -734,12 +729,7 @@ export const generateUpdateClassEvaluation = async (
           //#endregion
 
           //#region Validate mark evaluation
-          const valid = validateMark(
-            j.class_mark_level,
-            item.from_mark,
-            item.to_mark,
-            req,
-          );
+          const valid = validateMark(item, j.class_mark_level, req);
 
           if (valid instanceof HttpException) return valid;
           //#endregion
@@ -850,12 +840,7 @@ export const generateUpdateDepartmentEvaluation = async (
           //#endregion
 
           //#region Validate mark evaluation
-          const valid = validateMark(
-            j.department_mark_level,
-            item.from_mark,
-            item.to_mark,
-            req,
-          );
+          const valid = validateMark(item, j.department_mark_level, req);
 
           if (valid instanceof HttpException) return valid;
           //#endregion

@@ -16,35 +16,45 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 
 	//#region Event
 	const onChangeRange = (item_id, min, max) => (e) => {
-		let value = Number(e.target.value);
+		if (e.target.value === '') {
+			setScore('');
+			return;
+		} else {
+			let value = Number(e.target.value);
 
-		if (isNaN(value)) value = 0;
-		if (value > max) value = max;
-		if (value < min) value = min;
+			if (isNaN(value)) value = 0;
+			if (value > max) value = max;
+			if (value < min) value = min;
 
-		const markObj = {
-			item_id: Number(item_id),
-			class_mark_level: value,
-			header_id,
-		};
+			const markObj = {
+				item_id: Number(item_id),
+				class_mark_level: value,
+				header_id,
+			};
 
-		setScore(value);
-		dispatch(actions.updateMarks(markObj));
+			setScore(value);
+			dispatch(actions.updateMarks(markObj));
+		}
 	};
 
 	const onChangeMark = (item_id, mark) => (e) => {
-		let value = Number(e.target.value);
+		if (e.target.value === '') {
+			setScore('');
+			return;
+		} else {
+			let value = Number(e.target.value);
 
-		if (isNaN(value)) value = 0;
+			if (isNaN(value)) value = 0;
 
-		const markObj = {
-			item_id: Number(item_id),
-			class_mark_level: value,
-			header_id,
-		};
+			const markObj = {
+				item_id: Number(item_id),
+				class_mark_level: value,
+				header_id,
+			};
 
-		setScore(value);
-		dispatch(actions.updateMarks(markObj));
+			setScore(value);
+			dispatch(actions.updateMarks(markObj));
+		}
 	};
 	//#endregion
 

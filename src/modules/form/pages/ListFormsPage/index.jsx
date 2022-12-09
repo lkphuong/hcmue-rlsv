@@ -9,7 +9,7 @@ import { ROUTES } from '_constants/routes';
 
 import { getForms } from '_api/form.api';
 
-import { isSuccess, isEmpty } from '_func/';
+import { isSuccess, isEmpty, isFalsy } from '_func/';
 
 import { CPagination } from '_controls/';
 
@@ -39,7 +39,8 @@ const ListFormsPage = () => {
 		if (!_filter?.semester_id) {
 			delete _filter.semester_id;
 		}
-		if (!_filter?.status) {
+
+		if (isFalsy(_filter.status)) {
 			_filter.status = -1;
 		}
 

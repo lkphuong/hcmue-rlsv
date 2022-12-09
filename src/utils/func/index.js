@@ -2,6 +2,11 @@ export function isSuccess(response) {
 	return response?.status?.toString()[0] === '2';
 }
 
+// *Accept value 0
+export function isFalsy(value) {
+	return value === undefined || value === null || isNaN(value);
+}
+
 export function isEmpty(response) {
 	return response?.status?.toString() === '404' && response?.errorCode?.toString() === '4008';
 }

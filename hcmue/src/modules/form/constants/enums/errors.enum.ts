@@ -31,6 +31,7 @@ export enum ErrorMessage {
   TITLE_NOT_FOUND_ERROR = '[Tiêu chí đánh giá] không tồn tại (id: %s)',
 
   TIME_NAN_ERROR = '[Thời gian] không hợp lệ.',
+  INVALID_TIME_ERROR = '[Thời gian bắt đầu] và [thời gian kết thúc] tối thiểu 1 ngày.',
 
   ACADEMIC_YEAR_NOT_FOUND_ERROR = '[Niên khóa] không tồn tại (id: %s)',
   SEMESTER_NOT_FOUND_ERROR = '[Học kì] không tồn tại (id: %s)',

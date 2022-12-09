@@ -14,7 +14,7 @@ export const SCHEDULE_SERVICE_PORT = 9093;
 export const BACKGROUND_JOB_QUEUE = 'hcmue_background_job_queue';
 export const COMPOSER_QUEUE = 'hcmue_composer_queue';
 
-export const APP_PREFIX = 'assets';
+export const APP_PREFIX = 'hcmue';
 export const UPLOAD_DEST = 'uploads';
 
 export const LOG_PATH = './logs';

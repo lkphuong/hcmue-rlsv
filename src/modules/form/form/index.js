@@ -63,7 +63,8 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end)) return false;
+					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end, 'date'))
+						return false;
 
 					return true;
 				})
@@ -76,7 +77,11 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isBefore(parent.start)) return false;
+					if (
+						dayjs(value).isBefore(parent.start) ||
+						dayjs(value).isSame(parent.start, 'date')
+					)
+						return false;
 
 					return true;
 				})
@@ -94,7 +99,8 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end)) return false;
+					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end, 'date'))
+						return false;
 
 					return true;
 				})
@@ -107,7 +113,11 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isBefore(parent.start)) return false;
+					if (
+						dayjs(value).isBefore(parent.start) ||
+						dayjs(value).isSame(parent.start, 'date')
+					)
+						return false;
 
 					return true;
 				})
@@ -125,7 +135,8 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end)) return false;
+					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end, 'date'))
+						return false;
 
 					return true;
 				})
@@ -138,7 +149,11 @@ export const validationSchema = yup.object({
 				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
 					const { parent } = context;
 
-					if (dayjs(value).isBefore(parent.start)) return false;
+					if (
+						dayjs(value).isBefore(parent.start) ||
+						dayjs(value).isSame(parent.start, 'date')
+					)
+						return false;
 
 					return true;
 				})
@@ -230,7 +245,7 @@ export const validationItem = yup.object({
 						.required('Vui lòng nhập chi tiết tiêu chí.'),
 					mark: yup
 						.number('Giá trị điểm của tiêu chí phải là số.')
-						.moreThan(0, 'Giá trị điểm của tùy chọn phải lớn hơn 0.')
+						// .moreThan(0, 'Giá trị điểm của tùy chọn phải lớn hơn 0.')
 						.typeError('Giá trị điểm của tiêu chí phải là số.')
 						.required('Vui lòng nhập điểm cho tiêu chí.'),
 				})

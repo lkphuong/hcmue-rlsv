@@ -21,15 +21,10 @@ export default {
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
-  ACCESS_SECRET_KEY: 'hcmue-rlsv@2022',
-  REFRESH_SECRET_KEY: '@dm1nSp@ce123',
-  ACCESS_TOKEN_EXPIRESIN: '1d',
-  REFRESH_TOKEN_EXPIRESIN: '30 days',
-  ITEMS_PER_PAGE: 10,
+  MULTER_DEST: './static/uploads',
+  IMAGE_PATH: './static/resources',
 
-  MULTER_DEST: '../../../../hcmue/static/uploads',
-
-  GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 * * * * *',
-  UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 * * * * *',
-  UNLINK_FILES_CRON_JOB_TIME: '0 2 * * * *',
+  GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 0 0 * * *',
+  UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 0 0 * * *',
+  UNLINK_FILES_CRON_JOB_TIME: '0 0 2 * * *',
 };

@@ -6,6 +6,7 @@ import { Box, Button, Container } from '@mui/material';
 import { getFormById, getHeadersByFormId, publishForm, unpublishForm } from '_api/form.api';
 
 import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 import { ERRORS } from '_constants/messages';
 
@@ -13,7 +14,7 @@ import { actions } from '_slices/form.slice';
 
 import HeaderItem from './HeaderItem';
 
-const SettingItem = memo(({ updateStep }) => {
+const SettingItem = memo(() => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 	const status = useSelector((state) => state.form.status, shallowEqual);

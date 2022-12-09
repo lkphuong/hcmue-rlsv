@@ -97,7 +97,7 @@ const StudentListPage = () => {
 		<Box>
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5}>
+					<Typography fontSize={20} p={1.5} fontWeight={600}>
 						Danh sách điểm rèn luyện lớp {class_name}
 					</Typography>
 				</Paper>

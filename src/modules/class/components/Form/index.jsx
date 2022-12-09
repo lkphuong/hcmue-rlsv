@@ -80,6 +80,23 @@ const Form = ({ data, status }) => {
 			throw error;
 		}
 	};
+
+	const handleDeny = () => {
+		alert.question({
+			onConfirm: async () => {
+				const res = await updateClassSheets(data.id, { role_id, graded: 0 });
+
+				if (isSuccess(res)) {
+					dispatch(actions.clearMarks());
+
+					alert.success({ text: 'Cập nhật không xếp loại cho sinh viên thành công.' });
+
+					navigate(ROUTES.CLASS_SCORE, { replace: true });
+				}
+			},
+			text: 'Bạn chắc chắn điều chỉnh sinh viên này thành không xếp loại.',
+		});
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -148,6 +165,9 @@ const Form = ({ data, status }) => {
 			</ClassMarksContext.Provider>
 
 			<Box textAlign='center' mt={3}>
+				<Button variant='contained' onClick={handleDeny} color='error' sx={{ mr: 1 }}>
+					Không xếp loại
+				</Button>
 				<Button variant='contained' onClick={handleUpdate}>
 					Cập nhật
 				</Button>

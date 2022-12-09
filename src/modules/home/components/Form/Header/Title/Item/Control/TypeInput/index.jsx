@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import { Grid, Typography } from '@mui/material';
 
@@ -9,7 +9,6 @@ import { CInput } from '_controls/';
 
 const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark, header_id }) => {
 	//#region Data
-	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const [score, setScore] = useState(initialMark);
 
@@ -63,7 +62,6 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 			<Grid item xs={1.2} textAlign='center'>
 				{category === 1 ? (
 					<CInput
-						disabled={role_id !== 0}
 						fullWidth
 						type='number'
 						inputProps={{ min, max, style: { textAlign: 'center' } }}
@@ -72,7 +70,6 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 					/>
 				) : (
 					<CInput
-						disabled={role_id !== 0}
 						fullWidth
 						type='number'
 						inputProps={{ step: mark, style: { textAlign: 'center' } }}

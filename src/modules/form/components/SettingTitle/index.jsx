@@ -6,6 +6,7 @@ import { Box, Button, Container } from '@mui/material';
 import { getFormById, getHeadersByFormId, publishForm, unpublishForm } from '_api/form.api';
 
 import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 import { ERRORS } from '_constants/messages';
 

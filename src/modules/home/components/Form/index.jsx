@@ -130,7 +130,7 @@ const Form = ({ data }) => {
 			</Grid>
 
 			<StudentMarksContext.Provider value={{ itemsMark }}>
-				<Grid container mt={0.5} alignItems='stretch' className='grid-fake-table'>
+				<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
 					{data?.headers?.length > 0 &&
 						data.headers.map((e, i) => (
 							<Header key={i} data={e} sheetId={data?.id} index={i + 1} />

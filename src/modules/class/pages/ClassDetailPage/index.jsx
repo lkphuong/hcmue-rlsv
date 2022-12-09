@@ -48,16 +48,13 @@ const ClassDetailPage = () => {
 	//#region Render
 	return data ? (
 		<Box>
-			<Typography
-				borderRadius={1}
-				p={2}
-				mb={2}
-				fontWeight={700}
-				fontSize={20}
-				sx={{ backgroundColor: 'rgba(0 0 0 / 15%)' }}
-			>
-				{`${data?.user?.fullname} - ${data?.user?.std_code}`}
-			</Typography>
+			<Box mb={1.5}>
+				<Paper className='paper-wrapper'>
+					<Typography fontSize={20} p={1.5} fontWeight={600}>
+						{`${data?.user?.fullname} - ${data?.user?.std_code}`}
+					</Typography>
+				</Paper>
+			</Box>
 
 			<Paper className='paper-wrapper'>
 				<Box p={1.5}>{data && <Form data={data} status={data?.status} />}</Box>

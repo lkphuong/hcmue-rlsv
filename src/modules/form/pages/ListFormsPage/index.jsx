@@ -69,7 +69,7 @@ const ListFormsPage = () => {
 		<Box>
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5}>
+					<Typography fontSize={20} p={1.5} fontWeight={600}>
 						Lịch sử biểu mẫu đánh giá kết quả rèn luyện
 					</Typography>
 				</Paper>

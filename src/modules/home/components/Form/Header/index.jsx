@@ -49,59 +49,54 @@ const Header = memo(({ data, index, sheetId }) => {
 
 	//#region Render
 	return (
-		<>
-			<Accordion sx={{ width: '100%' }} expanded={open} onChange={toggle}>
-				<AccordionSummary sx={{ p: 0, '& .MuiAccordionSummary-content': { margin: 0 } }}>
-					<Grid
-						item
-						xs={1}
-						textAlign='center'
-						display='flex'
-						alignItems='center'
-						justifyContent='center'
-						fontWeight={600}
-						sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}
-					>
-						{index}
-					</Grid>
+		<Accordion sx={{ width: '100%' }} expanded={open} onChange={toggle}>
+			<AccordionSummary sx={{ p: 0, '& .MuiAccordionSummary-content': { margin: 0 } }}>
+				<Grid
+					item
+					xs={1}
+					textAlign='center'
+					display='flex'
+					alignItems='center'
+					justifyContent='center'
+					fontWeight={600}
+					sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}
+				>
+					{index}
+				</Grid>
 
-					<Grid item xs={11} sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}>
-						<Grid container alignItems='center' spacing={1}>
-							<Grid item xs={6.4}>
-								<Typography
-									fontWeight={600}
-									fontSize={20}
-								>{`${data.name}`}</Typography>
-							</Grid>
-							<Grid item xs={2} textAlign='center'>
-								<Typography>Tối đa {data?.max_mark} điểm</Typography>
-							</Grid>
+				<Grid item xs={11} sx={{ backgroundColor: 'rgb(206 206 206 / 20%)' }}>
+					<Grid container alignItems='center' spacing={1}>
+						<Grid item xs={6.4}>
+							<Typography fontWeight={600} fontSize={20}>{`${data.name}`}</Typography>
+						</Grid>
+						<Grid item xs={2} textAlign='center'>
+							<Typography>Tối đa {data?.max_mark} điểm</Typography>
+						</Grid>
 
-							<Grid item xs={true} textAlign='right'>
-								<IconButton onClick={toggle}>
-									{open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-								</IconButton>
-							</Grid>
+						<Grid item xs={true} textAlign='right'>
+							<IconButton onClick={toggle}>
+								{open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+							</IconButton>
 						</Grid>
 					</Grid>
-				</AccordionSummary>
+				</Grid>
+			</AccordionSummary>
 
-				<AccordionDetails sx={{ p: 0 }}>
-					<Grid container>
-						{titles.length > 0 &&
-							titles.map((e, i) => (
-								<Title
-									key={i}
-									data={e}
-									sheetId={sheetId}
-									index={i + 1}
-									headerId={data.id}
-								/>
-							))}
-					</Grid>
-				</AccordionDetails>
-			</Accordion>
-		</>
+			<AccordionDetails sx={{ p: 0 }}>
+				<Grid container>
+					{titles.length > 0 &&
+						titles.map((e, i) => (
+							<Title
+								key={i}
+								data={e}
+								sheetId={sheetId}
+								index={i + 1}
+								headerId={data.id}
+							/>
+						))}
+				</Grid>
+			</AccordionDetails>
+		</Accordion>
 	);
 	//#endregion
 });

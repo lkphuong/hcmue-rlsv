@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 
 import { isSuccess } from '_func/';
 
@@ -38,21 +38,20 @@ const Title = memo(({ data, headerId }) => {
 	//#region Render
 	return (
 		<>
-			<Grid container alignItems='center' spacing={1.2}>
-				<Grid item xs={6.4}>
-					<Typography
-						fontWeight={500}
-						fontStyle='oblique'
-						sx={{ textDecoration: 'underline' }}
-					>
-						{data.name}
-					</Typography>
+			<Grid item xs={1} mt={1.5} borderTop='1px solid rgb(0 0 0 / 10%)' />
+			<Grid item xs={11} mt={1.5} padding='10px' borderTop='1px solid rgb(0 0 0 / 10%)'>
+				<Grid container alignItems='center' spacing={1.2}>
+					<Grid item xs={12}>
+						<Box>
+							<Typography fontWeight={500} fontStyle='oblique' fontSize={16}>
+								{data.name}
+							</Typography>
+						</Box>
+					</Grid>
 				</Grid>
-
-				{items.length > 0 &&
-					items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
 			</Grid>
-			<Divider sx={{ my: 2 }} />
+
+			{items.length > 0 && items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
 		</>
 	);
 	//#endregion

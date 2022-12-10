@@ -266,6 +266,7 @@ export const generateData2Object = async (
         const item: BaseResponse = {
           id: header.id,
           name: header.name,
+          max_mark: header.max_mark,
         };
         payload.headers.push(item);
       }

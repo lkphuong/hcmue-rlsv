@@ -1,6 +1,7 @@
 export interface BaseResponse {
   id: number | string;
   name: string;
+  max_mark?: number;
 }
 
 export interface UserResponse {

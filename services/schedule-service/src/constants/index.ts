@@ -20,6 +20,17 @@ export const UPLOAD_DEST = 'uploads';
 export const LOG_PATH = './logs';
 export const LOG_RETENTION_DURATION = 31;
 
+export const TTL = 120;
+export const NO_ACK_QUEUE = 0;
+export const PERSISTENT_QUEUE = 1;
+export const PREFETCH_COUNT_QUEUE = 1;
+export const DURABLE_QUEUE_OPTION = 1;
+export const QUEUE_EXPIRED_ARGUMENT = 1800000;
+export const QUEUE_TYPE_ARGUMENT = 'quorum';
+export const MAX_LENGTH_ARGUMENT = 1000; // maximum number of messages in queue
+export const MESSAGE_TTL_ARGUMENT = 60000; // 60s
+export const OVERFLOW_ARGUMENT = 'reject-publish';
+
 export const SPECIAL_ALPHABEL_REGEX = /[ `!@#$%^&*()+=\[\]{};':"\\|,.<>\/?~]/;
 export const NORMAL_ALPHABEL_REGEX = /^[A-Za-z0-9-_\s]+$/;
 

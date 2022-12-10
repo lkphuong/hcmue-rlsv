@@ -42,10 +42,6 @@ export const overflow = process.env.OVERFLOW_ARGUMENT || OVERFLOW_ARGUMENT;
 
 export const moduleName = COMPOSER_MODULE;
 
-console.log('host: ', host);
-console.log('port: ', port);
-console.log('queueName: ', queueName);
-
 export const composerFactory = {
   urls: [`amqp://${host}:${port}`],
   queue: queueName,

@@ -4,6 +4,7 @@ import { ClientProxy } from '@nestjs/microservices';
 
 import * as config from 'config';
 
+import { handleLog } from '../../utils';
 import { send } from '../../funcs';
 
 import { ConfigurationService } from '../../../shared/services/configuration/configuration.service';
@@ -18,7 +19,6 @@ import { Crons } from '../../constants/enums/crons.enum';
 import { Pattern } from '../../../../constants/enums/pattern.enum';
 
 import { BACKGROUND_JOB_MODULE } from '../../../../constants';
-import { handleLog } from '../../utils';
 
 const CRON_JOB_TIME =
   process.env['UPDATE_STATUS_SHEETS_CRON_JOB_TIME'] ||

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
@@ -14,6 +14,8 @@ import { getAcademicYears, getSemesters, getAllDepartments } from '_api/options.
 import { isSuccess } from '_func/';
 
 import { ROUTES } from '_constants/routes';
+
+import { SuspenseLoading } from '_others/';
 
 import CHeader from './CHeader';
 import CSidebar from './CSidebar';
@@ -140,7 +142,9 @@ export const CMainLayout = () => {
 			<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
 			<Main theme={theme} open={leftDrawerOpened}>
-				<Outlet />
+				<Suspense fallback={<SuspenseLoading />}>
+					<Outlet />
+				</Suspense>
 			</Main>
 		</Box>
 	) : (

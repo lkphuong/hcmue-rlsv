@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -58,15 +58,13 @@ function App() {
 	return (
 		<StyledEngineProvider injectFirst>
 			<ThemeProvider theme={theme()}>
-				<Suspense fallback={<SuspenseLoading />}>
-					<LocalizationProvider dateAdapter={AdapterDayjs}>
-						<AbilityContext.Provider value={ability}>
-							<div className='App'>
-								<RouterProvider router={router} />
-							</div>
-						</AbilityContext.Provider>
-					</LocalizationProvider>
-				</Suspense>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<AbilityContext.Provider value={ability}>
+						<div className='App'>
+							<RouterProvider router={router} />
+						</div>
+					</AbilityContext.Provider>
+				</LocalizationProvider>
 			</ThemeProvider>
 		</StyledEngineProvider>
 	);

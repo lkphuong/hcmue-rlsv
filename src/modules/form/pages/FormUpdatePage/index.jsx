@@ -5,8 +5,9 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import {
 	Avatar,
 	Box,
+	Button,
 	ButtonBase,
-	CardContent,
+	Container,
 	Grid,
 	Paper,
 	Stack,
@@ -17,13 +18,25 @@ import {
 	Typography,
 	useTheme,
 } from '@mui/material';
+import {
+	ArrowBack,
+	ArrowForward,
+	CheckCircleOutline,
+	UnpublishedOutlined,
+} from '@mui/icons-material';
 
 import { ROUTES } from '_constants/routes';
 
 import { actions } from '_slices/form.slice';
 
 import { usePrompt } from '_hooks/';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
+
+import { getFormById, publishForm, unpublishForm } from '_api/form.api';
+
+import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
+
+import { ERRORS } from '_constants/messages';
 
 const SettingTime = lazy(() => import('_modules/form/components/SettingTime'));
 const SettingHeader = lazy(() => import('_modules/form/components/SettingHeader'));
@@ -42,6 +55,7 @@ const FormUpdatePage = () => {
 	const { form_id } = useParams();
 
 	const _step = useSelector((state) => state.form.step, shallowEqual);
+	const status = useSelector((state) => state.form.status, shallowEqual);
 
 	const [step, setStep] = useState(_step || 0);
 
@@ -73,6 +87,52 @@ const FormUpdatePage = () => {
 	const onForward = () => setStep((prev) => prev + 1);
 
 	const onStepChange = (step) => () => setStep(step);
+
+	const handlePublish = () => {
+		alert.warning({
+			onConfirm: async () => {
+				const res = await publishForm(form_id);
+
+				if (isSuccess(res)) {
+					alert.success({ text: 'Phát hành biểu mẫu thành công.' });
+
+					const _res = await getFormById(form_id);
+
+					if (isSuccess(_res)) {
+						const { status } = _res.data;
+
+						dispatch(actions.setStatus(status));
+					}
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+			title: 'Phát hành',
+		});
+	};
+
+	const handleUnpublish = () => {
+		alert.warning({
+			onConfirm: async () => {
+				const res = await unpublishForm(form_id);
+
+				if (isSuccess(res)) {
+					alert.success({ text: 'Hủy phát hành biểu mẫu thành công.' });
+
+					const _res = await getFormById(form_id);
+
+					if (isSuccess(_res)) {
+						const { status } = _res.data;
+
+						dispatch(actions.setStatus(status));
+					}
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+			title: 'Hủy phát hành',
+		});
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -138,7 +198,7 @@ const FormUpdatePage = () => {
 			<Grid container>
 				<Grid item xs={12}>
 					<Paper className='paper-wrapper'>
-						<CardContent sx={{ backgroundColor: 'rgb(247 246 255)' }}>
+						<Box p={1.5}>
 							<Stepper nonLinear activeStep={step} alternativeLabel>
 								{STEPS.map((label, index) => (
 									<Step key={label} completed>
@@ -149,9 +209,36 @@ const FormUpdatePage = () => {
 								))}
 							</Stepper>
 
-							<Typography fontWeight={600} fontSize={20} align='center' mt={3} mb={5}>
+							<Typography fontWeight={600} fontSize={24} align='center' mt={3} mb={4}>
 								PHIẾU ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN
 							</Typography>
+
+							{step !== 0 && (
+								<Container maxWidth='lg'>
+									{status === 0 && (
+										<Box py={1.5}>
+											<Button
+												variant='contained'
+												endIcon={<CheckCircleOutline />}
+												onClick={handlePublish}
+											>
+												Phát hành
+											</Button>
+										</Box>
+									)}
+									{status === 1 && (
+										<Box py={1.5}>
+											<Button
+												variant='contained'
+												endIcon={<UnpublishedOutlined />}
+												onClick={handleUnpublish}
+											>
+												Hủy phát hành
+											</Button>
+										</Box>
+									)}
+								</Container>
+							)}
 
 							{currentStage}
 
@@ -194,7 +281,7 @@ const FormUpdatePage = () => {
 									</Avatar>
 								</ButtonBase>
 							</Stack>
-						</CardContent>
+						</Box>
 					</Paper>
 				</Grid>
 			</Grid>

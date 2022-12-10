@@ -20,9 +20,6 @@ export default function componentStyleOverrides(theme) {
 				root: {
 					fontWeight: 600,
 					borderRadius: '4px',
-					'&.publish': {
-						backgroundColor: 'rgb(0 207 14)',
-					},
 				},
 			},
 		},
@@ -335,6 +332,9 @@ export default function componentStyleOverrides(theme) {
 						color: 'rgb(85, 105, 255)',
 						'&:hover': {
 							backgroundColor: 'rgb(208 206 244)',
+						},
+						'&.Mui-disabled': {
+							color: 'rgba(0, 0, 0, 0.26)',
 						},
 					},
 					'&.border-left': {

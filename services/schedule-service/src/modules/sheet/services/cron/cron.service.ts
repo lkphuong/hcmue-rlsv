@@ -2,29 +2,27 @@ import { Injectable, Inject } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { ClientProxy } from '@nestjs/microservices';
 
-import { catchError, map } from 'rxjs';
+import * as config from 'config';
 
-import { SheetEntity } from '../../../../entities/sheet.entity';
+import { send } from '../../funcs';
 
 import { ConfigurationService } from '../../../shared/services/configuration/configuration.service';
 import { SheetService } from '../sheet/sheet.service';
 import { LogService } from '../../../log/services/log.service';
 
-import { Configuration } from '../../../shared/constants/configuration.enum';
 import { ErrorMessage } from '../../constants/enums/errors.enum';
-import { Message } from '../../constants/enums/message.enum';
 
-import { Levels } from 'src/constants/enums/level.enum';
-import { Methods } from 'src/constants/enums/method.enum';
+import { Configuration } from '../../../shared/constants/configuration.enum';
 
-import {
-  UPDATE_STATUS_SHEETS_CRON_JOB_TIME,
-  BACKGROUND_JOB_MODULE,
-} from '../../../../constants';
+import { Crons } from '../../constants/enums/crons.enum';
+import { Pattern } from '../../../../constants/enums/pattern.enum';
 
-import { SheetPayload } from '../../interfaces/payloads/approval_payload.interface';
+import { BACKGROUND_JOB_MODULE } from '../../../../constants';
+import { handleLog } from '../../utils';
 
-let CRON_JOB_TIME = UPDATE_STATUS_SHEETS_CRON_JOB_TIME;
+const CRON_JOB_TIME =
+  process.env['UPDATE_STATUS_SHEETS_CRON_JOB_TIME'] ||
+  config.get('UPDATE_STATUS_SHEETS_CRON_JOB_TIME');
 
 @Injectable()
 export class CronService {
@@ -34,81 +32,50 @@ export class CronService {
     private readonly _configurationService: ConfigurationService,
     private readonly _sheetService: SheetService,
     private _logger: LogService,
-  ) {
-    CRON_JOB_TIME = this._configurationService.get(
-      Configuration.UPDATE_STATUS_SHEETS_CRON_JOB_TIME,
-    );
-  }
+  ) {}
 
   @Cron(CRON_JOB_TIME)
   async schedule() {
     try {
       console.log('----------------------------------------------------------');
+      console.log(
+        `${Pattern.CRON_JOB_PATTERN}: /${Crons.UPDATE_SHEETS_STATUS_CRON_JOB}`,
+      );
       console.log('Cron time: ', CRON_JOB_TIME);
 
-      //#region Count Sheets
+      //#region Count sheets
       const count = await this._sheetService.countSheets();
+      console.log('sheets: ', count);
       //#endregion
 
-      console.log('count: ', count);
-
-      if (count) {
-        //#region
+      if (count > 0) {
+        //#region Get pages
         const itemsPerPage = parseInt(
           this._configurationService.get(Configuration.ITEMS_PER_PAGE),
         );
 
         const pages = Math.ceil(count / itemsPerPage);
-
         //#endregion
 
+        //#region Paging
         for (let i = 0; i < pages; i++) {
           const sheets = await this._sheetService.getSheetsPaging(
             i * itemsPerPage,
             itemsPerPage,
           );
 
-          this.send(sheets);
+          send(sheets, this._backgroundClient);
         }
+        //#endregion
       } else {
         //#region Handle log
-        this._logger.writeLog(
-          Levels.ERROR,
-          Methods.SCHEDULE,
-          'CronService.schedule()',
-          ErrorMessage.NO_CONTENT,
-        );
+        handleLog(ErrorMessage.NO_CONTENT, this._logger);
         //#endregion
       }
     } catch (err) {
       //#region Handle log
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SCHEDULE,
-        'CronService.schedule()',
-        err,
-      );
+      handleLog(err.message, this._logger);
       //#endregion
     }
-  }
-
-  async send(results: SheetEntity[]): Promise<any> {
-    return new Promise<any>((resolve) => {
-      this._backgroundClient
-        .send<any, SheetPayload>(Message.GENERATE_UPDATE_APPROVED_STATUS, {
-          payload: {
-            data: results,
-          },
-        })
-        .pipe(
-          map((results) => {
-            return results;
-          }),
-          catchError(() => {
-            return null;
-          }),
-        )
-        .subscribe((result) => resolve(result));
-    });
   }
 }

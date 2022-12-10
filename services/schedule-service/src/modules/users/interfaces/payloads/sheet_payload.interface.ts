@@ -1,8 +1,8 @@
+import { AcademicYearEntity } from '../../../../entities/academic_year.entity';
 import { FormEntity } from '../../../../entities/form.entity';
 import { SemesterEntity } from '../../../../entities/semester.entity';
-import { AcademicYearEntity } from '../../../../entities/academic_year.entity';
 
-export interface SPayload {
+export interface SheetsPayload {
   payload: {
     data: SheetPayload[];
   };

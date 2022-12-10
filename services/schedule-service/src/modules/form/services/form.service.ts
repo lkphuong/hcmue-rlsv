@@ -32,7 +32,6 @@ export class FormService {
         .andWhere('form.deleted = :deleted', { deleted: false });
 
       const form = await conditions.getOne();
-
       return form || null;
     } catch (e) {
       this._logger.writeLog(
@@ -54,6 +53,7 @@ export class FormService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
+
       const result = await manager.update(
         FormEntity,
         { id: form_id },
@@ -63,7 +63,6 @@ export class FormService {
       return result.affected > 0;
     } catch (e) {
       this._logger.writeLog(Levels.ERROR, Methods.UPDATE, 'FormService', e);
-
       return null;
     }
   }

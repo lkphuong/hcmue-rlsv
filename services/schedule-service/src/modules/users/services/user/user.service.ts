@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-
 import { Model } from 'mongoose';
+
+import { UserDocument, User } from '../../../../schemas/user.schema';
 
 import { LogService } from '../../../log/services/log.service';
 
 import { Levels } from '../../../../constants/enums/level.enum';
 import { Methods } from '../../../../constants/enums/method.enum';
-
-import { UserDocument, User } from '../../../../schemas/user.schema';
 
 @Injectable()
 export class UserService {
@@ -20,7 +19,6 @@ export class UserService {
   async countUsers(): Promise<number> {
     try {
       const count = await this._userModel.count();
-
       return count || null;
     } catch (e) {
       this._logger.writeLog(
@@ -35,7 +33,6 @@ export class UserService {
 
   async getUsersPaging(offset: number, length: number): Promise<any> {
     try {
-      //const users = await this._userModel.find().skip(offset).limit(length);
       const users = await this._userModel.aggregate([
         {
           $lookup: {

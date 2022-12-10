@@ -1,23 +1,24 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 
+import * as config from 'config';
+
+import { generateData2Array } from '../../transform';
+import { handleLog } from '../../utils';
 import { unlinkFiles } from '../../funcs';
 
 import { ConfigurationService } from '../../../shared/services/configuration/configuration.service';
 import { FileService } from '../file/file.service';
 import { LogService } from '../../../log/services/log.service';
 
-import { generateData2Array } from '../../transform';
-
-import { Configuration } from '../../../shared/constants/configuration.enum';
-import { Crons } from '../../constants/enums/crons.enum';
-import { Levels } from '../../../../constants/enums/level.enum';
-import { Methods } from '../../../../constants/enums/method.enum';
-
 import { ErrorMessage } from '../../constants/enums/errors.enum';
 
-import { UNLINK_FILES_CRON_JOB_TIME } from '../../../../constants';
-let CRON_JOB_TIME = UNLINK_FILES_CRON_JOB_TIME;
+import { Crons } from '../../constants/enums/crons.enum';
+import { Pattern } from '../../../../constants/enums/pattern.enum';
+
+const CRON_JOB_TIME =
+  process.env['UNLINK_FILES_CRON_JOB_TIME'] ||
+  config.get('UNLINK_FILES_CRON_JOB_TIME');
 
 @Injectable()
 export class CronService {
@@ -25,17 +26,15 @@ export class CronService {
     private readonly _configurationService: ConfigurationService,
     private readonly _fileService: FileService,
     private _logger: LogService,
-  ) {
-    CRON_JOB_TIME = this._configurationService.get(
-      Configuration.UNLINK_FILES_CRON_JOB_TIME,
-    );
-  }
+  ) {}
 
   @Cron(CRON_JOB_TIME)
   async schedule() {
     try {
       console.log('----------------------------------------------------------');
-      console.log(`CronJobPattern: /${Crons.UNLINK_FILES_CRON_JOB}`);
+      console.log(
+        `${Pattern.CRON_JOB_PATTERN}: /${Crons.UNLINK_FILES_CRON_JOB}`,
+      );
       console.log('Cron time: ', CRON_JOB_TIME);
 
       const files = await this._fileService.getDraftedFiles();
@@ -53,33 +52,18 @@ export class CronService {
 
         if (!success) {
           //#region Handle log
-          this._logger.writeLog(
-            Levels.ERROR,
-            Methods.SCHEDULE,
-            Crons.UNLINK_FILES_CRON_JOB,
-            ErrorMessage.DRAFTED_FILES_NO_CONTENT_ERROR,
-          );
+          handleLog(ErrorMessage.UNLINK_DRAFTED_FILES_ERROR, this._logger);
           //#endregion
         }
         //#endregion
       } else {
         //#region Handle log
-        this._logger.writeLog(
-          Levels.LOG,
-          Methods.SCHEDULE,
-          Crons.UNLINK_FILES_CRON_JOB,
-          ErrorMessage.DRAFTED_FILES_NO_CONTENT_ERROR,
-        );
+        handleLog(ErrorMessage.DRAFTED_FILES_NO_CONTENT_ERROR, this._logger);
         //#endregion
       }
     } catch (err) {
       //#region Handle log
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SCHEDULE,
-        Crons.UNLINK_FILES_CRON_JOB,
-        err,
-      );
+      handleLog(err.message, this._logger);
       //#endregion
     }
   }

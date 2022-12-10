@@ -1,10 +1,12 @@
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { jwtFactory } from './factories/jwt.factory';
 import { mongoFactory } from './factories/mongo.factory';
 import { mysqlFactory } from './factories/mysql.factory';
+import { staticFactory } from './factories/static.factory';
 
 import { LogModule } from './modules/log/log.module';
 import { SharedModule } from './modules/shared/shared.module';
@@ -32,6 +34,11 @@ export const modules = [
     imports: [SharedModule],
     inject: [ConfigurationService],
     useFactory: jwtFactory,
+  }),
+  ServeStaticModule.forRootAsync({
+    imports: [SharedModule],
+    inject: [ConfigurationService],
+    useFactory: staticFactory,
   }),
   TypeOrmModule.forRootAsync({
     imports: [SharedModule],

@@ -5,6 +5,7 @@ export const NOTIFICATION_MODULE = 'NOTIFICATION_MODULE';
 export const REDIS_MODULE = 'REDIS_MODULE';
 export const SCHEDULE_MODULE = 'SCHEDULE_MODULE';
 
+export const STATIC_PATH = '../../../static';
 export const APP_PREFIX = 'hcmue';
 export const UPLOAD_DEST = 'uploads';
 

@@ -243,8 +243,17 @@ export class SheetController {
       const title = await this._itemService.contains(title_id, id);
 
       if (title && title.length > 0) {
+        const base_url = this._configurationService.get(
+          Configuration.BASE_URL,
+        ) as string;
         //#region Generate response
-        return await generateItemsResponse(role, title, this._fileService, req);
+        return await generateItemsResponse(
+          role,
+          title,
+          base_url,
+          this._fileService,
+          req,
+        );
         //#endregion
       } else {
         //#region throw HandlerException
@@ -314,10 +323,14 @@ export class SheetController {
       //#endregion
 
       if (evaluations && evaluations.length > 0) {
+        const base_url = this._configurationService.get(
+          Configuration.BASE_URL,
+        ) as string;
         //#region Generate response
         return await generateEvaluationsResponse(
           role,
           evaluations,
+          base_url,
           this._fileService,
           req,
         );

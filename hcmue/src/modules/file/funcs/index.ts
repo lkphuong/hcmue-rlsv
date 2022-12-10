@@ -109,7 +109,7 @@ export const unlinkFile = async (
   data_source: DataSource,
   req: Request,
 ) => {
-  const baseUrl = configuration_service.get(Configuration.BASE_URL) as string;
+  const base_url = configuration_service.get(Configuration.BASE_URL) as string;
 
   //#region Validate delete file
   const valid = await validateFileUser(
@@ -145,7 +145,7 @@ export const unlinkFile = async (
       //#region Generate response
       return await generateUploadFileSuccessResponse(
         req,
-        baseUrl,
+        base_url,
         file,
         query_runner,
       );

@@ -168,6 +168,7 @@ export const generateSheet = async (
 export const generateItemsResponse = async (
   role: number,
   items: ItemEntity[],
+  base_url: string,
   file_service: FilesService,
   req: Request,
 ) => {
@@ -175,7 +176,7 @@ export const generateItemsResponse = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', items);
 
-  const payload = await generateItemsArray(role, items, file_service);
+  const payload = await generateItemsArray(role, items, base_url, file_service);
 
   return {
     data: payload,
@@ -188,6 +189,7 @@ export const generateItemsResponse = async (
 export const generateEvaluationsResponse = async (
   role: number,
   evaluations: EvaluationEntity[],
+  base_url: string,
   file_service: FilesService,
   req: Request,
 ) => {
@@ -198,6 +200,7 @@ export const generateEvaluationsResponse = async (
   const payload = await generateEvaluationsArray(
     role,
     evaluations,
+    base_url,
     file_service,
   );
 

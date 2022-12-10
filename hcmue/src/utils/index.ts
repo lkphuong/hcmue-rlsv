@@ -23,6 +23,7 @@ export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
     .exclude(
       { path: '/api/auth/login', method: RequestMethod.POST },
       { path: '/api/auth/renew-token', method: RequestMethod.POST },
+      'uploads/(.*)',
     )
     .forRoutes({ path: '*', method: RequestMethod.ALL });
 };

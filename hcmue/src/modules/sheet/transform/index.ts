@@ -281,6 +281,7 @@ export const generateData2Object = async (
 export const generateItemsArray = async (
   role: number,
   items: ItemEntity[] | null,
+  base_url: string,
   file_service: FilesService,
 ) => {
   if (items) {
@@ -311,7 +312,10 @@ export const generateItemsArray = async (
               files:
                 files && files.length > 0
                   ? files.map((file) => {
-                      return { id: file.id, name: file.originalName };
+                      return {
+                        id: file.id,
+                        name: base_url + file.originalName,
+                      };
                     })
                   : null,
               personal_mark_level: evaluation.personal_mark_level,
@@ -332,7 +336,7 @@ export const generateItemsArray = async (
           const student_evaluation = item.evaluations.find(
             (e) => e.category == EvaluationCategory.STUDENT,
           );
-          if (student_evaluation && class_evaluation) {
+          if (student_evaluation) {
             const files = await file_service.getFileByEvaluation(
               student_evaluation.ref,
               student_evaluation.sheet.id,
@@ -352,7 +356,10 @@ export const generateItemsArray = async (
               files:
                 files && files.length > 0
                   ? files.map((file) => {
-                      return { id: file.id, name: file.originalName };
+                      return {
+                        id: file.id,
+                        name: base_url + file.originalName,
+                      };
                     })
                   : null,
               personal_mark_level: student_evaluation.personal_mark_level,
@@ -377,7 +384,7 @@ export const generateItemsArray = async (
             (e) => e.category == EvaluationCategory.STUDENT,
           );
 
-          if (department_evaluation && student_evaluation) {
+          if (student_evaluation) {
             const files = await file_service.getFileByEvaluation(
               student_evaluation.ref,
               student_evaluation.sheet.id,
@@ -398,7 +405,10 @@ export const generateItemsArray = async (
               files:
                 files && files.length > 0
                   ? files.map((file) => {
-                      return { id: file.id, name: file.originalName };
+                      return {
+                        id: file.id,
+                        name: base_url + file.originalName,
+                      };
                     })
                   : null,
               personal_mark_level: student_evaluation.personal_mark_level ?? 0,
@@ -420,6 +430,7 @@ export const generateItemsArray = async (
 export const generateEvaluationsArray = async (
   role: number,
   evaluations: EvaluationEntity[] | null,
+  base_url: string,
   file_service: FilesService,
 ) => {
   if (evaluations) {
@@ -441,7 +452,7 @@ export const generateEvaluationsArray = async (
                 e.item.id == evaluation.item.id,
             );
 
-            if (class_evaluation && student_evaluation) {
+            if (student_evaluation) {
               const files = await file_service.getFileByEvaluation(
                 student_evaluation.ref,
                 student_evaluation.sheet.id,
@@ -462,7 +473,10 @@ export const generateEvaluationsArray = async (
                 files:
                   files && files.length > 0
                     ? files.map((file) => {
-                        return { id: file.id, name: file.originalName };
+                        return {
+                          id: file.id,
+                          name: base_url + file.originalName,
+                        };
                       })
                     : null,
                 personal_mark_level:
@@ -504,7 +518,10 @@ export const generateEvaluationsArray = async (
                 files:
                   files && files.length > 0
                     ? files.map((file) => {
-                        return { id: file.id, name: file.originalName };
+                        return {
+                          id: file.id,
+                          name: base_url + file.originalName,
+                        };
                       })
                     : null,
                 personal_mark_level:
@@ -539,7 +556,10 @@ export const generateEvaluationsArray = async (
               files:
                 files && files.length > 0
                   ? files.map((file) => {
-                      return { id: file.id, name: file.originalName };
+                      return {
+                        id: file.id,
+                        name: base_url + file.originalName,
+                      };
                     })
                   : null,
               personal_mark_level: evaluation.personal_mark_level ?? 0,

@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 import { ROUTES } from '_constants/routes';
 
 import { CLoginLayout, CMainLayout } from '_layouts/';
@@ -8,21 +10,28 @@ import { CPermission } from '_controls';
 
 import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
 
-import { StudentPage, StudentDetailPage } from '_modules/home/pages';
+const StudentPage = lazy(() => import('_modules/home/pages/StudentPage'));
+const StudentDetailPage = lazy(() => import('_modules/home/pages/StudentDetailPage'));
 
-import { ClassPage, ClassDetailPage } from '_modules/class/pages';
+const ClassPage = lazy(() => import('_modules/class/pages/ClassPage'));
+const ClassDetailPage = lazy(() => import('_modules/class/pages/ClassDetailPage'));
 
-import { FormCreatePage, FormUpdatePage, ListFormsPage } from '_modules/form/pages';
+const ListDetailPage = lazy(() => import('_modules/list/pages/ListDetailPage'));
+const ListPage = lazy(() => import('_modules/list/pages/ListPage'));
+const StudentListPage = lazy(() => import('_modules/list/pages/StudentListPage'));
 
-import { ListDetailPage, ListPage, StudentListPage } from '_modules/list/pages';
+const ListPageStatistic = lazy(() => import('_modules/statistic/pages/ListPageStatistic'));
 
-import { ListPageStatistic } from '_modules/statistic/pages';
+const RolePage = lazy(() => import('_modules/role/pages/RolePage'));
 
-import { RolePage } from '_modules/role/pages';
+const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
 
-import { ConfigPage } from '_modules/config/pages';
+const ListPageAdmin = lazy(() => import('_modules/manager/pages/ListPageAdmin'));
+const SheetDetailPage = lazy(() => import('_modules/manager/pages/SheetDetailPage'));
 
-import { ListPageAdmin, SheetDetailPage } from '_modules/manager/pages';
+const FormCreatePage = lazy(() => import('_modules/form/pages/FormCreatePage'));
+const FormUpdatePage = lazy(() => import('_modules/form/pages/FormUpdatePage'));
+const ListFormsPage = lazy(() => import('_modules/form/pages/ListFormsPage'));
 
 export const browserRouter = [
 	{

@@ -1,0 +1,83 @@
+//#region Chicken
+.chicken {
+	position: relative;
+	width: calc(320px / 8);
+	height: 48px;
+	animation: chick 600ms steps(8) infinite, move 2s linear infinite;
+	background-image: url('~_assets/images/chicken.png');
+	transition: 300ms;
+	margin: auto;
+}
+
+@keyframes chick {
+	0% {
+		background-position: 0px;
+	}
+	100% {
+		background-position: -320px;
+	}
+}
+
+@keyframes move {
+	0% {
+		top: 0;
+	}
+	25% {
+		top: 50px;
+	}
+	50% {
+		top: 100px;
+	}
+	75% {
+		top: 50px;
+	}
+	100% {
+		top: 00px;
+	}
+}
+//#endregion
+
+//#region Rhino
+.rhino {
+	position: relative;
+	width: calc(312px / 6);
+	height: 34px;
+	animation: run 600ms steps(6) infinite, around 5s linear infinite;
+	background-image: url('~_assets/images/rhino.png');
+	margin-top: 110px;
+	transform: scaleX(-1);
+	transition: 300ms;
+}
+
+@keyframes run {
+	0% {
+		background-position: 0px;
+	}
+	100% {
+		background-position: -312px;
+	}
+}
+
+@keyframes around {
+	0% {
+		transform: scaleX(-1);
+		left: 0%;
+	}
+	25% {
+		left: 40%;
+	}
+	49% {
+		left: 80%;
+	}
+	51% {
+		left: 79%;
+	}
+	75% {
+		left: 40%;
+	}
+	100% {
+		left: 0%;
+	}
+}
+
+//#endregion

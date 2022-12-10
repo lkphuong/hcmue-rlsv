@@ -11,6 +11,8 @@ import PropTypes from 'prop-types';
 import CMenuList from './CMenuList';
 import CLogo from '../CLogo';
 
+import './index.scss';
+
 const CSidebar = ({ drawerOpen, drawerToggle, window }) => {
 	const theme = useTheme();
 	const matchUpMd = useMediaQuery(theme.breakpoints.up('md'));
@@ -32,6 +34,8 @@ const CSidebar = ({ drawerOpen, drawerToggle, window }) => {
 					}}
 				>
 					<CMenuList />
+					<Box className='chicken'></Box>
+					{/* <Box className='rhino'></Box> */}
 				</PerfectScrollbar>
 			</BrowserView>
 			<MobileView>

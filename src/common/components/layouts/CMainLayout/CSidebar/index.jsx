@@ -1,4 +1,3 @@
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { BrowserView, MobileView } from 'react-device-detect';
 
 import { useTheme } from '@mui/material/styles';
@@ -25,18 +24,11 @@ const CSidebar = ({ drawerOpen, drawerToggle, window }) => {
 				</Box>
 			</Box>
 			<BrowserView>
-				<PerfectScrollbar
-					component='div'
-					style={{
-						height: !matchUpMd ? 'calc(100vh - 56px)' : 'calc(100vh - 88px)',
-						paddingLeft: '16px',
-						paddingRight: '16px',
-					}}
-				>
+				<Box sx={{ px: 2 }}>
 					<CMenuList />
 					<Box className='chicken'></Box>
 					{/* <Box className='rhino'></Box> */}
-				</PerfectScrollbar>
+				</Box>
 			</BrowserView>
 			<MobileView>
 				<Box sx={{ px: 2 }}>

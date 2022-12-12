@@ -156,6 +156,8 @@ export class SheetController {
         JSON.stringify({ sheet_id: id }),
       );
 
+      const { role } = req.user as JwtPayload;
+
       //#region Validation
       const valid = validateSheetId(id, req);
       if (valid instanceof HttpException) throw valid;
@@ -168,6 +170,7 @@ export class SheetController {
         //#region Generate response
         return await generateSheet(
           sheet,
+          role,
           this._departmentService,
           this._classService,
           this._userService,
@@ -859,7 +862,7 @@ export class SheetController {
    */
   @Put('student/:id')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.STUDENT)
+  @Roles(Role.STUDENT, Role.CLASS)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkStudent(
     @Param('id') id: number,
@@ -1041,6 +1044,7 @@ export class SheetController {
         const result = await generateUngradeSheet(
           request_id,
           sheet,
+          role,
           this._classService,
           this._departmentService,
           this._kService,
@@ -1248,6 +1252,7 @@ export class SheetController {
         const result = await generateUngradeSheet(
           request_id,
           sheet,
+          role,
           this._classService,
           this._departmentService,
           this._kService,

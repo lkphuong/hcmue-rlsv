@@ -41,8 +41,6 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
-import { RoleCode } from 'src/constants/enums/role_enum';
-import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 
 export const generateClassesResponse = async (
   data: Class[] | null,
@@ -100,6 +98,7 @@ export const generateFailedResponse = (req: Request, message?: string) => {
 
 export const generateSuccessResponse = async (
   sheet: SheetEntity,
+  role: number,
   class_service: ClassService,
   department_service: DepartmentService,
   k_service: KService,
@@ -113,6 +112,7 @@ export const generateSuccessResponse = async (
   // Transform SheetEntity class to SheetResponse class
   const payload = await generateData2Object(
     sheet,
+    role,
     class_service,
     department_service,
     k_service,
@@ -144,6 +144,7 @@ export const generateApproveAllResponse = (
 
 export const generateSheet = async (
   sheet: SheetEntity,
+  role: number,
   department_service: DepartmentService,
   class_service: ClassService,
   user_service: UserService,
@@ -156,6 +157,7 @@ export const generateSheet = async (
 
   const payload = await generateData2Object(
     sheet,
+    role,
     class_service,
     department_service,
     k_service,

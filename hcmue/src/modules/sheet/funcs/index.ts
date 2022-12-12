@@ -150,6 +150,7 @@ export const generatePersonalMarks = async (
       //#region Generate response
       return await generateSuccessResponse(
         sheet,
+        role_id,
         class_service,
         department_service,
         k_service,
@@ -265,6 +266,7 @@ export const generateClassMarks = async (
       //#region Generate response
       return await generateSuccessResponse(
         result,
+        role_id,
         class_service,
         department_service,
         k_service,
@@ -380,6 +382,7 @@ export const generateDepartmentMarks = async (
       //#region Generate response
       return await generateSuccessResponse(
         result,
+        role_id,
         class_service,
         department_service,
         k_service,
@@ -419,6 +422,7 @@ export const generateDepartmentMarks = async (
 export const generateUngradeSheet = async (
   user_id: string,
   sheet: SheetEntity,
+  role: number,
   class_service: ClassService,
   department_service: DepartmentService,
   k_service: KService,
@@ -432,6 +436,7 @@ export const generateUngradeSheet = async (
     //#region Generate response
     return await generateSuccessResponse(
       sheet,
+      role,
       class_service,
       department_service,
       k_service,

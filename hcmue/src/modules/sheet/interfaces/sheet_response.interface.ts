@@ -94,6 +94,7 @@ export interface SheetDetailsResponse extends MarkResponse {
   level?: BaseResponse;
   status: number;
   headers: BaseResponse[];
+  time?: TimeResponse;
 }
 
 export interface SheetEvaluationResponse {
@@ -101,4 +102,9 @@ export interface SheetEvaluationResponse {
   semester: BaseResponse;
   academic: BaseResponse;
   evaluations: EvaluationResponse[];
+}
+
+export interface TimeResponse {
+  start: Date;
+  end: Date;
 }

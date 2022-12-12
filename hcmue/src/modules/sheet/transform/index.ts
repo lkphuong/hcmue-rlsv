@@ -1,6 +1,10 @@
 import { Types } from 'mongoose';
 
-import { convertObjectId2String, convertString2ObjectId } from '../../../utils';
+import {
+  convertObjectId2String,
+  convertString2Date,
+  convertString2ObjectId,
+} from '../../../utils';
 import { mapUserForSheet } from '../utils';
 
 import { Class } from '../../../schemas/class.schema';
@@ -21,11 +25,13 @@ import {
   ClassSheetsResponse,
   EvaluationsResponse,
   SheetDetailsResponse,
+  TimeResponse,
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
+import { Role } from 'src/modules/auth/constants/enums/role.enum';
 
 export const generateAdminSheets = async (
   sheets: SheetEntity[] | null,
@@ -184,6 +190,7 @@ export const generateClasses2Array = async (classes: Class[]) => {
 
 export const generateData2Object = async (
   sheet: SheetEntity | null,
+  role: number,
   class_service: ClassService,
   department_service: DepartmentService,
   k_service: KService,
@@ -212,6 +219,30 @@ export const generateData2Object = async (
     //#endregion
 
     const headers: BaseResponse[] = [];
+    let time: TimeResponse = null;
+    switch (role) {
+      case RoleCode.STUDENT:
+        time = {
+          start: convertString2Date(sheet.form.student_start.toString()),
+          end: convertString2Date(sheet.form.student_end.toString()),
+        };
+        break;
+      case RoleCode.CLASS:
+        time = {
+          start: convertString2Date(sheet.form.class_start.toString()),
+          end: convertString2Date(sheet.form.class_end.toString()),
+        };
+        break;
+      case RoleCode.DEPARTMENT:
+        time = {
+          start: convertString2Date(sheet.form.department_start.toString()),
+          end: convertString2Date(sheet.form.department_end.toString()),
+        };
+        break;
+      default:
+        time = null;
+    }
+
     const payload: SheetDetailsResponse = {
       id: sheet.id,
       department: department
@@ -258,6 +289,7 @@ export const generateData2Object = async (
       sum_of_class_marks: sheet.sum_of_class_marks,
       sum_of_department_marks: sheet.sum_of_department_marks,
       headers: headers,
+      time: time,
     };
 
     //#region Get headers
@@ -272,7 +304,6 @@ export const generateData2Object = async (
       }
     }
     //#endregion
-
     return payload;
   }
 

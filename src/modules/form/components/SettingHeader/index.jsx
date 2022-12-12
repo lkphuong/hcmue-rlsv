@@ -11,7 +11,7 @@ import { alert } from '_func/alert';
 
 import { ERRORS } from '_constants/messages';
 
-import { CreateModal } from '..';
+import CreateModal from './CreateModal';
 
 const SettingHeader = memo(() => {
 	//#region Data

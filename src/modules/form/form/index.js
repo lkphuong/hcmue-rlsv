@@ -38,6 +38,7 @@ export const initialItem = {
 	category: 0,
 	unit: 'Điểm',
 	options: [],
+	is_file: false,
 };
 //#endregion
 

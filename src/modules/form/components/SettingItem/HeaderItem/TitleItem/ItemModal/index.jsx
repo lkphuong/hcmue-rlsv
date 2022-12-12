@@ -2,7 +2,18 @@ import React, { forwardRef, memo, useImperativeHandle, useState } from 'react';
 import { Controller, useController, useForm } from 'react-hook-form';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Button, Checkbox, Grid, Grow, Modal, Paper, Stack, Typography } from '@mui/material';
+import {
+	Box,
+	Button,
+	Checkbox,
+	Grid,
+	Grow,
+	Modal,
+	Paper,
+	Stack,
+	Typography,
+	useMediaQuery,
+} from '@mui/material';
 
 import { useResolver } from '_hooks/';
 
@@ -26,6 +37,8 @@ const ItemModal = memo(
 	forwardRef(({ refetch, title_id }, ref) => {
 		//#region Data
 		const form_id = useSelector((state) => state.form.form_id, shallowEqual);
+
+		const isBelowMd = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
 		const [open, setOpen] = useState(false);
 
@@ -110,7 +123,12 @@ const ItemModal = memo(
 			<Modal open={open} onClose={toggleClose}>
 				<Grow in={open} timeout={400}>
 					<Paper className='center' sx={{ borderRadius: 3 }}>
-						<Box px={3} py={2} width={375}>
+						<Box
+							px={3}
+							py={2}
+							width={isBelowMd ? 360 : 400}
+							maxHeight={isBelowMd ? '500px' : 'unset'}
+						>
 							<form onSubmit={handleSubmit(onSubmit)}>
 								<Stack spacing={2}>
 									<Grid container spacing={1} alignItems='center'>
@@ -165,6 +183,23 @@ const ItemModal = memo(
 											<Controller
 												control={control}
 												name='required'
+												render={({ field: { name, onChange, value } }) => (
+													<Checkbox
+														name={name}
+														checked={value}
+														onChange={onChange}
+													/>
+												)}
+											/>
+										</Grid>
+
+										<Grid item xs={12} md={4}>
+											<Typography>Cần file minh chứng</Typography>
+										</Grid>
+										<Grid item xs={12} md={8}>
+											<Controller
+												control={control}
+												name='is_file'
 												render={({ field: { name, onChange, value } }) => (
 													<Checkbox
 														name={name}

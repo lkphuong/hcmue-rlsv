@@ -42,7 +42,8 @@
 	position: relative;
 	width: calc(312px / 6);
 	height: 34px;
-	animation: run 600ms steps(6) infinite, around 5s linear infinite;
+	animation: run 600ms steps(6) infinite, around 5s linear infinite,
+		turn 5s steps(2, jump-none) infinite;
 	background-image: url('~_assets/images/rhino.png');
 	margin-top: 110px;
 	transform: scaleX(-1);
@@ -60,7 +61,6 @@
 
 @keyframes around {
 	0% {
-		transform: scaleX(-1);
 		left: 0%;
 	}
 	25% {
@@ -77,6 +77,15 @@
 	}
 	100% {
 		left: 0%;
+	}
+}
+
+@keyframes turn {
+	0% {
+		transform: scaleX(-1);
+	}
+	100% {
+		transform: scaleX(1);
 	}
 }
 

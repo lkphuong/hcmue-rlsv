@@ -27,7 +27,7 @@ const CSidebar = ({ drawerOpen, drawerToggle, window }) => {
 				<Box sx={{ px: 2 }}>
 					<CMenuList />
 					<Box className='chicken'></Box>
-					{/* <Box className='rhino'></Box> */}
+					<Box className='rhino'></Box>
 				</Box>
 			</BrowserView>
 			<MobileView>

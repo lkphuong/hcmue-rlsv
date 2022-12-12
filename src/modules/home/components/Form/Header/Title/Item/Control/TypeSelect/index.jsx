@@ -37,7 +37,7 @@ const TypeSelect = ({ item_id, initialMark, currentMark, options, required, head
 				<CAutocomplete
 					disableClearable={required}
 					options={options}
-					display='content'
+					display='mark'
 					valueGet='mark'
 					value={score}
 					onChange={onChangeSelect}

@@ -24,9 +24,7 @@ const Optional = memo(({ control, name }) => {
 	//#endregion
 
 	//#region Render
-	return createElement(OptionComponent, {
-		control,
-	});
+	return createElement(OptionComponent, { control });
 
 	//#endregion
 });

@@ -1,5 +1,5 @@
 import React, { forwardRef, memo, useImperativeHandle, useState } from 'react';
-import { Controller, useController, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useController, useForm } from 'react-hook-form';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import {
@@ -44,7 +44,7 @@ const ItemModal = memo(
 
 		const resolver = useResolver(validationItem);
 
-		const { control, handleSubmit, reset } = useForm({
+		const { control, handleSubmit, reset, trigger } = useForm({
 			defaultValues: initialItem,
 			mode: 'all',
 			resolver,
@@ -129,97 +129,111 @@ const ItemModal = memo(
 							width={isBelowMd ? 360 : 400}
 							maxHeight={isBelowMd ? '500px' : 'unset'}
 						>
-							<form onSubmit={handleSubmit(onSubmit)}>
-								<Stack spacing={2}>
-									<Grid container spacing={1} alignItems='center'>
-										<Grid item xs={12} md={4}>
-											<Typography>Control</Typography>
-										</Grid>
-										<Grid item xs={12} md={8}>
-											<Controller
-												control={control}
-												name='control'
-												render={({ field: { name, onChange, value } }) => (
-													<CSelect
-														value={value}
-														options={CONTROL}
-														onChange={changeControl(onChange)}
-														name={name}
-														fullWidth
-													/>
-												)}
-											/>
-										</Grid>
+							<FormProvider trigger={trigger}>
+								<form onSubmit={handleSubmit(onSubmit)}>
+									<Stack spacing={2}>
+										<Grid container spacing={1} alignItems='center'>
+											<Grid item xs={12} md={4}>
+												<Typography>Control</Typography>
+											</Grid>
+											<Grid item xs={12} md={8}>
+												<Controller
+													control={control}
+													name='control'
+													render={({
+														field: { name, onChange, value },
+													}) => (
+														<CSelect
+															value={value}
+															options={CONTROL}
+															onChange={changeControl(onChange)}
+															name={name}
+															fullWidth
+														/>
+													)}
+												/>
+											</Grid>
 
-										<Grid item xs={12} md={4}>
-											<Typography>Tiêu chí</Typography>
-										</Grid>
-										<Grid item xs={12} md={8}>
-											<Controller
-												control={control}
-												name='content'
-												render={({
-													field: { name, onBlur, onChange, ref, value },
-													fieldState: { error },
-												}) => (
-													<CInput
-														value={value}
-														inputRef={ref}
-														onChange={onChange}
-														onBlur={onBlur}
-														name={name}
-														fullWidth
-														error={!!error}
-														helperText={error?.message}
-													/>
-												)}
-											/>
-										</Grid>
+											<Grid item xs={12} md={4}>
+												<Typography>Tiêu chí</Typography>
+											</Grid>
+											<Grid item xs={12} md={8}>
+												<Controller
+													control={control}
+													name='content'
+													render={({
+														field: {
+															name,
+															onBlur,
+															onChange,
+															ref,
+															value,
+														},
+														fieldState: { error },
+													}) => (
+														<CInput
+															value={value}
+															inputRef={ref}
+															onChange={onChange}
+															onBlur={onBlur}
+															name={name}
+															fullWidth
+															error={!!error}
+															helperText={error?.message}
+														/>
+													)}
+												/>
+											</Grid>
 
-										<Grid item xs={12} md={4}>
-											<Typography>Bắt buộc</Typography>
-										</Grid>
-										<Grid item xs={12} md={8}>
-											<Controller
-												control={control}
-												name='required'
-												render={({ field: { name, onChange, value } }) => (
-													<Checkbox
-														name={name}
-														checked={value}
-														onChange={onChange}
-													/>
-												)}
-											/>
-										</Grid>
+											<Grid item xs={12} md={4}>
+												<Typography>Bắt buộc</Typography>
+											</Grid>
+											<Grid item xs={12} md={8}>
+												<Controller
+													control={control}
+													name='required'
+													render={({
+														field: { name, onChange, value },
+													}) => (
+														<Checkbox
+															name={name}
+															checked={value}
+															onChange={onChange}
+														/>
+													)}
+												/>
+											</Grid>
 
-										<Grid item xs={12} md={4}>
-											<Typography>Cần file minh chứng</Typography>
-										</Grid>
-										<Grid item xs={12} md={8}>
-											<Controller
-												control={control}
-												name='is_file'
-												render={({ field: { name, onChange, value } }) => (
-													<Checkbox
-														name={name}
-														checked={value}
-														onChange={onChange}
-													/>
-												)}
-											/>
-										</Grid>
+											<Grid item xs={12} md={4}>
+												<Typography>Cần file minh chứng</Typography>
+											</Grid>
+											<Grid item xs={12} md={8}>
+												<Controller
+													control={control}
+													name='is_file'
+													render={({
+														field: { name, onChange, value },
+													}) => (
+														<Checkbox
+															name={name}
+															checked={value}
+															onChange={onChange}
+														/>
+													)}
+												/>
+											</Grid>
 
-										<Optional control={control} name='control' />
-									</Grid>
-								</Stack>
+											<Optional control={control} name='control' />
+										</Grid>
+									</Stack>
 
-								<Box textAlign='center' mt={4}>
-									<Button variant='contained' type='submit'>
-										Hoàn thành
-									</Button>
-								</Box>
-							</form>
+									<Box textAlign='center' mt={4}>
+										<Button variant='contained' type='submit'>
+											Hoàn thành
+										</Button>
+									</Box>
+								</form>
+							</FormProvider>
 						</Box>
 					</Paper>
 				</Grow>

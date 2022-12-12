@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { Controller } from 'react-hook-form';
+import React, { memo, useEffect } from 'react';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { Grid, Stack, Typography } from '@mui/material';
 
@@ -7,7 +7,10 @@ import { CInput } from '_controls/';
 
 const TypeRange = memo(({ control }) => {
 	//#region Data
+	const minValue = useWatch({ control, name: 'from_mark' });
+	const maxValue = useWatch({ control, name: 'to_mark' });
 
+	const { trigger } = useFormContext();
 	//#endregion
 
 	//#region Event
@@ -19,6 +22,10 @@ const TypeRange = memo(({ control }) => {
 		}
 	};
 	//#endregion
+
+	useEffect(() => {
+		trigger(['from_mark', 'to_mark']);
+	}, [minValue, maxValue]);
 
 	//#region Render
 	return (

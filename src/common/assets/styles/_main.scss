@@ -54,11 +54,13 @@ input:-webkit-autofill:active {
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
-	background: #a8a8a8;
+	background: #d5d5d5;
+	opacity: 0.1;
 	border-radius: 10px;
 }
 
 /* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
-	background: #555;
+	background: rgb(175, 175, 175);
+	opacity: 1;
 }

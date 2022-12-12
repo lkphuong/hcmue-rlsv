@@ -1,8 +1,8 @@
 import React, { memo } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { RemoveCircleOutline } from '@mui/icons-material';
-import { Box, Grid, IconButton, Typography } from '@mui/material';
+import { EditOutlined, RemoveCircleOutline } from '@mui/icons-material';
+import { Box, Grid, IconButton, Stack, Typography } from '@mui/material';
 
 import { alert } from '_func/alert';
 
@@ -12,7 +12,7 @@ import { isSuccess } from '_func/';
 
 import { ERRORS } from '_constants/messages';
 
-const ItemDisplay = memo(({ data, refetch }) => {
+const ItemDisplay = memo(({ data, refetch, handleEdit }) => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 	//#endregion
@@ -36,14 +36,17 @@ const ItemDisplay = memo(({ data, refetch }) => {
 	//#endregion
 
 	//#region Render
-	//#endregion
-
 	return (
 		<Grid container alignItems='center' spacing={1}>
 			<Grid item xs='auto'>
-				<IconButton onClick={handleDeleteItem}>
-					<RemoveCircleOutline />
-				</IconButton>
+				<Stack direction='row' spacing={1}>
+					<IconButton onClick={handleDeleteItem}>
+						<RemoveCircleOutline />
+					</IconButton>
+					<IconButton onClick={handleEdit}>
+						<EditOutlined />
+					</IconButton>
+				</Stack>
 			</Grid>
 			<Grid item xs={true}>
 				<Typography>{data.content}</Typography>
@@ -67,6 +70,7 @@ const ItemDisplay = memo(({ data, refetch }) => {
 			)}
 		</Grid>
 	);
+	//#endregion
 });
 
 export default ItemDisplay;

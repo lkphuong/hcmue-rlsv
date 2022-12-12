@@ -21,10 +21,10 @@ import { ERRORS } from '_constants/messages';
 
 const CreateModal = forwardRef(({ refetch }, ref) => {
 	//#region Data
+	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
+
 	const [open, setOpen] = useState(false);
 	const [headerId, setHeaderId] = useState(null);
-
-	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
 	const resolver = useResolver(validationHeader);
 

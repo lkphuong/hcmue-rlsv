@@ -34,6 +34,10 @@ export const createItem = (body = {}) => {
 	return post(FORMS.CREATE_ITEM, body);
 };
 
+export const updateItem = (id, body) => {
+	return put(`${FORMS.UPDATE_ITEM}/${id}`, body);
+};
+
 export const getFormById = (id) => {
 	return get(`${FORMS.GET_FORM_BY_ID}/${id}`);
 };

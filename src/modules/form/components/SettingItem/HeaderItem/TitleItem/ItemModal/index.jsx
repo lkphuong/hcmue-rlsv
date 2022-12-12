@@ -23,7 +23,7 @@ import { CInput, CSelect } from '_controls/';
 
 import { CONTROL } from '_constants/variables';
 
-import { createItem } from '_api/form.api';
+import { createItem, updateItem } from '_api/form.api';
 
 import { isSuccess } from '_func/';
 
@@ -38,9 +38,10 @@ const ItemModal = memo(
 		//#region Data
 		const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
-		const isBelowMd = useMediaQuery((theme) => theme.breakpoints.down('md'));
-
 		const [open, setOpen] = useState(false);
+		const [itemId, setItemId] = useState(null);
+
+		const isBelowMd = useMediaQuery((theme) => theme.breakpoints.down('md'));
 
 		const resolver = useResolver(validationItem);
 
@@ -82,7 +83,7 @@ const ItemModal = memo(
 				...values,
 			};
 
-			const res = await createItem(body);
+			const res = itemId ? await updateItem(itemId, body) : await createItem(body);
 
 			if (isSuccess(res)) {
 				alert.success({ text: 'Cập nhật chi tiết tiêu chí đánh giá thành công.' });
@@ -110,13 +111,19 @@ const ItemModal = memo(
 		};
 		//#endregion
 
-		useImperativeHandle(
-			ref,
-			() => ({
-				open: () => toggleModal(),
-			}),
-			[]
-		);
+		useImperativeHandle(ref, () => ({
+			open: (editData) => {
+				if (editData) {
+					const { id } = editData;
+
+					setItemId(id);
+
+					reset(editData);
+				}
+
+				toggleModal();
+			},
+		}));
 
 		//#region Render
 		return (

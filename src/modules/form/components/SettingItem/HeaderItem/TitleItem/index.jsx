@@ -37,6 +37,10 @@ const TitleItem = memo(({ data }) => {
 	};
 
 	const openModal = () => itemRef.current.open();
+
+	const handleEdit = (data) => () => {
+		itemRef.current.open(data);
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -52,7 +56,12 @@ const TitleItem = memo(({ data }) => {
 			<AccordionDetails>
 				{items.length > 0 &&
 					items.map((item) => (
-						<ItemDisplay key={item.id} data={item} refetch={getItems} />
+						<ItemDisplay
+							key={item.id}
+							data={item}
+							refetch={getItems}
+							handleEdit={handleEdit(item)}
+						/>
 					))}
 
 				<Grid item xs={12}>

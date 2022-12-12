@@ -28,7 +28,7 @@ export const NAVIGATIONS = [
 	},
 	{
 		id: 'class',
-		title: 'Lớp trưởng/Bí thư',
+		title: 'Lớp trưởng',
 		type: 'collapse',
 		icon: Attribution,
 		entity: ENTITY_KEY.CLASS_SCORE.key,

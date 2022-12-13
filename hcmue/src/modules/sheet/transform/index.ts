@@ -218,30 +218,6 @@ export const generateData2Object = async (
     //#endregion
 
     const headers: BaseResponse[] = [];
-    let time: TimeResponse = null;
-    switch (role) {
-      case RoleCode.STUDENT:
-        time = {
-          start: convertString2Date(sheet.form.student_start.toString()),
-          end: convertString2Date(sheet.form.student_end.toString()),
-        };
-        break;
-      case RoleCode.CLASS:
-        time = {
-          start: convertString2Date(sheet.form.class_start.toString()),
-          end: convertString2Date(sheet.form.class_end.toString()),
-        };
-        break;
-      case RoleCode.DEPARTMENT:
-        time = {
-          start: convertString2Date(sheet.form.department_start.toString()),
-          end: convertString2Date(sheet.form.department_end.toString()),
-        };
-        break;
-      default:
-        time = null;
-    }
-
     const payload: SheetDetailsResponse = {
       id: sheet.id,
       department: department
@@ -288,7 +264,18 @@ export const generateData2Object = async (
       sum_of_class_marks: sheet.sum_of_class_marks,
       sum_of_department_marks: sheet.sum_of_department_marks,
       headers: headers,
-      time: time,
+      time_student: {
+        start: convertString2Date(sheet.form.student_start.toString()),
+        end: convertString2Date(sheet.form.student_end.toString()),
+      },
+      time_class: {
+        start: convertString2Date(sheet.form.class_start.toString()),
+        end: convertString2Date(sheet.form.class_end.toString()),
+      },
+      time_department: {
+        start: convertString2Date(sheet.form.department_start.toString()),
+        end: convertString2Date(sheet.form.department_end.toString()),
+      },
     };
 
     //#region Get headers

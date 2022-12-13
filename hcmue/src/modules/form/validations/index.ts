@@ -154,6 +154,18 @@ export const validateForm = async (
       sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, form_id),
     );
   }
+  if (
+    form.status === FormStatus.IN_PROGRESS ||
+    form.status === FormStatus.DONE
+  ) {
+    return new HandlerException(
+      DATABASE_EXIT_CODE.OPERATOR_ERROR,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.FROM_IN_PROGRESS_OR_DONE_ERROR, form_id),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
 
   return form;
 };

@@ -94,7 +94,9 @@ export interface SheetDetailsResponse extends MarkResponse {
   level?: BaseResponse;
   status: number;
   headers: BaseResponse[];
-  time?: TimeResponse;
+  time_student: TimeResponse;
+  time_class: TimeResponse;
+  time_department: TimeResponse;
 }
 
 export interface SheetEvaluationResponse {

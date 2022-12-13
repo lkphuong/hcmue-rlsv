@@ -45,7 +45,6 @@ export class CronService {
 
       //#region Count sheets
       const count = await this._sheetService.countSheets();
-      console.log('sheets: ', count);
       //#endregion
 
       if (count > 0) {
@@ -63,6 +62,14 @@ export class CronService {
             i * itemsPerPage,
             itemsPerPage,
           );
+
+          console.log(
+            '----------------------------------------------------------',
+          );
+          console.log(
+            `${Pattern.CRON_JOB_PATTERN}: /${Crons.UPDATE_SHEETS_STATUS_CRON_JOB}`,
+          );
+          console.log('sheets: ', sheets);
 
           send(sheets, this._backgroundClient);
         }

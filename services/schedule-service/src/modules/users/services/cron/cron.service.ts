@@ -77,9 +77,18 @@ export class CronService {
               );
 
               if (i + 1 === pages) flag = true;
+              const sheets = await generateSheet2Array(form, flag, users);
 
-              const results = await generateSheet2Array(form, flag, users);
-              send(results, this._composerClient);
+              console.log(
+                '----------------------------------------------------------',
+              );
+              console.log(
+                `${Pattern.CRON_JOB_PATTERN}: /${Crons.GENERATE_CREATE_SHEETS_CRON_JOB}`,
+              );
+              console.log('Cron time: ', CRON_JOB_TIME);
+              console.log('sheets: ', sheets);
+
+              send(sheets, this._composerClient);
             }
             //#endregion
 

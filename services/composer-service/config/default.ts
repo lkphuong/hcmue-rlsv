@@ -18,7 +18,7 @@ export default {
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
-  ITEMS_PER_PAGE: 10,
+  ITEMS_PER_PAGE: 100,
 
   BACKGROUND_JOB_SERVICE_HOST: 'localhost',
   BACKGROUND_JOB_SERVICE_PORT: 5672,

@@ -5,7 +5,7 @@ import { Box, Button, Grid, Stack, Tooltip, Typography } from '@mui/material';
 
 import { CInput } from '_controls/';
 
-const OptionItem = memo(({ control, index, remove }) => {
+const OptionItem = memo(({ control, index, remove, length }) => {
 	return (
 		<Box p={1.5} border='1px solid #c5c5c5'>
 			<Stack>
@@ -70,7 +70,7 @@ const OptionItem = memo(({ control, index, remove }) => {
 							variant='contained'
 							color='error'
 							onClick={remove}
-							disabled={index === 0}
+							disabled={length === 1}
 						>
 							Xóa tùy chọn
 						</Button>

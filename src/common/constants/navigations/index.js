@@ -94,7 +94,7 @@ export const NAVIGATIONS = [
 			},
 			{
 				id: 'admin-note',
-				title: 'Quản lý danh sách phiếu',
+				title: 'Quản lý phiếu đánh giá',
 				type: 'item',
 				path: '/admin/sheets',
 				entity: ENTITY_KEY.NOTES.key,

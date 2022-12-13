@@ -16,12 +16,12 @@ const TypeSelect = memo(({ control }) => {
 	//#endregion
 
 	//#region Event
-	const addOneMoreOption = () => append({ content: '', mark: 0 });
+	const addOneMoreOption = () => append({ content: '', mark: 1 });
 	//#endregion
 
 	useEffect(() => {
 		if (!fields.length) {
-			append({ content: '', mark: 0 });
+			append({ content: '', mark: 1 });
 		}
 	}, [fields]);
 
@@ -41,6 +41,7 @@ const TypeSelect = memo(({ control }) => {
 						control={control}
 						index={index}
 						remove={() => remove(index)}
+						length={fields.length}
 					/>
 				))}
 			</Box>

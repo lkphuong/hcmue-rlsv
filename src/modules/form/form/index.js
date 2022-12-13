@@ -246,7 +246,7 @@ export const validationItem = yup.object({
 						.required('Vui lòng nhập chi tiết tiêu chí.'),
 					mark: yup
 						.number('Giá trị điểm của tiêu chí phải là số.')
-						// .moreThan(0, 'Giá trị điểm của tùy chọn phải lớn hơn 0.')
+						.not(0, 'Giá trị điểm phải khác 0.')
 						.typeError('Giá trị điểm của tiêu chí phải là số.')
 						.required('Vui lòng nhập điểm cho tiêu chí.'),
 				})

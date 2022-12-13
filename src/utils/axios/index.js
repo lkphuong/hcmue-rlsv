@@ -128,10 +128,14 @@ export const getProfile = async (token) => {
 			const role_id = res?.data?.role;
 
 			updateAbility(role_id);
-			store.dispatch(actions.setProfile({ ...res.data, role_id }));
-		}
 
-		return res;
+			store.dispatch(actions.setProfile({ ...res.data, role_id }));
+
+			return res;
+		} else {
+			tryLogout();
+			return;
+		}
 	} catch (error) {
 		tryLogout();
 	}

@@ -90,3 +90,69 @@
 }
 
 //#endregion
+
+//#region Bat
+.bat {
+	position: relative;
+	width: calc(322px / 7);
+	height: 30px;
+	animation: run-bat 200ms steps(7) infinite, move-bat 6s linear infinite,
+		turn 6s steps(2, jump-none) infinite;
+	background-image: url('~_assets/images/bat.png');
+	margin-top: 20px;
+	transform: scaleX(-1);
+	transition: 300ms;
+}
+
+@keyframes run-bat {
+	0% {
+		background-position: 0px;
+	}
+	100% {
+		background-position: -322px;
+	}
+}
+
+@keyframes move-bat {
+	0% {
+		left: 0%;
+		margin-top: 20px;
+	}
+	10% {
+		left: 20%;
+		margin-top: 80px;
+	}
+	20% {
+		left: 40%;
+		margin-top: 20px;
+	}
+	30% {
+		left: 60%;
+		margin-top: 80px;
+	}
+	49% {
+		left: 80%;
+		margin-top: 20px;
+	}
+	51% {
+		left: 79%;
+		margin-top: 20px;
+	}
+	70% {
+		left: 60%;
+		margin-top: 80px;
+	}
+	80% {
+		left: 40%;
+		margin-top: 20px;
+	}
+	90% {
+		left: 20%;
+		margin-top: 80px;
+	}
+	100% {
+		left: 0%;
+		margin-top: 20px;
+	}
+}
+//#endregion

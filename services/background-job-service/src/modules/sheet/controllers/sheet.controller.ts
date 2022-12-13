@@ -159,7 +159,7 @@ export class SheetController {
             this._logger,
           );
           //#endregion
-        }
+        } else channel.ack(original_message);
       } else {
         channel.ack(original_message);
 

@@ -43,8 +43,6 @@ export class SheetService {
         .take(length)
         .getMany();
 
-      console.log(sheets[0]);
-
       return sheets || null;
     } catch (e) {
       this._logger.writeLog(
@@ -72,7 +70,6 @@ export class SheetService {
         });
 
       const { count } = await conditions.getRawOne();
-
       return count;
     } catch (e) {
       this._logger.writeLog(

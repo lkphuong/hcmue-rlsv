@@ -50,8 +50,8 @@ export class CronService {
       const count = await this._userService.countUsers();
       const form = await this._formService.getFormPublished();
 
-      if (new Date() >= new Date(form.student_start)) {
-        if (count > 0 && form) {
+      if (count > 0 && form) {
+        if (new Date() >= new Date(form.student_start)) {
           //#region Get pages
           const itemsPerPage = parseInt(
             this._configurationService.get(Configuration.ITEMS_PER_PAGE),
@@ -116,11 +116,11 @@ export class CronService {
             );
             //#endregion
           }
-        } else {
-          //#region Handle log
-          handleLog(ErrorMessage.NO_CONTENT, this._logger);
-          //#endregion
         }
+      } else {
+        //#region Handle log
+        handleLog(ErrorMessage.NO_CONTENT, this._logger);
+        //#endregion
       }
     } catch (err) {
       //#region Handle log

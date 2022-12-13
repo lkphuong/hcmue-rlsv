@@ -23,6 +23,7 @@ export const DepartmentMarksContext = createContext();
 
 const Form = ({ data, status }) => {
 	//#region Data
+	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
 
@@ -156,7 +157,7 @@ const Form = ({ data, status }) => {
 			</DepartmentMarksContext.Provider>
 
 			<Box textAlign='center' mt={3}>
-				<Button variant='contained' onClick={handleUpdate}>
+				<Button variant='contained' onClick={handleUpdate} disabled={!available}>
 					Cập nhật
 				</Button>
 			</Box>

@@ -16,8 +16,8 @@ import { post } from './request';
 import { AUTH } from '_api/url';
 
 const apiInstance = axios.create({
-	// baseURL: process.env.REACT_APP_API_URL,
-	baseURL: 'http://103.154.176.80:3020/api',
+	baseURL: process.env.REACT_APP_API_URL,
+	// baseURL: 'http://103.154.176.80:3020/api',
 	timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 

@@ -7,7 +7,15 @@ import { CAutocomplete } from '_controls/';
 
 import { actions } from '_slices/mark.slice';
 
-const TypeSelect = ({ item_id, initialMark, currentMark, options, required, header_id }) => {
+const TypeSelect = ({
+	item_id,
+	initialMark,
+	currentMark,
+	options,
+	required,
+	header_id,
+	available,
+}) => {
 	//#region Data
 	const [score, setScore] = useState(initialMark);
 
@@ -34,19 +42,23 @@ const TypeSelect = ({ item_id, initialMark, currentMark, options, required, head
 			<Grid item xs={2} />
 
 			<Grid item xs={1.2} textAlign='center'>
-				<CAutocomplete
-					disableClearable={required}
-					options={options}
-					display='mark'
-					valueGet='mark'
-					value={score}
-					onChange={onChangeSelect}
-					renderOption={(props, option) => (
-						<Box component='li' key={option.id} {...props}>
-							{option.content} (<b>{option.mark} Điểm</b>)
-						</Box>
-					)}
-				/>
+				{available ? (
+					<CAutocomplete
+						disableClearable={required}
+						options={options}
+						display='mark'
+						valueGet='mark'
+						value={score}
+						onChange={onChangeSelect}
+						renderOption={(props, option) => (
+							<Box component='li' key={option.id} {...props}>
+								{option.content} (<b>{option.mark} Điểm</b>)
+							</Box>
+						)}
+					/>
+				) : (
+					<Typography>{currentMark.personal_mark_level || 0}</Typography>
+				)}
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
 				<Typography>{currentMark.class_mark_level || 0}</Typography>

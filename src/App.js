@@ -6,6 +6,9 @@ import { useSelector } from 'react-redux';
 
 import { StyledEngineProvider, ThemeProvider } from '@mui/material';
 
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
@@ -22,6 +25,8 @@ import { SuspenseLoading } from '_others/';
 import theme from '_theme';
 
 import '_styles/index.scss';
+
+dayjs.extend(isBetween);
 
 const router = createBrowserRouter(browserRouter);
 

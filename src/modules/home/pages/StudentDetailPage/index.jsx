@@ -1,8 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { Box, Paper, Typography } from '@mui/material';
 
-import { useNavigate, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 
 import { Form } from '_modules/home/components';
 
@@ -11,13 +13,21 @@ import { getSheetById } from '_api/sheets.api';
 import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
+import { actions } from '_slices/mark.slice';
+
+import { CExpired } from '_others/';
+
 const SemesterDetail = () => {
 	//#region Data
+	const available = useSelector((state) => state.mark.available, shallowEqual);
+
 	const { sheet_id } = useParams();
 
 	const [data, setData] = useState(null);
 
 	const navigate = useNavigate();
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -33,6 +43,13 @@ const SemesterDetail = () => {
 					});
 					navigate(-1);
 				}
+
+				const { time_student } = res.data;
+
+				if (!dayjs().isBetween(dayjs(time_student.start), dayjs(time_student.end), '[]')) {
+					dispatch(actions.setNotAvailable());
+				}
+
 				setData(res.data);
 			}
 		} catch (error) {
@@ -48,6 +65,14 @@ const SemesterDetail = () => {
 	//#region Render
 	return data ? (
 		<Box>
+			{!available && (
+				<CExpired
+					roleName='sinh viên'
+					start={data?.time_student?.start}
+					end={data?.time_student?.end}
+				/>
+			)}
+
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>

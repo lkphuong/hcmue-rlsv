@@ -5,7 +5,7 @@ import { Checkbox, Grid, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
-const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id }) => {
+const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id, available }) => {
 	//#region Data
 
 	const [score, setScore] = useState(initialMark);
@@ -37,7 +37,11 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id }) =
 			</Grid>
 
 			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox onChange={onCheck(id, mark)} checked={!!score} />
+				{available ? (
+					<Checkbox onChange={onCheck(id, mark)} checked={!!score} />
+				) : (
+					<Typography>{currentMark.personal_mark_level} </Typography>
+				)}
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
 				<Typography>{currentMark.class_mark_level} </Typography>

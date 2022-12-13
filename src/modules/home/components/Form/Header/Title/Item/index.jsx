@@ -1,5 +1,5 @@
 import React, { memo, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Grid, Typography } from '@mui/material';
 
@@ -10,6 +10,8 @@ import Control from './Control';
 
 const Item = memo(({ data, headerId }) => {
 	//#region Data
+	const available = useSelector((state) => state.mark.available, shallowEqual);
+
 	const dispatch = useDispatch();
 
 	// const fileRef = useRef();
@@ -56,6 +58,7 @@ const Item = memo(({ data, headerId }) => {
 						options={data.options || []}
 						required={data.required}
 						headerId={Number(headerId)}
+						available={available}
 					/>
 				</Grid>
 			</Grid>

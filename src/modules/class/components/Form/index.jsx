@@ -23,6 +23,7 @@ export const ClassMarksContext = createContext();
 
 const Form = ({ data, status }) => {
 	//#region Data
+	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
 
@@ -165,10 +166,16 @@ const Form = ({ data, status }) => {
 			</ClassMarksContext.Provider>
 
 			<Box textAlign='center' mt={3}>
-				<Button variant='contained' onClick={handleDeny} color='error' sx={{ mr: 1 }}>
+				<Button
+					variant='contained'
+					onClick={handleDeny}
+					color='error'
+					sx={{ mr: 1 }}
+					disabled={!available}
+				>
 					Không xếp loại
 				</Button>
-				<Button variant='contained' onClick={handleUpdate}>
+				<Button variant='contained' onClick={handleUpdate} disabled={!available}>
 					Cập nhật
 				</Button>
 			</Box>

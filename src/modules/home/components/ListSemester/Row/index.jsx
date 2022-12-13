@@ -29,7 +29,7 @@ const Row = memo(({ data, index }) => {
 			<TableCell align='center'>{data.semester.name}</TableCell>
 			<TableCell align='center'>{data.academic.name}</TableCell>
 			<TableCell align='center'>{data.sum_of_personal_marks}</TableCell>
-			<TableCell align='center'>{data?.level?.name}</TableCell>
+			<TableCell align='center'>{data?.level?.name || 'Kém'}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell>
 				<Tooltip title='Chấm điểm'>

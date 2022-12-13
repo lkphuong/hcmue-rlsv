@@ -7,7 +7,18 @@ import { actions } from '_slices/mark.slice';
 
 import { CInput } from '_controls/';
 
-const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark, header_id }) => {
+const TypeInput = ({
+	id,
+	min,
+	max,
+	mark,
+	category,
+	unit,
+	initialMark,
+	currentMark,
+	header_id,
+	available,
+}) => {
 	//#region Data
 	const [score, setScore] = useState(initialMark);
 
@@ -74,22 +85,26 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 				<Typography>{currentMark.class_mark_level}</Typography>
 			</Grid>
 			<Grid item xs={1.2} textAlign='center'>
-				{category === 1 ? (
-					<CInput
-						fullWidth
-						type='number'
-						inputProps={{ min, max }}
-						onChange={onChangeRange(id, min, max)}
-						value={score}
-					/>
+				{available ? (
+					category === 1 ? (
+						<CInput
+							fullWidth
+							type='number'
+							inputProps={{ min, max }}
+							onChange={onChangeRange(id, min, max)}
+							value={score}
+						/>
+					) : (
+						<CInput
+							fullWidth
+							type='number'
+							inputProps={{ step: mark }}
+							onChange={onChangeMark(id, mark)}
+							value={score}
+						/>
+					)
 				) : (
-					<CInput
-						fullWidth
-						type='number'
-						inputProps={{ step: mark }}
-						onChange={onChangeMark(id, mark)}
-						value={score}
-					/>
+					<Typography>{currentMark.department_mark_level}</Typography>
 				)}
 			</Grid>
 		</>

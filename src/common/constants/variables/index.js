@@ -1,15 +1,5 @@
 export const TYPE_NUMBER = /^[0-9-]+$/;
 
-export const LEVEL = [
-	{ id: 0, value: 0, name: 'Không xếp loại' },
-	{ id: 1, value: 1, name: 'Kém' },
-	{ id: 2, value: 2, name: 'Yếu' },
-	{ id: 3, value: 3, name: 'Trung bình' },
-	{ id: 4, value: 4, name: 'Khá' },
-	{ id: 5, value: 5, name: 'Tốt' },
-	{ id: 6, value: 6, name: 'Xuất sắc' },
-];
-
 export const STATUS = [
 	{ id: 0, value: 0, name: 'Chưa đánh giá' },
 	{ id: 1, value: 1, name: 'Chờ lớp xét duyệt' },
@@ -17,6 +7,7 @@ export const STATUS = [
 	{ id: 3, value: 3, name: 'Chờ khoa xét duyệt' },
 	{ id: 4, value: 4, name: 'Khoa quá hạn duyệt' },
 	{ id: 5, value: 5, name: 'Hoàn thành' },
+	{ id: 6, value: 6, name: 'Không xếp loại' },
 ];
 
 export const FORM_STATUS = [

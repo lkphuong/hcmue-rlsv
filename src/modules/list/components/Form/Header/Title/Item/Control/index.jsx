@@ -7,7 +7,7 @@ import TypeCheckbox from './TypeCheckbox';
 import TypeSelect from './TypeSelect';
 
 const Control = memo(
-	({ id, min, max, mark, control, category, unit, options, required, headerId }) => {
+	({ id, min, max, mark, control, category, unit, options, required, headerId, available }) => {
 		//#region Data
 		const { status, itemsMark } = useContext(DepartmentMarksContext);
 
@@ -65,6 +65,7 @@ const Control = memo(
 							initialMark={initialMark}
 							currentMark={currentMark}
 							header_id={headerId}
+							available={available}
 						/>
 					);
 				case 1:
@@ -76,6 +77,7 @@ const Control = memo(
 							initialMark={initialMark}
 							currentMark={currentMark}
 							header_id={headerId}
+							available={available}
 						/>
 					);
 				case 2:
@@ -87,6 +89,7 @@ const Control = memo(
 							initialMark={initialMark}
 							currentMark={currentMark}
 							header_id={headerId}
+							available={available}
 						/>
 					);
 				default:

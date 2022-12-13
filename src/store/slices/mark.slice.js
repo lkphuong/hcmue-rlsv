@@ -7,6 +7,7 @@ import { updateHeaderIdInArr, updateObjInArr } from '_func/';
 
 const initialState = {
 	marks: [],
+	available: true,
 };
 
 export const markSlice = createSlice({
@@ -30,8 +31,12 @@ export const markSlice = createSlice({
 
 			state.marks = updatedValues;
 		},
+		setNotAvailable: (state) => {
+			state.available = false;
+		},
 		clearMarks: (state) => {
 			state.marks = [];
+			state.available = true;
 		},
 	},
 });

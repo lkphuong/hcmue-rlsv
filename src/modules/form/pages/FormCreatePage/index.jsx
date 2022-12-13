@@ -5,8 +5,10 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import {
 	Avatar,
 	Box,
+	Button,
 	ButtonBase,
 	CardContent,
+	Container,
 	Grid,
 	Paper,
 	Stack,
@@ -17,13 +19,25 @@ import {
 	Typography,
 	useTheme,
 } from '@mui/material';
+import {
+	ArrowBack,
+	ArrowForward,
+	CheckCircleOutline,
+	UnpublishedOutlined,
+} from '@mui/icons-material';
 
 import { ROUTES } from '_constants/routes';
 
 import { actions } from '_slices/form.slice';
 
 import { usePrompt } from '_hooks/';
-import { ArrowBack, ArrowForward } from '@mui/icons-material';
+
+import { getFormById, publishForm, unpublishForm } from '_api/form.api';
+
+import { alert } from '_func/alert';
+import { isSuccess } from '_func/';
+
+import { ERRORS } from '_constants/messages';
 
 const SettingTime = lazy(() => import('_modules/form/components/SettingTime'));
 const SettingHeader = lazy(() => import('_modules/form/components/SettingHeader'));
@@ -40,6 +54,7 @@ const STEPS = [
 const FormCreatePage = () => {
 	//#region Data
 	const _step = useSelector((state) => state.form.step, shallowEqual);
+	const status = useSelector((state) => state.form.status, shallowEqual);
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 
 	const [step, setStep] = useState(_step || 0);
@@ -70,6 +85,52 @@ const FormCreatePage = () => {
 	const onBack = () => setStep((prev) => prev - 1);
 
 	const onForward = () => setStep((prev) => prev + 1);
+
+	const handlePublish = () => {
+		alert.warning({
+			onConfirm: async () => {
+				const res = await publishForm(form_id);
+
+				if (isSuccess(res)) {
+					alert.success({ text: 'Phát hành biểu mẫu thành công.' });
+
+					const _res = await getFormById(form_id);
+
+					if (isSuccess(_res)) {
+						const { status } = _res.data;
+
+						dispatch(actions.setStatus(status));
+					}
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+			title: 'Phát hành',
+		});
+	};
+
+	const handleUnpublish = () => {
+		alert.warning({
+			onConfirm: async () => {
+				const res = await unpublishForm(form_id);
+
+				if (isSuccess(res)) {
+					alert.success({ text: 'Hủy phát hành biểu mẫu thành công.' });
+
+					const _res = await getFormById(form_id);
+
+					if (isSuccess(_res)) {
+						const { status } = _res.data;
+
+						dispatch(actions.setStatus(status));
+					}
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+			title: 'Hủy phát hành',
+		});
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -140,6 +201,33 @@ const FormCreatePage = () => {
 							<Typography fontWeight={600} fontSize={20} align='center' mt={3} mb={5}>
 								PHIẾU ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN
 							</Typography>
+
+							{step !== 0 && (
+								<Container maxWidth='lg'>
+									{status === 0 && (
+										<Box py={1.5}>
+											<Button
+												variant='contained'
+												endIcon={<CheckCircleOutline />}
+												onClick={handlePublish}
+											>
+												Phát hành
+											</Button>
+										</Box>
+									)}
+									{status === 1 && (
+										<Box py={1.5}>
+											<Button
+												variant='contained'
+												endIcon={<UnpublishedOutlined />}
+												onClick={handleUnpublish}
+											>
+												Hủy phát hành
+											</Button>
+										</Box>
+									)}
+								</Container>
+							)}
 
 							{currentStage}
 

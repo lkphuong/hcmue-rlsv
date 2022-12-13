@@ -52,10 +52,10 @@ const STEPS = [
 
 const FormUpdatePage = () => {
 	//#region Data
-	const { form_id } = useParams();
-
 	const _step = useSelector((state) => state.form.step, shallowEqual);
 	const status = useSelector((state) => state.form.status, shallowEqual);
+
+	const { form_id } = useParams();
 
 	const [step, setStep] = useState(_step || 0);
 

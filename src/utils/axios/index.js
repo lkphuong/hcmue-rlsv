@@ -16,10 +16,8 @@ import { post } from './request';
 import { AUTH } from '_api/url';
 
 const apiInstance = axios.create({
-	baseURL: process.env.REACT_APP_API_URL,
-	// baseURL: 'http://103.154.176.80:3020/api/',
-	// baseURL: 'http://hcmue-ctcthssv.vtcode.vn:9093/api/',
-	// baseURL: 'http://192.168.1.25:5099/api/',
+	// baseURL: process.env.REACT_APP_API_URL,
+	baseURL: 'http://103.154.176.80:3020/api',
 	timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 

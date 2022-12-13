@@ -19,13 +19,16 @@ export const MMenuRole = forwardRef(({ id, role, department_id, class_id }, ref)
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
-	const [value, setValue] = useState(role);
+	const [value, setValue] = useState(null);
 
 	const { getData } = useContext(ConfigRoleContext);
 	//#endregion
 
 	//#region Event
-	const turnOnMenu = (event) => setAnchorEl(event.currentTarget);
+	const turnOnMenu = (event, roleId) => {
+		setValue(roleId);
+		setAnchorEl(event.currentTarget);
+	};
 
 	const turnOffMenu = () => setAnchorEl(null);
 
@@ -53,7 +56,7 @@ export const MMenuRole = forwardRef(({ id, role, department_id, class_id }, ref)
 	//#endregion
 
 	useImperativeHandle(ref, () => ({
-		onMenu: (event) => turnOnMenu(event),
+		onMenu: (event, roleId) => turnOnMenu(event, roleId),
 	}));
 
 	//#region Render

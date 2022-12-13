@@ -17,7 +17,7 @@ export const MRow = ({ data }) => {
 	//#endregion
 
 	//#region Event
-	const onClick = (event) => menuRef.current.onMenu(event);
+	const onClick = (event) => menuRef.current.onMenu(event, Number(data?.role));
 	//#endregion
 
 	//#region Render
@@ -40,7 +40,6 @@ export const MRow = ({ data }) => {
 
 			<MMenuRole
 				id={data?.user_id}
-				role={Number(data?.role)}
 				department_id={data?.department?.id}
 				class_id={data?.classes?.id}
 				ref={menuRef}

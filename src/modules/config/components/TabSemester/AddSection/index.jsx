@@ -1,5 +1,5 @@
 import React from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { Box, Button, IconButton, Stack } from '@mui/material';
 import { Block } from '@mui/icons-material';
@@ -22,18 +22,14 @@ export const AddSection = ({ refetch }) => {
 	//#region Data
 	const resolver = useResolver(validationSchema);
 
-	const {
-		control,
-		handleSubmit,
-		reset,
-		formState: { submitCount },
-	} = useForm({
+	const { control, handleSubmit, reset } = useForm({
 		defaultValues: initialValues,
 		mode: 'all',
 		shouldFocusError: true,
 		resolver,
 	});
 
+	const inputValue = useWatch({ control, name: 'name' });
 	//#endregion
 
 	//#region Event
@@ -82,8 +78,12 @@ export const AddSection = ({ refetch }) => {
 						Thêm
 					</Button>
 
-					{submitCount !== 0 && (
-						<IconButton color='error' type='button' onClick={reset}>
+					{inputValue && (
+						<IconButton
+							color='error'
+							type='button'
+							onClick={() => reset(initialValues)}
+						>
 							<Block />
 						</IconButton>
 					)}

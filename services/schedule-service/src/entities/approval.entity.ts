@@ -6,8 +6,8 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { SheetEntity } from './sheet.entity';
 import { RootEntity } from './root.entity';
+import { SheetEntity } from './sheet.entity';
 
 @Entity('approvals')
 export class ApprovalEntity extends RootEntity {

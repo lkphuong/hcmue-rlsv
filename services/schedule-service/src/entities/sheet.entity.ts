@@ -7,15 +7,15 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RootEntity } from './root.entity';
-import { EvaluationEntity } from './evaluation.entity';
-import { SheetSignatures } from './sheet_signatures.entity';
-import { SemesterEntity } from './semester.entity';
 import { AcademicYearEntity } from './academic_year.entity';
-import { LevelEntity } from './level.entity';
-import { FormEntity } from './form.entity';
 import { ApprovalEntity } from './approval.entity';
+import { EvaluationEntity } from './evaluation.entity';
 import { FileEntity } from './file.entity';
+import { FormEntity } from './form.entity';
+import { SemesterEntity } from './semester.entity';
+import { SheetSignatures } from './sheet_signatures.entity';
+import { LevelEntity } from './level.entity';
+import { RootEntity } from './root.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {

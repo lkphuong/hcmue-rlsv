@@ -26,7 +26,9 @@ export class ApprovalService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
+
       approvals = manager.create(ApprovalEntity, approvals);
+      console.log('approvals: ', approvals[0]);
       approvals = await manager.save(approvals);
 
       return approvals || null;

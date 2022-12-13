@@ -13,21 +13,23 @@ import { SheetEntity } from '../../../entities/sheet.entity';
 
 import { generateApproval2Array, generateSheet2Array } from '../transform';
 
+import { ApprovalEntity } from '../../../entities/approval.entity';
+
 import { ApprovalService } from '../../approval/services/approval.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 import { SheetService } from '../services/sheet.service';
 
+import { GenerateCreateSheetsResponse } from '../interfaces/responses/create-sheets-response.interface';
+import { SheetEntityPayload } from '../interfaces/payloads/create-sheets.interface';
+
 import { Configuration } from '../../shared/constants/configuration.enum';
+
+import { ErrorMessage } from '../constants/enums/errors.enum';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Message } from '../constants/enums/messages.enum';
 import { Pattern } from '../../../constants/enums/pattern.enum';
-
-import { GenerateCreateSheetsResponse } from '../interfaces/responses/create-sheets-response.interface';
-import { SheetEntityPayload } from '../interfaces/payloads/create-sheets.interface';
-import { ApprovalEntity } from 'src/entities/approval.entity';
-import { ErrorMessage } from '../constants/enums/errors.enum';
 
 @Controller('sheet')
 export class SheetController {
@@ -107,7 +109,7 @@ export class SheetController {
   }
 
   /**
-   * @description: Cập nhật trạng thái khi quá hạn
+   * @description: Cập nhật trạng thái phiếu khi quá hạn
    */
   @MessagePattern(Message.GENERATE_UPDATE_APPROVED_STATUS)
   async updateStatus(
@@ -130,28 +132,29 @@ export class SheetController {
     console.log(
       `${Pattern.MESSAGE_PATTERN}: /${Message.GENERATE_UPDATE_APPROVED_STATUS}`,
     );
-
     console.log('data: ', data);
 
     const { data: items } = data.payload;
 
     try {
-      //#region Update approval
-      const approvals = await generateApproval2Array(items);
+      let results: ApprovalEntity[] | SheetEntity[] | null = null;
 
+      //#region Update approvals
+      const approvals = await generateApproval2Array(items);
+      results = await this._approvalService.bulkUpdate(approvals);
       //#endregion
-      let success: ApprovalEntity[] | SheetEntity[] | null = null;
-      success = await this._approvalService.bulkUpdate(approvals);
-      if (success) {
+
+      if (results) {
         const sheets = await generateSheet2Array(items);
-        success = await this._sheetService.bulkUpdate(sheets);
-        if (!success) {
+        results = await this._sheetService.bulkUpdate(sheets);
+        if (!results) {
           channel.ack(original_message);
+
           //#region Handle log
           handleLog(
             Levels.ERROR,
             Pattern.MESSAGE_PATTERN,
-            Message.GENERATE_CREATE_SHEET,
+            Message.GENERATE_UPDATE_APPROVED_STATUS,
             ErrorMessage.UPDATE_SHEET_ERROR,
             this._logger,
           );
@@ -159,11 +162,12 @@ export class SheetController {
         }
       } else {
         channel.ack(original_message);
+
         //#region Handle log
         handleLog(
           Levels.ERROR,
           Pattern.MESSAGE_PATTERN,
-          Message.GENERATE_CREATE_SHEET,
+          Message.GENERATE_UPDATE_APPROVED_STATUS,
           ErrorMessage.UPDATE_APPROVAL_ERROR,
           this._logger,
         );

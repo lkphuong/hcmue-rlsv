@@ -6,7 +6,7 @@ export class ConfigurationService {
   private environment: string = process.env.NODE_ENV || 'development';
 
   get(name: string): string {
-    console.log(name, ': ', config.get(name));
+    console.log(name, ': ', process.env[name] || config.get(name));
     return process.env[name] || config.get(name);
   }
 

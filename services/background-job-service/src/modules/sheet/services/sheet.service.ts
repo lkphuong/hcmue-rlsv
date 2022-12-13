@@ -25,6 +25,7 @@ export class SheetService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
+
       sheets = manager.create(SheetEntity, sheets);
       sheets = await manager.save(sheets);
 
@@ -48,14 +49,16 @@ export class SheetService {
       if (!manager) {
         manager = this._dataSource.manager;
       }
+
       sheets = manager.create(SheetEntity, sheets);
+      console.log('sheets: ', sheets[0]);
       sheets = await manager.save(sheets);
 
       return sheets || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
-        Methods.INSERT,
+        Methods.UPDATE,
         'SheetService.bulkUpdate()',
         e,
       );

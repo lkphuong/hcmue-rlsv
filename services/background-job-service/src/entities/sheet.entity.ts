@@ -7,14 +7,14 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RootEntity } from './root.entity';
-import { EvaluationEntity } from './evaluation.entity';
-import { SheetSignatures } from './sheet_signatures.entity';
-import { SemesterEntity } from './semester.entity';
 import { AcademicYearEntity } from './academic_year.entity';
-import { LevelEntity } from './level.entity';
-import { FormEntity } from './form.entity';
 import { ApprovalEntity } from './approval.entity';
+import { EvaluationEntity } from './evaluation.entity';
+import { FormEntity } from './form.entity';
+import { SemesterEntity } from './semester.entity';
+import { SheetSignatures } from './sheet_signatures.entity';
+import { LevelEntity } from './level.entity';
+import { RootEntity } from './root.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -95,6 +95,14 @@ export class SheetEntity extends RootEntity {
     default: 0,
   })
   status: number;
+
+  // 0. Không xếp loại | 1, Xếp loại
+  @Column('tinyint', {
+    name: 'graded',
+    nullable: false,
+    default: 0,
+  })
+  graded: number;
 
   @Column('int', {
     name: 'sum_of_personal_marks',

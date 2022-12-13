@@ -17,6 +17,7 @@ export const generateApproval2Array = async (sheets: SheetEntity[] | null) => {
         }
       }
     }
+
     return payload;
   }
   return null;
@@ -26,14 +27,15 @@ export const generateSheet2Array = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
     const payload: SheetEntity[] = [];
     for await (const sheet of sheets) {
-      sheet.status += sheet.status % 2 == 0 ? 2 : 1;
+      sheet.approvals = null;
+      sheet.status += sheet.status !== 0 ? (sheet.status % 2 == 0 ? 2 : 1) : 0;
       sheet.updated_at = new Date();
       sheet.updated_by = 'system';
 
       payload.push(sheet);
     }
 
-    return sheets;
+    return payload;
   }
 
   return null;

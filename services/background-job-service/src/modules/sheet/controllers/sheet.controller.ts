@@ -113,7 +113,7 @@ export class SheetController {
    * @description: Cập nhật trạng thái phiếu khi quá hạn
    */
   @MessagePattern(Message.GENERATE_UPDATE_APPROVED_STATUS)
-  async updateStatus(
+  async updateSheetsStatus(
     @Payload() data: SheetEntityPayload,
     @Ctx() context: RmqContext,
   ): Promise<void> {

@@ -61,6 +61,7 @@ export class SheetService {
     academic_id: number,
     semester_id: number,
     status: number,
+    role: number,
     user_ids?: string[],
   ): Promise<SheetEntity[] | null> {
     try {
@@ -91,6 +92,11 @@ export class SheetService {
           `sheet.user_id IN (${generateObjectIDString(user_ids)})`,
         );
       }
+
+      const sheet_status = this.generateStatus(role);
+      conditions = conditions.andWhere('sheet.status >= :status', {
+        status: sheet_status,
+      });
 
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')
@@ -230,6 +236,7 @@ export class SheetService {
     department_id: string,
     semester_id: number,
     status: SheetStatus,
+    role?: number,
     user_ids?: string[],
   ): Promise<number> {
     try {
@@ -260,6 +267,13 @@ export class SheetService {
         conditions = conditions.andWhere(
           `sheet.user_id IN (${generateObjectIDString(user_ids)})`,
         );
+      }
+
+      if (role) {
+        const sheet_status = this.generateStatus(role);
+        conditions = conditions.andWhere('sheet.status >= :status', {
+          status: sheet_status,
+        });
       }
 
       const { count } = await conditions.getRawOne();
@@ -311,7 +325,7 @@ export class SheetService {
         SheetEntity,
         { id: sheet_id },
         {
-          status: SheetStatus.SUCCESS,
+          status: SheetStatus.NOT_GRADED,
           graded: 0,
           level: null,
           updated_at: new Date(),

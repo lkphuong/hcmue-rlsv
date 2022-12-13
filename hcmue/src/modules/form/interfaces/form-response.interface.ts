@@ -13,6 +13,7 @@ export interface FormResponse {
   classes: TimeResponse;
   department: TimeResponse;
   status: FormStatus;
+  created_at?: Date;
 }
 
 export interface HeaderResponse extends BaseResponse {

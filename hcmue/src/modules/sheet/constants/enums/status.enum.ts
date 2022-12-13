@@ -6,4 +6,5 @@ export enum SheetStatus {
   WAITING_DEPARTMENT = 3,
   OVERDUE_DEPARTMENT = 4,
   SUCCESS = 5,
+  NOT_GRADED = 6,
 }

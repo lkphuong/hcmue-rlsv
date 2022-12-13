@@ -31,7 +31,6 @@ import {
 
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
-import { Role } from 'src/modules/auth/constants/enums/role.enum';
 
 export const generateAdminSheets = async (
   sheets: SheetEntity[] | null,

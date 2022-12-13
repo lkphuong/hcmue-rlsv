@@ -3,6 +3,8 @@ import { ItemEntity } from '../../../entities/item.entity';
 import { TitleEntity } from '../../../entities/title.entity';
 import { FormEntity } from '../../../entities/form.entity';
 
+import { convertString2Date } from '../../../utils';
+
 import {
   BaseResponse,
   ItemResponse,
@@ -160,6 +162,7 @@ export const generateFormsArray = async (forms: FormEntity[] | null) => {
           end: form.department_end,
         },
         status: form.status,
+        created_at: convertString2Date(form.created_at.toString()),
       };
 
       payload.push(item);

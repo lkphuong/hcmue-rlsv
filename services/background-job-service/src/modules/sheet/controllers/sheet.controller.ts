@@ -71,24 +71,25 @@ export class SheetController {
     const { data: items } = data.payload;
 
     try {
+      //#region Generate create sheet entities
       items.map((data) => {
         const sheet = new SheetEntity();
         Object.assign(sheet, data);
         return sheet;
       });
+      //#endregion
 
+      //#region Create sheets
       const sheets = await this._sheetService.bulkAdd(items);
-
-      if (sheets instanceof HttpException) {
-        channel.ack(original_message);
-        throw sheets;
-      } else {
+      if (sheets instanceof HttpException) throw sheets;
+      else {
         channel.ack(original_message);
 
         //#region Generate response
         return await generateResponse(sheets, true);
         //#endregion
       }
+      //#endregion
     } catch (err) {
       channel.ack(original_message);
 
@@ -145,6 +146,7 @@ export class SheetController {
       //#endregion
 
       if (results) {
+        //#region Update sheets
         const sheets = await generateSheet2Array(items);
         results = await this._sheetService.bulkUpdate(sheets);
         if (!results) {
@@ -160,6 +162,7 @@ export class SheetController {
           );
           //#endregion
         } else channel.ack(original_message);
+        //#endregion
       } else {
         channel.ack(original_message);
 

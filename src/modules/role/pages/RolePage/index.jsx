@@ -18,6 +18,7 @@ const RolePage = memo(() => {
 	//#region Data
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const [data, setData] = useState();
 
@@ -39,6 +40,8 @@ const RolePage = memo(() => {
 
 	//#region Event
 	const getData = useCallback(async () => {
+		setIsLoading(true);
+
 		try {
 			let _filter = { ...filter };
 
@@ -51,6 +54,8 @@ const RolePage = memo(() => {
 			} else if (isEmpty(res)) setData(null);
 		} catch (error) {
 			throw error;
+		} finally {
+			setIsLoading(false);
 		}
 	}, [filter]);
 
@@ -97,12 +102,14 @@ const RolePage = memo(() => {
 				/>
 
 				<Stack direction='column' justifyContent='space-between'>
-					<MTable data={dataTable} />
+					<MTable data={dataTable} isLoading={isLoading} />
 
 					<CPagination
 						page={paginate.page}
 						pages={paginate.pages}
 						onChange={onPageChange}
+						isLoading={isLoading}
+						isGoTo
 					/>
 				</Stack>
 			</ConfigRoleContext.Provider>

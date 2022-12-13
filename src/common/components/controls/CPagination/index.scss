@@ -9,3 +9,23 @@
 		}
 	}
 }
+
+.c-pagination-goto {
+	.MuiOutlinedInput-root {
+		border-radius: inherit;
+		.MuiOutlinedInput-input {
+			padding: 6.5px 10px;
+			border-radius: inherit;
+			text-align: center;
+		}
+		.MuiOutlinedInput-notchedOutline {
+			border-radius: inherit;
+		}
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}

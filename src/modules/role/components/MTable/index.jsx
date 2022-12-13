@@ -1,10 +1,20 @@
 import React from 'react';
 
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import {
+	Box,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+} from '@mui/material';
+
+import { CLoadingSpinner } from '_others/';
 
 import { MRow } from './MRow';
 
-export const MTable = ({ data }) => {
+export const MTable = ({ data, isLoading }) => {
 	return (
 		<TableContainer className='c-table'>
 			<Table stickyHeader>
@@ -19,7 +29,15 @@ export const MTable = ({ data }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.length > 0 ? (
+					{isLoading ? (
+						<TableRow>
+							<TableCell colSpan='100%' height={500}>
+								<Box display='flex' alignItems='center' justifyContent='center'>
+									<CLoadingSpinner />
+								</Box>
+							</TableCell>
+						</TableRow>
+					) : data?.length > 0 ? (
 						data.map((row, index) => (
 							<MRow key={row?.user_id} index={index} data={row} />
 						))

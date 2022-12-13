@@ -20,7 +20,7 @@ import { Levels } from '../../../constants/enums/level.enum';
 import { Message } from '../constants/enums/messages.enum';
 import { Pattern } from '../../../constants/enums/pattern.enum';
 
-import { SPayload } from '../interfaces/payloads/create-sheets-entity.interface';
+import { SheetsPayload } from '../interfaces/payloads/create-sheets-entity.interface';
 
 @Controller('sheet')
 export class SheetController {
@@ -38,7 +38,7 @@ export class SheetController {
 
   @MessagePattern(Message.GENERATE_CREATE_SHEET_ENTITY)
   async generateCreateSheets(
-    @Payload() data: SPayload,
+    @Payload() data: SheetsPayload,
     @Ctx() context: RmqContext,
   ): Promise<void> {
     const channel = context.getChannelRef();
@@ -57,17 +57,18 @@ export class SheetController {
     console.log(
       `${Pattern.MESSAGE_PATTERN}: /${Message.GENERATE_CREATE_SHEET_ENTITY}`,
     );
+    console.log('data: ', data);
+
+    //#region Get params
+    const { data: items } = data.payload;
 
     const itemsPerPage = parseInt(
       this._configurationService.get(Configuration.ITEMS_PER_PAGE),
     );
-
-    console.log('data: ', data);
-
-    const { data: items } = data.payload;
+    //#endregion
 
     try {
-      //#region Generate Sheet Entity
+      //#region Generate sheets entity
       const sheets: SheetEntity[] = [];
       for await (const item of items) {
         const sheet = new SheetEntity();
@@ -87,7 +88,7 @@ export class SheetController {
       }
       //#endregion
 
-      //#region Compose Sheets
+      //#region Emit to Message.GENERATE_CREATE_SHEET to create sheets
       this._sheetService.send(Message.GENERATE_CREATE_SHEET, sheets);
       //#endregion
 

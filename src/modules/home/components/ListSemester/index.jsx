@@ -12,7 +12,7 @@ import {
 
 import Row from './Row';
 
-const ListSemester = ({ data }) => {
+export const ListSemester = ({ data }) => {
 	//#region Data
 
 	//#endregion
@@ -48,5 +48,3 @@ const ListSemester = ({ data }) => {
 	);
 	//#endregion
 };
-
-export default ListSemester;

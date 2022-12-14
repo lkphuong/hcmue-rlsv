@@ -21,7 +21,7 @@
 		"react-hook-form": "^7.39.4",
 		"react-redux": "^8.0.5",
 		"react-router-dom": "^6.4.3",
-		"react-to-print": "^2.14.9",
+		"react-to-print": "^2.14.10",
 		"react-transition-group": "^4.4.5",
 		"redux-persist": "^6.0.0",
 		"sass": "^1.56.1",

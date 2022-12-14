@@ -1,0 +1,27 @@
+.print-source {
+	display: none;
+
+	* {
+		font-size: 18px;
+	}
+
+	section {
+		margin-bottom: 1rem;
+
+		&.form {
+			* {
+				font-size: 12px;
+			}
+		}
+	}
+}
+
+body > .print-source {
+	display: block;
+}
+
+@media print {
+	.print-source {
+		display: block;
+	}
+}

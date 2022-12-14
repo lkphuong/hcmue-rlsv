@@ -1,4 +1,3 @@
-import ListSemester from './ListSemester';
-import Form from './Form';
-
-export { ListSemester, Form };
+export * from './PrintComponent';
+export * from './Form';
+export * from './ListSemester';

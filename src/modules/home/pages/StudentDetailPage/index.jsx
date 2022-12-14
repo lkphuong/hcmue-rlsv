@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
 import dayjs from 'dayjs';
 
-import { Form } from '_modules/home/components';
+import { Form, PrintComponent } from '_modules/home/components';
 
 import { getSheetById } from '_api/sheets.api';
 
@@ -16,8 +16,12 @@ import { alert } from '_func/alert';
 import { actions } from '_slices/mark.slice';
 
 import { CExpired } from '_others/';
+import { Print } from '@mui/icons-material';
+
+import { useReactToPrint } from 'react-to-print';
 
 const SemesterDetail = () => {
+	const ref = useRef();
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 
@@ -56,6 +60,12 @@ const SemesterDetail = () => {
 			throw error;
 		}
 	}, [sheet_id]);
+
+	const handlePrint = useReactToPrint({
+		content: () => {
+			return ref.current;
+		},
+	});
 	//#endregion
 
 	useEffect(() => {
@@ -72,18 +82,22 @@ const SemesterDetail = () => {
 					end={data?.time_student?.end}
 				/>
 			)}
-
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
-					</Typography>
+					<Stack direction='row' justifyContent='space-between'>
+						<Typography fontSize={20} p={1.5} fontWeight={600}>
+							{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
+						</Typography>
+						<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
+							In phiếu
+						</Button>
+					</Stack>
 				</Paper>
 			</Box>
-
 			<Paper className='paper-wrapper'>
 				<Box p={1.5}>{data && <Form data={data} />}</Box>
 			</Paper>
+			<PrintComponent data={data} ref={ref} />;
 		</Box>
 	) : (
 		<></>

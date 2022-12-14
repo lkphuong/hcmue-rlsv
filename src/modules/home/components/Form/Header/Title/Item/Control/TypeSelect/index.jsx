@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, TableCell, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
@@ -39,9 +39,8 @@ const TypeSelect = ({
 	//#region Render
 	return (
 		<>
-			<Grid item xs={2} />
-
-			<Grid item xs={1.2} textAlign='center'>
+			<TableCell />
+			<TableCell align='center'>
 				{available ? (
 					<CAutocomplete
 						disableClearable={required}
@@ -59,13 +58,13 @@ const TypeSelect = ({
 				) : (
 					<Typography>{currentMark.personal_mark_level || 0}</Typography>
 				)}
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
+			</TableCell>
+			<TableCell align='center'>
 				<Typography>{currentMark.class_mark_level || 0}</Typography>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
+			</TableCell>
+			<TableCell align='center'>
 				<Typography>{currentMark.department_mark_level || 0}</Typography>
-			</Grid>
+			</TableCell>
 		</>
 	);
 	//#endregion

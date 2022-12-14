@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Grid, Typography } from '@mui/material';
+import {  TableCell, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
@@ -72,14 +72,13 @@ const TypeInput = ({
 	//#region Render
 	return (
 		<>
-			<Grid item xs={2} textAlign='center'>
+			<TableCell align='center'>
 				<Typography component='span' whiteSpace='nowrap' fontWeight={500}>
 					&nbsp;&#40;{category === 1 ? `Từ ${min} đến ${max} ${unit}` : `${mark} ${unit}`}
 					&#41;&nbsp;
 				</Typography>
-			</Grid>
-
-			<Grid item xs={1.2} textAlign='center'>
+			</TableCell>
+			<TableCell align='center'>
 				{available ? (
 					category === 1 ? (
 						<CInput
@@ -101,13 +100,14 @@ const TypeInput = ({
 				) : (
 					<Typography>{currentMark.personal_mark_level}</Typography>
 				)}
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
+			</TableCell>
+			<TableCell align='center'>
 				<Typography>{currentMark.class_mark_level}</Typography>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
+			</TableCell>
+			<TableCell align='center'>
 				<Typography>{currentMark.department_mark_level}</Typography>
-			</Grid>
+			</TableCell>
+
 		</>
 	);
 	//#endregion

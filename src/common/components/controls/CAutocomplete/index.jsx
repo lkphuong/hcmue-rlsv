@@ -71,6 +71,8 @@ export const CAutocomplete = memo(
 
 			if (option?.inputValue) return option.inputValue;
 
+			if (typeof option?.[display] === 'number') return option?.[display].toString();
+
 			return option?.[display];
 		};
 		//#endregion
@@ -88,8 +90,8 @@ export const CAutocomplete = memo(
 				options={options}
 				renderInput={(params) => (
 					<TextField
-						placeholder={placeholder}
 						{...params}
+						placeholder={placeholder}
 						error={error}
 						helperText={helperText}
 						inputRef={inputRef}

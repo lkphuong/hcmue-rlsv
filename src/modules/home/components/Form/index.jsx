@@ -3,7 +3,17 @@ import React, { useCallback, useEffect, useState, createContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box, Button, Grid, Paper } from '@mui/material';
+import {
+	Box,
+	Button,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+} from '@mui/material';
 
 import { alert } from '_func/alert';
 
@@ -100,44 +110,58 @@ const Form = ({ data }) => {
 	//#region Render
 	return (
 		<Paper>
-			<Grid
-				container
-				borderRadius={1}
-				overflow='hidden'
-				sx={{ boxShadow: '0px 2px 2px 1px rgb(0 0 0 / 20%)' }}
-			>
-				<Grid item xs={1} textAlign='center' className='grid-fake-header'>
-					Mục
-				</Grid>
-				<Grid item xs={11} className='grid-fake-header' px='10px'>
-					<Grid container spacing={1}>
-						<Grid item xs={6.4}>
-							Nội dung đánh giá
-						</Grid>
-						<Grid item xs={2} textAlign='center'>
-							Khung điểm
-						</Grid>
-						<Grid item xs={1.2} textAlign='center'>
-							Sinh viên
-						</Grid>
-						<Grid item xs={1.2} textAlign='center'>
-							Lớp
-						</Grid>
-						<Grid item xs={1.2} textAlign='center'>
-							Khoa
-						</Grid>
-					</Grid>
-				</Grid>
-			</Grid>
-
-			<StudentMarksContext.Provider value={{ itemsMark }}>
-				<Grid container mt={1.5} alignItems='stretch' className='grid-fake-table'>
-					{data?.headers?.length > 0 &&
-						data.headers.map((e, i) => (
-							<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
-						))}
-				</Grid>
-			</StudentMarksContext.Provider>
+			<TableContainer>
+				<Table
+					stickyHeader
+					sx={{ '& .MuiTableCell-root': { border: '1px solid rgba(224, 224, 224, 1)' } }}
+				>
+					<TableHead>
+						<TableRow>
+							<TableCell
+								align='center'
+								rowSpan={2}
+								width={80}
+								sx={{ minWidth: '80px' }}
+							>
+								Mục
+							</TableCell>
+							<TableCell rowSpan={2} sx={{ minWidth: '650px' }}>
+								Nội dung đánh giá
+							</TableCell>
+							<TableCell
+								align='center'
+								rowSpan={2}
+								width={150}
+								sx={{ minWidth: '150px', maxWidth: '200px' }}
+							>
+								Khung điểm
+							</TableCell>
+							<TableCell align='center' colSpan={3} sx={{ minWidth: '390px' }}>
+								Điểm đánh giá
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell align='center' width={130}>
+								Sinh viên
+							</TableCell>
+							<TableCell align='center' width={130}>
+								Lớp
+							</TableCell>
+							<TableCell align='center' width={130}>
+								Khoa
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						<StudentMarksContext.Provider value={{ itemsMark }}>
+							{data?.headers?.length > 0 &&
+								data.headers.map((e, i) => (
+									<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
+								))}
+						</StudentMarksContext.Provider>
+					</TableBody>
+				</Table>
+			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
 				<Button variant='contained' onClick={handleUpdate} disabled={!available}>

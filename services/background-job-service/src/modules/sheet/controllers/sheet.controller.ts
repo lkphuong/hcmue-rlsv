@@ -1,4 +1,4 @@
-import { Controller, HttpException } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import {
   Ctx,
   MessagePattern,
@@ -7,37 +7,39 @@ import {
 } from '@nestjs/microservices';
 
 import { handleLog } from '../../../utils';
-import { generateResponse } from '../utils';
-
-import { SheetEntity } from '../../../entities/sheet.entity';
-
 import { generateApproval2Array, generateSheet2Array } from '../transform';
+import { generateCreateSheetEntities } from '../funcs';
 
 import { ApprovalEntity } from '../../../entities/approval.entity';
+import { SheetEntity } from '../../../entities/sheet.entity';
 
 import { ApprovalService } from '../../approval/services/approval.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 import { SheetService } from '../services/sheet.service';
 
-import { GenerateCreateSheetsResponse } from '../interfaces/responses/create-sheets-response.interface';
 import { SheetEntityPayload } from '../interfaces/payloads/create-sheets.interface';
+import { SheetsPayload } from '../interfaces/payloads/sheet_payload.interface';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Message } from '../constants/enums/messages.enum';
 import { Pattern } from '../../../constants/enums/pattern.enum';
 
+import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+
 @Controller('sheet')
 export class SheetController {
   MAX_TIMES = 3;
+
   constructor(
+    private readonly _approvalService: ApprovalService,
     private readonly _configurationService: ConfigurationService,
     private readonly _sheetService: SheetService,
-    private readonly _approvalService: ApprovalService,
     private _logger: LogService,
   ) {
     this.MAX_TIMES = parseInt(
@@ -47,9 +49,9 @@ export class SheetController {
 
   @MessagePattern(Message.GENERATE_CREATE_SHEET)
   async createSheets(
-    @Payload() data: SheetEntityPayload,
+    @Payload() data: SheetsPayload,
     @Ctx() context: RmqContext,
-  ): Promise<GenerateCreateSheetsResponse> {
+  ): Promise<void> {
     const channel = context.getChannelRef();
     const original_message = context.getMessage();
 
@@ -62,32 +64,39 @@ export class SheetController {
     );
     //#endregion
 
+    const { data: items, page } = data.payload;
+    console.log('page: ', page);
+
     console.log('----------------------------------------------------------');
     console.log(
       `${Pattern.MESSAGE_PATTERN}: /${Message.GENERATE_CREATE_SHEET}`,
     );
-    console.log('data: ', data);
-
-    const { data: items } = data.payload;
+    // console.log('data: ', data);
 
     try {
-      //#region Generate create sheet entities
-      items.map((data) => {
-        const sheet = new SheetEntity();
-        Object.assign(sheet, data);
-        return sheet;
-      });
+      console.log('start: ', new Date());
+
+      //#region Generate sheet entities
+      let sheets = await generateCreateSheetEntities(
+        items,
+        this._configurationService,
+      );
       //#endregion
 
       //#region Create sheets
-      const sheets = await this._sheetService.bulkAdd(items);
-      if (sheets instanceof HttpException) throw sheets;
-      else {
-        channel.ack(original_message);
-
-        //#region Generate response
-        return await generateResponse(sheets, true);
+      sheets = await this._sheetService.bulkAdd(sheets);
+      if (!sheets) {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          Pattern.MESSAGE_PATTERN,
+          Message.GENERATE_CREATE_SHEET,
+          ErrorMessage.CREATE_SHEETS_ERROR,
+        );
         //#endregion
+      } else {
+        console.log('done: ', new Date());
+        channel.ack(original_message);
       }
       //#endregion
     } catch (err) {
@@ -102,10 +111,6 @@ export class SheetController {
         this._logger,
       );
       //#endregion
-
-      //#region Generate response
-      return await generateResponse(null, false);
-      //#endregion
     }
   }
 
@@ -113,7 +118,7 @@ export class SheetController {
    * @description: Cập nhật trạng thái phiếu khi quá hạn
    */
   @MessagePattern(Message.GENERATE_UPDATE_APPROVED_STATUS)
-  async updateSheetsStatus(
+  async setSheetsStatus(
     @Payload() data: SheetEntityPayload,
     @Ctx() context: RmqContext,
   ): Promise<void> {

@@ -7,6 +7,7 @@ export interface CreateSheetPayload {
 
 export interface SheetEntityPayload {
   payload: {
+    count: number;
     data: SheetEntity[];
   };
 }

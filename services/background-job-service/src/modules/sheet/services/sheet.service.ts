@@ -26,9 +26,7 @@ export class SheetService {
         manager = this._dataSource.manager;
       }
 
-      sheets = manager.create(SheetEntity, sheets);
       sheets = await manager.save(sheets);
-
       return sheets || null;
     } catch (e) {
       this._logger.writeLog(

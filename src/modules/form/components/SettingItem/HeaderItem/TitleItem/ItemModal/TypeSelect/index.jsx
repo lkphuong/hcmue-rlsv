@@ -34,7 +34,7 @@ const TypeSelect = memo(({ control }) => {
 				</Button>
 			</Box>
 
-			<Box maxHeight={350} overflow='auto'>
+			<Box maxHeight={200} overflow='auto'>
 				{fields.map((item, index) => (
 					<OptionItem
 						key={item.id}

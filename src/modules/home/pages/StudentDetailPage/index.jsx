@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState, useRef, createContext } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
@@ -35,6 +35,8 @@ const SemesterDetail = () => {
 	const navigate = useNavigate();
 
 	const dispatch = useDispatch();
+
+	const location = useLocation();
 	//#endregion
 
 	//#region Event
@@ -101,6 +103,10 @@ const SemesterDetail = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [itemsMark]);
 
+	useEffect(() => {
+		dispatch(actions.clearMarks());
+	}, [location]);
+
 	//#region Render
 	return data ? (
 		<Box>
@@ -127,7 +133,7 @@ const SemesterDetail = () => {
 				<Paper className='paper-wrapper'>
 					<Box p={1.5}>{data && <Form data={data} />}</Box>
 				</Paper>
-				<PrintComponent data={data} ref={ref} />;
+				<PrintComponent data={data} ref={ref} />
 			</StudentMarksContext.Provider>
 		</Box>
 	) : (

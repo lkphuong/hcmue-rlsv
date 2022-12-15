@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { Box, Paper, Typography } from '@mui/material';
 import dayjs from 'dayjs';
@@ -27,6 +27,8 @@ const ClassDetailPage = () => {
 	const navigate = useNavigate();
 
 	const dispatch = useDispatch();
+
+	const location = useLocation();
 	//#endregion
 
 	//#region Event
@@ -60,6 +62,10 @@ const ClassDetailPage = () => {
 	useEffect(() => {
 		getForm();
 	}, [getForm]);
+
+	useEffect(() => {
+		dispatch(actions.clearMarks());
+	}, [location]);
 
 	//#region Render
 	return data ? (

@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Box, Paper, Typography } from '@mui/material';
 
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 
@@ -25,6 +25,8 @@ const ListDetailPage = () => {
 	const [data, setData] = useState(null);
 
 	const dispatch = useDispatch();
+
+	const location = useLocation();
 	//#endregion
 
 	//#region Event
@@ -57,6 +59,10 @@ const ListDetailPage = () => {
 	useEffect(() => {
 		getForm();
 	}, [getForm]);
+
+	useEffect(() => {
+		dispatch(actions.clearMarks());
+	}, [location]);
 
 	//#region Render
 	return (

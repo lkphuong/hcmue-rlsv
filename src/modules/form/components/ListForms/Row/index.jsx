@@ -131,7 +131,7 @@ const Row = memo(({ data, index, refetch }) => {
 							<FileCopy />
 						</IconButton>
 					</Tooltip>
-					<IconButton onClick={onEdit}>
+					<IconButton onClick={onEdit} disabled={data.status === 2 || data.status === 3}>
 						<Edit />
 					</IconButton>
 					<Tooltip

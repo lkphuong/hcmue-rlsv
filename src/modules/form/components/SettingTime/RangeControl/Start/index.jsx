@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { Box, Typography } from '@mui/material';
@@ -7,12 +7,11 @@ import dayjs from 'dayjs';
 
 import { CDatePicker } from '_controls/';
 
-export const MDateStart = ({ control, name, beforeCondition }) => {
+export const MDateStart = ({ control, name, beforeCondition, after }) => {
 	//#region Data
 	const { resetField } = useFormContext();
 
 	const before = useWatch({ control, name: beforeCondition })?.end;
-	const _before = useWatch({ control, name: beforeCondition });
 	//#endregion
 
 	//#region Event
@@ -25,14 +24,22 @@ export const MDateStart = ({ control, name, beforeCondition }) => {
 				dayjs(date).isSame(dayjs(before), 'date')
 			);
 	};
-	//#endregion
 
-	useEffect(() => {
-		if (!_before) return;
-		else {
-			resetField(`${[name]}.start`);
+	const onChangeStartDate = (CallbackFunc) => (event) => {
+		resetField(`${name}.end`, { defaultValue: null });
+
+		if (name !== 'department') {
+			resetField('department.start', { defaultValue: null });
+			resetField('department.end', { defaultValue: null });
+			if (name !== 'classes') {
+				resetField('classes.start', { defaultValue: null });
+				resetField('classes.end', { defaultValue: null });
+			}
 		}
-	}, [_before]);
+
+		CallbackFunc(event);
+	};
+	//#endregion
 
 	//#region Render
 	return (
@@ -53,7 +60,7 @@ export const MDateStart = ({ control, name, beforeCondition }) => {
 						name={name}
 						inputRef={ref}
 						value={value}
-						onChange={onChange}
+						onChange={onChangeStartDate(onChange)}
 						onBlur={onBlur}
 						error={!!error}
 						helperText={error?.message}

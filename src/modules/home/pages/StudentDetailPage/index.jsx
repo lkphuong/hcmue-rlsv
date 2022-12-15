@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, useRef } from 'react';
+import React, { useCallback, useEffect, useState, useRef, createContext } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 
 import { Form, PrintComponent } from '_modules/home/components';
 
-import { getSheetById } from '_api/sheets.api';
+import { getItemsMarks, getSheetById } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
@@ -20,6 +20,8 @@ import { Print } from '@mui/icons-material';
 
 import { useReactToPrint } from 'react-to-print';
 
+export const StudentMarksContext = createContext();
+
 const SemesterDetail = () => {
 	const ref = useRef();
 	//#region Data
@@ -28,6 +30,7 @@ const SemesterDetail = () => {
 	const { sheet_id } = useParams();
 
 	const [data, setData] = useState(null);
+	const [itemsMark, setItemsMark] = useState([]);
 
 	const navigate = useNavigate();
 
@@ -66,38 +69,66 @@ const SemesterDetail = () => {
 			return ref.current;
 		},
 	});
+
+	const getMarks = useCallback(async () => {
+		if (!data?.id) return;
+
+		try {
+			const res = await getItemsMarks(data.id);
+
+			if (isSuccess(res)) setItemsMark(res.data);
+		} catch (error) {
+			throw error;
+		}
+	}, [data?.id]);
 	//#endregion
 
 	useEffect(() => {
 		getForm();
 	}, [getForm]);
 
+	useEffect(() => {
+		getMarks();
+	}, [getMarks]);
+
+	useEffect(() => {
+		const payload = itemsMark.map((e) => ({
+			item_id: Number(e.item.id),
+			personal_mark_level: e.personal_mark_level,
+		}));
+
+		dispatch(actions.renewMarks(payload));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [itemsMark]);
+
 	//#region Render
 	return data ? (
 		<Box>
-			{!available && (
-				<CExpired
-					roleName='sinh viên'
-					start={data?.time_student?.start}
-					end={data?.time_student?.end}
-				/>
-			)}
-			<Box mb={1.5}>
+			<StudentMarksContext.Provider value={{ itemsMark }}>
+				{!available && (
+					<CExpired
+						roleName='sinh viên'
+						start={data?.time_student?.start}
+						end={data?.time_student?.end}
+					/>
+				)}
+				<Box mb={1.5}>
+					<Paper className='paper-wrapper'>
+						<Stack direction='row' justifyContent='space-between'>
+							<Typography fontSize={20} p={1.5} fontWeight={600}>
+								{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
+							</Typography>
+							<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
+								In phiếu
+							</Button>
+						</Stack>
+					</Paper>
+				</Box>
 				<Paper className='paper-wrapper'>
-					<Stack direction='row' justifyContent='space-between'>
-						<Typography fontSize={20} p={1.5} fontWeight={600}>
-							{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
-						</Typography>
-						<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
-							In phiếu
-						</Button>
-					</Stack>
+					<Box p={1.5}>{data && <Form data={data} />}</Box>
 				</Paper>
-			</Box>
-			<Paper className='paper-wrapper'>
-				<Box p={1.5}>{data && <Form data={data} />}</Box>
-			</Paper>
-			<PrintComponent data={data} ref={ref} />;
+				<PrintComponent data={data} ref={ref} />;
+			</StudentMarksContext.Provider>
 		</Box>
 	) : (
 		<></>

@@ -1,6 +1,6 @@
 import React, { memo, useMemo, useContext } from 'react';
 
-import { StudentMarksContext } from '_modules/home/components/Form';
+import { StudentMarksContext } from '_modules/home/pages/StudentDetailPage';
 
 import TypeInput from './TypeInput';
 import TypeCheckbox from './TypeCheckbox';

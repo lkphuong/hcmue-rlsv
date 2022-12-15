@@ -20,17 +20,8 @@ const Item = memo(({ data, headerId }) => {
 				<TableCell>
 					<Typography ml={2}>- {data.content}</Typography>
 				</TableCell>
-			</TableRow>
-		</>
-	);
-	//#endregion
-});
 
-Item.displayName = Item;
-
-export default Item;
-
-/* <Control
+				<Control
 					id={Number(data.id)}
 					min={data.from_mark}
 					max={data.to_mark}
@@ -42,4 +33,12 @@ export default Item;
 					required={data.required}
 					headerId={Number(headerId)}
 				/>
-			 */
+			</TableRow>
+		</>
+	);
+	//#endregion
+});
+
+Item.displayName = Item;
+
+export default Item;

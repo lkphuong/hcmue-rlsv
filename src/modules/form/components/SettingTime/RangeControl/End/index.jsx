@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { Box, Typography } from '@mui/material';
@@ -13,7 +13,6 @@ export const MDateEnd = ({ control, name, beforeCondition }) => {
 
 	const start = useWatch({ control, name })?.start;
 	const before = useWatch({ control, name: beforeCondition })?.end;
-	const _before = useWatch({ control, name: beforeCondition });
 	//#endregion
 
 	//#region Event
@@ -33,14 +32,20 @@ export const MDateEnd = ({ control, name, beforeCondition }) => {
 				dayjs(date).isSame(dayjs(start), 'date')
 			);
 	};
-	//#endregion
 
-	useEffect(() => {
-		if (!_before) return;
-		else {
-			resetField(`${[name]}.end`);
+	const onChangeEndDate = (CallbackFunc) => (event) => {
+		if (name !== 'department') {
+			resetField('department.start', { defaultValue: null });
+			resetField('department.end', { defaultValue: null });
+			if (name !== 'classes') {
+				resetField('classes.start', { defaultValue: null });
+				resetField('classes.end', { defaultValue: null });
+			}
 		}
-	}, [_before]);
+
+		CallbackFunc(event);
+	};
+	//#endregion
 
 	//#region Render
 	return (
@@ -61,7 +66,7 @@ export const MDateEnd = ({ control, name, beforeCondition }) => {
 						name={name}
 						inputRef={ref}
 						value={value}
-						onChange={onChange}
+						onChange={onChangeEndDate(onChange)}
 						onBlur={onBlur}
 						error={!!error}
 						helperText={error?.message}

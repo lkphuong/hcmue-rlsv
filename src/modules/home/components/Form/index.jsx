@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, createContext } from 'react';
+import React from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
@@ -21,7 +21,7 @@ import { isSuccess } from '_func/';
 
 import { ROUTES } from '_constants/routes';
 
-import { updateStudentSheets, getItemsMarks } from '_api/sheets.api';
+import { updateStudentSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
 
@@ -29,15 +29,11 @@ import Header from './Header';
 
 import './index.scss';
 
-export const StudentMarksContext = createContext();
-
 export const Form = ({ data }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
-
-	const [itemsMark, setItemsMark] = useState([]);
 
 	const navigate = useNavigate();
 
@@ -45,15 +41,6 @@ export const Form = ({ data }) => {
 	// //#endregion
 
 	//#region Event
-	const getMarks = useCallback(async () => {
-		try {
-			const res = await getItemsMarks(data.id);
-
-			if (isSuccess(res)) setItemsMark(res.data);
-		} catch (error) {
-			throw error;
-		}
-	}, [data?.id]);
 
 	const handleUpdate = async () => {
 		try {
@@ -93,83 +80,67 @@ export const Form = ({ data }) => {
 	};
 	//#endregion
 
-	useEffect(() => {
-		getMarks();
-	}, [getMarks]);
-
-	useEffect(() => {
-		const payload = itemsMark.map((e) => ({
-			item_id: Number(e.item.id),
-			personal_mark_level: e.personal_mark_level,
-		}));
-
-		dispatch(actions.renewMarks(payload));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [itemsMark]);
-
 	//#region Render
 	return (
 		<Paper>
-			<StudentMarksContext.Provider value={{ itemsMark }}>
-				<TableContainer>
-					<Table
-						stickyHeader
-						sx={{
-							'& .MuiTableCell-root': { border: '1px solid rgba(224, 224, 224, 1)' },
-						}}
-					>
-						<TableHead>
-							<TableRow>
-								<TableCell
-									align='center'
-									rowSpan={2}
-									width={80}
-									sx={{ minWidth: '80px' }}
-								>
-									Mục
-								</TableCell>
-								<TableCell rowSpan={2} sx={{ minWidth: '650px' }}>
-									Nội dung đánh giá
-								</TableCell>
-								<TableCell
-									align='center'
-									rowSpan={2}
-									width={150}
-									sx={{ minWidth: '150px', maxWidth: '200px' }}
-								>
-									Khung điểm
-								</TableCell>
-								<TableCell align='center' colSpan={3} sx={{ minWidth: '390px' }}>
-									Điểm đánh giá
-								</TableCell>
-							</TableRow>
-							<TableRow>
-								<TableCell align='center' width={130}>
-									Sinh viên
-								</TableCell>
-								<TableCell align='center' width={130}>
-									Lớp
-								</TableCell>
-								<TableCell align='center' width={130}>
-									Khoa
-								</TableCell>
-							</TableRow>
-						</TableHead>
-						<TableBody>
-							{data?.headers?.length > 0 &&
-								data.headers.map((e, i) => (
-									<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
-								))}
-						</TableBody>
-					</Table>
-				</TableContainer>
+			<TableContainer>
+				<Table
+					stickyHeader
+					sx={{
+						'& .MuiTableCell-root': { border: '1px solid rgba(224, 224, 224, 1)' },
+					}}
+				>
+					<TableHead>
+						<TableRow>
+							<TableCell
+								align='center'
+								rowSpan={2}
+								width={80}
+								sx={{ minWidth: '80px' }}
+							>
+								Mục
+							</TableCell>
+							<TableCell rowSpan={2} sx={{ minWidth: '650px' }}>
+								Nội dung đánh giá
+							</TableCell>
+							<TableCell
+								align='center'
+								rowSpan={2}
+								width={150}
+								sx={{ minWidth: '150px', maxWidth: '200px' }}
+							>
+								Khung điểm
+							</TableCell>
+							<TableCell align='center' colSpan={3} sx={{ minWidth: '390px' }}>
+								Điểm đánh giá
+							</TableCell>
+						</TableRow>
+						<TableRow>
+							<TableCell align='center' width={130}>
+								Sinh viên
+							</TableCell>
+							<TableCell align='center' width={130}>
+								Lớp
+							</TableCell>
+							<TableCell align='center' width={130}>
+								Khoa
+							</TableCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{data?.headers?.length > 0 &&
+							data.headers.map((e, i) => (
+								<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
+							))}
+					</TableBody>
+				</Table>
+			</TableContainer>
 
-				<Box textAlign='center' mt={3}>
-					<Button variant='contained' onClick={handleUpdate} disabled={!available}>
-						Cập nhật
-					</Button>
-				</Box>
-			</StudentMarksContext.Provider>
+			<Box textAlign='center' mt={3}>
+				<Button variant='contained' onClick={handleUpdate} disabled={!available}>
+					Cập nhật
+				</Button>
+			</Box>
 		</Paper>
 	);
 	//#endregion

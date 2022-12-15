@@ -10,6 +10,7 @@ import Control from './Control';
 const Item = memo(({ data, headerId }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
+	const marks = useSelector((state) => state.mark.marks, shallowEqual);
 
 	const dispatch = useDispatch();
 	//#endregion
@@ -19,8 +20,12 @@ const Item = memo(({ data, headerId }) => {
 	//#endregion
 
 	useEffect(() => {
-		dispatch(actions.updateHeaderId({ header_id: Number(headerId), item_id: Number(data.id) }));
-	}, [data.id, headerId]);
+		if (marks?.length) {
+			dispatch(
+				actions.updateHeaderId({ header_id: Number(headerId), item_id: Number(data.id) })
+			);
+		}
+	}, [marks.length]);
 
 	//#region Render
 	return (

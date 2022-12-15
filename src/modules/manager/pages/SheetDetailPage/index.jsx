@@ -1,20 +1,28 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { useLocation, useParams } from 'react-router-dom';
 
-import { Box, Paper, Typography } from '@mui/material';
-
-import { useParams } from 'react-router-dom';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { Form } from '_modules/manager/components';
 
-import { getSheetById } from '_api/sheets.api';
+import { getItemsMarks, getSheetById } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
+import { actions } from '_slices/mark.slice';
+
+export const DepartmentMarksContext = createContext();
 
 const SheetDetailPage = () => {
 	//#region Data
 	const { sheet_id } = useParams();
 
 	const [data, setData] = useState(null);
+	const [itemsMark, setItemsMark] = useState([]);
+
+	const dispatch = useDispatch();
+
+	const location = useLocation();
 	//#endregion
 
 	//#region Event
@@ -28,26 +36,75 @@ const SheetDetailPage = () => {
 			throw error;
 		}
 	}, [sheet_id]);
+
+	const getMarks = useCallback(async () => {
+		try {
+			const res = await getItemsMarks(data.id);
+
+			if (isSuccess(res)) setItemsMark(res.data);
+		} catch (error) {
+			throw error;
+		}
+	}, [data?.id]);
 	//#endregion
 
 	useEffect(() => {
 		getForm();
 	}, [getForm]);
 
+	useEffect(() => {
+		getMarks();
+	}, [getMarks]);
+
+	useEffect(() => {
+		if (data?.status === 4) {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				department_mark_level: e.personal_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		}
+		if (data?.status < 4) {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				department_mark_level: e.class_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		} else {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				department_mark_level: e.department_mark_level,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data?.status, itemsMark]);
+
+	useEffect(() => {
+		dispatch(actions.clearMarks());
+	}, [location]);
+
 	//#region Render
 	return (
 		<Box>
-			<Box mb={1.5}>
-				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5} fontWeight={700}>
-						{`${data?.user?.fullname} - ${data?.user?.std_code}`}
-					</Typography>
-				</Paper>
-			</Box>
+			<DepartmentMarksContext.Provider value={{ status: data?.status, itemsMark }}>
+				<Box mb={1.5}>
+					<Paper className='paper-wrapper'>
+						<Stack direction='row' justifyContent='space-between'>
+							<Typography fontSize={20} p={1.5} fontWeight={600}>
+								{`${data?.user?.fullname} - ${data?.user?.std_code}`}
+							</Typography>
+						</Stack>
+					</Paper>
+				</Box>
 
-			<Paper className='paper-wrapper'>
-				<Box p={1.5}>{data && <Form data={data} status={data?.status} />}</Box>
-			</Paper>
+				<Paper className='paper-wrapper'>
+					<Box p={1.5}>{data && <Form data={data} />}</Box>
+				</Paper>
+			</DepartmentMarksContext.Provider>
 		</Box>
 	);
 	//#endregion

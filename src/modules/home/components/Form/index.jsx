@@ -6,7 +6,6 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import {
 	Box,
 	Button,
-	Paper,
 	Table,
 	TableBody,
 	TableCell,
@@ -38,10 +37,9 @@ export const Form = ({ data }) => {
 	const navigate = useNavigate();
 
 	const dispatch = useDispatch();
-	// //#endregion
+	//#endregion
 
 	//#region Event
-
 	const handleUpdate = async () => {
 		try {
 			if (!marks?.length) {
@@ -82,7 +80,7 @@ export const Form = ({ data }) => {
 
 	//#region Render
 	return (
-		<Paper>
+		<>
 			<TableContainer>
 				<Table
 					stickyHeader
@@ -137,11 +135,16 @@ export const Form = ({ data }) => {
 			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
-				<Button variant='contained' onClick={handleUpdate} disabled={!available}>
+				<Button
+					sx={{ mb: 2 }}
+					variant='contained'
+					onClick={handleUpdate}
+					disabled={!available}
+				>
 					Cập nhật
 				</Button>
 			</Box>
-		</Paper>
+		</>
 	);
 	//#endregion
 };

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import {  TableCell, Typography } from '@mui/material';
+import { TableCell, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
@@ -20,7 +20,6 @@ const TypeInput = ({
 	available,
 }) => {
 	//#region Data
-
 	const [score, setScore] = useState(initialMark);
 
 	const dispatch = useDispatch();
@@ -78,6 +77,7 @@ const TypeInput = ({
 					&#41;&nbsp;
 				</Typography>
 			</TableCell>
+
 			<TableCell align='center'>
 				{available ? (
 					category === 1 ? (
@@ -107,7 +107,6 @@ const TypeInput = ({
 			<TableCell align='center'>
 				<Typography>{currentMark.department_mark_level}</Typography>
 			</TableCell>
-
 		</>
 	);
 	//#endregion

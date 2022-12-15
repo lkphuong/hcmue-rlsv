@@ -3,6 +3,9 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Print } from '@mui/icons-material';
+
+import { useReactToPrint } from 'react-to-print';
 
 import dayjs from 'dayjs';
 
@@ -16,9 +19,6 @@ import { alert } from '_func/alert';
 import { actions } from '_slices/mark.slice';
 
 import { CExpired } from '_others/';
-import { Print } from '@mui/icons-material';
-
-import { useReactToPrint } from 'react-to-print';
 
 export const StudentMarksContext = createContext();
 
@@ -66,12 +66,6 @@ const SemesterDetail = () => {
 		}
 	}, [sheet_id]);
 
-	const handlePrint = useReactToPrint({
-		content: () => {
-			return ref.current;
-		},
-	});
-
 	const getMarks = useCallback(async () => {
 		if (!data?.id) return;
 
@@ -83,6 +77,12 @@ const SemesterDetail = () => {
 			throw error;
 		}
 	}, [data?.id]);
+
+	const handlePrint = useReactToPrint({
+		content: () => {
+			return ref.current;
+		},
+	});
 	//#endregion
 
 	useEffect(() => {
@@ -118,6 +118,7 @@ const SemesterDetail = () => {
 						end={data?.time_student?.end}
 					/>
 				)}
+
 				<Box mb={1.5}>
 					<Paper className='paper-wrapper'>
 						<Stack direction='row' justifyContent='space-between'>
@@ -130,9 +131,11 @@ const SemesterDetail = () => {
 						</Stack>
 					</Paper>
 				</Box>
+
 				<Paper className='paper-wrapper'>
 					<Box p={1.5}>{data && <Form data={data} />}</Box>
 				</Paper>
+
 				<PrintComponent data={data} ref={ref} />
 			</StudentMarksContext.Provider>
 		</Box>

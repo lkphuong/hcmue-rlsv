@@ -18,7 +18,6 @@ const Header = memo(({ data, index, sheetId }) => {
 	//#endregion
 
 	//#region Event
-
 	const getTitles = useCallback(async () => {
 		if (!data?.id) return navigate(-1);
 

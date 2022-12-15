@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Grid, Typography } from '@mui/material';
+import { TableCell, TableRow, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
@@ -9,6 +9,8 @@ import Control from './Control';
 
 const Item = memo(({ data, headerId }) => {
 	//#region Data
+	const available = useSelector((state) => state.mark.available, shallowEqual);
+
 	const dispatch = useDispatch();
 	//#endregion
 
@@ -22,10 +24,11 @@ const Item = memo(({ data, headerId }) => {
 
 	//#region Render
 	return (
-		<>
-			<Grid item xs={6.4}>
-				<Typography>- {data.content}</Typography>
-			</Grid>
+		<TableRow>
+			<TableCell />
+			<TableCell>
+				<Typography ml={2}>- {data.content}</Typography>
+			</TableCell>
 
 			<Control
 				id={Number(data.id)}
@@ -38,8 +41,9 @@ const Item = memo(({ data, headerId }) => {
 				options={data.options || []}
 				required={data.required}
 				headerId={Number(headerId)}
+				available={available}
 			/>
-		</>
+		</TableRow>
 	);
 	//#endregion
 });

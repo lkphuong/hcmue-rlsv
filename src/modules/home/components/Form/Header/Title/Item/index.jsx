@@ -27,28 +27,26 @@ const Item = memo(({ data, headerId }) => {
 
 	//#region Render
 	return (
-		<>
-			<TableRow>
-				<TableCell />
-				<TableCell>
-					<Typography ml={2}>- {data.content}</Typography>
-				</TableCell>
+		<TableRow>
+			<TableCell />
+			<TableCell>
+				<Typography ml={2}>- {data.content}</Typography>
+			</TableCell>
 
-				<Control
-					id={Number(data.id)}
-					min={data.from_mark}
-					max={data.to_mark}
-					mark={data.mark}
-					control={data.control}
-					category={data.category}
-					unit={data.unit}
-					options={data.options || []}
-					required={data.required}
-					headerId={Number(headerId)}
-					available={available}
-				/>
-			</TableRow>
-		</>
+			<Control
+				id={Number(data.id)}
+				min={data.from_mark}
+				max={data.to_mark}
+				mark={data.mark}
+				control={data.control}
+				category={data.category}
+				unit={data.unit}
+				options={data.options || []}
+				required={data.required}
+				headerId={Number(headerId)}
+				available={available}
+			/>
+		</TableRow>
 	);
 	//#endregion
 });

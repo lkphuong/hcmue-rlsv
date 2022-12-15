@@ -1,13 +1,24 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Grid, Typography } from '@mui/material';
+import { TableCell, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
 import { CInput } from '_controls/';
 
-const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMark, header_id }) => {
+const TypeInput = ({
+	id,
+	min,
+	max,
+	mark,
+	category,
+	unit,
+	initialMark,
+	currentMark,
+	header_id,
+	available,
+}) => {
 	//#region Data
 	const [score, setScore] = useState(initialMark);
 
@@ -16,72 +27,87 @@ const TypeInput = ({ id, min, max, mark, category, unit, initialMark, currentMar
 
 	//#region Event
 	const onChangeRange = (item_id, min, max) => (e) => {
-		let value = Number(e.target.value);
+		if (e.target.value === '') {
+			setScore('');
+			return;
+		} else {
+			let value = Number(e.target.value);
 
-		if (isNaN(value)) value = 0;
-		if (value > max) value = max;
-		if (value < min) value = min;
+			if (isNaN(value)) value = 0;
+			if (value > max) value = max;
+			if (value < min) value = min;
 
-		const markObj = {
-			item_id: Number(item_id),
-			department_mark_level: value,
-			header_id,
-		};
+			const markObj = {
+				item_id: Number(item_id),
+				department_mark_level: value,
+				header_id,
+			};
 
-		setScore(value);
-		dispatch(actions.updateMarks(markObj));
+			setScore(value);
+			dispatch(actions.updateMarks(markObj));
+		}
 	};
 
 	const onChangeMark = (item_id, mark) => (e) => {
-		let value = Number(e.target.value);
+		if (e.target.value === '') {
+			setScore('');
+			return;
+		} else {
+			let value = Number(e.target.value);
 
-		if (isNaN(value)) value = 0;
+			if (isNaN(value)) value = 0;
 
-		const markObj = {
-			item_id: Number(item_id),
-			department_mark_level: value,
-			header_id,
-		};
+			const markObj = {
+				item_id: Number(item_id),
+				department_mark_level: value,
+				header_id,
+			};
 
-		setScore(value);
-		dispatch(actions.updateMarks(markObj));
+			setScore(value);
+			dispatch(actions.updateMarks(markObj));
+		}
 	};
 	//#endregion
 
 	//#region Render
 	return (
 		<>
-			<Grid item xs={2} textAlign='center'>
+			<TableCell align='center'>
 				<Typography component='span' whiteSpace='nowrap' fontWeight={500}>
 					&nbsp;&#40;{category === 1 ? `Từ ${min} đến ${max} ${unit}` : `${mark} ${unit}`}
 					&#41;&nbsp;
 				</Typography>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
+			</TableCell>
+
+			<TableCell align='center'>
 				<Typography>{currentMark.personal_mark_level}</Typography>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
+			</TableCell>
+			<TableCell align='center'>
 				<Typography>{currentMark.class_mark_level}</Typography>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				{category === 1 ? (
-					<CInput
-						fullWidth
-						type='number'
-						inputProps={{ min, max }}
-						onChange={onChangeRange(id, min, max)}
-						value={score}
-					/>
+			</TableCell>
+			<TableCell align='center'>
+				{available ? (
+					category === 1 ? (
+						<CInput
+							fullWidth
+							type='number'
+							inputProps={{ min, max }}
+							onChange={onChangeRange(id, min, max)}
+							value={score}
+						/>
+					) : (
+						<CInput
+							fullWidth
+							type='number'
+							inputProps={{ step: mark }}
+							onChange={onChangeMark(id, mark)}
+							value={score}
+						/>
+					)
 				) : (
-					<CInput
-						fullWidth
-						type='number'
-						inputProps={{ step: mark }}
-						onChange={onChangeMark(id, mark)}
-						value={score}
-					/>
+					<Typography>{currentMark.department_mark_level}</Typography>
 				)}
-			</Grid>
+			</TableCell>
 		</>
 	);
 	//#endregion

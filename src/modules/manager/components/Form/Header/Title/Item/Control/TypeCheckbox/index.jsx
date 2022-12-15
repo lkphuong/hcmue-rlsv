@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Checkbox, Grid, Typography } from '@mui/material';
+import { Checkbox, TableCell, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
-const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id }) => {
+const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id, available }) => {
 	//#region Data
 	const [score, setScore] = useState(initialMark);
 
@@ -28,22 +28,26 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id }) =
 	//#region Render
 	return (
 		<>
-			<Grid item xs={2} textAlign='center'>
+			<TableCell align='center'>
 				<Typography component='span' whiteSpace='nowrap' fontWeight={500}>
 					&nbsp;&#40;{`${mark} ${unit}`}
 					&#41;&nbsp;
 				</Typography>
-			</Grid>
+			</TableCell>
 
-			<Grid item xs={1.2} textAlign='center'>
+			<TableCell align='center'>
 				<Typography>{currentMark.personal_mark_level}</Typography>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				<Typography>{currentMark.class_mark_level}</Typography>
-			</Grid>
-			<Grid item xs={1.2} textAlign='center'>
-				<Checkbox onChange={onCheck(id, mark)} checked={!!score} />
-			</Grid>
+			</TableCell>
+			<TableCell align='center'>
+				<Typography>{currentMark.class_mark_level} </Typography>
+			</TableCell>
+			<TableCell align='center'>
+				{available ? (
+					<Checkbox onChange={onCheck(id, mark)} checked={!!score} />
+				) : (
+					<Typography>{currentMark.department_mark_level} </Typography>
+				)}
+			</TableCell>
 		</>
 	);
 	//#endregion

@@ -1,6 +1,6 @@
 import React, { memo, useContext, useMemo } from 'react';
 
-import { DepartmentMarksContext } from '_modules/list/components/Form';
+import { DepartmentMarksContext } from '_modules/list/pages/ListDetailPage';
 
 import TypeInput from './TypeInput';
 import TypeCheckbox from './TypeCheckbox';

@@ -2,7 +2,7 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { Divider, Grid, Typography } from '@mui/material';
+import { TableCell, TableRow, Typography } from '@mui/material';
 
 import { isSuccess } from '_func/';
 
@@ -38,21 +38,16 @@ const Title = memo(({ data, headerId }) => {
 	//#region Render
 	return (
 		<>
-			<Grid container alignItems='center' spacing={1.2}>
-				<Grid item xs={6.4}>
-					<Typography
-						fontWeight={500}
-						fontStyle='oblique'
-						sx={{ textDecoration: 'underline' }}
-					>
-						{data.name}
+			<TableRow>
+				<TableCell />
+				<TableCell colSpan='100%'>
+					<Typography fontWeight={500} fontSize={17}>
+						{data?.name}
 					</Typography>
-				</Grid>
+				</TableCell>
+			</TableRow>
 
-				{items.length > 0 &&
-					items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
-			</Grid>
-			<Divider sx={{ my: 2 }} />
+			{items.length > 0 && items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
 		</>
 	);
 	//#endregion

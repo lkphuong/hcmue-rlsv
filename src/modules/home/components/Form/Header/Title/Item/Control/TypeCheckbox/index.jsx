@@ -7,7 +7,6 @@ import { actions } from '_slices/mark.slice';
 
 const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id, available }) => {
 	//#region Data
-
 	const [score, setScore] = useState(initialMark);
 
 	const dispatch = useDispatch();
@@ -35,6 +34,7 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id, ava
 					&#41;&nbsp;
 				</Typography>
 			</TableCell>
+
 			<TableCell align='center'>
 				{available ? (
 					<Checkbox onChange={onCheck(id, mark)} checked={!!score} />

@@ -1,7 +1,7 @@
 import React, { memo, useEffect } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Grid, Typography } from '@mui/material';
+import { TableCell, TableRow, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
@@ -24,10 +24,11 @@ const Item = memo(({ data, headerId }) => {
 
 	//#region Render
 	return (
-		<>
-			<Grid item xs={6.4}>
-				<Typography>- {data.content}</Typography>
-			</Grid>
+		<TableRow>
+			<TableCell />
+			<TableCell>
+				<Typography ml={2}>- {data.content}</Typography>
+			</TableCell>
 
 			<Control
 				id={Number(data.id)}
@@ -42,7 +43,7 @@ const Item = memo(({ data, headerId }) => {
 				headerId={Number(headerId)}
 				available={available}
 			/>
-		</>
+		</TableRow>
 	);
 	//#endregion
 });

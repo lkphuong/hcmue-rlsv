@@ -1,15 +1,15 @@
 import React, { memo, useContext, useMemo } from 'react';
 
-import { AdminMarksContext } from '_modules/manager/components/Form';
+import { DepartmentMarksContext } from '_modules/manager/pages/SheetDetailPage';
 
 import TypeInput from './TypeInput';
 import TypeCheckbox from './TypeCheckbox';
 import TypeSelect from './TypeSelect';
 
 const Control = memo(
-	({ id, min, max, mark, control, category, unit, options, required, headerId }) => {
+	({ id, min, max, mark, control, category, unit, options, required, headerId, available }) => {
 		//#region Data
-		const { status, itemsMark } = useContext(AdminMarksContext);
+		const { status, itemsMark } = useContext(DepartmentMarksContext);
 
 		const currentMark = useMemo(() => {
 			if (!itemsMark?.length)
@@ -65,6 +65,7 @@ const Control = memo(
 							initialMark={initialMark}
 							currentMark={currentMark}
 							header_id={headerId}
+							available={available}
 						/>
 					);
 				case 1:
@@ -76,6 +77,7 @@ const Control = memo(
 							initialMark={initialMark}
 							currentMark={currentMark}
 							header_id={headerId}
+							available={available}
 						/>
 					);
 				case 2:
@@ -87,6 +89,7 @@ const Control = memo(
 							initialMark={initialMark}
 							currentMark={currentMark}
 							header_id={headerId}
+							available={available}
 						/>
 					);
 				default:

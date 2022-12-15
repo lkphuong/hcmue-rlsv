@@ -1,5 +1,5 @@
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import { ItemEntity } from '../../../entities/item.entity';
 import { OptionEntity } from '../../../entities/option.entity';
@@ -9,7 +9,6 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
-import { FileEntity } from 'src/entities/file.entity';
 
 export class ItemService {
   constructor(
@@ -116,6 +115,28 @@ export class ItemService {
         Levels.ERROR,
         Methods.SELECT,
         'ItemService.getItemsByTitleId()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getMaxSortOrder(ids: number[]): Promise<number> {
+    try {
+      const conditions = this._itemRepository
+        .createQueryBuilder('item')
+        .select('MAX(sort_order)', 'sort_order')
+        .where(`item.id IN (${ids.toString()})`)
+        .andWhere('item.deleted = :deleted', { deleted: false });
+
+      const { sort_order } = await conditions.getRawOne();
+
+      return sort_order || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ItemService.getMaxSortOrder()',
         e,
       );
       return null;

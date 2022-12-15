@@ -5,7 +5,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { FileEntity } from './file.entity';
 
 import { ItemEntity } from './item.entity';
 import { OptionEntity } from './option.entity';

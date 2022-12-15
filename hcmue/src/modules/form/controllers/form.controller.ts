@@ -55,6 +55,7 @@ import {
   validateHeaderId,
   validateItemDto,
   validateItemId,
+  validateTimePublish,
   validateTitleId,
 } from '../validations';
 
@@ -320,6 +321,7 @@ export class FormController {
 
       //#region Get form
       const form = await this._formService.getFormById(id);
+
       if (form) {
         //#region Validate
         //#region Validate form status
@@ -337,6 +339,11 @@ export class FormController {
 
         if (valid instanceof HttpException) throw valid;
         //#endregion
+        //#endregion
+
+        //#region Validate time publish
+        const valid_time = validateTimePublish(form.student_start, req);
+        if (valid_time instanceof HttpException) throw valid_time;
         //#endregion
 
         //#region Get jwt payload

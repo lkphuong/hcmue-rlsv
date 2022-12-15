@@ -92,6 +92,41 @@ export class RoleUsersService {
     }
   }
 
+  async checkRoleUser(
+    department_id: string,
+    role_id: number,
+    class_id?: string,
+  ): Promise<RoleUsersEntity | null> {
+    try {
+      let conditions = this._roleUserRepository
+        .createQueryBuilder('role_user')
+        .innerJoinAndSelect('role_user.role', 'role')
+        .where('role.code = :role_id', { role_id })
+        .andWhere('role_user.department_id = :department_id', {
+          department_id,
+        })
+        .andWhere('role_user.deleted = :deleted', { deleted: false })
+        .andWhere('role.deleted = :deleted', { deleted: false });
+
+      if (class_id) {
+        conditions = conditions.andWhere('role_user.class_id = :class_id', {
+          class_id,
+        });
+      }
+
+      const role_user = await conditions.getOne();
+      return role_user || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'RoleUsersService.checkRoleUser()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async add(
     role_user: RoleUsersEntity,
     manager?: EntityManager,

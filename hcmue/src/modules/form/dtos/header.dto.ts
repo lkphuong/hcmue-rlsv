@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 import { GreaterValidator } from 'src/validators/greater.validator';
 
 import { generateValidationMessage } from '../../../utils';
@@ -53,4 +53,22 @@ export class HeaderDto {
       ),
   })
   max_mark: number;
+
+  @IsOptional()
+  @Transform((params) => parseFloat(params.value) ?? 1)
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Bạn vui lòng nhập [điểm tối đa cho hạng mục].',
+      ),
+  })
+  @MinValidator(1, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [điểm tối đa] không hợp lệ (phải lớn hơn 0).',
+      ),
+  })
+  is_return?: boolean = true;
 }

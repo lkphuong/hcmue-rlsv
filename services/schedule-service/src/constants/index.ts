@@ -1,18 +1,18 @@
 export const BACKGROUND_JOB_MODULE = 'BACKGROUND_JOB_MODULE';
-export const COMPOSER_MODULE = 'COMPOSER_MODULE';
+export const TRACKING_MODULE = 'TRACKING_MODULE';
 export const SCHEDULE_MODULE = 'SCHEDULE_MODULE';
 
 export const BACKGROUND_JOB_SERVICE_HOST = '192.168.1.103';
 export const BACKGROUND_JOB_SERVICE_PORT = 5672;
 
-export const COMPOSER_SERVICE_HOST = '192.168.1.103';
-export const COMPOSER_SERVICE_PORT = 5672;
+export const TRACKING_SERVICE_HOST = '192.168.1.103';
+export const TRACKING_SERVICE_PORT = 5672;
 
 export const SCHEDULE_SERVICE_HOST = 'localhost';
 export const SCHEDULE_SERVICE_PORT = 3003;
 
 export const BACKGROUND_JOB_QUEUE = 'hcmue_background_job_queue';
-export const COMPOSER_QUEUE = 'hcmue_composer_queue';
+export const TRACKING_QUEUE = 'hcmue_tracking_queue';
 
 export const APP_PREFIX = 'hcmue';
 export const UPLOAD_DEST = 'uploads';

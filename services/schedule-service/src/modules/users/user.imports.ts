@@ -2,7 +2,7 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
 import { HttpModule } from '@nestjs/axios';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { composerFactory } from '../../factories/composer.factory';
+import { trackingFactory } from '../../factories/tracking.factory';
 
 import { User, UserSchema } from '../../schemas/user.schema';
 
@@ -14,7 +14,7 @@ import { SharedModule } from '../shared/shared.module';
 
 import { FormModule } from '../form/form.module';
 
-import { BACKGROUND_JOB_MODULE, COMPOSER_MODULE } from '../../constants';
+import { BACKGROUND_JOB_MODULE, TRACKING_MODULE } from '../../constants';
 import { backgroundFactory } from 'src/factories/background.factory';
 
 export const modules = [
@@ -26,9 +26,9 @@ export const modules = [
       options: backgroundFactory,
     },
     {
-      name: COMPOSER_MODULE,
+      name: TRACKING_MODULE,
       transport: Transport.RMQ,
-      options: composerFactory,
+      options: trackingFactory,
     },
   ]),
   MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),

@@ -31,6 +31,8 @@ export interface ItemResponse {
   category: number;
   unit: string;
   required: boolean;
+  is_file: boolean;
+  sort_order: number;
   options?: OptionResponse[] | null;
 }
 

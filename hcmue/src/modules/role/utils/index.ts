@@ -2,9 +2,12 @@ import { HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 import { QueryRunner } from 'typeorm';
 
-import { generateRoleUser } from '../transform';
+import { generateCheckRoleUser, generateRoleUser } from '../transform';
 
 import { RoleEntity } from '../../../entities/role.entity';
+import { RoleUsersEntity } from '../../../entities/role_users.entity';
+
+import { User } from '../../../schemas/user.schema';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
@@ -22,6 +25,30 @@ export const generateSuccessResponse = async (
 
   // Transform RoleEntity class to RoleResponse class
   const payload = await generateRoleUser(role);
+
+  if (query_runner) await query_runner.commitTransaction();
+
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
+
+export const generateCheckRoleUserSuccessResponse = async (
+  role_user: RoleUsersEntity,
+  user: User,
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('role_user: ', role_user);
+  console.log('user: ', user);
+
+  // Transform RoleEntity class to RoleResponse class
+  const payload = await generateCheckRoleUser(role_user, user);
 
   if (query_runner) await query_runner.commitTransaction();
 

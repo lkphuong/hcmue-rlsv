@@ -138,6 +138,18 @@ export class ItemDto {
   category?: number = 0;
 
   @IsOptional()
+  @Transform((params) => parseFloat(params.value) ?? 0)
+  @ValidateIf((_object, value) => !isEmpty(value))
+  @BetweenValidator(1, 6, {
+    message: (arg) =>
+      generateValidationMessage(
+        arg,
+        'Giá trị [xếp loại] tối thiểu bằng 0 & tối đa bằng 6.',
+      ),
+  })
+  sort_order?: number = 1;
+
+  @IsOptional()
   @Transform((params) =>
     params.value ? params.value.toString().trim() : params.value,
   )

@@ -45,4 +45,11 @@ export class HeaderEntity extends RootEntity {
     default: 0,
   })
   max_mark: number;
+
+  @Column('boolean', {
+    name: 'is_return',
+    nullable: false,
+    default: true,
+  })
+  is_return: boolean;
 }

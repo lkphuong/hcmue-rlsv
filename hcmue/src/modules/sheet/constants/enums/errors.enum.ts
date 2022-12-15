@@ -10,10 +10,11 @@ export enum ErrorMessage {
 
   CLASS_NOT_FOUND_ERROR = 'Lớp không tồn tại (id: %s).',
   DEPARTMENT_NOT_FOUND_ERROR = 'Khoa không tồn tại (id: %s).',
-  EVALUATION_NOT_FOUND_ERROR = 'Giá trị biểu mẫu không tồn tại (id: %s).',
+  EVALUATION_NOT_FOUND_ERROR = 'Giá trị phiếu không tồn tại (id: %s).',
   HEADER_NOT_FOUND_ERROR = '[Hạng mục đánh giá] không tồn tại (id: %s)',
   ITEM_NOT_FOUND_ERROR = '[Nội dung chấm điểm] không tồn tại (id: %s)',
   LEVEL_NOT_FOUND_ERROR = 'Không tìm thấy xếp loại (điểm: %s).',
+  LEVEL_BY_SORT_ORDER_NOT_FOUND_ERROR = 'Không tìm thấy xếp loại (sort_order: %s).',
   SHEET_NOT_FOUND_ERROR = 'Phiếu không tồn tại (id: %s).',
   STUDENT_NOT_FOUND_ERROR = 'Sinh viên không tồn tại (id: %s).',
 

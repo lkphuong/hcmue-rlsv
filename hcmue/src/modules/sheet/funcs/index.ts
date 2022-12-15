@@ -20,6 +20,7 @@ import {
 
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { FileEntity } from '../../../entities/file.entity';
+import { LevelEntity } from '../../../entities/level.entity';
 import { OptionEntity } from '../../../entities/option.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 
@@ -90,7 +91,13 @@ export const generatePersonalMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(sheet.form, role_id, req);
+  const valid = await validateTime(
+    sheet.form,
+    sheet.user_id,
+    user_id,
+    role_id,
+    req,
+  );
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion
@@ -110,6 +117,7 @@ export const generatePersonalMarks = async (
       SheetStatus.WAITING_CLASS,
       params,
       sheet,
+      item_service,
       header_service,
       level_service,
       sheet_service,
@@ -208,7 +216,13 @@ export const generateClassMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(sheet.form, role_id, req);
+  const valid = await validateTime(
+    sheet.form,
+    sheet.user_id,
+    user_id,
+    role_id,
+    req,
+  );
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion
@@ -228,6 +242,7 @@ export const generateClassMarks = async (
       SheetStatus.WAITING_DEPARTMENT,
       params,
       sheet,
+      item_service,
       header_service,
       level_service,
       sheet_service,
@@ -323,7 +338,13 @@ export const generateDepartmentMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(sheet.form, role_id, req);
+  const valid = await validateTime(
+    sheet.form,
+    sheet.user_id,
+    user_id,
+    role_id,
+    req,
+  );
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion
@@ -343,6 +364,7 @@ export const generateDepartmentMarks = async (
       SheetStatus.SUCCESS,
       params,
       sheet,
+      item_service,
       header_service,
       level_service,
       sheet_service,
@@ -929,6 +951,7 @@ export const generateUpdateSheet = async (
   status: SheetStatus,
   params: UpdateStudentMarkDto | UpdateClassMarkDto | UpdateDepartmentMarkDto,
   sheet: SheetEntity,
+  item_service: ItemService,
   header_service: HeaderService,
   level_service: LevelService,
   sheet_service: SheetService,
@@ -963,10 +986,15 @@ export const generateUpdateSheet = async (
         }
       }
 
-      sum_of_mark_items =
-        header.max_mark > sum_of_mark_items
+      // sum_of_mark_items =
+      //   header.max_mark > sum_of_mark_items
+      //     ? sum_of_mark_items
+      //     : header.max_mark;
+      sum_of_mark_items = header.is_return
+        ? header.max_mark > sum_of_mark_items
           ? sum_of_mark_items
-          : header.max_mark;
+          : header.max_mark
+        : sum_of_mark_items;
 
       sum_of_marks += sum_of_mark_items;
     } else {
@@ -989,6 +1017,17 @@ export const generateUpdateSheet = async (
   if (level instanceof HttpException) return level;
   //#endregion
 
+  //#region Get level by sort order
+  const new_level = await getLevelBySortOrder(
+    params,
+    level,
+    item_service,
+    level_service,
+    req,
+  );
+  if (new_level instanceof HttpException) return new_level;
+  //#endregion
+
   if (category === SheetCategory.STUDENT)
     sheet.sum_of_personal_marks = sum_of_marks;
   else if (category === SheetCategory.CLASS)
@@ -996,7 +1035,7 @@ export const generateUpdateSheet = async (
   else sheet.sum_of_department_marks = sum_of_marks;
 
   sheet.status = status;
-  sheet.level = level;
+  sheet.level = new_level;
   sheet.updated_at = new Date();
   sheet.updated_by = user_id;
 
@@ -1009,6 +1048,9 @@ export const getLevel = async (
   level_service: LevelService,
   req: Request,
 ) => {
+  //#region convert mark when mark upper 100
+  mark = mark > 100 ? 100 : mark;
+  //#endregion
   const level = await level_service.getLevelByMark(mark);
   if (!level) {
     //#region throw HandleException
@@ -1023,4 +1065,46 @@ export const getLevel = async (
   }
 
   return level;
+};
+
+export const getLevelBySortOrder = async (
+  params: UpdateStudentMarkDto | UpdateClassMarkDto | UpdateDepartmentMarkDto,
+  level: LevelEntity,
+  item_service: ItemService,
+  level_service: LevelService,
+  req: Request,
+) => {
+  const ids = params.data.map((item) => {
+    return item.item_id;
+  });
+
+  const sort_order = await item_service.getMaxSortOrder(ids);
+  if (!sort_order) {
+    //#region throw HandleException
+    return new UnknownException(
+      JSON.stringify(ids),
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.ITEM_NOT_FOUND_ERROR, JSON.stringify(ids)),
+    );
+    //#endregion
+  }
+  if (level.sort_order >= sort_order) return level;
+
+  //#region new level
+  const new_level = await level_service.getLevelBySortOrder(sort_order);
+  if (!new_level) {
+    //#region throw HandleException
+    return new UnknownException(
+      sort_order,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.LEVEL_BY_SORT_ORDER_NOT_FOUND_ERROR, sort_order),
+    );
+    //#endregion
+  }
+  return new_level;
+  //#endregion
 };

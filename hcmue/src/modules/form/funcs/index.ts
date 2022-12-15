@@ -165,7 +165,7 @@ export const createHeader = async (
   req: Request,
 ) => {
   //#region Get params
-  const { form_id, name, max_mark } = params;
+  const { form_id, name, max_mark, is_return } = params;
   //#endregion
 
   //#region Validation
@@ -193,6 +193,7 @@ export const createHeader = async (
     header.ref = randomUUID();
     header.name = name;
     header.max_mark = max_mark;
+    header.is_return = is_return;
 
     header.created_by = user_id;
     header.created_at = new Date();
@@ -500,7 +501,7 @@ export const updateHeader = async (
   req: Request,
 ) => {
   //#region Get params
-  const { form_id, name, max_mark } = params;
+  const { form_id, name, max_mark, is_return } = params;
   //#endregion
 
   //#region Validation
@@ -536,6 +537,7 @@ export const updateHeader = async (
     header.form = form;
     header.name = name;
     header.max_mark = max_mark;
+    header.is_return = is_return;
 
     header.updated_by = user_id;
     header.updated_at = new Date();
@@ -1139,6 +1141,7 @@ export const generateCreateItem = async (
     required,
     to_mark,
     mark,
+    sort_order,
   } = params;
   //#endregion
 
@@ -1156,6 +1159,7 @@ export const generateCreateItem = async (
   item.unit = unit;
   item.required = required;
   item.is_file = is_file;
+  item.sort_order = sort_order;
 
   item.created_at = new Date();
   item.created_by = user_id;
@@ -1184,6 +1188,7 @@ export const generateUpdateItem = async (
     required,
     to_mark,
     mark,
+    sort_order,
   } = params;
   //#endregion
 
@@ -1199,6 +1204,7 @@ export const generateUpdateItem = async (
   item.unit = unit;
   item.required = required;
   item.is_file = is_file;
+  item.sort_order = sort_order;
 
   item.updated_at = new Date();
   item.updated_by = user_id;

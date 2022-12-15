@@ -59,4 +59,25 @@ export class LevelService {
       );
     }
   }
+
+  async getLevelBySortOrder(sort_order: number): Promise<LevelEntity | null> {
+    try {
+      const conditions = this._levelRepository
+        .createQueryBuilder('level')
+        .where('level.sort_order = :sort_order', { sort_order })
+        .andWhere('level.deleted = :deleted', { deleted: false });
+
+      const level = await conditions.getOne();
+
+      return level || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'LevelService.getLevelBySortOrder()',
+        e,
+      );
+      return null;
+    }
+  }
 }

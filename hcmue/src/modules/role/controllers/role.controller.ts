@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   HttpException,
+  HttpStatus,
   Param,
+  Post,
   Put,
   Req,
   UseGuards,
@@ -35,7 +37,10 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 
-import { RoleUserResponse } from '../interfaces/assign-user-role-response.interface';
+import {
+  CheckRoleUserResponse,
+  RoleUserResponse,
+} from '../interfaces/assign-user-role-response.interface';
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
@@ -46,7 +51,13 @@ import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { Levels } from '../../../constants/enums/level.enum';
 import { Role } from '../../auth/constants/enums/role.enum';
 
-import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import {
+  DATABASE_EXIT_CODE,
+  SERVER_EXIT_CODE,
+} from '../../../constants/enums/error-code.enum';
+import { GetUserDto } from '../dtos/get_user.dto';
+import { ErrorMessage } from '../constants/enums/errors.enum';
+import { generateCheckRoleUserSuccessResponse } from '../utils';
 
 @Controller('roles')
 export class RoleController {
@@ -158,6 +169,87 @@ export class RoleController {
       //#endregion
     } catch (err) {
       console.log(err);
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method Post
+   * @url /api/roles/check
+   * @access private
+   * @param department_id
+   * @param class_id
+   * @param role_id
+   * @description Kiểm tra lớp hoặc khoa đã tồn tại role
+   * @return
+   * @page roles page
+   */
+  @Post('check')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async checkRole(
+    @Body() params: GetUserDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<CheckRoleUserResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      //#region Get params
+      const { class_id, department_id, role_id } = params;
+      //#endregion
+
+      const role_user = await this._roleUserService.checkRoleUser(
+        department_id,
+        role_id,
+        class_id,
+      );
+
+      if (role_user) {
+        const user = await this._userService.getUserById(role_user.user_id);
+        if (user) {
+          return generateCheckRoleUserSuccessResponse(
+            role_user,
+            user,
+            null,
+            req,
+          );
+        }
+      }
+      //#region throw HandlerException
+      throw new HandlerException(
+        DATABASE_EXIT_CODE.NO_CONTENT,
+        req.method,
+        req.url,
+        ErrorMessage.NO_CONTENT,
+        HttpStatus.NOT_FOUND,
+      );
+      //#endregion
+    } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
 

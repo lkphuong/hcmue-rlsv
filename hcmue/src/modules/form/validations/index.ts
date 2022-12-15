@@ -557,3 +557,15 @@ export const validateRequiredOption = (
 
   return null;
 };
+
+export const validateTimePublish = (start: Date, req: Request) => {
+  if (new Date(start) < new Date()) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      ErrorMessage.TIME_PUBLISH_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+};

@@ -25,7 +25,6 @@ import {
   ClassSheetsResponse,
   EvaluationsResponse,
   SheetDetailsResponse,
-  TimeResponse,
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 

@@ -25,14 +25,14 @@ export default {
   BACKGROUND_JOB_SERVICE_HOST: 'localhost',
   BACKGROUND_JOB_SERVICE_PORT: 5672,
 
-  COMPOSER_SERVICE_HOST: 'localhost',
-  COMPOSER_SERVICE_PORT: 5672,
+  TRACKING_SERVICE_HOST: 'localhost',
+  TRACKING_SERVICE_PORT: 5672,
 
   SCHEDULE_SERVICE_HOST: 'localhost',
   SCHEDULE_SERVICE_PORT: 3003,
 
   BACKGROUND_JOB_QUEUE: 'hcmue_background_job_queue',
-  COMPOSER_QUEUE: 'hcmue_composer_queue',
+  TRACKING_QUEUE: 'hcmue_tracking_queue',
 
   TTL: 120,
   NO_ACK_QUEUE: 0,

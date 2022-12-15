@@ -24,12 +24,13 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { MAX_FILES } from '../../../constants';
-import { ItemControl } from '../constants/enums/item_control.enums';
+import { ItemControl } from '../constants/enums/item_control.enum';
 import {
   DATABASE_EXIT_CODE,
   FILE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { ItemCategory } from '../constants/enums/item_category.enum';
 
 export const validateClassId = (id: string, req: Request) => {
   if (isEmpty(id)) {
@@ -121,8 +122,8 @@ export const validateUserId = (id: string, req: Request) => {
 
 export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
   if (
-    item.control === ItemControl.INPUT ||
-    item.control === ItemControl.SINGLE_SELECT
+    item.control === ItemControl.INPUT &&
+    item.category === ItemCategory.REANGE_VALUE
   ) {
     if (mark > item.to_mark || mark < item.from_mark) {
       //#region throw HandlerException
@@ -139,19 +140,21 @@ export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
       );
       //#endregion
     }
-  } else if (item.control === ItemControl.CHECKBOX) {
-    if (item.mark !== mark) {
-      //#region throw HandlerException
-      return new HandlerException(
-        VALIDATION_EXIT_CODE.INVALID_FORMAT,
-        req.method,
-        req.url,
-        sprintf(ErrorMessage.CHECKBOX_MARK_INVALID_FORMAT, item.mark),
-        HttpStatus.BAD_REQUEST,
-      );
-      //#endregion
-    }
   }
+  // else if (item.control === ItemControl.CHECKBOX) {
+  //   if (item.mark !== mark) {
+  //     //#region throw HandlerException
+  //     return new HandlerException(
+  //       VALIDATION_EXIT_CODE.INVALID_FORMAT,
+  //       req.method,
+  //       req.url,
+  //       sprintf(ErrorMessage.CHECKBOX_MARK_INVALID_FORMAT, item.mark),
+  //       HttpStatus.BAD_REQUEST,
+  //     );
+  //     //#endregion
+  //   }
+  // }
+  return null;
 };
 
 export const validateStudentRole = async (
@@ -163,7 +166,6 @@ export const validateStudentRole = async (
 ) => {
   if (role === RoleCode.STUDENT) {
     const user = await user_service.getUserById(request_id);
-
     if (user._id.toString() !== user_id) {
       //#region throw HandlerException
       return new HandlerException(
@@ -426,6 +428,8 @@ export const validateUser = async (
 
 export const validateTime = async (
   form: FormEntity,
+  user_id: string,
+  request_id: string,
   role: RoleCode,
   req: Request,
 ) => {
@@ -433,8 +437,8 @@ export const validateTime = async (
   if (role === RoleCode.STUDENT) {
     //#region Validate student time
     if (
-      current < convertString2Date(form.student_start.toString()) ||
-      current > convertString2Date(form.student_end.toString())
+      current < new Date(form.student_start) ||
+      current > new Date(form.student_end)
     ) {
       return new HandlerException(
         VALIDATION_EXIT_CODE.NO_MATCHING,
@@ -447,24 +451,27 @@ export const validateTime = async (
     //#endregion
   } else if (role === RoleCode.CLASS) {
     //#region Validate class time
-    if (
-      current < convertString2Date(form.class_start.toString()) ||
-      current > convertString2Date(form.class_end.toString())
-    ) {
-      return new HandlerException(
-        VALIDATION_EXIT_CODE.NO_MATCHING,
-        req.method,
-        req.url,
-        sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
-        HttpStatus.BAD_REQUEST,
-      );
+    if (request_id !== user_id) {
+      if (
+        current < new Date(form.class_start) ||
+        current > new Date(form.class_end)
+      ) {
+        return new HandlerException(
+          VALIDATION_EXIT_CODE.NO_MATCHING,
+          req.method,
+          req.url,
+          sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
+          HttpStatus.BAD_REQUEST,
+        );
+      }
     }
+
     //#endregion
   } else if (role == RoleCode.DEPARTMENT) {
     //#region Validate department time
     if (
-      current < convertString2Date(form.department_start.toString()) ||
-      current > convertString2Date(form.department_end.toString())
+      current < new Date(form.department_start) ||
+      current > new Date(form.department_end)
     ) {
       return new HandlerException(
         VALIDATION_EXIT_CODE.NO_MATCHING,

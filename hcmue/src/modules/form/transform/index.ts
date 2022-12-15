@@ -61,6 +61,8 @@ export const generateItemsArray = async (items: ItemEntity[] | null) => {
         category: ite.category,
         unit: ite.unit,
         required: ite.required,
+        is_file: ite.is_file,
+        sort_order: ite.sort_order,
         options:
           ite.options && ite.options.length > 0
             ? ite.options.map((option) => {
@@ -92,6 +94,8 @@ export const generateItemObject = async (item: ItemEntity | null) => {
       category: item.category,
       unit: item.unit,
       required: item.required,
+      is_file: item.is_file,
+      sort_order: item.sort_order,
       options:
         item.options && item.options.length > 0
           ? item.options.map((option) => {

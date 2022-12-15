@@ -1,4 +1,5 @@
 # Các table phase-1
+
 - academic_year_classes
 - academic_years
 - approvals
@@ -18,12 +19,19 @@
 - signuatures
 - titles
 
+# Update
+
+- Table evaluations và level thêm field sort_order
+- Table headers thêm field is_return default: true quay về điểm max của header
+
 # Các trigger được thêm vào
+
 - tg_add_sheets_tbl (tự động insert to "approvals" trạng thái đánh giá của sinh viên, lớp & khoa theo "sheet_id")
 
 - tg_update_sheets_tbl (tính tổng xếp loại sinh viên theo niên khóa, học kì, khoa & lớp)
 
 # Các store_procedures được thêm vào
+
 - sp_generate_headers (clone headers from source_form to target_form)
 
 - sp_generate_titles (clone titles from source_form to target_form)

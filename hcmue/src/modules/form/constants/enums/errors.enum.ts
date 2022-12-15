@@ -32,6 +32,7 @@ export enum ErrorMessage {
 
   TIME_NAN_ERROR = '[Thời gian] không hợp lệ.',
   INVALID_TIME_ERROR = '[Thời gian bắt đầu] và [thời gian kết thúc] tối thiểu 1 ngày.',
+  TIME_PUBLISH_ERROR = '[Thơi gian phát hành] phải lớn hơn hiện tại',
 
   ACADEMIC_YEAR_NOT_FOUND_ERROR = '[Niên khóa] không tồn tại (id: %s)',
   SEMESTER_NOT_FOUND_ERROR = '[Học kì] không tồn tại (id: %s)',

@@ -82,9 +82,25 @@ const FormCreatePage = () => {
 	//#endregion
 
 	//#region Event
-	const onBack = () => setStep((prev) => prev - 1);
+	const onBack = () =>
+		setStep((prev) => {
+			if (prev - 1 < 0) {
+				navigate(ROUTES.FORM);
+				return prev;
+			}
 
-	const onForward = () => setStep((prev) => prev + 1);
+			return prev - 1;
+		});
+
+	const onForward = () =>
+		setStep((prev) => {
+			if (prev + 1 > 3) {
+				navigate(ROUTES.FORM);
+				return prev;
+			}
+
+			return prev + 1;
+		});
 
 	const handlePublish = () => {
 		alert.warning({
@@ -135,14 +151,6 @@ const FormCreatePage = () => {
 
 	useEffect(() => {
 		dispatch(actions.setStep(step));
-
-		if (step < 0) {
-			dispatch(actions.clearForm());
-			navigate(ROUTES.FORM);
-		} else if (step > 3) {
-			dispatch(actions.clearForm());
-			navigate(ROUTES.FORM);
-		}
 	}, [step]);
 
 	usePrompt(

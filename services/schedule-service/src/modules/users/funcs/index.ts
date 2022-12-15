@@ -1,35 +1,14 @@
 import { ClientProxy } from '@nestjs/microservices';
-import { catchError, map, Observable } from 'rxjs';
-
-import {
-  SheetPayload,
-  SheetsPayload,
-} from '../interfaces/payloads/sheet_payload.interface';
-
-import { Message } from '../constants/enums/message.enum';
+import { SheetsPayload } from '../interfaces/payloads/sheet_payload.interface';
 
 export const send = async (
-  page: number,
-  results: SheetPayload[],
+  pattern: string,
+  data: SheetsPayload,
   background_client: ClientProxy,
 ): Promise<any> => {
   return new Promise<any>((resolve) => {
     background_client
-      .send<any, SheetsPayload>(Message.GENERATE_CREATE_SHEET, {
-        payload: {
-          page,
-          data: results,
-        },
-      })
-      .pipe(
-        map((results) => {
-          return results;
-        }),
-        catchError((err: any, caught: Observable<any>) => {
-          console.log('Error: ', err);
-          return caught;
-        }),
-      )
+      .send<any, SheetsPayload>(pattern, data)
       .subscribe((result) => resolve(result));
   });
 };

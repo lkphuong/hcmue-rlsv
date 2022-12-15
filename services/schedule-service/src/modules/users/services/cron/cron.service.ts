@@ -20,6 +20,7 @@ import { Configuration } from '../../../shared/constants/configuration.enum';
 import { FormStatus } from '../../../form/constants/emuns/form_status.enum';
 
 import { Crons } from '../../constants/enums/crons.enum';
+import { Message } from '../../constants/enums/message.enum';
 import { Pattern } from '../../../../constants/enums/pattern.enum';
 
 import { BACKGROUND_JOB_MODULE } from '../../../../constants';
@@ -73,16 +74,22 @@ export class CronService {
 
             //#region Paging
             for (let i = 0; i < pages; i++) {
-              let flag = false;
+              //#region Get users
               const users = await this._userService.getUsersPaging(
                 i * itemsPerPage,
                 itemsPerPage,
               );
+              //#endregion
 
-              if (i + 1 === pages) flag = true;
+              //#region Get sheets payload
+              const sheets = await generateSheet2Array(
+                form,
+                i + 1 === pages,
+                users,
+              );
+              //#endregion
 
-              const sheets = await generateSheet2Array(form, flag, users);
-
+              //#region Logging
               console.log(
                 '----------------------------------------------------------',
               );
@@ -92,8 +99,20 @@ export class CronService {
               console.log('Cron time: ', CRON_JOB_TIME);
               console.log('sheets: ', sheets.length);
               console.log('page: ', i + 1);
+              //#endregion
 
-              send(i + 1, sheets, this._backgroundClient);
+              //#region Emit Message.GENERATE_CREATE_SHEET
+              send(
+                Message.GENERATE_CREATE_SHEET,
+                {
+                  payload: {
+                    page: i + 1,
+                    data: sheets,
+                  },
+                },
+                this._backgroundClient,
+              );
+              //#endregion
 
               await sleep(1000);
             }

@@ -10,6 +10,7 @@ import {
 	TableContainer,
 	TableHead,
 	TableRow,
+	Typography,
 } from '@mui/material';
 
 import Row from './Row';
@@ -41,10 +42,17 @@ export const ListStudents = ({ data }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{data?.length > 0 &&
+						{data?.length > 0 ? (
 							data.map((row, index) => (
 								<Row key={row.id} index={index} data={row} classId={class_id} />
-							))}
+							))
+						) : (
+							<TableRow>
+								<TableCell colSpan='100%' align='center' sx={{ py: 15 }}>
+									<Typography fontSize={20}>Không có dữ liệu hiển thị</Typography>
+								</TableCell>
+							</TableRow>
+						)}
 					</TableBody>
 				</Table>
 			</TableContainer>

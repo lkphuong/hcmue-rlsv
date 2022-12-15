@@ -104,7 +104,8 @@ services:
 
       - COMPOSER_SERVICE_HOST=rabbitmq
       - COMPOSER_SERVICE_PORT=5672
-
+      
+      - ITEMS_PER_PAGE=100
       - MAX_TIMES=3
     networks:
       - net-hcmue
@@ -159,7 +160,9 @@ services:
 
       - COMPOSER_SERVICE_HOST=rabbitmq
       - COMPOSER_SERVICE_PORT=5672
-
+      
+      - ITEMS_PER_PAGE=100
+      
       - GENERATE_CREATE_SHEETS_CRON_JOB_TIME='0 0 0 * * *'
       - UPDATE_STATUS_SHEETS_CRON_JOB_TIME='0 0 0 * * *'
       - UNLINK_FILES_CRON_JOB_TIME='0 0 2 * * *'

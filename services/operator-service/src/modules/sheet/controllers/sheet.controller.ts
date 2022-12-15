@@ -66,6 +66,7 @@ export class SheetController {
     console.log('page: ', page);
 
     try {
+      console.log('start: ', new Date());
       //#region Generate sheet entities
       let sheets = await generateCreateSheetEntities(
         items,
@@ -84,10 +85,9 @@ export class SheetController {
           ErrorMessage.CREATE_SHEETS_ERROR,
         );
         //#endregion
-      } else {
-        channel.ack(original_message);
-      }
+      } else channel.ack(original_message);
       //#endregion
+      console.log('end: ', new Date());
     } catch (err) {
       channel.ack(original_message);
 

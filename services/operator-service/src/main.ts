@@ -28,7 +28,7 @@ async function bootstrap() {
 
   await app.listen();
 
-  console.log(`Sheet Queue microservice is listenning.`);
+  console.log(`Operator Queue microservice is listenning.`);
   console.log(`Host: ${host}`);
   console.log(`Port : ${port}`);
 }

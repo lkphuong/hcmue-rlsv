@@ -1,4 +1,3 @@
-import { MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { ValidationArguments } from 'class-validator';
 
 import { Types } from 'mongoose';
@@ -115,4 +114,10 @@ export const hashFnv32a = (
   }
 
   return hval >>> 0;
+};
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
 };

@@ -4,6 +4,7 @@ import { SemesterEntity } from '../../../../entities/semester.entity';
 
 export interface SheetsPayload {
   payload: {
+    page: number;
     data: SheetPayload[];
   };
 }

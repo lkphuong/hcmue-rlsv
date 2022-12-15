@@ -18,7 +18,7 @@ export default {
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
-  ITEMS_PER_PAGE: 100,
+  ITEMS_PER_PAGE: 10,
 
   MULTER_DEST: './static/uploads',
 
@@ -45,7 +45,7 @@ export default {
   MESSAGE_TTL_ARGUMENT: 60000, // 60,
   OVERFLOW_ARGUMENT: 'reject-publish',
 
-  GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 */15 * * * *',
+  GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 * * * * *',
   UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 */15 * * * *',
   UNLINK_FILES_CRON_JOB_TIME: '0 0 0 * * *',
 };

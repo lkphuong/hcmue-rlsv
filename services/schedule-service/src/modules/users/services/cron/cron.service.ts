@@ -7,7 +7,7 @@ import * as config from 'config';
 import { generateSheet2Array } from '../../transform';
 import { handleLog } from '../../utils';
 import { send } from '../../funcs';
-import { sprintf } from '../../../../utils';
+import { sleep, sprintf } from '../../../../utils';
 
 import { ConfigurationService } from '../../../shared/services/configuration/configuration.service';
 import { FormService } from '../../../form/services/form.service';
@@ -22,7 +22,7 @@ import { FormStatus } from '../../../form/constants/emuns/form_status.enum';
 import { Crons } from '../../constants/enums/crons.enum';
 import { Pattern } from '../../../../constants/enums/pattern.enum';
 
-import { COMPOSER_MODULE } from '../../../../constants';
+import { BACKGROUND_JOB_MODULE } from '../../../../constants';
 
 const CRON_JOB_TIME =
   process.env['GENERATE_CREATE_SHEETS_CRON_JOB_TIME'] ||
@@ -31,7 +31,8 @@ const CRON_JOB_TIME =
 @Injectable()
 export class CronService {
   constructor(
-    @Inject(COMPOSER_MODULE) private readonly _composerClient: ClientProxy,
+    @Inject(BACKGROUND_JOB_MODULE)
+    private readonly _backgroundClient: ClientProxy,
     private readonly _configurationService: ConfigurationService,
     private readonly _formService: FormService,
     private readonly _userService: UserService,
@@ -68,6 +69,8 @@ export class CronService {
           //#endregion
 
           if (success) {
+            console.log('pages: ', pages);
+
             //#region Paging
             for (let i = 0; i < pages; i++) {
               let flag = false;
@@ -77,6 +80,7 @@ export class CronService {
               );
 
               if (i + 1 === pages) flag = true;
+
               const sheets = await generateSheet2Array(form, flag, users);
 
               console.log(
@@ -86,9 +90,12 @@ export class CronService {
                 `${Pattern.CRON_JOB_PATTERN}: /${Crons.GENERATE_CREATE_SHEETS_CRON_JOB}`,
               );
               console.log('Cron time: ', CRON_JOB_TIME);
-              console.log('sheets: ', sheets);
+              console.log('sheets: ', sheets.length);
+              console.log('page: ', i + 1);
 
-              send(sheets, this._composerClient);
+              send(i + 1, sheets, this._backgroundClient);
+
+              await sleep(1000);
             }
             //#endregion
 

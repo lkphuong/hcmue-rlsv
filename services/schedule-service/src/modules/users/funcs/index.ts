@@ -1,5 +1,5 @@
 import { ClientProxy } from '@nestjs/microservices';
-import { catchError, map } from 'rxjs';
+import { catchError, map, Observable } from 'rxjs';
 
 import {
   SheetPayload,
@@ -9,13 +9,15 @@ import {
 import { Message } from '../constants/enums/message.enum';
 
 export const send = async (
+  page: number,
   results: SheetPayload[],
-  composer_client: ClientProxy,
+  background_client: ClientProxy,
 ): Promise<any> => {
   return new Promise<any>((resolve) => {
-    composer_client
-      .send<any, SheetsPayload>(Message.GENERATE_CREATE_SHEET_ENTITY, {
+    background_client
+      .send<any, SheetsPayload>(Message.GENERATE_CREATE_SHEET, {
         payload: {
+          page,
           data: results,
         },
       })
@@ -23,8 +25,9 @@ export const send = async (
         map((results) => {
           return results;
         }),
-        catchError(() => {
-          return null;
+        catchError((err: any, caught: Observable<any>) => {
+          console.log('Error: ', err);
+          return caught;
         }),
       )
       .subscribe((result) => resolve(result));

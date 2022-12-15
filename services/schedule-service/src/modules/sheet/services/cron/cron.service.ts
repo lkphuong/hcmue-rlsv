@@ -56,23 +56,26 @@ export class CronService {
         const pages = Math.ceil(count / itemsPerPage);
         //#endregion
 
+        console.log('pages: ', pages);
+
         //#region Paging
-        for (let i = 0; i < pages; i++) {
-          const sheets = await this._sheetService.getSheetsPaging(
-            i * itemsPerPage,
-            itemsPerPage,
-          );
+        // for (let i = 0; i < pages; i++) {
+        //   const sheets = await this._sheetService.getSheetsPaging(
+        //     i * itemsPerPage,
+        //     itemsPerPage,
+        //   );
 
-          console.log(
-            '----------------------------------------------------------',
-          );
-          console.log(
-            `${Pattern.CRON_JOB_PATTERN}: /${Crons.UPDATE_SHEETS_STATUS_CRON_JOB}`,
-          );
-          console.log('sheets: ', sheets);
+        //   console.log(
+        //     '----------------------------------------------------------',
+        //   );
+        //   console.log(
+        //     `${Pattern.CRON_JOB_PATTERN}: /${Crons.UPDATE_SHEETS_STATUS_CRON_JOB}`,
+        //   );
+        //   console.log('sheets: ', sheets.length);
+        //   console.log('page: ', i + 1);
 
-          send(sheets, this._backgroundClient);
-        }
+        //   send(sheets, this._backgroundClient);
+        // }
         //#endregion
       } else {
         //#region Handle log

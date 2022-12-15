@@ -14,11 +14,17 @@ import { SharedModule } from '../shared/shared.module';
 
 import { FormModule } from '../form/form.module';
 
-import { COMPOSER_MODULE } from '../../constants';
+import { BACKGROUND_JOB_MODULE, COMPOSER_MODULE } from '../../constants';
+import { backgroundFactory } from 'src/factories/background.factory';
 
 export const modules = [
   SharedModule,
   ClientsModule.register([
+    {
+      name: BACKGROUND_JOB_MODULE,
+      transport: Transport.RMQ,
+      options: backgroundFactory,
+    },
     {
       name: COMPOSER_MODULE,
       transport: Transport.RMQ,

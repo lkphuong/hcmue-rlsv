@@ -7,18 +7,12 @@ import {
 } from '@nestjs/microservices';
 
 import { handleLog } from '../../../utils';
-import { generateApproval2Array, generateSheet2Array } from '../transform';
 import { generateCreateSheetEntities } from '../funcs';
 
-import { ApprovalEntity } from '../../../entities/approval.entity';
-import { SheetEntity } from '../../../entities/sheet.entity';
-
-import { ApprovalService } from '../../approval/services/approval.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 import { SheetService } from '../services/sheet.service';
 
-import { SheetEntityPayload } from '../interfaces/payloads/create-sheets.interface';
 import { SheetsPayload } from '../interfaces/payloads/sheet_payload.interface';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
@@ -37,7 +31,6 @@ export class SheetController {
   MAX_TIMES = 3;
 
   constructor(
-    private readonly _approvalService: ApprovalService,
     private readonly _configurationService: ConfigurationService,
     private readonly _sheetService: SheetService,
     private _logger: LogService,
@@ -65,13 +58,12 @@ export class SheetController {
     //#endregion
 
     const { data: items, page } = data.payload;
-    console.log('page: ', page);
 
     console.log('----------------------------------------------------------');
     console.log(
       `${Pattern.MESSAGE_PATTERN}: /${Message.GENERATE_CREATE_SHEET}`,
     );
-    // console.log('data: ', data);
+    console.log('page: ', page);
 
     try {
       //#region Generate sheet entities

@@ -17,7 +17,7 @@ import { ConfigurationService } from '../../shared/services/configuration/config
 import { LogService } from '../../log/services/log.service';
 import { SheetService } from '../services/sheet.service';
 
-import { ApprovalPayload } from '../interfaces/payloads/approval_payload.interface';
+import { SheetEntityPayload } from '../interfaces/payloads/create-sheets.interface';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 
@@ -47,7 +47,7 @@ export class SheetController {
    */
   @MessagePattern(Message.GENERATE_UPDATE_APPROVED_STATUS)
   async setSheetsStatus(
-    @Payload() data: ApprovalPayload,
+    @Payload() data: SheetEntityPayload,
     @Ctx() context: RmqContext,
   ): Promise<void> {
     const channel = context.getChannelRef();
@@ -58,22 +58,21 @@ export class SheetController {
       Levels.LOG,
       Pattern.MESSAGE_PATTERN,
       Message.GENERATE_UPDATE_APPROVED_STATUS,
-      JSON.stringify(data),
+      JSON.stringify({ data }),
     );
     //#endregion
 
     //#region Get params
-    const { data: items, page } = data.payload;
+    const { data: items } = data.payload;
     //#endregion
 
     console.log('----------------------------------------------------------');
     console.log(
       `${Pattern.MESSAGE_PATTERN}: /${Message.GENERATE_UPDATE_APPROVED_STATUS}`,
     );
-    console.log('page: ', page);
+    console.log('data: ', data);
 
     try {
-      console.log('start: ', new Date());
       let results: ApprovalEntity[] | SheetEntity[] | null = null;
 
       //#region Update approvals
@@ -86,6 +85,8 @@ export class SheetController {
         const sheets = await generateSheet2Array(items);
         results = await this._sheetService.bulkUpdate(sheets);
         if (!results) {
+          channel.ack(original_message);
+
           //#region Handle log
           handleLog(
             Levels.ERROR,
@@ -95,9 +96,11 @@ export class SheetController {
             this._logger,
           );
           //#endregion
-        }
+        } else channel.ack(original_message);
         //#endregion
       } else {
+        channel.ack(original_message);
+
         //#region Handle log
         handleLog(
           Levels.ERROR,
@@ -108,9 +111,6 @@ export class SheetController {
         );
         //#endregion
       }
-
-      channel.ack(original_message);
-      console.log('end: ', new Date());
     } catch (err) {
       channel.ack(original_message);
 

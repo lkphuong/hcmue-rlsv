@@ -73,7 +73,6 @@ export class SheetController {
     console.log('page: ', page);
 
     try {
-      console.log('start: ', new Date());
       let results: ApprovalEntity[] | SheetEntity[] | null = null;
 
       //#region Update approvals
@@ -86,6 +85,8 @@ export class SheetController {
         const sheets = await generateSheet2Array(items);
         results = await this._sheetService.bulkUpdate(sheets);
         if (!results) {
+          channel.ack(original_message);
+
           //#region Handle log
           handleLog(
             Levels.ERROR,
@@ -95,9 +96,11 @@ export class SheetController {
             this._logger,
           );
           //#endregion
-        }
+        } else channel.ack(original_message);
         //#endregion
       } else {
+        channel.ack(original_message);
+
         //#region Handle log
         handleLog(
           Levels.ERROR,
@@ -108,9 +111,6 @@ export class SheetController {
         );
         //#endregion
       }
-
-      channel.ack(original_message);
-      console.log('end: ', new Date());
     } catch (err) {
       channel.ack(original_message);
 

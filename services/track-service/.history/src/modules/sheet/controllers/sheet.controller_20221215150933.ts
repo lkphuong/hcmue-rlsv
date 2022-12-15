@@ -8,6 +8,7 @@ import {
 
 import { handleLog } from '../../../utils';
 import { generateApproval2Array, generateSheet2Array } from '../transform';
+import { generateCreateSheetEntities } from '../funcs';
 
 import { ApprovalEntity } from '../../../entities/approval.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
@@ -17,15 +18,19 @@ import { ConfigurationService } from '../../shared/services/configuration/config
 import { LogService } from '../../log/services/log.service';
 import { SheetService } from '../services/sheet.service';
 
-import { ApprovalPayload } from '../interfaces/payloads/approval_payload.interface';
+import { SheetEntityPayload } from '../interfaces/payloads/create-sheets.interface';
+import { SheetsPayload } from '../interfaces/payloads/sheet_payload.interface';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Message } from '../constants/enums/messages.enum';
 import { Pattern } from '../../../constants/enums/pattern.enum';
+
+import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 @Controller('sheet')
 export class SheetController {
@@ -47,7 +52,7 @@ export class SheetController {
    */
   @MessagePattern(Message.GENERATE_UPDATE_APPROVED_STATUS)
   async setSheetsStatus(
-    @Payload() data: ApprovalPayload,
+    @Payload() data: SheetEntityPayload,
     @Ctx() context: RmqContext,
   ): Promise<void> {
     const channel = context.getChannelRef();
@@ -58,22 +63,19 @@ export class SheetController {
       Levels.LOG,
       Pattern.MESSAGE_PATTERN,
       Message.GENERATE_UPDATE_APPROVED_STATUS,
-      JSON.stringify(data),
+      JSON.stringify({ data }),
     );
-    //#endregion
-
-    //#region Get params
-    const { data: items, page } = data.payload;
     //#endregion
 
     console.log('----------------------------------------------------------');
     console.log(
       `${Pattern.MESSAGE_PATTERN}: /${Message.GENERATE_UPDATE_APPROVED_STATUS}`,
     );
-    console.log('page: ', page);
+    console.log('data: ', data);
+
+    const { data: items } = data.payload;
 
     try {
-      console.log('start: ', new Date());
       let results: ApprovalEntity[] | SheetEntity[] | null = null;
 
       //#region Update approvals
@@ -86,6 +88,8 @@ export class SheetController {
         const sheets = await generateSheet2Array(items);
         results = await this._sheetService.bulkUpdate(sheets);
         if (!results) {
+          channel.ack(original_message);
+
           //#region Handle log
           handleLog(
             Levels.ERROR,
@@ -95,9 +99,11 @@ export class SheetController {
             this._logger,
           );
           //#endregion
-        }
+        } else channel.ack(original_message);
         //#endregion
       } else {
+        channel.ack(original_message);
+
         //#region Handle log
         handleLog(
           Levels.ERROR,
@@ -108,9 +114,6 @@ export class SheetController {
         );
         //#endregion
       }
-
-      channel.ack(original_message);
-      console.log('end: ', new Date());
     } catch (err) {
       channel.ack(original_message);
 

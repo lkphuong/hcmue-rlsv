@@ -30,6 +30,7 @@ export default {
   SCHEDULE_SERVICE_PORT: 3003,
 
   BACKGROUND_JOB_QUEUE: 'hcmue_background_job_queue',
+
   TRACKING_QUEUE: 'hcmue_tracking_queue',
 
   TTL: 120,
@@ -39,8 +40,8 @@ export default {
   DURABLE_QUEUE_OPTION: 1,
   QUEUE_EXPIRED_ARGUMENT: 1800000,
   QUEUE_TYPE_ARGUMENT: 'quorum',
-  MAX_LENGTH_ARGUMENT: 50000, // maximum number of messages in queu,
-  MESSAGE_TTL_ARGUMENT: 1800000, // 30,
+  MAX_LENGTH_ARGUMENT: 1000, // maximum number of messages in queu,
+  MESSAGE_TTL_ARGUMENT: 60000, // 60,
   OVERFLOW_ARGUMENT: 'reject-publish',
 
   MAX_TIMES: 3,

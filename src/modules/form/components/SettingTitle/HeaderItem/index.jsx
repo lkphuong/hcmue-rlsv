@@ -1,7 +1,12 @@
 import React, { memo, useState, useEffect, useRef } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { AddCircleOutline, Edit, ExpandMore, RemoveCircleOutline } from '@mui/icons-material';
+import {
+	AddCircleOutline,
+	EditOutlined,
+	ExpandMore,
+	RemoveCircleOutline,
+} from '@mui/icons-material';
 import {
 	Accordion,
 	AccordionDetails,
@@ -110,7 +115,7 @@ const HeaderItem = memo(({ data }) => {
 									</Grid>
 									<Grid item xs='auto'>
 										<IconButton onClick={handleEdit(title)}>
-											<Edit />
+											<EditOutlined />
 										</IconButton>
 									</Grid>
 								</Grid>

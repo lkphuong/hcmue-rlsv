@@ -2,7 +2,7 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Container, Grid, IconButton, Typography } from '@mui/material';
-import { AddCircleOutline, Edit, RemoveCircleOutline } from '@mui/icons-material';
+import { AddCircleOutline, EditOutlined, RemoveCircleOutline } from '@mui/icons-material';
 
 import { deleteHeader, getHeadersByFormId } from '_api/form.api';
 
@@ -101,7 +101,7 @@ const SettingHeader = memo(() => {
 									</Grid>
 									<Grid item xs='auto'>
 										<IconButton onClick={handleEdit(header)}>
-											<Edit />
+											<EditOutlined />
 										</IconButton>
 									</Grid>
 								</Grid>

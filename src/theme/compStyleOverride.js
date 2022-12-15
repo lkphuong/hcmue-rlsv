@@ -36,7 +36,7 @@ export default function componentStyleOverrides(theme) {
 		},
 		MuiPaper: {
 			defaultProps: {
-				elevation: 0,
+				elevation: 3,
 			},
 			styleOverrides: {
 				root: {

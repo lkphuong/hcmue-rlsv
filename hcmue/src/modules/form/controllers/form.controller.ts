@@ -287,11 +287,11 @@ export class FormController {
 
   /**
    * @method GET
-   * @url /api/forms/:id
+   * @url /api/forms/detail/:id
    * @access private
    * @param id
    * @description Hiển thị chi tiết biểu mẫu
-   * @return HttpResponse<FormResponse> | HttpException | null
+   * @return HttpResponse<DetailFormResponse> | HttpException | null
    * @page forms page
    */
   @Get('detail/:id')

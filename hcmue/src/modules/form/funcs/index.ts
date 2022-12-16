@@ -17,6 +17,7 @@ import {
   valiadteTitle,
   validateAcademicYear,
   validateForm,
+  validateFormExist,
   validateFormPubishStatus,
   validateHeader,
   validateMaxMarkHeaderByForm,
@@ -986,7 +987,7 @@ export const cloneForm = async (
 ) => {
   //#region Validation
   //#region Validate form
-  const source_form = await validateForm(form_id, form_service, req);
+  const source_form = await validateFormExist(form_id, form_service, req);
   if (source_form instanceof HttpException) return source_form;
   //#endregion
   //#endregion

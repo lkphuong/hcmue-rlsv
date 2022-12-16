@@ -170,6 +170,25 @@ export const validateForm = async (
   return form;
 };
 
+export const validateFormExist = async (
+  form_id: number,
+  form_service: FormService,
+  req: Request,
+): Promise<FormEntity | HttpException> => {
+  const form = await form_service.getFormById(form_id);
+  if (!form) {
+    return new UnknownException(
+      form_id,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, form_id),
+    );
+  }
+
+  return form;
+};
+
 export const validateFormPubishStatus = (form: FormEntity, req: Request) => {
   if (form.status !== FormStatus.DRAFTED) {
     //#region throw HandlerException

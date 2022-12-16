@@ -1,5 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBooleanValidator } from 'src/validators/boolean.validator';
 import { GreaterValidator } from 'src/validators/greater.validator';
 
 import { generateValidationMessage } from '../../../utils';
@@ -55,20 +56,10 @@ export class HeaderDto {
   max_mark: number;
 
   @IsOptional()
-  @Transform((params) => parseFloat(params.value) ?? 1)
-  @IsNotEmpty({
+  @Transform((params) => params.value ?? true)
+  @IsBooleanValidator({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Bạn vui lòng nhập [điểm tối đa cho hạng mục].',
-      ),
-  })
-  @MinValidator(1, {
-    message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [điểm tối đa] không hợp lệ (phải lớn hơn 0).',
-      ),
+      generateValidationMessage(arg, 'Giá trị [is_return] không hợp lệ.'),
   })
   is_return?: boolean = true;
 }

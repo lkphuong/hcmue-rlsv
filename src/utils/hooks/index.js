@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useContext } from 'react';
 import { useDispatch } from 'react-redux';
-import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom';
+import {
+	UNSAFE_NavigationContext as NavigationContext,
+	useLocation,
+	useNavigate,
+} from 'react-router-dom';
 
 // Custom resolver for validation react-fook-form by Yup
 export const useResolver = (validationSchema) =>
@@ -65,11 +69,31 @@ export function useConfirmExit(confirmExit, when = true) {
 export function usePrompt(message, when = true, actionConfirm) {
 	const dispatch = useDispatch();
 
+	const navigate = useNavigate();
+
+	const location = useLocation();
+
 	useEffect(() => {
 		if (when) {
+			// Khi reload
 			window.onbeforeunload = function (e) {
 				return message;
 			};
+
+			// Khi click nút Back
+			window.onpopstate = function (e) {
+				let r = window.confirm(message);
+
+				if (r === true) {
+					dispatch(actionConfirm);
+					return message;
+				} else {
+					navigate(location.pathname, { state: null });
+				}
+			};
+
+			// Hủy back
+			// navigate(location.pathname, { state: null });
 		}
 
 		return () => {

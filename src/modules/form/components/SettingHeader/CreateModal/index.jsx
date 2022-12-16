@@ -3,7 +3,7 @@ import React, { forwardRef, useState, useImperativeHandle } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Button, Grow, Modal, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Checkbox, Grow, Modal, Paper, Stack, Typography } from '@mui/material';
 
 import { useResolver } from '_hooks/';
 
@@ -132,6 +132,26 @@ const CreateModal = forwardRef(({ refetch }, ref) => {
 												value={value}
 												error={!!error}
 												helperText={error?.message}
+											/>
+										)}
+									/>
+								</Stack>
+								<Stack
+									direction='row'
+									alignItems='center'
+									justifyContent='space-between'
+									mb={2}
+								>
+									<Typography mr={1.5}>Giới hạn tối đa</Typography>
+									<Controller
+										control={control}
+										name='is_return'
+										render={({ field: { name, onChange, ref, value } }) => (
+											<Checkbox
+												name={name}
+												ref={ref}
+												onChange={onChange}
+												checked={value}
 											/>
 										)}
 									/>

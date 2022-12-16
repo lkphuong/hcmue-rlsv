@@ -22,6 +22,7 @@ export const initialValues = {
 export const initialHeader = {
 	name: '',
 	max_mark: 0,
+	is_return: true,
 };
 
 export const initialTitle = {

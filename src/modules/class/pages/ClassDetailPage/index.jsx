@@ -96,6 +96,7 @@ const ClassDetailPage = () => {
 			const payload = itemsMark.map((e) => ({
 				item_id: Number(e.item.id),
 				class_mark_level: e.personal_mark_level,
+				option_id: Number(e.options?.id) || null,
 			}));
 
 			dispatch(actions.renewMarks(payload));
@@ -103,6 +104,7 @@ const ClassDetailPage = () => {
 			const payload = itemsMark.map((e) => ({
 				item_id: Number(e.item.id),
 				class_mark_level: e.class_mark_level,
+				option_id: Number(e.options?.id) || null,
 			}));
 
 			dispatch(actions.renewMarks(payload));

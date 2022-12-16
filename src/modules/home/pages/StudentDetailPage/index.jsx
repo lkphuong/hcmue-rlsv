@@ -97,6 +97,7 @@ const SemesterDetail = () => {
 		const payload = itemsMark.map((e) => ({
 			item_id: Number(e.item.id),
 			personal_mark_level: e.personal_mark_level,
+			option_id: Number(e.options?.id) || null,
 		}));
 
 		dispatch(actions.renewMarks(payload));

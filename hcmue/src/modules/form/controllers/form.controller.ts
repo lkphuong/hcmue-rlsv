@@ -20,6 +20,7 @@ import { DataSource } from 'typeorm';
 import { sprintf } from '../../../utils';
 
 import {
+  generateDetailFormResponse,
   generateFormResponse,
   generateFormsResponse,
   generateHeadersResponse,
@@ -79,6 +80,7 @@ import { HttpPagingResponse } from '../../../interfaces/http-paging-response.int
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import {
   BaseResponse,
+  DetailFormResponse,
   FormResponse,
   HeaderResponse,
   ItemResponse,
@@ -255,6 +257,75 @@ export class FormController {
       if (form) {
         //#region Generate response
         return await generateFormResponse(form, null, req);
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        return new UnknownException(
+          id,
+          DATABASE_EXIT_CODE.UNKNOW_VALUE,
+          req.method,
+          req.url,
+          sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, id),
+        );
+        //#endregion
+      }
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method GET
+   * @url /api/forms/:id
+   * @access private
+   * @param id
+   * @description Hiển thị chi tiết biểu mẫu
+   * @return HttpResponse<FormResponse> | HttpException | null
+   * @page forms page
+   */
+  @Get('detail/:id')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  @HttpCode(HttpStatus.OK)
+  async getDetailFormById(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<DetailFormResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ id: id }),
+      );
+
+      //#region Validation
+      const valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Get form
+      const form = await this._formService.getDetailFormById(id);
+      if (form) {
+        //#region Generate response
+        return await generateDetailFormResponse(form, null, req);
         //#endregion
       } else {
         //#region throw HandlerException

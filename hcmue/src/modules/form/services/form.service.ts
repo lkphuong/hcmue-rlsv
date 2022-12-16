@@ -10,6 +10,10 @@ import { FormStatus } from '../constants/enums/statuses.enum';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { HeaderEntity } from 'src/entities/header.entity';
+import { TitleEntity } from 'src/entities/title.entity';
+import { ItemEntity } from 'src/entities/item.entity';
+import { OptionEntity } from 'src/entities/option.entity';
 
 @Injectable()
 export class FormService {
@@ -67,6 +71,61 @@ export class FormService {
         Levels.ERROR,
         Methods.SELECT,
         'FormService.getFormById()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getDetailFormById(id: number): Promise<FormEntity | null> {
+    try {
+      const conditions = this._formRepository
+        .createQueryBuilder('form')
+        .innerJoinAndSelect('form.academic_year', 'academic_year')
+        .innerJoinAndSelect('form.semester', 'semester')
+        .leftJoinAndMapMany(
+          'form.headers',
+          HeaderEntity,
+          'header',
+          `header.form_id = form.id 
+          AND header.delete_flag = 0`,
+        )
+        .leftJoinAndMapMany(
+          'header.titles',
+          TitleEntity,
+          'title',
+          `title.form_id = header.form_id 
+          AND header.ref = title.parent_ref 
+          AND title.delete_flag = 0`,
+        )
+        .leftJoinAndMapMany(
+          'title.items',
+          ItemEntity,
+          'item',
+          `item.form_id = title.form_id 
+          AND title.ref = item.parent_ref 
+          AND item.delete_flag = 0`,
+        )
+        .leftJoinAndMapMany(
+          'item.options',
+          OptionEntity,
+          'options',
+          `item.form_id = options.form_id
+           AND item.ref = options.parent_ref 
+           AND options.delete_flag = 0`,
+        )
+        .where('form.id = :id', { id })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('form.deleted = :deleted', { deleted: false });
+
+      const form = await conditions.getOne();
+      return form || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FormService.getDetailForm()',
         e,
       );
       return null;

@@ -10,6 +10,7 @@ import {
   ItemResponse,
   FormResponse,
   HeaderResponse,
+  DetailFormResponse,
 } from '../interfaces/form-response.interface';
 
 export const generateHeadersArray = async (headers: HeaderEntity[] | null) => {
@@ -21,6 +22,7 @@ export const generateHeadersArray = async (headers: HeaderEntity[] | null) => {
         id: header.id,
         name: header.name,
         max_mark: header.max_mark,
+        is_return: header.is_return,
       };
 
       payload.push(item);
@@ -38,6 +40,7 @@ export const generateHeaderObject = async (header: HeaderEntity | null) => {
       id: header.id,
       name: header.name,
       max_mark: header.max_mark,
+      is_return: header.is_return,
     };
 
     return payload;
@@ -204,6 +207,91 @@ export const generateFormObject = (form: FormEntity | null) => {
       },
       status: form.status,
     };
+
+    return payload;
+  }
+
+  return null;
+};
+
+export const generateDetailFormObject = (form: FormEntity | null) => {
+  if (form) {
+    const payload: DetailFormResponse = {
+      id: form.id,
+      academic: {
+        id: form.academic_year.id,
+        name: form.academic_year.name,
+      },
+      semester: {
+        id: form.semester.id,
+        name: form.semester.name,
+      },
+      student: {
+        start: form.student_start,
+        end: form.student_end,
+      },
+      classes: {
+        start: form.class_start,
+        end: form.class_end,
+      },
+      department: {
+        start: form.department_start,
+        end: form.department_end,
+      },
+      status: form.status,
+      headers: [],
+    };
+    if (form.headers) {
+      for (const header of form.headers) {
+        const payload_header: HeaderResponse = {
+          id: header.id,
+          is_return: header.is_return,
+          max_mark: header.max_mark,
+          name: header.name,
+          titles: [],
+        };
+        if (header.titles) {
+          for (const title of header.titles) {
+            const pay_title: BaseResponse = {
+              id: title.id,
+              name: title.name,
+              items: [],
+            };
+            if (title.items) {
+              for (const item of title.items) {
+                const payload_item: ItemResponse = {
+                  id: item.id,
+                  control: item.control,
+                  multiple: item.multiple,
+                  content: item.content,
+                  from_mark: item.from_mark,
+                  to_mark: item.to_mark,
+                  mark: item.mark,
+                  category: item.category,
+                  unit: item.unit,
+                  required: item.required,
+                  is_file: item.is_file,
+                  sort_order: item.sort_order,
+                  options:
+                    item.options && item.options.length > 0
+                      ? item.options.map((option) => {
+                          return {
+                            id: option.id,
+                            content: option.content,
+                            mark: option.mark,
+                          };
+                        })
+                      : null,
+                };
+                pay_title.items.push(payload_item);
+              }
+            }
+            payload_header.titles.push(pay_title);
+          }
+        }
+        payload.headers.push(payload_header);
+      }
+    }
 
     return payload;
   }

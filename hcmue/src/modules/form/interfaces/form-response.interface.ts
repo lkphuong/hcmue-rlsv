@@ -3,6 +3,7 @@ import { FormStatus } from '../constants/enums/statuses.enum';
 export interface BaseResponse {
   id: number;
   name: string;
+  items?: ItemResponse[];
 }
 
 export interface FormResponse {
@@ -16,8 +17,14 @@ export interface FormResponse {
   created_at?: Date;
 }
 
+export interface DetailFormResponse extends FormResponse {
+  headers: HeaderResponse[];
+}
+
 export interface HeaderResponse extends BaseResponse {
   max_mark: number;
+  is_return: boolean;
+  titles?: BaseResponse[];
 }
 
 export interface ItemResponse {

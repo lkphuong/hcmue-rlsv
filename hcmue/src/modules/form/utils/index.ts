@@ -11,6 +11,7 @@ import {
   generateItemsArray,
   generateTitleObject,
   generateTitlesArray,
+  generateDetailFormObject,
 } from '../transform';
 
 import { FormResponse } from '../interfaces/form-response.interface';
@@ -54,6 +55,28 @@ export const generateFormResponse = async (
 
   // Transform FormEntity class to FormResponse class
   const payload = generateFormObject(form);
+
+  if (query_runner) await query_runner.commitTransaction();
+
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
+
+export const generateDetailFormResponse = async (
+  form: FormEntity,
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', form);
+
+  // Transform FormEntity class to DetailFormResponse class
+  const payload = generateDetailFormObject(form);
 
   if (query_runner) await query_runner.commitTransaction();
 

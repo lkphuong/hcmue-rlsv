@@ -8,6 +8,7 @@ import {
 
 import { FormEntity } from './form.entity';
 import { RootEntity } from './root.entity';
+import { TitleEntity } from './title.entity';
 
 @Entity('headers')
 export class HeaderEntity extends RootEntity {
@@ -52,4 +53,6 @@ export class HeaderEntity extends RootEntity {
     default: true,
   })
   is_return: boolean;
+
+  titles: TitleEntity[] | null;
 }

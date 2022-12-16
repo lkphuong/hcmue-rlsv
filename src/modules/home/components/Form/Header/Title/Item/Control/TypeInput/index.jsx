@@ -6,6 +6,8 @@ import { TableCell, Typography } from '@mui/material';
 import { actions } from '_slices/mark.slice';
 
 import { CInput } from '_controls/';
+import { Controller, useFormContext } from 'react-hook-form';
+import { useEffect } from 'react';
 
 const TypeInput = ({
 	id,
@@ -17,10 +19,14 @@ const TypeInput = ({
 	initialMark,
 	currentMark,
 	header_id,
+	titleId,
+	index,
 	available,
 }) => {
 	//#region Data
+
 	const [score, setScore] = useState(initialMark);
+	const { control, resetField } = useFormContext();
 
 	const dispatch = useDispatch();
 	//#endregion
@@ -66,6 +72,10 @@ const TypeInput = ({
 			dispatch(actions.updateMarks(markObj));
 		}
 	};
+
+	useEffect(() => {
+		resetField(`title_${titleId}.${index}.personal_mark_level`, initialMark);
+	}, [initialMark]);
 	//#endregion
 
 	//#region Render
@@ -80,23 +90,19 @@ const TypeInput = ({
 
 			<TableCell align='center'>
 				{available ? (
-					category === 1 ? (
-						<CInput
-							fullWidth
-							type='number'
-							inputProps={{ min, max, style: { textAlign: 'center' } }}
-							onChange={onChangeRange(id, min, max)}
-							value={score}
-						/>
-					) : (
-						<CInput
-							fullWidth
-							type='number'
-							inputProps={{ step: mark, style: { textAlign: 'center' } }}
-							onChange={onChangeMark(id, mark)}
-							value={score}
-						/>
-					)
+					<Controller
+						control={control}
+						name={`title_${titleId}.${index}.personal_mark_level`}
+						defaultValue={initialMark}
+						render={({ field }) => (
+							<CInput
+								fullWidth
+								type='number'
+								// inputProps={{ min, max, style: { textAlign: 'center' } }}
+								{...field}
+							/>
+						)}
+					/>
 				) : (
 					<Typography>{currentMark.personal_mark_level}</Typography>
 				)}
@@ -113,3 +119,27 @@ const TypeInput = ({
 };
 
 export default TypeInput;
+
+// <TableCell align='center'>
+// 	{available ? (
+// 		category === 1 ? (
+// 			<CInput
+// 				fullWidth
+// 				type='number'
+// 				inputProps={{ min, max, style: { textAlign: 'center' } }}
+// 				onChange={onChangeRange(id, min, max)}
+// 				value={score}
+// 			/>
+// 		) : (
+// 			<CInput
+// 				fullWidth
+// 				type='number'
+// 				inputProps={{ step: mark, style: { textAlign: 'center' } }}
+// 				onChange={onChangeMark(id, mark)}
+// 				value={score}
+// 			/>
+// 		)
+// 	) : (
+// 		<Typography>{currentMark.personal_mark_level}</Typography>
+// 	)}
+// </TableCell>;

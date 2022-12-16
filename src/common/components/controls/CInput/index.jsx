@@ -1,24 +1,28 @@
-import React, { useState, memo } from 'react';
+import React, { useState } from 'react';
 
 import { IconButton, InputAdornment, TextField } from '@mui/material';
 
 import { Search, Visibility, VisibilityOff } from '@mui/icons-material';
 
 import { string, any, func, bool } from 'prop-types';
+import { forwardRef } from 'react';
 
-export const CInput = memo(
-	({
-		id,
-		name,
-		value,
-		placeholder,
-		onChange,
-		error,
-		helperText,
-		isPassword,
-		isSearch,
-		...props
-	}) => {
+export const CInput = forwardRef(
+	(
+		{
+			id,
+			name,
+			value,
+			placeholder,
+			onChange,
+			error,
+			helperText,
+			isPassword,
+			isSearch,
+			...props
+		},
+		ref
+	) => {
 		const [show, setShow] = useState(false);
 
 		const togglePassword = () => setShow(!show);
@@ -27,6 +31,7 @@ export const CInput = memo(
 
 		return (
 			<TextField
+				ref={ref}
 				id={id}
 				name={name}
 				value={value}

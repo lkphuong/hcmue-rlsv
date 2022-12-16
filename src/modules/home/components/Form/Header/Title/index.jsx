@@ -9,6 +9,7 @@ import { isSuccess } from '_func/';
 import { getItemsByTitleId } from '_api/form.api';
 
 import Item from './Item';
+import { Controller } from 'react-hook-form';
 
 const Title = memo(({ data, headerId }) => {
 	//#region Data
@@ -47,7 +48,18 @@ const Title = memo(({ data, headerId }) => {
 				</TableCell>
 			</TableRow>
 
-			{items.length > 0 && items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
+			{items.length > 0 &&
+				items.map((e, i) => (
+					<React.Fragment key={i}>
+						<Controller
+							name={`title_${data.id}.${i}.header_id`}
+							defaultValue={headerId}
+							render={({ field }) => <input type='hidden' {...field} />}
+						/>
+
+						<Item key={i} data={e} headerId={headerId} titleId={data.id} index={i} />
+					</React.Fragment>
+				))}
 		</>
 	);
 	//#endregion

@@ -4,10 +4,23 @@ import { useDispatch } from 'react-redux';
 import { Checkbox, TableCell, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
+import { Controller, useFormContext } from 'react-hook-form';
 
-const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id, available }) => {
+const TypeCheckbox = ({
+	id,
+	mark,
+	unit,
+	initialMark,
+	currentMark,
+	header_id,
+	available,
+	titleId,
+	index,
+}) => {
 	//#region Data
 	const [score, setScore] = useState(initialMark);
+
+	const { control, resetField } = useFormContext();
 
 	const dispatch = useDispatch();
 	//#endregion
@@ -23,6 +36,14 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id, ava
 		setScore(e.target.checked ? mark : 0);
 		dispatch(actions.updateMarks(markObj));
 	};
+
+	const onChangeCheckbox = (CallbackFunc) => (e) => {
+		if (e.target.checked) {
+			CallbackFunc(mark);
+		} else {
+			CallbackFunc(0);
+		}
+	};
 	//#endregion
 
 	//#region Render
@@ -37,7 +58,19 @@ const TypeCheckbox = ({ id, mark, unit, initialMark, currentMark, header_id, ava
 
 			<TableCell align='center'>
 				{available ? (
-					<Checkbox onChange={onCheck(id, mark)} checked={!!score} />
+					<Controller
+						control={control}
+						name={`title_${titleId}.${index}.personal_mark_level`}
+						defaultValue={initialMark}
+						render={({ field: { name, ref, value, onChange } }) => (
+							<Checkbox
+								name={name}
+								ref={ref}
+								value={value}
+								onChange={onChangeCheckbox(onChange)}
+							/>
+						)}
+					/>
 				) : (
 					<Typography>{currentMark.personal_mark_level} </Typography>
 				)}

@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 
 import { Autocomplete, TextField } from '@mui/material';
 
@@ -6,25 +6,28 @@ import classNames from 'classnames';
 
 import { string, any, func, bool, arrayOf, object } from 'prop-types';
 
-export const CAutocomplete = memo(
-	({
-		id,
-		name,
-		placeholder,
-		options,
-		value,
-		onChange,
-		onInputChange,
-		multiple,
-		renderOption,
-		display,
-		valueGet,
-		error,
-		helperText,
-		inputRef,
-		// getOptionLabel,
-		...props
-	}) => {
+export const CAutocomplete = forwardRef(
+	(
+		{
+			id,
+			name,
+			placeholder,
+			options,
+			value,
+			onChange,
+			onInputChange,
+			multiple,
+			renderOption,
+			display,
+			valueGet,
+			error,
+			helperText,
+			inputRef,
+			// getOptionLabel,
+			...props
+		},
+		ref
+	) => {
 		//#region Data
 		const [inputValue, setInputValue] = useState('');
 
@@ -79,6 +82,7 @@ export const CAutocomplete = memo(
 
 		return (
 			<Autocomplete
+				ref={ref}
 				id={id}
 				name={name}
 				multiple={multiple}

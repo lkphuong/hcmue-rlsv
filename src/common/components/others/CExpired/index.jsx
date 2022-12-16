@@ -11,7 +11,7 @@ export const CExpired = ({ roleName, start, end }) => {
 					<WarningAmber sx={{ color: '#f9b94a' }} />
 
 					<Typography fontSize={18} fontWeight={500} color='#f9b94a'>
-						{`Đã quá hạn ${roleName} chấm điểm (Từ: ${dayjs(start).format(
+						{`Không đúng hạn ${roleName} chấm điểm (Từ: ${dayjs(start).format(
 							'DD/MM/YYYY'
 						)} - đến ${dayjs(end).format('DD/MM/YYYY')})`}
 					</Typography>

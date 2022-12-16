@@ -27,12 +27,15 @@ import { actions } from '_slices/mark.slice';
 import Header from './Header';
 
 import './index.scss';
+import { useFormContext } from 'react-hook-form';
 
 export const Form = ({ data }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+
+	const { handleSubmit } = useFormContext();
 
 	const navigate = useNavigate();
 
@@ -76,11 +79,15 @@ export const Form = ({ data }) => {
 			throw error;
 		}
 	};
+
+	const onSubmit = (values) => {
+		console.log(values);
+	};
 	//#endregion
 
 	//#region Render
 	return (
-		<>
+		<form onSubmit={handleSubmit(onSubmit)}>
 			<TableContainer>
 				<Table
 					stickyHeader
@@ -138,13 +145,14 @@ export const Form = ({ data }) => {
 				<Button
 					sx={{ mb: 2 }}
 					variant='contained'
-					onClick={handleUpdate}
+					// onClick={handleUpdate}
+					type='submit'
 					disabled={!available}
 				>
 					Cập nhật
 				</Button>
 			</Box>
-		</>
+		</form>
 	);
 	//#endregion
 };

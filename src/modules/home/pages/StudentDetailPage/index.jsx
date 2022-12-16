@@ -19,6 +19,7 @@ import { alert } from '_func/alert';
 import { actions } from '_slices/mark.slice';
 
 import { CExpired } from '_others/';
+import { FormProvider, useForm } from 'react-hook-form';
 
 export const StudentMarksContext = createContext();
 
@@ -26,6 +27,8 @@ const SemesterDetail = () => {
 	const ref = useRef();
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
+
+	const methods = useForm();
 
 	const { sheet_id } = useParams();
 
@@ -111,34 +114,36 @@ const SemesterDetail = () => {
 	//#region Render
 	return data ? (
 		<Box>
-			<StudentMarksContext.Provider value={{ itemsMark }}>
-				{!available && (
-					<CExpired
-						roleName='sinh viên'
-						start={data?.time_student?.start}
-						end={data?.time_student?.end}
-					/>
-				)}
+			<FormProvider {...methods}>
+				<StudentMarksContext.Provider value={{ itemsMark }}>
+					{!available && (
+						<CExpired
+							roleName='sinh viên'
+							start={data?.time_student?.start}
+							end={data?.time_student?.end}
+						/>
+					)}
 
-				<Box mb={1.5}>
+					<Box mb={1.5}>
+						<Paper className='paper-wrapper'>
+							<Stack direction='row' justifyContent='space-between'>
+								<Typography fontSize={20} p={1.5} fontWeight={600}>
+									{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
+								</Typography>
+								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
+									In phiếu
+								</Button>
+							</Stack>
+						</Paper>
+					</Box>
+
 					<Paper className='paper-wrapper'>
-						<Stack direction='row' justifyContent='space-between'>
-							<Typography fontSize={20} p={1.5} fontWeight={600}>
-								{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
-							</Typography>
-							<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
-								In phiếu
-							</Button>
-						</Stack>
+						<Box p={1.5}>{data && <Form data={data} />}</Box>
 					</Paper>
-				</Box>
 
-				<Paper className='paper-wrapper'>
-					<Box p={1.5}>{data && <Form data={data} />}</Box>
-				</Paper>
-
-				<PrintComponent data={data} ref={ref} />
-			</StudentMarksContext.Provider>
+					<PrintComponent data={data} ref={ref} />
+				</StudentMarksContext.Provider>
+			</FormProvider>
 		</Box>
 	) : (
 		<></>

@@ -8,7 +8,7 @@ import { actions } from '_slices/mark.slice';
 // import { FileModal } from './FileModal';
 import Control from './Control';
 
-const Item = memo(({ data, headerId }) => {
+const Item = memo(({ data, headerId, titleId, index }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
@@ -48,7 +48,8 @@ const Item = memo(({ data, headerId }) => {
 				unit={data.unit}
 				options={data.options || []}
 				required={data.required}
-				headerId={Number(headerId)}
+				titleId={titleId}
+				index={index}
 				available={available}
 			/>
 		</TableRow>

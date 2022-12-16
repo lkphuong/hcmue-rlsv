@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 
 import * as moment from 'moment';
 
@@ -18,6 +18,7 @@ export class SheetService {
   constructor(
     @InjectRepository(SheetEntity)
     private readonly _sheetRepository: Repository<SheetEntity>,
+    private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
@@ -55,7 +56,7 @@ export class SheetService {
     }
   }
 
-  async countSheets(): Promise<number> {
+  async countOutOfDateSheets(): Promise<number> {
     try {
       const conditions = this._sheetRepository
         .createQueryBuilder('sheet')
@@ -75,7 +76,26 @@ export class SheetService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'SheetService.countSheets()',
+        'SheetService.countOutOfDateSheets()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async bulkUpdate(manager?: EntityManager): Promise<boolean> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.query(`CALL sp_update_sheets_status()`);
+      return results[0][0].success ?? 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'SheetService.bulkUpdate()',
         e,
       );
       return null;

@@ -8,7 +8,7 @@ export const BACKGROUND_JOB_SERVICE_PORT = 5672;
 export const SCHEDULE_SERVICE_HOST = 'localhost';
 export const SCHEDULE_SERVICE_PORT = 3003;
 
-export const TRACKING_SERVICE_HOST = '192.168.1.103';
+export const TRACKING_SERVICE_HOST = 'localhost';
 export const TRACKING_SERVICE_PORT = 5672;
 
 export const BACKGROUND_JOB_QUEUE = 'hcmue_background_queue';

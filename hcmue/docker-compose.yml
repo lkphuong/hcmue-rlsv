@@ -46,10 +46,8 @@ services:
 
       - BACKGROUND_JOB_SERVICE_HOST=rabbitmq
       - BACKGROUND_JOB_SERVICE_PORT=5672
-
-      - COMPOSER_SERVICE_HOST=rabbitmq
-      - COMPOSER_SERVICE_PORT=5672
       
+      - ITEMS_PER_PAGE=10
       - MAX_TIMES=3
     networks:
       - net-hcmue
@@ -58,63 +56,7 @@ services:
     restart: 'always'
     deploy:
       mode: replicated
-      replicas: 1
-      endpoint_mode: vip
-      restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-      rollback_config:
-        parallelism: 2
-        delay: 10s
-        failure_action: pause
-        order: stop-first
-      update_config:
-        parallelism: 2
-        delay: 10s
-        failure_action: rollback
-        order: stop-first
-    depends_on:
-      - rabbitmq
-    links:
-      - rabbitmq
-
-  composer-queue:
-    container_name: hcmue-composer-queue-service
-    image: hoanglong1011/hcmue-composer:1.1
-    environment:
-      - NODE_ENV=development
-      - MYSQL_HOST=103.154.176.80
-      - MYSQL_PORT=3306
-      - MYSQL_DATABASE_NAME=hcmue_rlsv_v1
-      - MYSQL_USERNAME=uat
-      - MYSQL_PASSWORD=Uatvtcode@2022
-      
-      - MONGODB_URL=mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product
-      
-      - MONGODB_HOST=103.154.176.80
-      - MONGODB_PORT=27072
-      - MONGODB_USERNAME=adminYouth
-      - MONGODB_PASSWORD=adminYouth2022
-      - MOGODB_DATABASE_NAME=youth-app-product
-
-      - BACKGROUND_JOB_SERVICE_HOST=rabbitmq
-      - BACKGROUND_JOB_SERVICE_PORT=5672
-
-      - COMPOSER_SERVICE_HOST=rabbitmq
-      - COMPOSER_SERVICE_PORT=5672
-      
-      - ITEMS_PER_PAGE=100
-      - MAX_TIMES=3
-    networks:
-      - net-hcmue
-    volumes:
-      - ./logs:/opt/app/logs
-    restart: 'always'
-    deploy:
-      mode: replicated
-      replicas: 1
+      replicas: 3
       endpoint_mode: vip
       restart_policy:
         condition: on-failure
@@ -157,15 +99,12 @@ services:
 
       - BACKGROUND_JOB_SERVICE_HOST=rabbitmq
       - BACKGROUND_JOB_SERVICE_PORT=5672
-
-      - COMPOSER_SERVICE_HOST=rabbitmq
-      - COMPOSER_SERVICE_PORT=5672
       
-      - ITEMS_PER_PAGE=100
+      - ITEMS_PER_PAGE=10
       
-      - GENERATE_CREATE_SHEETS_CRON_JOB_TIME='0 0 0 * * *'
-      - UPDATE_STATUS_SHEETS_CRON_JOB_TIME='0 0 0 * * *'
-      - UNLINK_FILES_CRON_JOB_TIME='0 0 2 * * *'
+      - GENERATE_CREATE_SHEETS_CRON_JOB_TIME='0 0 1 * * *'
+      - UPDATE_STATUS_SHEETS_CRON_JOB_TIME='0 */5 * * * *'
+      - UNLINK_FILES_CRON_JOB_TIME='0 0 0 * * *'
     networks:
       - net-hcmue
     volumes:
@@ -202,7 +141,7 @@ services:
       - NODE_ENV=development
       - MYSQL_HOST=103.154.176.80
       - MYSQL_PORT=3306
-      - MYSQL_DATABASE_NAME=hcmue_rlsv
+      - MYSQL_DATABASE_NAME=hcmue_rlsv_v1
       - MYSQL_USERNAME=uat
       - MYSQL_PASSWORD=Uatvtcode@2022
 

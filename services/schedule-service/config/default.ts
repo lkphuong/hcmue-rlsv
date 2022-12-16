@@ -46,6 +46,6 @@ export default {
   OVERFLOW_ARGUMENT: 'reject-publish',
 
   GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 0 1 * * *',
-  UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 0 2 * * *',
+  UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 */5 * * * *',
   UNLINK_FILES_CRON_JOB_TIME: '0 0 1 * * *',
 };

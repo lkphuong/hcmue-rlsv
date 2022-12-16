@@ -1,30 +1,19 @@
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { HttpModule } from '@nestjs/axios';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { trackingFactory } from '../../factories/tracking.factory';
-
 import { SheetEntity } from '../../entities/sheet.entity';
 
-import { SheetService } from './services/sheet/sheet.service';
+import { ApprovalService } from './services/approval/approval.service';
 import { CronService } from './services/cron/cron.service';
+import { SheetService } from './services/sheet/sheet.service';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { FormModule } from '../form/form.module';
 
-import { TRACKING_MODULE } from '../../constants';
-
 export const modules = [
   SharedModule,
-  ClientsModule.register([
-    {
-      name: TRACKING_MODULE,
-      transport: Transport.RMQ,
-      options: trackingFactory,
-    },
-  ]),
   TypeOrmModule.forFeature([SheetEntity]),
   FormModule,
   HttpModule,
@@ -32,5 +21,5 @@ export const modules = [
 ];
 
 export const controllers = [];
-export const providers = [CronService, SheetService];
-export const exporteds = [CronService, SheetService];
+export const providers = [ApprovalService, CronService, SheetService];
+export const exporteds = [ApprovalService, CronService, SheetService];

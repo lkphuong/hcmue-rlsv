@@ -108,7 +108,7 @@ const ListPageAdmin = () => {
 						Lớp {className}
 					</Typography>
 
-					<ListStudents data={listData} />
+					<ListStudents data={listData} page={paginate.page} />
 
 					<CPagination
 						page={paginate.page}

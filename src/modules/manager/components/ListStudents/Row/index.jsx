@@ -3,12 +3,12 @@ import React, { memo, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
+import { HistoryEdu } from '@mui/icons-material';
 
 import { STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
-import { HistoryEdu } from '@mui/icons-material';
 
-const Row = memo(({ classId, data, index }) => {
+const Row = memo(({ page, data, index }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ const Row = memo(({ classId, data, index }) => {
 	//#region Render
 	return (
 		<TableRow hover>
-			<TableCell align='center'>{index + 1}</TableCell>
+			<TableCell align='center'>{(page - 1) * 10 + (index + 1)}</TableCell>
 			<TableCell align='center'>{data.user.fullname}</TableCell>
 			<TableCell align='center'>{data.user.std_code}</TableCell>
 			<TableCell align='center'>{data.sum_of_personal_marks}</TableCell>

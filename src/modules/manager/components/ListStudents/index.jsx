@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { useParams } from 'react-router-dom';
-
 import {
 	Box,
 	Table,
@@ -15,9 +13,8 @@ import {
 
 import Row from './Row';
 
-export const ListStudents = ({ data }) => {
+export const ListStudents = ({ data, page }) => {
 	//#region Data
-	const { class_id } = useParams();
 	//#endregion
 
 	//#region Event
@@ -44,7 +41,7 @@ export const ListStudents = ({ data }) => {
 					<TableBody>
 						{data?.length > 0 ? (
 							data.map((row, index) => (
-								<Row key={row.id} index={index} data={row} classId={class_id} />
+								<Row key={row.id} index={index} data={row} page={page} />
 							))
 						) : (
 							<TableRow>

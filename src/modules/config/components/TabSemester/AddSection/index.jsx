@@ -54,7 +54,7 @@ export const AddSection = ({ refetch }) => {
 	return (
 		<Box my={2}>
 			<form onSubmit={handleSubmit(onSubmit)}>
-				<Stack alignItems='center' direction='row' spacing={1.5}>
+				<Stack alignItems='baseline' direction='row' spacing={1.5}>
 					<Controller
 						control={control}
 						name='name'

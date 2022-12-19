@@ -3,19 +3,23 @@ import React, { memo, useState, useEffect, useMemo } from 'react';
 
 import {
 	Box,
-	CardHeader,
+	Breadcrumbs,
+	Link,
+	Paper,
 	Table,
 	TableBody,
 	TableCell,
 	TableContainer,
 	TableHead,
 	TableRow,
+	Typography,
 } from '@mui/material';
 
 import { getClassSheets } from '_api/sheets.api';
+
 import { CPagination } from '_controls/';
 
-const MClassTable = memo(({ classData, academic_id, semester_id, department_id }) => {
+const MClassTable = memo(({ classData, academic_id, semester_id, department_id, onBack }) => {
 	//#region Data
 	const [data, setData] = useState();
 
@@ -56,7 +60,24 @@ const MClassTable = memo(({ classData, academic_id, semester_id, department_id }
 	//#region Render
 	return (
 		<Box>
-			<CardHeader title={`DANH SÁCH SINH VIÊN LỚP ${classData.name}`} />
+			<Box mb={1.5}>
+				<Paper className='paper-wrapper'>
+					<Box p={1.5}>
+						<Typography fontSize={20} fontWeight={600} mb={1}>
+							Thống kê điểm rèn luyện của lớp {classData?.name}
+						</Typography>
+
+						<Breadcrumbs>
+							<Link underline='hover' onClick={onBack} href='#'>
+								Danh sách lớp
+							</Link>
+							<Typography color='text.primary' fontSize='120%' fontWeight={500}>
+								{classData?.name}
+							</Typography>
+						</Breadcrumbs>
+					</Box>
+				</Paper>
+			</Box>
 
 			<TableContainer className='c-table'>
 				<Table stickyHeader>

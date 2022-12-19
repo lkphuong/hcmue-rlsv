@@ -59,6 +59,7 @@ const ListPageStatistic = () => {
 		else if (isEmpty(res)) setClasses([]);
 	};
 
+	const onBack = () => setClassData(null);
 	//#endregion
 
 	useEffect(() => {
@@ -92,7 +93,7 @@ const ListPageStatistic = () => {
 					academic_id={filter?.academic_id}
 					semester_id={filter?.semester_id}
 					department_id={filter?.department_id}
-					onBack={() => setClassData(null)}
+					onBack={onBack}
 				/>
 			)}
 		</Box>

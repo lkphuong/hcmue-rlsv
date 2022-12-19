@@ -24,7 +24,7 @@ const SemestersPage = () => {
 
 			if (isSuccess(res)) setData(res?.data);
 		} catch (error) {
-			console.log(error);
+			throw error;
 		}
 	}, []);
 	//#endregion

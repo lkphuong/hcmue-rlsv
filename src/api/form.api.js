@@ -42,6 +42,10 @@ export const getFormById = (id) => {
 	return get(`${FORMS.GET_FORM_BY_ID}/${id}`);
 };
 
+export const getDetailForm = (id) => {
+	return get(`${FORMS.GET_DETAIL_FORM}/${id}`);
+};
+
 export const getHeadersByFormId = (id) => {
 	return get(`${FORMS.GET_HEADERS_BY_FORM_ID}/${id}`);
 };

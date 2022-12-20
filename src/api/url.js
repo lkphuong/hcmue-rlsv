@@ -25,6 +25,7 @@ export const FORMS = {
 	UPDATE_FORM: '/forms',
 	GET_FORM_BY_ID: '/forms',
 	DELETE_FORM: '/forms' /* /forms/:id */,
+	GET_DETAIL_FORM: '/forms/detail',
 
 	CREATE_HEADER: '/forms/headers',
 	GET_HEADERS_BY_FORM_ID: '/forms/headers',

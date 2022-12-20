@@ -19,9 +19,9 @@ import { useResolver } from '_hooks/';
 
 import { initialItem, validationItem } from '_modules/form/form';
 
-import { CInput, CSelect } from '_controls/';
+import { CAutocomplete, CInput, CSelect } from '_controls/';
 
-import { CONTROL } from '_constants/variables';
+import { CONTROL, SORT_ORDER } from '_constants/variables';
 
 import { createItem, updateItem } from '_api/form.api';
 
@@ -45,11 +45,19 @@ const ItemModal = memo(
 
 		const resolver = useResolver(validationItem);
 
-		const { control, handleSubmit, reset, trigger } = useForm({
+		const {
+			control,
+			handleSubmit,
+			reset,
+			trigger,
+			formState: { errors },
+		} = useForm({
 			defaultValues: initialItem,
 			mode: 'all',
 			resolver,
 		});
+
+		console.log(errors);
 
 		const {
 			field: { onChange: onChangeOption },
@@ -83,6 +91,8 @@ const ItemModal = memo(
 				...values,
 			};
 
+			if (!body?.sort_order) delete body.sort_order;
+
 			const res = itemId ? await updateItem(itemId, body) : await createItem(body);
 
 			if (isSuccess(res)) {
@@ -108,6 +118,10 @@ const ItemModal = memo(
 					onChangeToMark(0);
 				}
 			}
+		};
+
+		const onWarnChange = (CallbackFunc) => (option) => {
+			CallbackFunc(Number(option?.value) || null);
 		};
 		//#endregion
 
@@ -225,6 +239,33 @@ const ItemModal = memo(
 															name={name}
 															checked={value}
 															onChange={onChange}
+														/>
+													)}
+												/>
+											</Grid>
+
+											<Typography mt={1.5} mb={-0.5} fontWeight={200}>
+												* Nếu là cảnh cáo hãy chọn mức xếp loại tối đa đạt
+												được
+											</Typography>
+											<Grid item xs={12} md={4}>
+												<Typography>Xếp loại tối đa</Typography>
+											</Grid>
+											<Grid item xs={12} md={8}>
+												<Controller
+													control={control}
+													name='sort_order'
+													render={({
+														field: { name, onChange, value },
+													}) => (
+														<CAutocomplete
+															value={value}
+															options={SORT_ORDER}
+															display='name'
+															valueGet='value'
+															onChange={onWarnChange(onChange)}
+															name={name}
+															fullWidth
 														/>
 													)}
 												/>

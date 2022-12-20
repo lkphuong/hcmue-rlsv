@@ -40,6 +40,7 @@ export const initialItem = {
 	unit: 'Điểm',
 	options: [],
 	is_file: false,
+	sort_order: null,
 };
 //#endregion
 
@@ -186,6 +187,7 @@ export const validationItem = yup.object({
 		.required('Vui lòng nhập nội dung tiêu chí.'),
 	required: yup.bool(),
 	category: yup.number().typeError(),
+	sort_order: yup.number('324324').typeError('asd').nullable().notRequired(),
 	from_mark: yup
 		.number('Giá trị điểm tối thiểu phải là số.')
 		.typeError('Giá trị điểm tối thiểu phải là số.')
@@ -237,25 +239,29 @@ export const validationItem = yup.object({
 					.required('Vui lòng nhập điểm tối đa.'),
 			}),
 		}),
-	options: yup.array().when('control', {
-		is: (value) => value === 2 || value === 3,
-		then: yup
-			.array(
-				yup.object({
-					content: yup
-						.string('Vui lòng nhập chi tiết tiêu chí.')
-						.required('Vui lòng nhập chi tiết tiêu chí.'),
-					mark: yup
-						.number('Giá trị điểm của tiêu chí phải là số.')
-						.typeError('Giá trị điểm của tiêu chí phải là số.')
-						.test('is-zero', 'Giá trị điểm phải khác 0.', (value) => {
-							if (value?.toString() === '0') return false;
-							return true;
-						})
-						.required('Vui lòng nhập điểm cho tiêu chí.'),
-				})
-			)
-			.min(1, 'Phải có ít nhất 1 tùy chọn cho control Select/Multiple select'),
-	}),
+
+	options: yup
+		.array()
+		.nullable()
+		.when('control', {
+			is: (value) => value === 2 || value === 3,
+			then: yup
+				.array(
+					yup.object({
+						content: yup
+							.string('Vui lòng nhập chi tiết tiêu chí.')
+							.required('Vui lòng nhập chi tiết tiêu chí.'),
+						mark: yup
+							.number('Giá trị điểm của tiêu chí phải là số.')
+							.typeError('Giá trị điểm của tiêu chí phải là số.')
+							.test('is-zero', 'Giá trị điểm phải khác 0.', (value) => {
+								if (value?.toString() === '0') return false;
+								return true;
+							})
+							.required('Vui lòng nhập điểm cho tiêu chí.'),
+					})
+				)
+				.min(1, 'Phải có ít nhất 1 tùy chọn cho control Select/Multiple select'),
+		}),
 });
 //#endregion

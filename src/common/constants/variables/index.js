@@ -1,5 +1,14 @@
 export const TYPE_NUMBER = /^[0-9-]+$/;
 
+export const SORT_ORDER = [
+	{ id: 1, value: 1, name: 'Xuất sắc' },
+	{ id: 2, value: 2, name: 'Tốt' },
+	{ id: 3, value: 3, name: 'Khá' },
+	{ id: 4, value: 4, name: 'Trung bình' },
+	{ id: 5, value: 5, name: 'Yếu' },
+	{ id: 6, value: 6, name: 'Kém' },
+];
+
 export const STATUS = [
 	{ id: 0, value: 0, name: 'Chưa đánh giá' },
 	{ id: 1, value: 1, name: 'Chờ lớp xét duyệt' },

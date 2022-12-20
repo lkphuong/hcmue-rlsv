@@ -8,7 +8,7 @@ const Filter = ({ filter, onChangeFilter, semesters, academic_years }) => {
 	//#region Data
 	const searchRef = useRef();
 
-	const [input, setInput] = useState('');
+	const [input, setInput] = useState(filter?.input || '');
 	//#endregion
 
 	//#region Event

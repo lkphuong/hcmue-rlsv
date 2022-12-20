@@ -12,7 +12,7 @@ import {
 
 import Row from './Row';
 
-const ListStudents = ({ data }) => {
+const ListStudents = ({ data, saveFilter }) => {
 	//#region Data
 
 	//#endregion
@@ -40,7 +40,14 @@ const ListStudents = ({ data }) => {
 					</TableHead>
 					<TableBody>
 						{data?.length > 0 &&
-							data.map((row, index) => <Row key={row.id} index={index} data={row} />)}
+							data.map((row, index) => (
+								<Row
+									key={row.id}
+									index={index}
+									data={row}
+									saveFilter={saveFilter}
+								/>
+							))}
 					</TableBody>
 				</Table>
 			</TableContainer>

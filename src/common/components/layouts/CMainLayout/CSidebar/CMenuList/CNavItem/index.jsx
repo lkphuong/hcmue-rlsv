@@ -16,6 +16,7 @@ import { FiberManualRecord } from '@mui/icons-material/';
 import PropTypes from 'prop-types';
 
 import { actions } from '_slices/menu.slice';
+import { actions as filterActions } from '_slices/filter.slice';
 
 const CNavItem = ({ item, level }) => {
 	const { pathname } = useLocation();
@@ -53,6 +54,8 @@ const CNavItem = ({ item, level }) => {
 	}
 
 	const itemHandler = (id) => {
+		dispatch(filterActions.setFilter(null));
+
 		if (matchesSM) dispatch(actions.setMenu(false));
 	};
 

@@ -64,6 +64,7 @@ export const PrintComponent = forwardRef(({ data }, ref) => {
 								</Typography>
 							</Typography>
 						</Grid>
+
 						<Grid item xs={6}>
 							<Typography component='span'>
 								MSSV:
@@ -78,6 +79,15 @@ export const PrintComponent = forwardRef(({ data }, ref) => {
 								Lớp:
 								<Typography component='span' fontWeight={600}>
 									&nbsp;{data?.class?.name}&nbsp;
+								</Typography>
+							</Typography>
+						</Grid>
+
+						<Grid item xs={6}>
+							<Typography component='span'>
+								Khóa:
+								<Typography component='span' fontWeight={600}>
+									&nbsp;{data?.k?.name}&nbsp;
 								</Typography>
 							</Typography>
 						</Grid>

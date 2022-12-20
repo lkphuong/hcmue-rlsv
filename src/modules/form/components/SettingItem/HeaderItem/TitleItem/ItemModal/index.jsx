@@ -45,19 +45,11 @@ const ItemModal = memo(
 
 		const resolver = useResolver(validationItem);
 
-		const {
-			control,
-			handleSubmit,
-			reset,
-			trigger,
-			formState: { errors },
-		} = useForm({
+		const { control, handleSubmit, reset, trigger } = useForm({
 			defaultValues: initialItem,
 			mode: 'all',
 			resolver,
 		});
-
-		console.log(errors);
 
 		const {
 			field: { onChange: onChangeOption },

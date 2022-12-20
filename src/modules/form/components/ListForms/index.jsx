@@ -31,7 +31,6 @@ const ListSemester = ({ data, refetch, saveFilter }) => {
 							<TableCell align='center'>Học kỳ</TableCell>
 							<TableCell align='center'>Niên khóa</TableCell>
 							<TableCell align='center'>Ngày tạo</TableCell>
-							<TableCell align='center'>Người tạo</TableCell>
 							<TableCell align='center'>Trạng thái phiếu</TableCell>
 							<TableCell />
 						</TableRow>

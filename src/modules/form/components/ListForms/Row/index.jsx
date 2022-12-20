@@ -124,8 +124,7 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 			<TableCell align='center'>{index + 1}</TableCell>
 			<TableCell align='center'>{data.semester.name}</TableCell>
 			<TableCell align='center'>{data.academic.name}</TableCell>
-			<TableCell align='center'>{dayjs(data.created_date).format('DD/MM/YYYY')}</TableCell>
-			<TableCell align='center'>{data.created_by}</TableCell>
+			<TableCell align='center'>{dayjs(data.created_at).format('DD/MM/YYYY')}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center' width={120}>
 				<Stack direction='row' alignItems='center' justifyContent='space-between'>

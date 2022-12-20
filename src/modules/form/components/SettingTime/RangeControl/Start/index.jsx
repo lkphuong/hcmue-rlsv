@@ -7,9 +7,9 @@ import dayjs from 'dayjs';
 
 import { CDatePicker } from '_controls/';
 
-export const MDateStart = ({ control, name, beforeCondition, after }) => {
+export const MDateStart = ({ control, name, beforeCondition }) => {
 	//#region Data
-	const { resetField } = useFormContext();
+	const { resetField, trigger } = useFormContext();
 
 	const before = useWatch({ control, name: beforeCondition })?.end;
 	//#endregion
@@ -25,7 +25,7 @@ export const MDateStart = ({ control, name, beforeCondition, after }) => {
 			);
 	};
 
-	const onChangeStartDate = (CallbackFunc) => (event) => {
+	const onChangeStartDate = (CallbackFunc) => async (event) => {
 		resetField(`${name}.end`, { defaultValue: null });
 
 		if (name !== 'department') {
@@ -38,6 +38,8 @@ export const MDateStart = ({ control, name, beforeCondition, after }) => {
 		}
 
 		CallbackFunc(event);
+
+		trigger();
 	};
 	//#endregion
 

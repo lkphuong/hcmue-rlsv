@@ -9,7 +9,7 @@ import { CDatePicker } from '_controls/';
 
 export const MDateEnd = ({ control, name, beforeCondition }) => {
 	//#region Data
-	const { resetField } = useFormContext();
+	const { resetField, trigger } = useFormContext();
 
 	const start = useWatch({ control, name })?.start;
 	const before = useWatch({ control, name: beforeCondition })?.end;
@@ -44,6 +44,8 @@ export const MDateEnd = ({ control, name, beforeCondition }) => {
 		}
 
 		CallbackFunc(event);
+
+		trigger();
 	};
 	//#endregion
 

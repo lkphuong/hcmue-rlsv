@@ -35,7 +35,7 @@ const SettingTime = memo(() => {
 
 	const resolver = useResolver(validationSchema);
 
-	const { control, handleSubmit, reset, resetField } = useForm({
+	const { control, handleSubmit, reset, resetField, trigger } = useForm({
 		defaultValues: initialValues,
 		mode: 'all',
 		resolver,
@@ -103,7 +103,7 @@ const SettingTime = memo(() => {
 
 	//#region Render
 	return (
-		<FormProvider reset={reset} resetField={resetField}>
+		<FormProvider reset={reset} resetField={resetField} trigger={trigger}>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Container maxWidth='lg'>
 					<Grid container mb={2} spacing={2}>

@@ -156,17 +156,28 @@ export class SheetController {
         JSON.stringify({ sheet_id: id }),
       );
 
-      const { role } = req.user as JwtPayload;
+      const { role, user_id: request_id } = req.user as JwtPayload;
 
       //#region Validation
       const valid = validateSheetId(id, req);
       if (valid instanceof HttpException) throw valid;
+
       //#endregion
 
       //#region Get sheet
       const sheet = await this._sheetService.getSheetById(id);
       //#endregion
       if (sheet) {
+        //#region Validate role
+        const valid = await validateStudentRole(
+          role,
+          request_id,
+          sheet.user_id,
+          this._userService,
+          req,
+        );
+        if (valid instanceof HttpException) throw valid;
+        //#endregion
         //#region Generate response
         return await generateSheet(
           sheet,

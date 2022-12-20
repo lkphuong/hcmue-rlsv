@@ -28,6 +28,12 @@ import {
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 
+import {
+  HeaderResponse,
+  ItemResponse,
+  BaseResponse as FormBaseResponse,
+} from '../../form/interfaces/form-response.interface';
+
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 
@@ -215,8 +221,6 @@ export const generateData2Object = async (
     //#region Get k by _id
     const k = await k_service.getKById(sheet.k);
     //#endregion
-
-    const headers: BaseResponse[] = [];
     const payload: SheetDetailsResponse = {
       id: sheet.id,
       department: department
@@ -262,7 +266,7 @@ export const generateData2Object = async (
       sum_of_personal_marks: sheet.sum_of_personal_marks,
       sum_of_class_marks: sheet.sum_of_class_marks,
       sum_of_department_marks: sheet.sum_of_department_marks,
-      headers: headers,
+      headers: [],
       time_student: {
         start: convertString2Date(sheet.form.student_start.toString()),
         end: convertString2Date(sheet.form.student_end.toString()),
@@ -278,14 +282,55 @@ export const generateData2Object = async (
     };
 
     //#region Get headers
-    if (sheet?.form?.headers && sheet?.form?.headers.length > 0) {
+    if (sheet.form && sheet.form.headers) {
       for (const header of sheet.form.headers) {
-        const item: BaseResponse = {
+        const payload_header: HeaderResponse = {
           id: header.id,
-          name: header.name,
+          is_return: header.is_return,
           max_mark: header.max_mark,
+          name: header.name,
+          titles: [],
         };
-        payload.headers.push(item);
+        if (header.titles) {
+          for (const title of header.titles) {
+            const pay_title: FormBaseResponse = {
+              id: title.id,
+              name: title.name,
+              items: [],
+            };
+            if (title.items) {
+              for (const item of title.items) {
+                const payload_item: ItemResponse = {
+                  id: item.id,
+                  control: item.control,
+                  multiple: item.multiple,
+                  content: item.content,
+                  from_mark: item.from_mark,
+                  to_mark: item.to_mark,
+                  mark: item.mark,
+                  category: item.category,
+                  unit: item.unit,
+                  required: item.required,
+                  is_file: item.is_file,
+                  sort_order: item.sort_order,
+                  options:
+                    item.options && item.options.length > 0
+                      ? item.options.map((option) => {
+                          return {
+                            id: option.id,
+                            content: option.content,
+                            mark: option.mark,
+                          };
+                        })
+                      : null,
+                };
+                pay_title.items.push(payload_item);
+              }
+            }
+            payload_header.titles.push(pay_title);
+          }
+        }
+        payload.headers.push(payload_header);
       }
     }
     //#endregion

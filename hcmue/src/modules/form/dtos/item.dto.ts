@@ -138,8 +138,7 @@ export class ItemDto {
   category?: number = 0;
 
   @IsOptional()
-  @Transform((params) => parseFloat(params.value) ?? 0)
-  @ValidateIf((_object, value) => !isEmpty(value))
+  @Transform((params) => parseFloat(params.value) ?? 1)
   @BetweenValidator(1, 6, {
     message: (arg) =>
       generateValidationMessage(

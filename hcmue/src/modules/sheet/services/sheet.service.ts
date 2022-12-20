@@ -4,7 +4,11 @@ import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { generateObjectIDString } from '../utils';
 
+import { HeaderEntity } from '../../../entities/header.entity';
+import { ItemEntity } from '../../../entities/item.entity';
+import { OptionEntity } from '../../../entities/option.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
+import { TitleEntity } from '../../../entities/title.entity';
 
 import { LogService } from '../../log/services/log.service';
 
@@ -202,11 +206,36 @@ export class SheetService {
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
         .leftJoinAndSelect('sheet.level', 'level')
         .innerJoinAndSelect('sheet.form', 'form')
-        .leftJoinAndSelect(
+        .leftJoinAndMapMany(
           'form.headers',
-          'headers',
-          'headers.form_id = form.id AND headers.deleted = :deleted',
-          { deleted: false },
+          HeaderEntity,
+          'header',
+          `header.form_id = form.id 
+          AND header.delete_flag = 0`,
+        )
+        .leftJoinAndMapMany(
+          'header.titles',
+          TitleEntity,
+          'title',
+          `title.form_id = header.form_id 
+          AND header.ref = title.parent_ref 
+          AND title.delete_flag = 0`,
+        )
+        .leftJoinAndMapMany(
+          'title.items',
+          ItemEntity,
+          'item',
+          `item.form_id = title.form_id 
+          AND title.ref = item.parent_ref 
+          AND item.delete_flag = 0`,
+        )
+        .leftJoinAndMapMany(
+          'item.options',
+          OptionEntity,
+          'options',
+          `item.form_id = options.form_id
+           AND item.ref = options.parent_ref 
+           AND options.delete_flag = 0`,
         )
         .where(
           new Brackets((qb) => {
@@ -215,7 +244,10 @@ export class SheetService {
           }),
         )
         .andWhere('sheet.id = :id', { id })
-        .andWhere('sheet.deleted = :deleted', { deleted: false });
+        .andWhere('sheet.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('form.deleted = :deleted', { deleted: false });
 
       const sheet = await conditions.getOne();
       return sheet || null;

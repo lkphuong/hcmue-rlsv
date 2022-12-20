@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Button, Paper, Typography } from '@mui/material';
 
@@ -13,20 +14,27 @@ import { isSuccess, isEmpty, isFalsy } from '_func/';
 
 import { CPagination } from '_controls/';
 
+import { actions } from '_slices/filter.slice';
+
 const ListFormsPage = () => {
 	//#region Data
+	const filters = useSelector((state) => state.filter.filters, shallowEqual);
 
 	const [data, setData] = useState();
 
 	const dataTable = useMemo(() => data?.data || [], [data]);
 
-	const [filter, setFilter] = useState({
-		page: 1,
-		pages: 0,
-		status: -1,
-	});
+	const [filter, setFilter] = useState(
+		filters || {
+			page: 1,
+			pages: 0,
+			status: -1,
+		}
+	);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -51,6 +59,10 @@ const ListFormsPage = () => {
 	};
 
 	const onPageChange = (event, value) => setFilter((prev) => ({ ...prev, page: value }));
+
+	const saveFilter = () => {
+		dispatch(actions.setFilter(filter));
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -83,7 +95,7 @@ const ListFormsPage = () => {
 				</Link>
 			</Box>
 
-			<ListForms data={dataTable} refetch={getData} />
+			<ListForms data={dataTable} refetch={getData} saveFilter={saveFilter} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>

@@ -8,7 +8,7 @@ import { HistoryEdu } from '@mui/icons-material';
 import { STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
 
-const Row = memo(({ page, data, index }) => {
+const Row = memo(({ page, data, index, saveFilter }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -19,7 +19,10 @@ const Row = memo(({ page, data, index }) => {
 	//#endregion
 
 	//#region Event
-	const onEdit = () => navigate(`${ROUTES.ADMIN_SHEET}/${data?.id}`);
+	const onEdit = () => {
+		saveFilter();
+		navigate(`${ROUTES.ADMIN_SHEET}/${data?.id}`);
+	};
 	//#endregion
 
 	//#region Render

@@ -13,7 +13,7 @@ import {
 
 import Row from './Row';
 
-export const ListStudents = ({ data, page }) => {
+export const ListStudents = ({ data, page, saveFilter }) => {
 	//#region Data
 	//#endregion
 
@@ -41,7 +41,13 @@ export const ListStudents = ({ data, page }) => {
 					<TableBody>
 						{data?.length > 0 ? (
 							data.map((row, index) => (
-								<Row key={row.id} index={index} data={row} page={page} />
+								<Row
+									key={row.id}
+									index={index}
+									data={row}
+									page={page}
+									saveFilter={saveFilter}
+								/>
 							))
 						) : (
 							<TableRow>

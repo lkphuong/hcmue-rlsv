@@ -66,7 +66,7 @@ const STATUS = {
 };
 //#endregion
 
-const Row = memo(({ data, index, refetch }) => {
+const Row = memo(({ data, index, refetch, saveFilter }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -80,7 +80,10 @@ const Row = memo(({ data, index, refetch }) => {
 	//#endregion
 
 	//#region Event
-	const onEdit = () => navigate(`${ROUTES.FORM}/update/${data.id}`);
+	const onEdit = () => {
+		saveFilter();
+		navigate(`${ROUTES.FORM}/update/${data.id}`);
+	};
 
 	const onDelete = () => {
 		alert.warningDelete({

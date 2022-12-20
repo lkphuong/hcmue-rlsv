@@ -12,7 +12,7 @@ import {
 
 import Row from './Row';
 
-const ListSemester = ({ data, refetch }) => {
+const ListSemester = ({ data, refetch, saveFilter }) => {
 	//#region Data
 
 	//#endregion
@@ -39,7 +39,13 @@ const ListSemester = ({ data, refetch }) => {
 					<TableBody>
 						{data?.length > 0 &&
 							data.map((row, index) => (
-								<Row key={row.id} index={index} data={row} refetch={refetch} />
+								<Row
+									key={row.id}
+									index={index}
+									data={row}
+									refetch={refetch}
+									saveFilter={saveFilter}
+								/>
 							))}
 					</TableBody>
 				</Table>

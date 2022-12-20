@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Typography } from '@mui/material';
 
@@ -13,11 +13,14 @@ import { CPagination } from '_controls/';
 import { getClasses } from '_api/classes.api';
 import { getAdminSheets } from '_api/sheets.api';
 
+import { actions } from '_slices/filter.slice';
+
 const ListPageAdmin = () => {
 	//#region Data
 	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
+	const filters = useSelector((state) => state.filter.filters, shallowEqual);
 
 	const [data, setData] = useState(null);
 
@@ -25,15 +28,17 @@ const ListPageAdmin = () => {
 
 	const [classes, setClasses] = useState([]);
 
-	const [filter, setFilter] = useState({
-		pages: 0,
-		page: 1,
-		department_id: departments[0].id,
-		class_id: '',
-		semester_id: semesters[0]?.id,
-		academic_id: academic_years[0]?.id,
-		status: -1,
-	});
+	const [filter, setFilter] = useState(
+		filters || {
+			pages: 0,
+			page: 1,
+			department_id: departments[0].id,
+			class_id: '',
+			semester_id: semesters[0]?.id,
+			academic_id: academic_years[0]?.id,
+			status: -1,
+		}
+	);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
 
@@ -41,7 +46,9 @@ const ListPageAdmin = () => {
 		if (!filter.class_id || !classes.length) return '';
 
 		return classes.find((e) => e.id.toString() === filter.class_id.toString())?.name || '';
-	}, [filter.class_id]);
+	}, [filter.class_id, classes]);
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -68,6 +75,10 @@ const ListPageAdmin = () => {
 
 		if (isSuccess(res)) setData(res.data);
 		else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
+	};
+
+	const saveFilter = () => {
+		dispatch(actions.setFilter(filter));
 	};
 	//#endregion
 
@@ -108,7 +119,7 @@ const ListPageAdmin = () => {
 						Lớp {className}
 					</Typography>
 
-					<ListStudents data={listData} page={paginate.page} />
+					<ListStudents data={listData} page={paginate.page} saveFilter={saveFilter} />
 
 					<CPagination
 						page={paginate.page}

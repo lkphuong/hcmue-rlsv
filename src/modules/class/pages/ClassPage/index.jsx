@@ -15,8 +15,6 @@ import { CPagination } from '_controls/';
 
 import { actions } from '_slices/filter.slice';
 
-import { ROUTES } from '_constants/routes';
-
 const ClassPage = () => {
 	//#region Data
 	const { class_id, department_id } = useSelector((state) => state.auth.profile, shallowEqual);

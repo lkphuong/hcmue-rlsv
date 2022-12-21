@@ -99,14 +99,12 @@ export const CUpload = ({ name, itemData }) => {
 		checkFile(newFile);
 	};
 
-	const onDelete = (index) => () => {
-		remove(index);
-	};
+	const onDelete = (index) => () => remove(index);
 	//#endregion
 
 	useEffect(() => {
 		if (itemData?.files) {
-			replace(itemData.files);
+			replace(itemData.files.map((e) => ({ ...e, file_id: Number(e.id) })));
 		}
 	}, [itemData]);
 

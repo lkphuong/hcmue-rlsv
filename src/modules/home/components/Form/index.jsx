@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useFormContext } from 'react-hook-form';
 
 import {
 	Box,
@@ -27,7 +28,6 @@ import { actions } from '_slices/mark.slice';
 import Header from './Header';
 
 import './index.scss';
-import { useFormContext } from 'react-hook-form';
 
 export const Form = ({ data }) => {
 	//#region Data
@@ -43,6 +43,7 @@ export const Form = ({ data }) => {
 	//#endregion
 
 	//#region Event
+	// eslint-disable-next-line no-unused-vars
 	const handleUpdate = async () => {
 		try {
 			if (!marks?.length) {

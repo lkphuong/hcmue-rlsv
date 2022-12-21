@@ -6,6 +6,10 @@ export const getSheetById = (id) => {
 	return get(`${SHEETS.GET_BY_ID}/${id}`);
 };
 
+export const getDetailSheet = (id) => {
+	return get(`${SHEETS.GET_DETAIL_SHEET}/${id}`);
+};
+
 export const getMarks = (id, title_id) => {
 	return get(`${SHEETS.GET_MARK}/${id}/items/${title_id}`);
 };

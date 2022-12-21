@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { Controller, useFormContext } from 'react-hook-form';
 
 import { TableCell, Typography } from '@mui/material';
 
 import { actions } from '_slices/mark.slice';
 
 import { CInput } from '_controls/';
-import { Controller, useFormContext } from 'react-hook-form';
-import { useEffect } from 'react';
 
 const TypeInput = ({
 	id,

@@ -9,7 +9,7 @@ import { useReactToPrint } from 'react-to-print';
 
 import dayjs from 'dayjs';
 
-import { Form, PrintComponent } from '_modules/home/components';
+import { Form } from '_modules/home/components';
 
 import { getItemsMarks, getSheetById } from '_api/sheets.api';
 
@@ -141,7 +141,7 @@ const SemesterDetail = () => {
 						<Box p={1.5}>{data && <Form data={data} />}</Box>
 					</Paper>
 
-					<PrintComponent data={data} ref={ref} />
+					{/* <PrintComponent data={data} ref={ref} /> */}
 				</StudentMarksContext.Provider>
 			</FormProvider>
 		</Box>

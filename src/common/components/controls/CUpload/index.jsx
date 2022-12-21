@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 
@@ -18,7 +18,7 @@ const MAX_FILES = 5;
 
 const MAX_FILE_SIZE = 10485760;
 
-export const CUpload = ({ name }) => {
+export const CUpload = ({ name, itemData }) => {
 	//#region Data
 	const inputRef = useRef(null);
 
@@ -26,7 +26,7 @@ export const CUpload = ({ name }) => {
 
 	const { control } = useFormContext();
 
-	const { fields, append, remove } = useFieldArray({ control, name });
+	const { fields, append, remove, replace } = useFieldArray({ control, name });
 	//#endregion
 
 	//#region Event
@@ -103,6 +103,12 @@ export const CUpload = ({ name }) => {
 		remove(index);
 	};
 	//#endregion
+
+	useEffect(() => {
+		if (itemData?.files) {
+			replace(itemData.files);
+		}
+	}, [itemData]);
 
 	//#region Render
 	return (

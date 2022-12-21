@@ -1,9 +1,11 @@
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useContext, useEffect, useRef } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Controller } from 'react-hook-form';
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 import { ImageSearch } from '@mui/icons-material';
+
+import { StudentMarksContext } from '_modules/home/pages/StudentDetailPage';
 
 import { actions } from '_slices/mark.slice';
 
@@ -15,6 +17,7 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 	const fileRef = useRef();
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+	const { itemsMark } = useContext(StudentMarksContext);
 
 	const dispatch = useDispatch();
 	//#endregion
@@ -66,7 +69,11 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 				available={available}
 			/>
 
-			<FileModal ref={fileRef} name={`title_${titleId}.${index}.files`} />
+			<FileModal
+				ref={fileRef}
+				name={`title_${titleId}.${index}.files`}
+				itemData={itemsMark[index]}
+			/>
 		</TableRow>
 	);
 	//#endregion

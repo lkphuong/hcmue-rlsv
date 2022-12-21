@@ -4,7 +4,7 @@ import { Box, Grow, Modal, Paper } from '@mui/material';
 
 import { CUpload } from '_controls/';
 
-export const FileModal = forwardRef(({ name }, ref) => {
+export const FileModal = forwardRef(({ name, itemData }, ref) => {
 	//#region Data
 	const [open, setOpen] = useState(false);
 	//#endregion
@@ -24,7 +24,7 @@ export const FileModal = forwardRef(({ name }, ref) => {
 				<Box className='center' borderRadius={3}>
 					<Paper>
 						<Box p={4} minWidth={330}>
-							<CUpload name={name} />
+							<CUpload name={name} itemData={itemData} />
 						</Box>
 					</Paper>
 				</Box>

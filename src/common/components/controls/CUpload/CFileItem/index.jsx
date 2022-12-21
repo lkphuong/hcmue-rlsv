@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { Box, CardMedia, IconButton, Link, ListItem, Stack } from '@mui/material';
 import { DeleteForever } from '@mui/icons-material';
 
@@ -26,11 +28,21 @@ const FILE_IMAGE = {
 	svg: image,
 	webp: image,
 	pdf: pdf,
+	0: pdf,
+	1: image,
 	other: blank,
 };
 
 export const CFileItem = ({ file, onDelete }) => {
 	const url = process.env.REACT_APP_API_URL.replace('/api/', '') + file.url;
+
+	const type = useMemo(() => {
+		if (file?.extension) {
+			return FILE_IMAGE[file.extension.split('.').at(-1)] || FILE_IMAGE['other'];
+		} else {
+			return FILE_IMAGE[file.type] || FILE_IMAGE['other'];
+		}
+	}, []);
 
 	return (
 		<ListItem
@@ -50,8 +62,7 @@ export const CFileItem = ({ file, onDelete }) => {
 					component='img'
 					width='auto'
 					height='100%'
-					// src={FILE_IMAGE[file.type.split('/')[0]] || FILE_IMAGE['other']}
-					src={FILE_IMAGE[file.extension.split('.').at(-1)] || FILE_IMAGE['other']}
+					src={type}
 				/>
 				<Link
 					ml={0.8}
@@ -63,8 +74,7 @@ export const CFileItem = ({ file, onDelete }) => {
 					href={url || URL.createObjectURL(file)}
 					target='_blank'
 				>
-					{/* {file.name} */}
-					{file.originalName}
+					{file.originalName || file.name}
 				</Link>
 			</Stack>
 

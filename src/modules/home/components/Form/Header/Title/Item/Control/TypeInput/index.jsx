@@ -23,7 +23,6 @@ const TypeInput = ({
 	available,
 }) => {
 	//#region Data
-
 	const [score, setScore] = useState(initialMark);
 	const { control, resetField } = useFormContext();
 
@@ -72,6 +71,10 @@ const TypeInput = ({
 		}
 	};
 
+	const handleChange = (CallbackFunc) => (e) => {
+		CallbackFunc(Number(e.target.value));
+	};
+
 	useEffect(() => {
 		resetField(`title_${titleId}.${index}.personal_mark_level`, initialMark);
 	}, [initialMark]);
@@ -93,12 +96,15 @@ const TypeInput = ({
 						control={control}
 						name={`title_${titleId}.${index}.personal_mark_level`}
 						defaultValue={initialMark}
-						render={({ field }) => (
+						render={({ field: { name, onChange, ref, value } }) => (
 							<CInput
 								fullWidth
 								type='number'
 								// inputProps={{ min, max, style: { textAlign: 'center' } }}
-								{...field}
+								name={name}
+								ref={ref}
+								value={value}
+								onChange={handleChange(onChange)}
 							/>
 						)}
 					/>

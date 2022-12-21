@@ -33,7 +33,7 @@ export const Form = ({ data }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+	// const marks = useSelector((state) => state.mark.marks, shallowEqual);
 
 	const { handleSubmit } = useFormContext();
 
@@ -44,45 +44,71 @@ export const Form = ({ data }) => {
 
 	//#region Event
 	// eslint-disable-next-line no-unused-vars
-	const handleUpdate = async () => {
-		try {
-			if (!marks?.length) {
-				alert.fail({ title: 'Bạn chưa cập nhật điểm!' });
-				return;
-			}
+	// const handleUpdate = async () => {
+	// 	try {
+	// 		if (!marks?.length) {
+	// 			alert.fail({ title: 'Bạn chưa cập nhật điểm!' });
+	// 			return;
+	// 		}
 
-			const _data = marks.map((e) => ({ ...e, item_id: Number(e.item_id) }));
+	// 		const _data = marks.map((e) => ({ ...e, item_id: Number(e.item_id) }));
 
-			const body = {
-				role_id,
-				data: _data,
-			};
+	// 		const body = {
+	// 			role_id,
+	// 			data: _data,
+	// 		};
 
-			const res = await updateStudentSheets(data.id, body);
+	// 		const res = await updateStudentSheets(data.id, body);
 
-			if (isSuccess(res)) {
-				const { data } = res;
+	// 		if (isSuccess(res)) {
+	// 			const { data } = res;
 
-				alert.confirmMark({
-					onConfirm: () => {
-						dispatch(actions.clearMarks());
+	// 			alert.confirmMark({
+	// 				onConfirm: () => {
+	// 					dispatch(actions.clearMarks());
 
-						navigate(ROUTES.MY_SCORE, { replace: true });
-					},
-					fullname: data?.user?.fullname,
-					mark: data?.sum_of_personal_marks,
-					level: data?.level?.name,
-				});
-			} else {
-				alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
-			}
-		} catch (error) {
-			throw error;
+	// 					navigate(ROUTES.MY_SCORE, { replace: true });
+	// 				},
+	// 				fullname: data?.user?.fullname,
+	// 				mark: data?.sum_of_personal_marks,
+	// 				level: data?.level?.name,
+	// 			});
+	// 		} else {
+	// 			alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
+	// 		}
+	// 	} catch (error) {
+	// 		throw error;
+	// 	}
+	// };
+
+	const onSubmit = async (values) => {
+		const marks = Object.values(values).flat();
+
+		const _data = marks.map((e) => ({ ...e, item_id: Number(e.item_id) }));
+
+		const body = {
+			role_id,
+			data: _data,
+		};
+
+		const res = await updateStudentSheets(data.id, body);
+
+		if (isSuccess(res)) {
+			const { data } = res;
+
+			alert.confirmMark({
+				onConfirm: () => {
+					dispatch(actions.clearMarks());
+
+					navigate(ROUTES.MY_SCORE, { replace: true });
+				},
+				fullname: data?.user?.fullname,
+				mark: data?.sum_of_personal_marks,
+				level: data?.level?.name,
+			});
+		} else {
+			alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
 		}
-	};
-
-	const onSubmit = (values) => {
-		console.log(values);
 	};
 	//#endregion
 
@@ -136,7 +162,7 @@ export const Form = ({ data }) => {
 					<TableBody>
 						{data?.headers?.length > 0 &&
 							data.headers.map((e, i) => (
-								<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
+								<Header key={i} data={e} sheetId={Number(data?.id)} index={i + 1} />
 							))}
 					</TableBody>
 				</Table>

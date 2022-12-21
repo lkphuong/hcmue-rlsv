@@ -1,5 +1,4 @@
 import React, { memo } from 'react';
-import { Controller } from 'react-hook-form';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
 
@@ -28,15 +27,13 @@ const Title = memo(({ data, headerId }) => {
 
 			{data?.items?.length > 0 &&
 				data.items.map((e, i) => (
-					<React.Fragment key={i}>
-						<Controller
-							name={`title_${data.id}.${i}.header_id`}
-							defaultValue={headerId}
-							render={({ field }) => <input type='hidden' {...field} />}
-						/>
-
-						<Item key={i} data={e} headerId={headerId} titleId={data.id} index={i} />
-					</React.Fragment>
+					<Item
+						key={i}
+						data={e}
+						headerId={headerId}
+						titleId={Number(data.id)}
+						index={i}
+					/>
 				))}
 		</>
 	);

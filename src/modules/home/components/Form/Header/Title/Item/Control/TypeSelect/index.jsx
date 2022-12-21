@@ -6,7 +6,7 @@ import { Box, TableCell, Typography } from '@mui/material';
 import { CAutocomplete } from '_controls/';
 
 import { actions } from '_slices/mark.slice';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useController, useFormContext } from 'react-hook-form';
 
 const TypeSelect = ({
 	item_id,
@@ -25,6 +25,10 @@ const TypeSelect = ({
 	const { control, resetField } = useFormContext();
 
 	const dispatch = useDispatch();
+
+	const {
+		field: { onChange: changeOption },
+	} = useController({ control, name: `title_${titleId}.${index}.option_id` });
 	//#endregion
 
 	//#region Event
@@ -42,6 +46,7 @@ const TypeSelect = ({
 
 	const onChangeSelect = (CallbackFunc) => (option) => {
 		CallbackFunc(option?.mark);
+		changeOption(Number(option?.id));
 	};
 	//#endregion
 

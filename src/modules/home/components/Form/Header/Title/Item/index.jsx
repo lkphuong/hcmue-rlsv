@@ -7,6 +7,7 @@ import { actions } from '_slices/mark.slice';
 
 // import { FileModal } from './FileModal';
 import Control from './Control';
+import { Controller } from 'react-hook-form';
 
 const Item = memo(({ data, headerId, titleId, index }) => {
 	//#region Data
@@ -36,6 +37,19 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 			<TableCell />
 			<TableCell>
 				<Typography ml={2}>- {data.content}</Typography>
+			</TableCell>
+
+			<TableCell sx={{ display: 'none' }}>
+				<Controller
+					name={`title_${titleId}.${index}.header_id`}
+					defaultValue={headerId}
+					render={({ field }) => <input type='hidden' {...field} />}
+				/>
+				<Controller
+					name={`title_${titleId}.${index}.item_id`}
+					defaultValue={Number(data?.id)}
+					render={({ field }) => <input type='hidden' {...field} />}
+				/>
 			</TableCell>
 
 			<Control

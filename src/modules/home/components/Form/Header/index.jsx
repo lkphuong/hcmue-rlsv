@@ -36,7 +36,13 @@ const Header = memo(({ data, index, sheetId }) => {
 
 			{data?.titles?.length > 0 &&
 				data.titles.map((e, i) => (
-					<Title key={i} data={e} sheetId={sheetId} index={i + 1} headerId={data.id} />
+					<Title
+						key={i}
+						data={e}
+						sheetId={sheetId}
+						index={i + 1}
+						headerId={Number(data.id)}
+					/>
 				))}
 		</>
 	);

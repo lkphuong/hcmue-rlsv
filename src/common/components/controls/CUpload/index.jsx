@@ -1,12 +1,16 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { TransitionGroup } from 'react-transition-group';
+import { useFieldArray, useFormContext } from 'react-hook-form';
 
 import { Box, Grow, List, Typography } from '@mui/material';
 import { CloudUploadOutlined } from '@mui/icons-material';
 
-import { alert } from '_func/alert';
-
 import { CFileItem } from './CFileItem';
+
+import { uploadFile } from '_api/files.api';
+
+import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 import './index.scss';
 
@@ -14,17 +18,19 @@ const MAX_FILES = 5;
 
 const MAX_FILE_SIZE = 10485760;
 
-export const CUpload = () => {
+export const CUpload = ({ name }) => {
 	//#region Data
 	const inputRef = useRef(null);
 
 	const wrapperRef = useRef();
 
-	const [fileList, setFileList] = useState([]);
+	const { control } = useFormContext();
+
+	const { fields, append, remove } = useFieldArray({ control, name });
 	//#endregion
 
 	//#region Event
-	const checkFile = (file) => {
+	const checkFile = async (file) => {
 		if (file) {
 			if (file.size > MAX_FILE_SIZE) {
 				alert.fail({ text: 'Dung lượng file tối đa 10Mb.' });
@@ -32,7 +38,20 @@ export const CUpload = () => {
 			} else if (file.type === 'application/pdf' || file.type.split('/')[0] === 'image') {
 				inputRef.current.value = null;
 
-				setFileList((prev) => [...prev, file]);
+				const res = await uploadFile(file);
+
+				if (isSuccess(res)) {
+					const { data } = res;
+
+					const file = {
+						file_id: Number(data.id),
+						extension: data.extension,
+						originalName: data.originalName,
+						url: data.url,
+					};
+
+					append(file);
+				}
 			} else {
 				alert.fail({ text: 'Định dạng file không hợp lệ (.pdf, hoặc image/*).' });
 				return;
@@ -54,7 +73,7 @@ export const CUpload = () => {
 	};
 
 	const onChange = (e) => {
-		if (fileList.length >= MAX_FILES) {
+		if (fields.length >= MAX_FILES) {
 			alert.fail({ text: `Tối đa ${MAX_FILES} files minh chứng.` });
 			return;
 		}
@@ -70,7 +89,7 @@ export const CUpload = () => {
 
 		wrapperRef.current.classList.remove('dragover');
 
-		if (fileList.length >= MAX_FILES) {
+		if (fields.length >= MAX_FILES) {
 			alert.fail({ text: `Tối đa ${MAX_FILES} files minh chứng.` });
 			return;
 		}
@@ -81,9 +100,7 @@ export const CUpload = () => {
 	};
 
 	const onDelete = (index) => () => {
-		const newList = fileList.filter((e, i) => i !== index);
-
-		setFileList(newList);
+		remove(index);
 	};
 	//#endregion
 
@@ -127,11 +144,11 @@ export const CUpload = () => {
 				</Box>
 			</Box>
 
-			{fileList.length > 0 && (
+			{fields.length > 0 && (
 				<List sx={{ p: 0 }}>
 					<TransitionGroup>
-						{fileList.map((file, index) => (
-							<Grow key={index}>
+						{fields.map((file, index) => (
+							<Grow key={file.id}>
 								<div>
 									<CFileItem file={file} onDelete={onDelete(index)} />
 								</div>

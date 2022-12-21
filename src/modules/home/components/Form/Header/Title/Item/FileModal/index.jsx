@@ -1,9 +1,10 @@
 import { forwardRef, useState, useImperativeHandle } from 'react';
 
 import { Box, Grow, Modal, Paper } from '@mui/material';
+
 import { CUpload } from '_controls/';
 
-export const FileModal = forwardRef(({ props }, ref) => {
+export const FileModal = forwardRef(({ name }, ref) => {
 	//#region Data
 	const [open, setOpen] = useState(false);
 	//#endregion
@@ -23,7 +24,7 @@ export const FileModal = forwardRef(({ props }, ref) => {
 				<Box className='center' borderRadius={3}>
 					<Paper>
 						<Box p={4} minWidth={330}>
-							<CUpload />
+							<CUpload name={name} />
 						</Box>
 					</Paper>
 				</Box>

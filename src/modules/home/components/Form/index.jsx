@@ -33,7 +33,6 @@ export const Form = ({ data }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-	// const marks = useSelector((state) => state.mark.marks, shallowEqual);
 
 	const { handleSubmit } = useFormContext();
 
@@ -43,48 +42,18 @@ export const Form = ({ data }) => {
 	//#endregion
 
 	//#region Event
-	// eslint-disable-next-line no-unused-vars
-	// const handleUpdate = async () => {
-	// 	try {
-	// 		if (!marks?.length) {
-	// 			alert.fail({ title: 'Bạn chưa cập nhật điểm!' });
-	// 			return;
-	// 		}
-
-	// 		const _data = marks.map((e) => ({ ...e, item_id: Number(e.item_id) }));
-
-	// 		const body = {
-	// 			role_id,
-	// 			data: _data,
-	// 		};
-
-	// 		const res = await updateStudentSheets(data.id, body);
-
-	// 		if (isSuccess(res)) {
-	// 			const { data } = res;
-
-	// 			alert.confirmMark({
-	// 				onConfirm: () => {
-	// 					dispatch(actions.clearMarks());
-
-	// 					navigate(ROUTES.MY_SCORE, { replace: true });
-	// 				},
-	// 				fullname: data?.user?.fullname,
-	// 				mark: data?.sum_of_personal_marks,
-	// 				level: data?.level?.name,
-	// 			});
-	// 		} else {
-	// 			alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
-	// 		}
-	// 	} catch (error) {
-	// 		throw error;
-	// 	}
-	// };
-
 	const onSubmit = async (values) => {
 		const marks = Object.values(values).flat();
 
-		const _data = marks.map((e) => ({ ...e, item_id: Number(e.item_id) }));
+		const _data = marks.map((e) => {
+			const obj = { ...e, item_id: Number(e.item_id) };
+
+			if (obj?.files) {
+				const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
+
+				return { ...obj, files };
+			} else return obj;
+		});
 
 		const body = {
 			role_id,
@@ -127,8 +96,8 @@ export const Form = ({ data }) => {
 							<TableCell
 								align='center'
 								rowSpan={2}
-								width={80}
-								sx={{ minWidth: '80px' }}
+								width={60}
+								sx={{ minWidth: '60px' }}
 							>
 								Mục
 							</TableCell>

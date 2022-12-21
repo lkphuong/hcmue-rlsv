@@ -81,3 +81,7 @@ export const REPORTS = {
 export const LEVELS = {
 	GET_LEVELS: '/levels',
 };
+
+export const FILES = {
+	UPLOAD: '/files/upload',
+};

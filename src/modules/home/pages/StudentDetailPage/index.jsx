@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState, useRef, createContext } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useReactToPrint } from 'react-to-print';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
-
-import { useReactToPrint } from 'react-to-print';
 
 import dayjs from 'dayjs';
 
@@ -19,7 +19,6 @@ import { alert } from '_func/alert';
 import { actions } from '_slices/mark.slice';
 
 import { CExpired } from '_others/';
-import { FormProvider, useForm } from 'react-hook-form';
 
 export const StudentMarksContext = createContext();
 
@@ -75,7 +74,10 @@ const SemesterDetail = () => {
 		try {
 			const res = await getItemsMarks(data.id);
 
-			if (isSuccess(res)) setItemsMark(res.data);
+			if (isSuccess(res))
+				setItemsMark(() => {
+					return res.data.map((e) => ({ ...e, id: Number(e.id) }));
+				});
 		} catch (error) {
 			throw error;
 		}
@@ -104,7 +106,6 @@ const SemesterDetail = () => {
 		}));
 
 		dispatch(actions.renewMarks(payload));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [itemsMark]);
 
 	useEffect(() => {

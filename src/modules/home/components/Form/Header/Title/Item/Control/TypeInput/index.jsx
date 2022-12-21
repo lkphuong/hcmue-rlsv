@@ -1,15 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { TableCell, Typography } from '@mui/material';
 
-import { actions } from '_slices/mark.slice';
-
 import { CInput } from '_controls/';
 
 const TypeInput = ({
-	id,
 	min,
 	max,
 	mark,
@@ -17,67 +12,59 @@ const TypeInput = ({
 	unit,
 	initialMark,
 	currentMark,
-	header_id,
 	titleId,
 	index,
 	available,
 }) => {
 	//#region Data
-	const [score, setScore] = useState(initialMark);
-	const { control, resetField } = useFormContext();
-
-	const dispatch = useDispatch();
+	const { control } = useFormContext();
 	//#endregion
 
 	//#region Event
-	const onChangeRange = (item_id, min, max) => (e) => {
-		if (e.target.value === '') {
-			setScore('');
-			return;
-		} else {
-			let value = Number(e.target.value);
-			if (isNaN(value)) value = 0;
-			if (value > max) value = max;
-			if (value < min) value = min;
+	// const onChangeRange = (item_id, min, max) => (e) => {
+	// 	if (e.target.value === '') {
+	// 		setScore('');
+	// 		return;
+	// 	} else {
+	// 		let value = Number(e.target.value);
+	// 		if (isNaN(value)) value = 0;
+	// 		if (value > max) value = max;
+	// 		if (value < min) value = min;
 
-			const markObj = {
-				item_id: Number(item_id),
-				personal_mark_level: value,
-				header_id,
-			};
+	// 		const markObj = {
+	// 			item_id: Number(item_id),
+	// 			personal_mark_level: value,
+	// 			header_id,
+	// 		};
 
-			setScore(value);
-			dispatch(actions.updateMarks(markObj));
-		}
-	};
+	// 		setScore(value);
+	// 		dispatch(actions.updateMarks(markObj));
+	// 	}
+	// };
 
-	const onChangeMark = (item_id, mark) => (e) => {
-		if (e.target.value === '') {
-			setScore('');
-			return;
-		} else {
-			let value = Number(e.target.value);
+	// const onChangeMark = (item_id, mark) => (e) => {
+	// 	if (e.target.value === '') {
+	// 		setScore('');
+	// 		return;
+	// 	} else {
+	// 		let value = Number(e.target.value);
 
-			if (isNaN(value)) value = 0;
+	// 		if (isNaN(value)) value = 0;
 
-			const markObj = {
-				item_id: Number(item_id),
-				personal_mark_level: value,
-				header_id,
-			};
+	// 		const markObj = {
+	// 			item_id: Number(item_id),
+	// 			personal_mark_level: value,
+	// 			header_id,
+	// 		};
 
-			setScore(value);
-			dispatch(actions.updateMarks(markObj));
-		}
-	};
+	// 		setScore(value);
+	// 		dispatch(actions.updateMarks(markObj));
+	// 	}
+	// };
 
 	const handleChange = (CallbackFunc) => (e) => {
 		CallbackFunc(Number(e.target.value));
 	};
-
-	useEffect(() => {
-		resetField(`title_${titleId}.${index}.personal_mark_level`, initialMark);
-	}, [initialMark]);
 	//#endregion
 
 	//#region Render

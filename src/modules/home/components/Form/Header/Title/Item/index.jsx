@@ -1,26 +1,26 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Controller } from 'react-hook-form';
 
-import { TableCell, TableRow, Typography } from '@mui/material';
+import { Button, TableCell, TableRow, Typography } from '@mui/material';
+import { ImageSearch } from '@mui/icons-material';
 
 import { actions } from '_slices/mark.slice';
 
-// import { FileModal } from './FileModal';
+import { FileModal } from './FileModal';
 import Control from './Control';
-import { Controller } from 'react-hook-form';
 
 const Item = memo(({ data, headerId, titleId, index }) => {
 	//#region Data
+	const fileRef = useRef();
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
 
 	const dispatch = useDispatch();
-
-	// const fileRef = useRef();
 	//#endregion
 
 	//#region Event
-	// const openModal = () => fileRef.current.open();
+	const openModal = () => fileRef.current.open();
 	//#endregion
 
 	useEffect(() => {
@@ -37,6 +37,12 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 			<TableCell />
 			<TableCell>
 				<Typography ml={2}>- {data.content}</Typography>
+
+				{data?.is_file && (
+					<Button size='small' endIcon={<ImageSearch />} onClick={openModal}>
+						Minh chứng
+					</Button>
+				)}
 			</TableCell>
 
 			<TableCell sx={{ display: 'none' }}>
@@ -53,19 +59,14 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 			</TableCell>
 
 			<Control
+				data={data}
 				id={Number(data.id)}
-				min={data.from_mark}
-				max={data.to_mark}
-				mark={data.mark}
-				control={data.control}
-				category={data.category}
-				unit={data.unit}
-				options={data.options || []}
-				required={data.required}
 				titleId={titleId}
 				index={index}
 				available={available}
 			/>
+
+			<FileModal ref={fileRef} name={`title_${titleId}.${index}.files`} />
 		</TableRow>
 	);
 	//#endregion

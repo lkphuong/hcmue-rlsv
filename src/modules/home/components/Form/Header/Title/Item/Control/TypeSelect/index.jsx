@@ -1,30 +1,13 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-
 import { Box, TableCell, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
-import { actions } from '_slices/mark.slice';
 import { Controller, useController, useFormContext } from 'react-hook-form';
 
-const TypeSelect = ({
-	item_id,
-	initialMark,
-	currentMark,
-	options,
-	required,
-	header_id,
-	available,
-	titleId,
-	index,
-}) => {
+const TypeSelect = ({ initialMark, currentMark, options, required, available, titleId, index }) => {
 	//#region Data
-	const [score, setScore] = useState(initialMark);
 
-	const { control, resetField } = useFormContext();
-
-	const dispatch = useDispatch();
+	const { control } = useFormContext();
 
 	const {
 		field: { onChange: changeOption },
@@ -32,17 +15,6 @@ const TypeSelect = ({
 	//#endregion
 
 	//#region Event
-	// const onChangeSelect = (value) => {
-	// 	const markObj = {
-	// 		item_id,
-	// 		personal_mark_level: value?.mark,
-	// 		option_id: Number(value?.id),
-	// 		header_id,
-	// 	};
-
-	// 	setScore(value.mark);
-	// 	dispatch(actions.updateMarks(markObj));
-	// };
 
 	const onChangeSelect = (CallbackFunc) => (option) => {
 		CallbackFunc(option?.mark);
@@ -67,8 +39,6 @@ const TypeSelect = ({
 								options={options}
 								display='mark'
 								valueGet='mark'
-								// value={score}
-								// onChange={onChangeSelect}
 								value={value}
 								onChange={onChangeSelect(onChange)}
 								renderOption={(props, option) => (

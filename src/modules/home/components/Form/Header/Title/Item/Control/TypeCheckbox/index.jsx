@@ -1,48 +1,16 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-
 import { Checkbox, TableCell, Typography } from '@mui/material';
 
-import { actions } from '_slices/mark.slice';
 import { Controller, useFormContext } from 'react-hook-form';
 
-const TypeCheckbox = ({
-	id,
-	mark,
-	unit,
-	initialMark,
-	currentMark,
-	header_id,
-	available,
-	titleId,
-	index,
-}) => {
+const TypeCheckbox = ({ mark, unit, initialMark, currentMark, available, titleId, index }) => {
 	//#region Data
-	const [score, setScore] = useState(initialMark);
-
-	const { control, resetField } = useFormContext();
-
-	const dispatch = useDispatch();
+	const { control } = useFormContext();
 	//#endregion
 
 	//#region Event
-	const onCheck = (item_id, mark) => (e) => {
-		const markObj = {
-			item_id: Number(item_id),
-			personal_mark_level: e.target.checked ? mark : 0,
-			header_id,
-		};
-
-		setScore(e.target.checked ? mark : 0);
-		dispatch(actions.updateMarks(markObj));
-	};
-
 	const onChangeCheckbox = (CallbackFunc) => (e) => {
-		if (e.target.checked) {
-			CallbackFunc(mark);
-		} else {
-			CallbackFunc(0);
-		}
+		if (e.target.checked) CallbackFunc(mark);
+		else CallbackFunc(0);
 	};
 	//#endregion
 
@@ -66,7 +34,7 @@ const TypeCheckbox = ({
 							<Checkbox
 								name={name}
 								ref={ref}
-								value={value}
+								checked={!!value}
 								onChange={onChangeCheckbox(onChange)}
 							/>
 						)}

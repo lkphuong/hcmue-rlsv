@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  HttpCode,
   HttpException,
   HttpStatus,
   Param,
@@ -195,6 +196,7 @@ export class RoleController {
    * @page roles page
    */
   @Post('check')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

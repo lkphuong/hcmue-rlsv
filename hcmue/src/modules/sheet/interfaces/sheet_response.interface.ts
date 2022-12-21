@@ -68,6 +68,8 @@ export interface EvaluationsResponse {
 export interface FileResponse {
   id: number;
   name: string;
+  url: string;
+  type: number;
 }
 
 export interface EvaluationResponse extends MarkResponse {

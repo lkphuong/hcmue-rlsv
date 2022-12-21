@@ -35,8 +35,6 @@ export const uploadFile = async (
   data_source: DataSource,
   req: Request,
 ) => {
-  const baseUrl = configuration_service.get(Configuration.BASE_URL) as string;
-
   // Make the QueryRunner
   const query_runner = data_source.createQueryRunner();
 
@@ -62,12 +60,7 @@ export const uploadFile = async (
 
     if (file) {
       //#region Generate response
-      return await generateUploadFileSuccessResponse(
-        req,
-        baseUrl,
-        file,
-        query_runner,
-      );
+      return await generateUploadFileSuccessResponse(req, file, query_runner);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -109,8 +102,6 @@ export const unlinkFile = async (
   data_source: DataSource,
   req: Request,
 ) => {
-  const base_url = configuration_service.get(Configuration.BASE_URL) as string;
-
   //#region Validate delete file
   const valid = await validateFileUser(
     user_id,
@@ -143,12 +134,7 @@ export const unlinkFile = async (
       //#endregion
 
       //#region Generate response
-      return await generateUploadFileSuccessResponse(
-        req,
-        base_url,
-        file,
-        query_runner,
-      );
+      return await generateUploadFileSuccessResponse(req, file, query_runner);
       //#endregion
     } else {
       //#region throw HandlerException

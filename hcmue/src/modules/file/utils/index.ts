@@ -14,7 +14,6 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 
 export const generateUploadFileSuccessResponse = async (
   req: Request,
-  base_url: string,
   file: FileEntity | null,
   query_runner: QueryRunner,
 ) => {
@@ -29,7 +28,7 @@ export const generateUploadFileSuccessResponse = async (
     data: {
       id: file.id,
       originalName: file.originalName,
-      url: `${base_url}${file.url}`,
+      url: `/${file.url}`,
       extension: file.extension,
     },
     errorCode: 0,

@@ -36,6 +36,7 @@ import {
 
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
+import { PDF_EXTENSION } from '../constants';
 
 export const generateAdminSheets = async (
   sheets: SheetEntity[] | null,
@@ -376,7 +377,9 @@ export const generateItemsArray = async (
                   ? files.map((file) => {
                       return {
                         id: file.id,
-                        name: base_url + file.originalName,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
                       };
                     })
                   : null,
@@ -420,7 +423,9 @@ export const generateItemsArray = async (
                   ? files.map((file) => {
                       return {
                         id: file.id,
-                        name: base_url + file.originalName,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
                       };
                     })
                   : null,
@@ -469,7 +474,9 @@ export const generateItemsArray = async (
                   ? files.map((file) => {
                       return {
                         id: file.id,
-                        name: base_url + file.originalName,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
                       };
                     })
                   : null,
@@ -537,7 +544,9 @@ export const generateEvaluationsArray = async (
                     ? files.map((file) => {
                         return {
                           id: file.id,
-                          name: base_url + file.originalName,
+                          url: '/' + file.url,
+                          name: file.originalName,
+                          type: file.extension == PDF_EXTENSION ? 0 : 1,
                         };
                       })
                     : null,
@@ -582,7 +591,9 @@ export const generateEvaluationsArray = async (
                     ? files.map((file) => {
                         return {
                           id: file.id,
-                          name: base_url + file.originalName,
+                          url: '/' + file.url,
+                          name: file.originalName,
+                          type: file.extension == PDF_EXTENSION ? 0 : 1,
                         };
                       })
                     : null,
@@ -620,7 +631,9 @@ export const generateEvaluationsArray = async (
                   ? files.map((file) => {
                       return {
                         id: file.id,
-                        name: base_url + file.originalName,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
                       };
                     })
                   : null,

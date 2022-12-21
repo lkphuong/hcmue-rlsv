@@ -4,6 +4,8 @@ import { ClientProxy } from '@nestjs/microservices/client';
 
 import * as config from 'config';
 
+import * as moment from 'moment';
+
 import { generateSheet2Array } from '../../transform';
 import { handleLog } from '../../utils';
 import { send } from '../../funcs';
@@ -53,7 +55,10 @@ export class CronService {
       const form = await this._formService.getFormPublished();
 
       if (count > 0 && form) {
-        if (new Date() >= new Date(form.student_start)) {
+        if (
+          moment(new Date()).format('YYYY-MM-DD') ==
+          moment(new Date(form.student_start)).format('YYYY-MM-DD')
+        ) {
           //#region Get pages
           const itemsPerPage = parseInt(
             this._configurationService.get(Configuration.ITEMS_PER_PAGE),

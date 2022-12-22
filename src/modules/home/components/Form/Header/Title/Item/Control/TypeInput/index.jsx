@@ -17,7 +17,7 @@ const TypeInput = ({
 	available,
 }) => {
 	//#region Data
-	const { control } = useFormContext();
+	const { control, trigger } = useFormContext();
 	//#endregion
 
 	//#region Event
@@ -63,7 +63,13 @@ const TypeInput = ({
 	// };
 
 	const handleChange = (CallbackFunc) => (e) => {
+		if (e.target.value === '') {
+			CallbackFunc('');
+			trigger(`title_${titleId}[${index}].personal_mark_level`);
+			return;
+		}
 		CallbackFunc(Number(e.target.value));
+		trigger(`title_${titleId}[${index}].personal_mark_level`);
 	};
 	//#endregion
 
@@ -81,9 +87,12 @@ const TypeInput = ({
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}.${index}.personal_mark_level`}
+						name={`title_${titleId}[${index}].personal_mark_level`}
 						defaultValue={initialMark}
-						render={({ field: { name, onChange, ref, value } }) => (
+						render={({
+							field: { name, onChange, ref, value },
+							fieldState: { error },
+						}) => (
 							<CInput
 								fullWidth
 								type='number'
@@ -92,6 +101,7 @@ const TypeInput = ({
 								ref={ref}
 								value={value}
 								onChange={handleChange(onChange)}
+								error={!!error}
 							/>
 						)}
 					/>

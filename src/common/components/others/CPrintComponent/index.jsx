@@ -17,9 +17,9 @@ import Header from './Header';
 
 import './index.scss';
 
-export const StudentMarksContextt = createContext();
+export const MarkContext = createContext();
 
-export const PrintComponent = forwardRef(({ data }, ref) => {
+export const CPrintComponent = forwardRef(({ data, marks }, ref) => {
 	//#region Data
 	//#endregion
 
@@ -137,12 +137,14 @@ export const PrintComponent = forwardRef(({ data }, ref) => {
 									</TableCell>
 								</TableRow>
 							</TableHead>
-							<TableBody>
-								{data?.headers?.length > 0 &&
-									data.headers.map((e, i) => (
-										<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
-									))}
-							</TableBody>
+							<MarkContext.Provider value={{ marks }}>
+								<TableBody>
+									{data?.headers?.length > 0 &&
+										data.headers.map((e, i) => (
+											<Header key={i} data={e} index={i + 1} />
+										))}
+								</TableBody>
+							</MarkContext.Provider>
 						</Table>
 					</TableContainer>
 				</Container>

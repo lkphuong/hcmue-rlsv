@@ -18,7 +18,11 @@ import { alert } from '_func/alert';
 
 import { actions } from '_slices/mark.slice';
 
-import { CExpired } from '_others/';
+import { CExpired, CPrintComponent } from '_others/';
+
+import { useResolver } from '_hooks/';
+
+import { validationSchema } from '_modules/home/form';
 
 export const StudentMarksContext = createContext();
 
@@ -27,12 +31,14 @@ const SemesterDetail = () => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 
-	const methods = useForm();
-
 	const { sheet_id } = useParams();
 
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
+
+	const resolver = useResolver(validationSchema(data?.headers));
+
+	const methods = useForm({ resolver });
 
 	const navigate = useNavigate();
 
@@ -142,7 +148,7 @@ const SemesterDetail = () => {
 						<Box p={1.5}>{data && <Form data={data} />}</Box>
 					</Paper>
 
-					{/* <PrintComponent data={data} ref={ref} /> */}
+					<CPrintComponent data={data} marks={itemsMark} ref={ref} />
 				</StudentMarksContext.Provider>
 			</FormProvider>
 		</Box>

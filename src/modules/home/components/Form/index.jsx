@@ -43,6 +43,7 @@ export const Form = ({ data }) => {
 
 	//#region Event
 	const onSubmit = async (values) => {
+		console.log(values);
 		const marks = Object.values(values).flat();
 
 		const _data = marks.map((e) => {

@@ -28,7 +28,7 @@ const TypeCheckbox = ({ mark, unit, initialMark, currentMark, available, titleId
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}.${index}.personal_mark_level`}
+						name={`title_${titleId}[${index}].personal_mark_level`}
 						defaultValue={initialMark}
 						render={({ field: { name, ref, value, onChange } }) => (
 							<Checkbox

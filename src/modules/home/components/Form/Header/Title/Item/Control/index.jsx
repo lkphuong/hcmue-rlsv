@@ -49,8 +49,8 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 	}, [currentMark?.option_id]);
 
 	useEffect(() => {
-		resetField(`title_${titleId}.${index}.personal_mark_level`, { defaultValue: initialMark });
-		resetField(`title_${titleId}.${index}.option_id`, { defaultValue: optionId });
+		resetField(`title_${titleId}[${index}].personal_mark_level`, { defaultValue: initialMark });
+		resetField(`title_${titleId}[${index}].option_id`, { defaultValue: optionId });
 	}, [initialMark, titleId, index, optionId]);
 
 	const renderControl = useMemo(() => {

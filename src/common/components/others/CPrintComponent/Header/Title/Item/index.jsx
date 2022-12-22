@@ -4,9 +4,8 @@ import { TableCell, TableRow, Typography } from '@mui/material';
 
 import Control from './Control';
 
-const Item = memo(({ data, headerId }) => {
+const Item = memo(({ data }) => {
 	//#region Data
-
 	//#endregion
 
 	//#region Event
@@ -21,18 +20,7 @@ const Item = memo(({ data, headerId }) => {
 					<Typography ml={2}>- {data.content}</Typography>
 				</TableCell>
 
-				<Control
-					id={Number(data.id)}
-					min={data.from_mark}
-					max={data.to_mark}
-					mark={data.mark}
-					control={data.control}
-					category={data.category}
-					unit={data.unit}
-					options={data.options || []}
-					required={data.required}
-					headerId={Number(headerId)}
-				/>
+				<Control data={data} id={Number(data.id)} />
 			</TableRow>
 		</>
 	);

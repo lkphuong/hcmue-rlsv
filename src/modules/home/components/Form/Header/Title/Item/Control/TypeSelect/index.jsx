@@ -30,9 +30,9 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}.${index}.personal_mark_level`}
+						name={`title_${titleId}[${index}].personal_mark_level`}
 						defaultValue={initialMark}
-						render={({ field: { value, onChange, ref } }) => (
+						render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
 							<CAutocomplete
 								ref={ref}
 								disableClearable={required}
@@ -46,6 +46,7 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 										{option.content} (<b>{option.mark} Điểm</b>)
 									</Box>
 								)}
+								error={!!error}
 							/>
 						)}
 					/>

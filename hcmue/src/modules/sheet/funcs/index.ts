@@ -173,7 +173,7 @@ export const generatePersonalMarks = async (
       //#endregion
     }
   } catch (err) {
-    console.log(err);
+    console.log('err: ', err);
     // Rollback transaction
     await query_runner.rollbackTransaction();
 
@@ -624,11 +624,10 @@ export const generateUpdateStudentEvaluation = async (
 
             evaluations.push(evaluation);
             //#endregion
-
             //#region handle update file
             if (j.files) {
               //#region validate Max files
-              const valid = validateCreateEvaluationMaxFile(j.params, req);
+              const valid = validateCreateEvaluationMaxFile(j.files, req);
               if (valid instanceof HttpException) return valid;
               //#endregion
 

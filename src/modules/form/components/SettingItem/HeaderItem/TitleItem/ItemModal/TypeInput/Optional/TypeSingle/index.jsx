@@ -43,7 +43,7 @@ const TypeSingle = memo(({ control }) => {
 							inputProps={{
 								min: -100,
 								max: 100,
-								maxLength: 3,
+								maxLength: 5,
 							}}
 							placeholder='Điểm'
 							name={name}

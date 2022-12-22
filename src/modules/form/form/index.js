@@ -187,7 +187,7 @@ export const validationItem = yup.object({
 		.required('Vui lòng nhập nội dung tiêu chí.'),
 	required: yup.bool(),
 	category: yup.number().typeError(),
-	sort_order: yup.number('324324').typeError('asd').nullable().notRequired(),
+	sort_order: yup.number().typeError().nullable().notRequired(),
 	from_mark: yup
 		.number('Giá trị điểm tối thiểu phải là số.')
 		.typeError('Giá trị điểm tối thiểu phải là số.')
@@ -225,18 +225,21 @@ export const validationItem = yup.object({
 				}),
 		}),
 	mark: yup
-		.number('Giá trị điểm tối đa phải là số.')
-		.typeError('Giá trị điểm tối đa phải là số.')
+		.number('Giá trị điểm phải là số.')
+		.typeError('Giá trị điểm phải là số.')
 		.notRequired()
 		.when('category', {
 			is: (value) => value !== 1,
 			then: yup.number().when('control', {
 				is: (value) => value !== 2,
 				then: yup
-					.number('Giá trị điểm tối đa phải là số.')
-					.moreThan(0, 'Giá trị điểm phải lớn hơn 0.')
-					.typeError('Giá trị điểm tối đa phải là số.')
-					.required('Vui lòng nhập điểm tối đa.'),
+					.number('Giá trị điểm phải là số.')
+					.test('is-zero', 'Giá trị điểm phải khác 0.', (value) => {
+						if (value?.toString() === '0') return false;
+						return true;
+					})
+					.typeError('Giá trị điểm phải là số.')
+					.required('Vui lòng nhập điểm.'),
 			}),
 		}),
 

@@ -51,7 +51,7 @@ const TypeRange = memo(({ control }) => {
 								inputProps={{
 									min: -100,
 									max: 100,
-									maxLength: 3,
+									maxLength: 5,
 								}}
 								name={name}
 								inputRef={ref}
@@ -75,7 +75,7 @@ const TypeRange = memo(({ control }) => {
 								inputProps={{
 									min: -100,
 									max: 100,
-									maxLength: 3,
+									maxLength: 5,
 								}}
 								name={name}
 								inputRef={ref}

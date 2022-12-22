@@ -48,7 +48,7 @@ const OptionItem = memo(({ control, index, remove, length }) => {
 							}) => (
 								<CInput
 									fullWidth
-									inputProps={{ min: -100, max: 100, maxLength: 3 }}
+									inputProps={{ min: -100, max: 100, maxLength: 5 }}
 									name={name}
 									inputRef={ref}
 									value={value}

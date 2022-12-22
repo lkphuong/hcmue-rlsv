@@ -16,6 +16,7 @@ import {
   valiadteItem,
   valiadteTitle,
   validateAcademicYear,
+  validateEditFormInProgressOrDone,
   validateForm,
   validateFormExist,
   validateFormPubishStatus,
@@ -511,6 +512,11 @@ export const updateHeader = async (
   if (form instanceof HttpException) return form;
   //#endregion
 
+  //#region Validate form in progress or done
+  const valid_form = validateEditFormInProgressOrDone(form, req);
+  if (valid_form instanceof HttpException) throw valid_form;
+  //#endregion
+
   //#region Validate form status
   const valid = await validateFormPubishStatus(form, req);
   if (valid instanceof HttpException) return valid;
@@ -586,6 +592,11 @@ export const updateTitle = async (
   if (form instanceof HttpException) return form;
   //#endregion
 
+  //#region Validate form in progress or done
+  const valid_form = validateEditFormInProgressOrDone(form, req);
+  if (valid_form instanceof HttpException) throw valid_form;
+  //#endregion
+
   //#region Validate form status
   const valid = await validateFormPubishStatus(form, req);
   if (valid instanceof HttpException) return valid;
@@ -656,6 +667,11 @@ export const updateItem = async (
   //#region Validate form
   const form = await validateForm(form_id, form_service, req);
   if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form in progress or done
+  const valid_form = validateEditFormInProgressOrDone(form, req);
+  if (valid_form instanceof HttpException) throw valid_form;
   //#endregion
 
   //#region Validate form status
@@ -810,6 +826,11 @@ export const unlinkHeader = async (
   if (form instanceof HttpException) return form;
   //#endregion
 
+  //#region Validate form in progress or done
+  const valid_form = validateEditFormInProgressOrDone(form, req);
+  if (valid_form instanceof HttpException) throw valid_form;
+  //#endregion
+
   //#region Validate form status
   const valid = await validateFormPubishStatus(form, req);
   if (valid instanceof HttpException) return valid;
@@ -863,6 +884,11 @@ export const unlinkTitle = async (
   //#region Validate form
   const form = await validateForm(form_id, form_service, req);
   if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form in progress or done
+  const valid_form = validateEditFormInProgressOrDone(form, req);
+  if (valid_form instanceof HttpException) throw valid_form;
   //#endregion
 
   //#region Validate form status
@@ -922,6 +948,11 @@ export const unlinkItem = async (
   //#region Validate form
   const form = await validateForm(form_id, form_service, req);
   if (form instanceof HttpException) return form;
+  //#endregion
+
+  //#region Validate form in progress or done
+  const valid_form = validateEditFormInProgressOrDone(form, req);
+  if (valid_form instanceof HttpException) throw valid_form;
   //#endregion
 
   //#region Validate form status

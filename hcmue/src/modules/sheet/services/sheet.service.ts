@@ -97,10 +97,12 @@ export class SheetService {
         );
       }
 
-      const sheet_status = this.generateStatus(role);
-      conditions = conditions.andWhere('sheet.status >= :status', {
-        status: sheet_status,
-      });
+      if (role) {
+        const sheet_status = this.generateStatus(role);
+        conditions = conditions.andWhere('sheet.status >= :status', {
+          status: sheet_status,
+        });
+      }
 
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')

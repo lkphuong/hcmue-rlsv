@@ -154,6 +154,13 @@ export const validateForm = async (
       sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, form_id),
     );
   }
+  return form;
+};
+
+export const validateEditFormInProgressOrDone = (
+  form: FormEntity,
+  req: Request,
+) => {
   if (
     form.status === FormStatus.IN_PROGRESS ||
     form.status === FormStatus.DONE
@@ -162,12 +169,10 @@ export const validateForm = async (
       DATABASE_EXIT_CODE.OPERATOR_ERROR,
       req.method,
       req.url,
-      sprintf(ErrorMessage.FROM_IN_PROGRESS_OR_DONE_ERROR, form_id),
+      sprintf(ErrorMessage.FROM_IN_PROGRESS_OR_DONE_ERROR, form.id),
       HttpStatus.BAD_REQUEST,
     );
   }
-
-  return form;
 };
 
 export const validateFormExist = async (

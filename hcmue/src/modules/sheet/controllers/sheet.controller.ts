@@ -417,8 +417,6 @@ export class SheetController {
         JSON.stringify({ params: params }),
       );
 
-      const { role } = req.user as JwtPayload;
-
       //#region Get params
       const {
         academic_id,
@@ -447,7 +445,19 @@ export class SheetController {
           input,
         );
 
-        user_ids = generateObjectIdFromUsers(users);
+        if (users && users.length > 0) {
+          user_ids = generateObjectIdFromUsers(users);
+        } else {
+          //#region throw HandlerException
+          throw new HandlerException(
+            DATABASE_EXIT_CODE.NO_CONTENT,
+            req.method,
+            req.url,
+            ErrorMessage.NO_CONTENT,
+            HttpStatus.NOT_FOUND,
+          );
+          //#endregion
+        }
       }
       //#endregion
 
@@ -460,7 +470,7 @@ export class SheetController {
           department_id,
           semester_id,
           status,
-          role,
+          null,
           user_ids,
         );
 
@@ -478,7 +488,7 @@ export class SheetController {
         academic_id,
         semester_id,
         status,
-        role,
+        null,
         user_ids,
       );
       //#endregion

@@ -38,6 +38,8 @@ export const CFileItem = ({ file, onDelete }) => {
 
 	const type = useMemo(() => {
 		if (file?.extension) {
+			if (!file?.extension?.split('.')?.at(-1)) return FILE_IMAGE['png'];
+
 			return FILE_IMAGE[file.extension.split('.').at(-1)] || FILE_IMAGE['other'];
 		} else {
 			return FILE_IMAGE[file.type] || FILE_IMAGE['other'];

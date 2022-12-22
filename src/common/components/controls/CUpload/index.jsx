@@ -13,6 +13,7 @@ import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
 import './index.scss';
+import { ERRORS } from '_constants/messages';
 
 const MAX_FILES = 5;
 
@@ -51,6 +52,8 @@ export const CUpload = ({ name, itemData }) => {
 					};
 
 					append(file);
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
 				}
 			} else {
 				alert.fail({ text: 'Định dạng file không hợp lệ (.pdf, hoặc image/*).' });

@@ -30,6 +30,7 @@ import TitleModal from './TitleModal';
 const HeaderItem = memo(({ data }) => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
+	const status = useSelector((state) => state.form.status, shallowEqual);
 
 	const [titles, setTitles] = useState([]);
 
@@ -114,7 +115,10 @@ const HeaderItem = memo(({ data }) => {
 										</Box>
 									</Grid>
 									<Grid item xs='auto'>
-										<IconButton onClick={handleEdit(title)}>
+										<IconButton
+											onClick={handleEdit(title)}
+											disabled={status === 3 || status === 2}
+										>
 											<EditOutlined />
 										</IconButton>
 									</Grid>
@@ -125,7 +129,10 @@ const HeaderItem = memo(({ data }) => {
 					<Grid item xs={12} mb={1}>
 						<Grid container alignItems='center' justifyContent='center' spacing={1}>
 							<Grid item xs='auto'>
-								<IconButton onClick={openCreate}>
+								<IconButton
+									onClick={openCreate}
+									disabled={status === 3 || status === 2}
+								>
 									<AddCircleOutline />
 								</IconButton>
 							</Grid>

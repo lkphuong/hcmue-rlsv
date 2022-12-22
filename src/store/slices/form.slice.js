@@ -45,7 +45,7 @@ const persistConfig = {
 	key: 'form',
 	version: 1,
 	storage,
-	whitelist: ['form_id', 'header_id', 'title_id', 'step'],
+	whitelist: ['form_id', 'header_id', 'title_id', 'step', 'status'],
 };
 
 export default persistReducer(persistConfig, formSlice.reducer);

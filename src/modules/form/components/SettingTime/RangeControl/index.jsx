@@ -5,7 +5,7 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { MDateStart } from './Start';
 import { MDateEnd } from './End';
 
-export const RangeControl = ({ control, label, name }) => {
+export const RangeControl = ({ control, label, name, disabled }) => {
 	//#region Data
 	//#endregion
 
@@ -26,6 +26,7 @@ export const RangeControl = ({ control, label, name }) => {
 					beforeCondition={
 						name === 'classes' ? 'student' : name === 'department' ? 'classes' : ''
 					}
+					disabled={disabled}
 				/>
 
 				<MDateEnd
@@ -34,6 +35,7 @@ export const RangeControl = ({ control, label, name }) => {
 					beforeCondition={
 						name === 'classes' ? 'student' : name === 'department' ? 'classes' : ''
 					}
+					disabled={disabled}
 				/>
 			</Stack>
 		</Grid>

@@ -12,7 +12,7 @@ import { isSuccess } from '_func/';
 
 import { ERRORS } from '_constants/messages';
 
-const ItemDisplay = memo(({ data, refetch, handleEdit }) => {
+const ItemDisplay = memo(({ data, refetch, handleEdit, disabled }) => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 	//#endregion
@@ -39,7 +39,7 @@ const ItemDisplay = memo(({ data, refetch, handleEdit }) => {
 	return (
 		<Grid container alignItems='center' spacing={1}>
 			<Grid item xs='auto'>
-				<IconButton onClick={handleDeleteItem}>
+				<IconButton onClick={handleDeleteItem} disabled={disabled}>
 					<RemoveCircleOutline />
 				</IconButton>
 			</Grid>
@@ -77,7 +77,7 @@ const ItemDisplay = memo(({ data, refetch, handleEdit }) => {
 			)}
 
 			<Grid item xs='auto'>
-				<IconButton onClick={handleEdit}>
+				<IconButton onClick={handleEdit} disabled={disabled}>
 					<EditOutlined />
 				</IconButton>
 			</Grid>

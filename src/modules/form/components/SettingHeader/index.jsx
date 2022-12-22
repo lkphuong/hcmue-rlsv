@@ -18,6 +18,7 @@ const SettingHeader = memo(() => {
 	const createRef = useRef();
 
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
+	const status = useSelector((state) => state.form.status, shallowEqual);
 
 	const [headers, setHeaders] = useState([]);
 	//#endregion
@@ -81,7 +82,10 @@ const SettingHeader = memo(() => {
 									spacing={1}
 								>
 									<Grid item xs='auto'>
-										<IconButton onClick={onDelete(header.id)}>
+										<IconButton
+											onClick={onDelete(header.id)}
+											disabled={status === 3 || status === 2}
+										>
 											<RemoveCircleOutline />
 										</IconButton>
 									</Grid>
@@ -100,7 +104,10 @@ const SettingHeader = memo(() => {
 										</Box>
 									</Grid>
 									<Grid item xs='auto'>
-										<IconButton onClick={handleEdit(header)}>
+										<IconButton
+											onClick={handleEdit(header)}
+											disabled={status === 3 || status === 2}
+										>
 											<EditOutlined />
 										</IconButton>
 									</Grid>
@@ -111,7 +118,10 @@ const SettingHeader = memo(() => {
 					<Grid item xs={12} mb={1}>
 						<Grid container alignItems='center' justifyContent='center' spacing={1}>
 							<Grid item xs='auto'>
-								<IconButton onClick={openCreate}>
+								<IconButton
+									onClick={openCreate}
+									disabled={status === 3 || status === 2}
+								>
 									<AddCircleOutline />
 								</IconButton>
 							</Grid>

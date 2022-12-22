@@ -7,7 +7,7 @@ import dayjs from 'dayjs';
 
 import { CDatePicker } from '_controls/';
 
-export const MDateEnd = ({ control, name, beforeCondition }) => {
+export const MDateEnd = ({ control, name, beforeCondition, disabled }) => {
 	//#region Data
 	const { resetField, trigger } = useFormContext();
 
@@ -63,6 +63,7 @@ export const MDateEnd = ({ control, name, beforeCondition }) => {
 					fieldState: { error },
 				}) => (
 					<CDatePicker
+						disabled={disabled}
 						disablePast
 						minDate={dayjs()}
 						name={name}

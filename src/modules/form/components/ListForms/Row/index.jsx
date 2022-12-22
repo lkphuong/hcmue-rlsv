@@ -120,7 +120,7 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 
 	//#region Render
 	return (
-		<TableRow hover>
+		<TableRow hover sx={{ '&:hover': { cursor: 'pointer' } }} onClick={onEdit}>
 			<TableCell align='center'>{index + 1}</TableCell>
 			<TableCell align='center'>{data.semester.name}</TableCell>
 			<TableCell align='center'>{data.academic.name}</TableCell>

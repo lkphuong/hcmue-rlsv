@@ -1,3 +1,5 @@
+import { shallowEqual, useSelector } from 'react-redux';
+
 import { AddCircleOutline, ExpandMore } from '@mui/icons-material';
 import {
 	Accordion,
@@ -18,6 +20,8 @@ import ItemModal from './ItemModal';
 const TitleItem = memo(({ data }) => {
 	//#region Data
 	const itemRef = useRef();
+
+	const status = useSelector((state) => state.form.status, shallowEqual);
 
 	const [items, setItems] = useState([]);
 
@@ -61,13 +65,14 @@ const TitleItem = memo(({ data }) => {
 							data={item}
 							refetch={getItems}
 							handleEdit={handleEdit(item)}
+							disabled={status === 3 || status === 2}
 						/>
 					))}
 
 				<Grid item xs={12}>
 					<Grid container alignItems='center' justifyContent='center' spacing={1}>
 						<Grid item xs='auto'>
-							<IconButton onClick={openModal}>
+							<IconButton onClick={openModal} disabled={status === 3 || status === 2}>
 								<AddCircleOutline />
 							</IconButton>
 						</Grid>

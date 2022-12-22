@@ -28,7 +28,7 @@ import { RangeControl } from './RangeControl';
 const SettingTime = memo(() => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
-
+	const status = useSelector((state) => state.form.status, shallowEqual);
 	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
 
 	const dispatch = useDispatch();
@@ -121,6 +121,7 @@ const SettingTime = memo(() => {
 											fieldState: { error },
 										}) => (
 											<CAutocomplete
+												disabled={status === 2 || status === 3}
 												disableClearable
 												onChange={handleChangeSelect(onChange)}
 												onBlur={onBlur}
@@ -150,6 +151,7 @@ const SettingTime = memo(() => {
 											fieldState: { error },
 										}) => (
 											<CAutocomplete
+												disabled={status === 2 || status === 3}
 												disableClearable
 												onChange={handleChangeSelect(onChange)}
 												onBlur={onBlur}
@@ -179,14 +181,21 @@ const SettingTime = memo(() => {
 							control={control}
 							label='Thời gian sinh viên chấm'
 							name='student'
+							disabled={status === 2 || status === 3}
 						/>
 
-						<RangeControl control={control} label='Thời gian lớp chấm' name='classes' />
+						<RangeControl
+							control={control}
+							label='Thời gian lớp chấm'
+							name='classes'
+							disabled={status === 2 || status === 3}
+						/>
 
 						<RangeControl
 							control={control}
 							label='Thời gian khoa chấm'
 							name='department'
+							disabled={status === 2 || status === 3}
 						/>
 
 						<Grid item xs={12} textAlign='center'>
@@ -199,6 +208,7 @@ const SettingTime = memo(() => {
 							>
 								<Grid item>
 									<Button
+										disabled={status === 2 || status === 3}
 										sx={{ maxWidth: 200 }}
 										type='submit'
 										variant='contained'

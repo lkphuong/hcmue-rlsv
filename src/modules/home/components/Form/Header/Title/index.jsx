@@ -6,11 +6,9 @@ import Item from './Item';
 
 const Title = memo(({ data, headerId }) => {
 	//#region Data
-
 	//#endregion
 
 	//#region Event
-
 	//#endregion
 
 	//#region Render

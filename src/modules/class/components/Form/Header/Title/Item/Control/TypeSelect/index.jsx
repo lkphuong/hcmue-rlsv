@@ -1,38 +1,22 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-
 import { Box, TableCell, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
-import { actions } from '_slices/mark.slice';
+import { Controller, useController, useFormContext } from 'react-hook-form';
 
-const TypeSelect = ({
-	item_id,
-	initialMark,
-	currentMark,
-	options,
-	required,
-	header_id,
-	available,
-}) => {
+const TypeSelect = ({ initialMark, currentMark, options, required, available, titleId, index }) => {
 	//#region Data
-	const [score, setScore] = useState(initialMark);
+	const { control } = useFormContext();
 
-	const dispatch = useDispatch();
+	const {
+		field: { onChange: changeOption },
+	} = useController({ control, name: `title_${titleId}.${index}.option_id` });
 	//#endregion
 
 	//#region Event
-	const onChangeSelect = (value) => {
-		const markObj = {
-			item_id,
-			class_mark_level: value?.mark,
-			option_id: Number(value?.id),
-			header_id,
-		};
-
-		setScore(value.mark);
-		dispatch(actions.updateMarks(markObj));
+	const onChangeSelect = (CallbackFunc) => (option) => {
+		CallbackFunc(option?.mark);
+		changeOption(Number(option?.id));
 	};
 	//#endregion
 
@@ -40,23 +24,31 @@ const TypeSelect = ({
 	return (
 		<>
 			<TableCell />
-
 			<TableCell align='center'>
 				<Typography>{currentMark.personal_mark_level || 0}</Typography>
 			</TableCell>
 			<TableCell align='center'>
 				{available ? (
-					<CAutocomplete
-						disableClearable={required}
-						options={options}
-						display='content'
-						valueGet='mark'
-						value={score}
-						onChange={onChangeSelect}
-						renderOption={(props, option) => (
-							<Box component='li' key={option.id} {...props}>
-								{option.content} (<b>{option.mark} Điểm</b>)
-							</Box>
+					<Controller
+						control={control}
+						name={`title_${titleId}[${index}].class_mark_level`}
+						defaultValue={initialMark}
+						render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
+							<CAutocomplete
+								ref={ref}
+								disableClearable={required}
+								options={options}
+								display='mark'
+								valueGet='mark'
+								value={value}
+								onChange={onChangeSelect(onChange)}
+								renderOption={(props, option) => (
+									<Box component='li' key={option.id} {...props}>
+										{option.content} (<b>{option.mark} Điểm</b>)
+									</Box>
+								)}
+								error={!!error}
+							/>
 						)}
 					/>
 				) : (

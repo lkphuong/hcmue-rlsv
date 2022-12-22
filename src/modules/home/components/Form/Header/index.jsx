@@ -8,11 +8,9 @@ import Title from './Title';
 
 const Header = memo(({ data, index, sheetId }) => {
 	//#region Data
-
 	//#endregion
 
 	//#region Event
-
 	//#endregion
 
 	//#region Render

@@ -1,8 +1,12 @@
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useReactToPrint } from 'react-to-print';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Print } from '@mui/icons-material';
+
 import dayjs from 'dayjs';
 
 import { Form } from '_modules/class/components';
@@ -14,10 +18,11 @@ import { alert } from '_func/alert';
 
 import { actions } from '_slices/mark.slice';
 
-import { CExpired } from '_others/';
+import { CExpired, CPrintComponent } from '_others/';
 
-import { useReactToPrint } from 'react-to-print';
-import { Print } from '@mui/icons-material';
+import { useResolver } from '_hooks/';
+
+import { validationSchema } from '_modules/class/form';
 
 export const ClassMarksContext = createContext();
 
@@ -30,6 +35,10 @@ const ClassDetailPage = () => {
 
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
+
+	const resolver = useResolver(validationSchema(data?.headers));
+
+	const methods = useForm({ resolver });
 
 	const navigate = useNavigate();
 
@@ -69,7 +78,10 @@ const ClassDetailPage = () => {
 		try {
 			const res = await getItemsMarks(data.id);
 
-			if (isSuccess(res)) setItemsMark(res.data);
+			if (isSuccess(res))
+				setItemsMark(() => {
+					return res.data.map((e) => ({ ...e, id: Number(e.id) }));
+				});
 		} catch (error) {
 			throw error;
 		}
@@ -80,7 +92,6 @@ const ClassDetailPage = () => {
 			return ref.current;
 		},
 	});
-
 	//#endregion
 
 	useEffect(() => {
@@ -109,7 +120,6 @@ const ClassDetailPage = () => {
 
 			dispatch(actions.renewMarks(payload));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data?.status, itemsMark]);
 
 	useEffect(() => {
@@ -119,32 +129,36 @@ const ClassDetailPage = () => {
 	//#region Render
 	return data ? (
 		<Box>
-			<ClassMarksContext.Provider value={{ itemsMark, status: data?.status }}>
-				{!available && (
-					<CExpired
-						roleName='lớp'
-						start={data?.time_class?.start}
-						end={data?.time_class?.end}
-					/>
-				)}
+			<FormProvider {...methods}>
+				<ClassMarksContext.Provider value={{ itemsMark, status: data?.status }}>
+					{!available && (
+						<CExpired
+							roleName='lớp'
+							start={data?.time_class?.start}
+							end={data?.time_class?.end}
+						/>
+					)}
 
-				<Box mb={1.5}>
+					<Box mb={1.5}>
+						<Paper className='paper-wrapper'>
+							<Stack direction='row' justifyContent='space-between'>
+								<Typography fontSize={20} p={1.5} fontWeight={600}>
+									{`${data?.user?.fullname} - ${data?.user?.std_code}`}
+								</Typography>
+								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
+									In phiếu
+								</Button>
+							</Stack>
+						</Paper>
+					</Box>
+
 					<Paper className='paper-wrapper'>
-						<Stack direction='row' justifyContent='space-between'>
-							<Typography fontSize={20} p={1.5} fontWeight={600}>
-								{`${data?.user?.fullname} - ${data?.user?.std_code}`}
-							</Typography>
-							<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
-								In phiếu
-							</Button>
-						</Stack>
+						<Box p={1.5}>{data && <Form data={data} />}</Box>
 					</Paper>
-				</Box>
 
-				<Paper className='paper-wrapper'>
-					<Box p={1.5}>{data && <Form data={data} status={data?.status} />}</Box>
-				</Paper>
-			</ClassMarksContext.Provider>
+					<CPrintComponent data={data} marks={itemsMark} ref={ref} />
+				</ClassMarksContext.Provider>
+			</FormProvider>
 		</Box>
 	) : (
 		<></>

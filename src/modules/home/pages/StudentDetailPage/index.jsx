@@ -50,6 +50,7 @@ const SemesterDetail = () => {
 	//#region Event
 	const getForm = useCallback(async () => {
 		if (!sheet_id) return;
+
 		try {
 			const res = await getSheetById(sheet_id);
 

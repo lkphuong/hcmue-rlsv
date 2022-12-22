@@ -6,7 +6,6 @@ import { Controller, useController, useFormContext } from 'react-hook-form';
 
 const TypeSelect = ({ initialMark, currentMark, options, required, available, titleId, index }) => {
 	//#region Data
-
 	const { control } = useFormContext();
 
 	const {
@@ -15,7 +14,6 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 	//#endregion
 
 	//#region Event
-
 	const onChangeSelect = (CallbackFunc) => (option) => {
 		CallbackFunc(option?.mark);
 		changeOption(Number(option?.id));

@@ -1,39 +1,17 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
-
-import { useNavigate } from 'react-router-dom';
+import React, { memo } from 'react';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
 
-import { isSuccess, intToRoman } from '_func/';
-
-import { getTitlesByHeaderId } from '_api/form.api';
+import { intToRoman } from '_func/';
 
 import Title from './Title';
 
 const Header = memo(({ data, index, sheetId }) => {
 	//#region Data
-	const [titles, setTitles] = useState([]);
-
-	const navigate = useNavigate();
 	//#endregion
 
 	//#region Event
-	const getTitles = useCallback(async () => {
-		if (!data?.id) return navigate(-1);
-
-		try {
-			const res = await getTitlesByHeaderId(data.id);
-
-			if (isSuccess(res)) setTitles(res.data);
-		} catch (error) {
-			throw error;
-		}
-	}, [data?.id, navigate]);
 	//#endregion
-
-	useEffect(() => {
-		getTitles();
-	}, [getTitles]);
 
 	//#region Render
 	return (
@@ -54,9 +32,15 @@ const Header = memo(({ data, index, sheetId }) => {
 				</TableCell>
 			</TableRow>
 
-			{titles.length > 0 &&
-				titles.map((e, i) => (
-					<Title key={i} data={e} sheetId={sheetId} index={i + 1} headerId={data.id} />
+			{data?.titles?.length > 0 &&
+				data.titles.map((e, i) => (
+					<Title
+						key={i}
+						data={e}
+						sheetId={sheetId}
+						index={i + 1}
+						headerId={Number(data.id)}
+					/>
 				))}
 		</>
 	);

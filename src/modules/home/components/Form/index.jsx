@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useFormContext } from 'react-hook-form';
@@ -43,7 +41,6 @@ export const Form = ({ data }) => {
 
 	//#region Event
 	const onSubmit = async (values) => {
-		console.log(values);
 		const marks = Object.values(values).flat();
 
 		const _data = marks.map((e) => {
@@ -139,13 +136,7 @@ export const Form = ({ data }) => {
 			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
-				<Button
-					sx={{ mb: 2 }}
-					variant='contained'
-					// onClick={handleUpdate}
-					type='submit'
-					disabled={!available}
-				>
+				<Button sx={{ mb: 2 }} variant='contained' type='submit' disabled={!available}>
 					Cập nhật
 				</Button>
 			</Box>

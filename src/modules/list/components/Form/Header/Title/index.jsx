@@ -1,39 +1,15 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
-
-import { useNavigate } from 'react-router-dom';
+import React, { memo } from 'react';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
-
-import { isSuccess } from '_func/';
-
-import { getItemsByTitleId } from '_api/form.api';
 
 import Item from './Item';
 
 const Title = memo(({ data, headerId }) => {
 	//#region Data
-	const [items, setItems] = useState([]);
-
-	const navigate = useNavigate();
 	//#endregion
 
 	//#region Event
-	const getItems = useCallback(async () => {
-		if (!data?.id) return navigate(-1);
-
-		try {
-			const res = await getItemsByTitleId(data.id);
-
-			if (isSuccess(res)) setItems(res.data);
-		} catch (error) {
-			throw error;
-		}
-	}, [data?.id, navigate]);
 	//#endregion
-
-	useEffect(() => {
-		getItems();
-	}, [getItems]);
 
 	//#region Render
 	return (
@@ -47,7 +23,16 @@ const Title = memo(({ data, headerId }) => {
 				</TableCell>
 			</TableRow>
 
-			{items.length > 0 && items.map((e, i) => <Item key={i} data={e} headerId={headerId} />)}
+			{data?.items?.length > 0 &&
+				data.items.map((e, i) => (
+					<Item
+						key={i}
+						data={e}
+						headerId={headerId}
+						titleId={Number(data.id)}
+						index={i}
+					/>
+				))}
 		</>
 	);
 	//#endregion

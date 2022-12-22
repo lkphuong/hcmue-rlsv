@@ -9,7 +9,8 @@ import { StudentMarksContext } from '_modules/home/pages/StudentDetailPage';
 
 import { actions } from '_slices/mark.slice';
 
-import { FileModal } from './FileModal';
+import { CFileModal } from '_others/';
+
 import Control from './Control';
 
 const Item = memo(({ data, headerId, titleId, index }) => {
@@ -69,7 +70,7 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 				available={available}
 			/>
 
-			<FileModal
+			<CFileModal
 				ref={fileRef}
 				name={`title_${titleId}.${index}.files`}
 				itemData={itemsMark[index]}

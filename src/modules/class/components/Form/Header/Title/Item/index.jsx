@@ -1,21 +1,30 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useContext, useEffect, useRef } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { Controller } from 'react-hook-form';
 
-import { TableCell, TableRow, Typography } from '@mui/material';
+import { Button, TableCell, TableRow, Typography } from '@mui/material';
+import { ImageSearch } from '@mui/icons-material';
+
+import { ClassMarksContext } from '_modules/class/pages/ClassDetailPage';
 
 import { actions } from '_slices/mark.slice';
 
+import { CFileModal } from '_others/';
+
 import Control from './Control';
 
-const Item = memo(({ data, headerId }) => {
+const Item = memo(({ data, headerId, titleId, index }) => {
 	//#region Data
+	const fileRef = useRef();
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+	const { itemsMark } = useContext(ClassMarksContext);
 
 	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
+	const openModal = () => fileRef.current.open();
 	//#endregion
 
 	useEffect(() => {
@@ -28,28 +37,45 @@ const Item = memo(({ data, headerId }) => {
 
 	//#region Render
 	return (
-		<>
-			<TableRow>
-				<TableCell />
-				<TableCell>
-					<Typography ml={2}>- {data.content}</Typography>
-				</TableCell>
+		<TableRow>
+			<TableCell />
+			<TableCell>
+				<Typography ml={2}>- {data.content}</Typography>
 
-				<Control
-					id={Number(data.id)}
-					min={data.from_mark}
-					max={data.to_mark}
-					mark={data.mark}
-					control={data.control}
-					category={data.category}
-					unit={data.unit}
-					options={data.options || []}
-					required={data.required}
-					headerId={Number(headerId)}
-					available={available}
+				{data?.is_file && (
+					<Button size='small' endIcon={<ImageSearch />} onClick={openModal}>
+						Minh chứng
+					</Button>
+				)}
+			</TableCell>
+
+			<TableCell sx={{ display: 'none' }}>
+				<Controller
+					name={`title_${titleId}.${index}.header_id`}
+					defaultValue={headerId}
+					render={({ field }) => <input type='hidden' {...field} />}
 				/>
-			</TableRow>
-		</>
+				<Controller
+					name={`title_${titleId}.${index}.item_id`}
+					defaultValue={Number(data?.id)}
+					render={({ field }) => <input type='hidden' {...field} />}
+				/>
+			</TableCell>
+
+			<Control
+				data={data}
+				id={Number(data.id)}
+				titleId={titleId}
+				index={index}
+				available={available}
+			/>
+
+			<CFileModal
+				ref={fileRef}
+				name={`title_${titleId}.${index}.files`}
+				itemData={itemsMark[index]}
+			/>
+		</TableRow>
 	);
 	//#endregion
 });

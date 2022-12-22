@@ -1,11 +1,11 @@
-import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useState, useRef, createContext } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useLocation, useParams } from 'react-router-dom';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useReactToPrint } from 'react-to-print';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
-
-import { useReactToPrint } from 'react-to-print';
 
 import dayjs from 'dayjs';
 
@@ -17,7 +17,11 @@ import { isSuccess } from '_func/';
 
 import { actions } from '_slices/mark.slice';
 
-import { CExpired } from '_others/';
+import { CExpired, CPrintComponent } from '_others/';
+
+import { useResolver } from '_hooks/';
+
+import { validationSchema } from '_modules/list/form';
 
 export const DepartmentMarksContext = createContext();
 
@@ -31,6 +35,10 @@ const ListDetailPage = () => {
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
 
+	const resolver = useResolver(validationSchema(data?.headers));
+
+	const methods = useForm({ resolver });
+
 	const dispatch = useDispatch();
 
 	const location = useLocation();
@@ -39,6 +47,7 @@ const ListDetailPage = () => {
 	//#region Event
 	const getForm = useCallback(async () => {
 		if (!sheet_id) return;
+
 		try {
 			const res = await getSheetById(sheet_id);
 
@@ -66,7 +75,10 @@ const ListDetailPage = () => {
 		try {
 			const res = await getItemsMarks(data.id);
 
-			if (isSuccess(res)) setItemsMark(res.data);
+			if (isSuccess(res))
+				setItemsMark(() => {
+					return res.data.map((e) => ({ ...e, id: Number(e.id) }));
+				});
 		} catch (error) {
 			throw error;
 		}
@@ -114,7 +126,6 @@ const ListDetailPage = () => {
 
 			dispatch(actions.renewMarks(payload));
 		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data?.status, itemsMark]);
 
 	useEffect(() => {
@@ -124,32 +135,36 @@ const ListDetailPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<DepartmentMarksContext.Provider value={{ status: data?.status, itemsMark }}>
-				{!available && (
-					<CExpired
-						roleName='khoa'
-						start={data?.time_department?.start}
-						end={data?.time_department?.end}
-					/>
-				)}
+			<FormProvider {...methods}>
+				<DepartmentMarksContext.Provider value={{ status: data?.status, itemsMark }}>
+					{!available && (
+						<CExpired
+							roleName='khoa'
+							start={data?.time_department?.start}
+							end={data?.time_department?.end}
+						/>
+					)}
 
-				<Box mb={1.5}>
+					<Box mb={1.5}>
+						<Paper className='paper-wrapper'>
+							<Stack direction='row' justifyContent='space-between'>
+								<Typography fontSize={20} p={1.5} fontWeight={600}>
+									{`${data?.user?.fullname} - ${data?.user?.std_code}`}
+								</Typography>
+								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
+									In phiếu
+								</Button>
+							</Stack>
+						</Paper>
+					</Box>
+
 					<Paper className='paper-wrapper'>
-						<Stack direction='row' justifyContent='space-between'>
-							<Typography fontSize={20} p={1.5} fontWeight={600}>
-								{`${data?.user?.fullname} - ${data?.user?.std_code}`}
-							</Typography>
-							<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
-								In phiếu
-							</Button>
-						</Stack>
+						<Box p={1.5}>{data && <Form data={data} />}</Box>
 					</Paper>
-				</Box>
 
-				<Paper className='paper-wrapper'>
-					<Box p={1.5}>{data && <Form data={data} />}</Box>
-				</Paper>
-			</DepartmentMarksContext.Provider>
+					<CPrintComponent data={data} marks={itemsMark} ref={ref} />
+				</DepartmentMarksContext.Provider>
+			</FormProvider>
 		</Box>
 	);
 	//#endregion

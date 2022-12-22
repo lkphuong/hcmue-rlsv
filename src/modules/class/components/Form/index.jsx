@@ -2,6 +2,7 @@ import React from 'react';
 
 import { useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useFormContext } from 'react-hook-form';
 
 import {
 	Box,
@@ -32,7 +33,8 @@ const Form = ({ data }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
-	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+
+	const { handleSubmit } = useFormContext();
 
 	const navigate = useNavigate();
 
@@ -40,40 +42,41 @@ const Form = ({ data }) => {
 	//#endregion
 
 	//#region Event
-	const handleUpdate = async () => {
-		try {
-			if (!marks?.length) {
-				alert.fail({ title: 'Bạn chưa cập nhật điểm!' });
-				return;
-			}
+	const onSubmit = async (values) => {
+		const marks = Object.values(values).flat();
 
-			const _data = marks.map((e) => ({ ...e, item_id: Number(e.item_id) }));
+		const _data = marks.map((e) => {
+			const obj = { ...e, item_id: Number(e.item_id) };
 
-			const body = {
-				role_id,
-				data: _data,
-			};
+			if (obj?.files) {
+				const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
 
-			const res = await updateClassSheets(data.id, body);
+				return { ...obj, files };
+			} else return obj;
+		});
 
-			if (isSuccess(res)) {
-				const { data } = res;
+		const body = {
+			role_id,
+			data: _data,
+		};
 
-				alert.confirmMark({
-					onConfirm: () => {
-						dispatch(actions.clearMarks());
+		const res = await updateClassSheets(data.id, body);
 
-						navigate(ROUTES.CLASS_SCORE, { replace: true });
-					},
-					fullname: data?.user?.fullname,
-					mark: data?.sum_of_class_marks,
-					level: data?.level?.name,
-				});
-			} else {
-				alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
-			}
-		} catch (error) {
-			throw error;
+		if (isSuccess(res)) {
+			const { data } = res;
+
+			alert.confirmMark({
+				onConfirm: () => {
+					dispatch(actions.clearMarks());
+
+					navigate(ROUTES.CLASS_SCORE, { replace: true });
+				},
+				fullname: data?.user?.fullname,
+				mark: data?.sum_of_class_marks,
+				level: data?.level?.name,
+			});
+		} else {
+			alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
 		}
 	};
 
@@ -97,7 +100,7 @@ const Form = ({ data }) => {
 
 	//#region Render
 	return (
-		<>
+		<form onSubmit={handleSubmit(onSubmit)}>
 			<TableContainer>
 				<Table
 					stickyHeader
@@ -145,7 +148,7 @@ const Form = ({ data }) => {
 					<TableBody>
 						{data?.headers?.length > 0 &&
 							data.headers.map((e, i) => (
-								<Header key={i} data={e} sheetId={data?.id} index={i + 1} />
+								<Header key={i} data={e} sheetId={Number(data?.id)} index={i + 1} />
 							))}
 					</TableBody>
 				</Table>
@@ -161,16 +164,11 @@ const Form = ({ data }) => {
 				>
 					Không xếp loại
 				</Button>
-				<Button
-					sx={{ mb: 2 }}
-					variant='contained'
-					onClick={handleUpdate}
-					disabled={!available}
-				>
+				<Button sx={{ mb: 2 }} variant='contained' type='submit' disabled={!available}>
 					Cập nhật
 				</Button>
 			</Box>
-		</>
+		</form>
 	);
 	//#endregion
 };

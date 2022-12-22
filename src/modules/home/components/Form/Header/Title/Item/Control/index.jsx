@@ -99,12 +99,10 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 	//#endregion
 
 	//#region Event
-
 	//#endregion
 
 	//#region Render
 	return <>{renderControl[data.control]}</>;
-
 	//#endregion
 });
 

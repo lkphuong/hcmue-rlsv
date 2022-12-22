@@ -13,10 +13,14 @@ const TypeCheckbox = memo(({ control }) => {
 
 	//#region Event
 	const handleChangeMark = (CallbackFunc) => (event) => {
-		if (!isNaN(event.target.value)) {
-			CallbackFunc(Number(event.target.value));
+		if (event.target.value?.includes('.')) {
+			CallbackFunc(event);
 		} else {
-			CallbackFunc(event.target.value);
+			if (!isNaN(event.target.value)) {
+				CallbackFunc(Number(event.target.value));
+			} else {
+				CallbackFunc(event.target.value);
+			}
 		}
 	};
 	//#endregion

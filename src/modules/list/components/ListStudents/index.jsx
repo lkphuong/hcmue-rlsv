@@ -22,7 +22,7 @@ import { isSuccess } from '_func/';
 
 import Row from './Row';
 
-const ListStudents = ({ data, refetch, isSelectedAll, selected, onSelect }) => {
+const ListStudents = ({ data, refetch, isSelectedAll, selected, onSelect, saveFilter }) => {
 	//#region Data
 	const isSelected = useMemo(
 		() => selected && !!Object.values(selected).filter((s) => s).length,
@@ -100,6 +100,7 @@ const ListStudents = ({ data, refetch, isSelectedAll, selected, onSelect }) => {
 									classId={class_id}
 									onSelect={onSelect(Number(row.id))}
 									isSelected={selected?.includes(Number(row.id)) || isSelectedAll}
+									saveFilter={saveFilter}
 								/>
 							))}
 					</TableBody>

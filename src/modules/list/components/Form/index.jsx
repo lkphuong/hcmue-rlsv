@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useFormContext } from 'react-hook-form';
 
@@ -33,6 +33,8 @@ const Form = ({ data }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
+
+	const { class_name } = useParams();
 
 	const {
 		handleSubmit,
@@ -72,7 +74,9 @@ const Form = ({ data }) => {
 				onConfirm: () => {
 					dispatch(actions.clearMarks());
 
-					navigate(`${ROUTES.LIST}/${data.class.id}`, { replace: true });
+					navigate(`${ROUTES.LIST}/${data.class.id}/class/${class_name}`, {
+						replace: true,
+					});
 				},
 				fullname: data?.user?.fullname,
 				mark: data?.sum_of_department_marks,

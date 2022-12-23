@@ -11,7 +11,7 @@ export const ROUTES = {
 
 	LIST: '/list',
 	LIST_DETAIL_CLASS: '/list/:class_id/class/:class_name',
-	LIST_DETAIL_STUDENT: '/list/:class_id/:sheet_id',
+	LIST_DETAIL_STUDENT: '/list/:class_id/:sheet_id/:class_name',
 
 	FORM: '/admin/forms',
 	FORM_CREATE: '/admin/forms/create',

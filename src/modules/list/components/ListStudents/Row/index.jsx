@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useCallback, useContext, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -8,9 +8,13 @@ import { HistoryEdu } from '@mui/icons-material';
 import { STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
 
-const Row = memo(({ classId, data, index, isSelected, onSelect }) => {
+import { NameContext } from '_modules/list/pages/StudentListPage';
+
+const Row = memo(({ classId, data, index, isSelected, onSelect, saveFilter }) => {
 	//#region Data
 	const navigate = useNavigate();
+
+	const { class_name } = useContext(NameContext);
 
 	const status = useMemo(
 		() => STATUS.find((e) => e.value.toString() === (data?.status).toString())?.name || null,
@@ -21,7 +25,10 @@ const Row = memo(({ classId, data, index, isSelected, onSelect }) => {
 	//#region Event
 	const onEdit = (e) => {
 		e.stopPropagation();
-		navigate(`${ROUTES.LIST}/${classId}/${data?.id}`);
+
+		saveFilter();
+
+		navigate(`${ROUTES.LIST}/${classId}/${data?.id}/${class_name}`);
 	};
 
 	const handleSelect = useCallback(

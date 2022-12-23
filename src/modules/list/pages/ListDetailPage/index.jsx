@@ -66,6 +66,8 @@ const ListDetailPage = () => {
 	}, [sheet_id]);
 
 	const getMarks = useCallback(async () => {
+		if (!data?.id) return;
+
 		try {
 			const res = await getItemsMarks(data.id);
 
@@ -130,34 +132,40 @@ const ListDetailPage = () => {
 	return (
 		<Box>
 			<FormProvider {...methods}>
-				<DepartmentMarksContext.Provider value={{ status: data?.status, itemsMark }}>
-					{!available && (
-						<CExpired
-							roleName='khoa'
-							start={data?.time_department?.start}
-							end={data?.time_department?.end}
-						/>
-					)}
+				{data && (
+					<DepartmentMarksContext.Provider value={{ status: data?.status, itemsMark }}>
+						{!available && (
+							<CExpired
+								roleName='khoa'
+								start={data?.time_department?.start}
+								end={data?.time_department?.end}
+							/>
+						)}
 
-					<Box mb={1.5}>
+						<Box mb={1.5}>
+							<Paper className='paper-wrapper'>
+								<Stack direction='row' justifyContent='space-between'>
+									<Typography fontSize={20} p={1.5} fontWeight={600}>
+										{`${data?.user?.fullname} - ${data?.user?.std_code}`}
+									</Typography>
+									<Button
+										startIcon={<Print />}
+										sx={{ p: 1.5 }}
+										onClick={handlePrint}
+									>
+										In phiếu
+									</Button>
+								</Stack>
+							</Paper>
+						</Box>
+
 						<Paper className='paper-wrapper'>
-							<Stack direction='row' justifyContent='space-between'>
-								<Typography fontSize={20} p={1.5} fontWeight={600}>
-									{`${data?.user?.fullname} - ${data?.user?.std_code}`}
-								</Typography>
-								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
-									In phiếu
-								</Button>
-							</Stack>
+							<Box p={1.5}>{data && <Form data={data} />}</Box>
 						</Paper>
-					</Box>
 
-					<Paper className='paper-wrapper'>
-						<Box p={1.5}>{data && <Form data={data} />}</Box>
-					</Paper>
-
-					<CPrintComponent data={data} marks={itemsMark} ref={ref} />
-				</DepartmentMarksContext.Provider>
+						<CPrintComponent data={data} marks={itemsMark} ref={ref} />
+					</DepartmentMarksContext.Provider>
+				)}
 			</FormProvider>
 		</Box>
 	);

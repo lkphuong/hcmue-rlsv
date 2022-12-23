@@ -40,7 +40,7 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 								value={value}
 								onChange={onChangeSelect(onChange)}
 								renderOption={(props, option) => (
-									<Box component='li' key={option.id} {...props}>
+									<Box component='li' {...props} key={option.id}>
 										{option.content} (<b>{option.mark} Điểm</b>)
 									</Box>
 								)}

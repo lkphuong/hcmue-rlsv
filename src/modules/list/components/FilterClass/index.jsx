@@ -32,7 +32,7 @@ export const FilterClass = ({ filter, onChangeFilter, semesters, academic_years,
 											options={classes}
 											display='name'
 											renderOption={(props, option) => (
-												<Box component='li' key={option.id} {...props}>
+												<Box component='li' {...props} key={option.id}>
 													{option.name}
 												</Box>
 											)}

@@ -52,7 +52,7 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 										display='name'
 										placeholder='Tất cả'
 										renderOption={(props, option) => (
-											<Box component='li' key={option.id} {...props}>
+											<Box component='li' {...props} key={option.id}>
 												{option.name}
 											</Box>
 										)}
@@ -74,7 +74,7 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 										display='name'
 										placeholder='ALL'
 										renderOption={(props, option) => (
-											<Box component='li' key={option.id} {...props}>
+											<Box component='li' {...props} key={option.id}>
 												{option.name}
 											</Box>
 										)}
@@ -95,7 +95,7 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 										options={classes}
 										display='name'
 										renderOption={(props, option) => (
-											<Box component='li' key={option.id} {...props}>
+											<Box component='li' {...props} key={option.id}>
 												{option.name}
 											</Box>
 										)}

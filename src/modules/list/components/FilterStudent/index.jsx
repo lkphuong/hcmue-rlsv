@@ -50,7 +50,7 @@ export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_year
 												options={semesters}
 												display='name'
 												renderOption={(props, option) => (
-													<Box component='li' key={option.id} {...props}>
+													<Box component='li' {...props} key={option.id}>
 														{option.name}
 													</Box>
 												)}
@@ -76,7 +76,7 @@ export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_year
 												options={academic_years}
 												display='name'
 												renderOption={(props, option) => (
-													<Box component='li' key={option.id} {...props}>
+													<Box component='li' {...props} key={option.id}>
 														{option.name}
 													</Box>
 												)}

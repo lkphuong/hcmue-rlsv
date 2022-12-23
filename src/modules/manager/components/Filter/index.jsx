@@ -56,7 +56,7 @@ export const Filter = ({
 											options={departments}
 											display='name'
 											renderOption={(props, option) => (
-												<Box component='li' key={option.id} {...props}>
+												<Box component='li' {...props} key={option.id}>
 													{option.name}
 												</Box>
 											)}
@@ -84,7 +84,7 @@ export const Filter = ({
 											options={classes}
 											display='name'
 											renderOption={(props, option) => (
-												<Box component='li' key={option.id} {...props}>
+												<Box component='li' {...props} key={option.id}>
 													{option.name}
 												</Box>
 											)}
@@ -106,7 +106,7 @@ export const Filter = ({
 											options={semesters}
 											display='name'
 											renderOption={(props, option) => (
-												<Box component='li' key={option.id} {...props}>
+												<Box component='li' {...props} key={option.id}>
 													{option.name}
 												</Box>
 											)}
@@ -127,7 +127,7 @@ export const Filter = ({
 											options={academic_years}
 											display='name'
 											renderOption={(props, option) => (
-												<Box component='li' key={option.id} {...props}>
+												<Box component='li' {...props} key={option.id}>
 													{option.name}
 												</Box>
 											)}
@@ -148,7 +148,7 @@ export const Filter = ({
 											display='name'
 											placeholder='Tất cả'
 											renderOption={(props, option) => (
-												<Box component='li' key={option.id} {...props}>
+												<Box component='li' {...props} key={option.id}>
 													{option.name}
 												</Box>
 											)}

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import { useFieldArray, useFormContext } from 'react-hook-form';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Grow, List, Typography } from '@mui/material';
 import { CloudUploadOutlined } from '@mui/icons-material';
@@ -21,6 +22,8 @@ const MAX_FILE_SIZE = 10485760;
 
 export const CUpload = ({ name, itemData }) => {
 	//#region Data
+	const available = useSelector((state) => state.mark.available, shallowEqual);
+
 	const inputRef = useRef(null);
 
 	const wrapperRef = useRef();
@@ -141,9 +144,13 @@ export const CUpload = ({ name, itemData }) => {
 					width='100%'
 					borderRadius='inherit'
 					border='3px dashed #a1a0a0'
-					sx={{ inset: 0, backgroundColor: 'transparent', cursor: 'pointer' }}
+					sx={{
+						inset: 0,
+						backgroundColor: 'transparent',
+						cursor: available ? 'pointer' : 'default',
+					}}
 				>
-					<input type='file' ref={inputRef} onChange={onChange} hidden />
+					{available && <input type='file' ref={inputRef} onChange={onChange} hidden />}
 				</Box>
 				<Box textAlign='center' fontWeight={600} p={1.1}>
 					<CloudUploadOutlined sx={{ fontSize: '3rem' }} color='primary' />

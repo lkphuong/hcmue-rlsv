@@ -21,7 +21,7 @@ const ConfigPanel = () => {
 									options={HOCKY}
 									display='name'
 									renderOption={(props, option) => (
-										<Box component='li' key={option.id} {...props}>
+										<Box component='li' {...props} key={option.id}>
 											{option.name}
 										</Box>
 									)}
@@ -32,7 +32,7 @@ const ConfigPanel = () => {
 									options={NIENKHOA}
 									display='name'
 									renderOption={(props, option) => (
-										<Box component='li' key={option.id} {...props}>
+										<Box component='li' {...props} key={option.id}>
 											{option.name}
 										</Box>
 									)}

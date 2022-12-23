@@ -537,7 +537,11 @@ export const validateRequiredOption = (
   option_id: number,
   req: Request,
 ) => {
-  if (item.control === ItemControl.SINGLE_SELECT && !option_id) {
+  if (
+    item.control === ItemControl.SINGLE_SELECT &&
+    !option_id &&
+    item.required
+  ) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_VALUE,
       req.method,

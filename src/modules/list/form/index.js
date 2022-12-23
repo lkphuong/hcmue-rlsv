@@ -9,7 +9,7 @@ const rules = (headers = []) => {
 				if (rule[`title_${title.id}`]) {
 					rule[`title_${title.id}`] = yup.array(
 						yup.object({
-							personal_mark_level: yup
+							department_mark_level: yup
 								.number('Vui lòng nhập điểm số')
 								.typeError('Vui lòng nhập điểm số')
 								.required('Vui lòng nhập điểm số'),
@@ -18,7 +18,7 @@ const rules = (headers = []) => {
 				} else {
 					rule[`title_${title.id}`] = yup.array(
 						yup.object({
-							personal_mark_level: yup
+							department_mark_level: yup
 								.number('Vui lòng nhập điểm số')
 								.typeError('Vui lòng nhập điểm số')
 								.required('Vui lòng nhập điểm số'),

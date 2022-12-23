@@ -36,9 +36,9 @@ const SemesterDetail = () => {
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
 
-	const resolver = useResolver(validationSchema(data?.headers));
+	// const resolver = useResolver(validationSchema(data?.headers));
 
-	const methods = useForm({ resolver });
+	const methods = useForm();
 
 	const navigate = useNavigate();
 

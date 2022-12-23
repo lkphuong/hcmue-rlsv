@@ -63,8 +63,7 @@ const SemesterDetail = () => {
 				}
 
 				const { time_student } = res.data;
-
-				if (!dayjs().isBetween(dayjs(time_student.start), dayjs(time_student.end), '[]')) {
+				if (!dayjs().isBetween(time_student.start, time_student.end, '[]')) {
 					dispatch(actions.setNotAvailable());
 				}
 

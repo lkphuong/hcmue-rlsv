@@ -63,7 +63,7 @@ const ClassDetailPage = () => {
 
 				const { time_class } = res.data;
 
-				if (!dayjs().isBetween(dayjs(time_class.start), dayjs(time_class.end), '[]')) {
+				if (!dayjs().isBetween(time_class.start, time_class.end, '[]')) {
 					dispatch(actions.setNotAvailable());
 				}
 

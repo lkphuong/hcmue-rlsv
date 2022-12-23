@@ -54,13 +54,7 @@ const ListDetailPage = () => {
 			if (isSuccess(res)) {
 				const { time_department } = res.data;
 
-				if (
-					!dayjs().isBetween(
-						dayjs(time_department.start),
-						dayjs(time_department.end),
-						'[]'
-					)
-				) {
+				if (!dayjs().isBetween(time_department.start, time_department.end, '[]')) {
 					dispatch(actions.setNotAvailable());
 				}
 

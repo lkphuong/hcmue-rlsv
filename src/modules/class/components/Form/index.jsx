@@ -14,6 +14,9 @@ import {
 	TableHead,
 	TableRow,
 } from '@mui/material';
+import { Save } from '@mui/icons-material';
+
+import LoadingButton from '@mui/lab/LoadingButton';
 
 import { alert } from '_func/alert';
 
@@ -34,7 +37,10 @@ const Form = ({ data }) => {
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
-	const { handleSubmit } = useFormContext();
+	const {
+		handleSubmit,
+		formState: { isSubmitting },
+	} = useFormContext();
 
 	const navigate = useNavigate();
 
@@ -160,13 +166,21 @@ const Form = ({ data }) => {
 					onClick={handleDeny}
 					color='error'
 					sx={{ mr: 1, mb: 2 }}
-					disabled={!available}
+					disabled={!available || isSubmitting}
 				>
 					Không xếp loại
 				</Button>
-				<Button sx={{ mb: 2 }} variant='contained' type='submit' disabled={!available}>
+				<LoadingButton
+					sx={{ mb: 2 }}
+					variant='contained'
+					type='submit'
+					disabled={!available}
+					loading={isSubmitting}
+					loadingPosition='start'
+					startIcon={<Save />}
+				>
 					Cập nhật
-				</Button>
+				</LoadingButton>
 			</Box>
 		</form>
 	);

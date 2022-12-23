@@ -6,7 +6,7 @@ import {
 	useNavigate,
 } from 'react-router-dom';
 
-// Custom resolver for validation react-fook-form by Yup
+//#region Hook resolver for validation (react-fook-form & yup)
 export const useResolver = (validationSchema) =>
 	useCallback(
 		async (data) => {
@@ -37,11 +37,9 @@ export const useResolver = (validationSchema) =>
 		},
 		[validationSchema]
 	);
+//#endregion
 
-// Check selectable row by status
-export const useCheckStatus = () => {};
-
-// Confirm before reload / navigate
+//#region Hook confirm before reload / navigate
 export function useConfirmExit(confirmExit, when = true) {
 	const { navigator } = useContext(NavigationContext);
 
@@ -112,3 +110,16 @@ export function usePrompt(message, when = true, actionConfirm) {
 	}, [message]);
 	useConfirmExit(confirmExit, when);
 }
+//#endregion
+
+//#region Hook focus error (react-hook-form)
+export const useFocusError = (isSubmitting, errors, setFocus) => {
+	useEffect(() => {
+		if (isSubmitting) return;
+		if (Object.keys(errors).length > 0) {
+			const firstError = Object.keys(errors)[0];
+
+			setFocus(firstError);
+		}
+	}, [isSubmitting, errors, setFocus]);
+};

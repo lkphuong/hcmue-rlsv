@@ -20,7 +20,7 @@ import { actions } from '_slices/mark.slice';
 
 import { CExpired, CPrintComponent } from '_others/';
 
-import { useResolver } from '_hooks/';
+import { useResolver, useFocusError } from '_hooks/';
 
 import { validationSchema } from '_modules/home/form';
 
@@ -36,9 +36,15 @@ const SemesterDetail = () => {
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
 
-	// const resolver = useResolver(validationSchema(data?.headers));
+	const resolver = useResolver(validationSchema(data?.headers));
 
-	const methods = useForm();
+	const methods = useForm({ resolver, mode: 'all', shouldFocusError: true });
+	const {
+		formState: { errors, isSubmitting },
+		setFocus,
+	} = methods;
+
+	useFocusError(isSubmitting, errors, setFocus);
 
 	const navigate = useNavigate();
 

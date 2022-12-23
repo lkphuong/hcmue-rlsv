@@ -7,23 +7,51 @@ const rules = (headers = []) => {
 		header.titles.forEach((title) => {
 			title.items.forEach((item) => {
 				if (rule[`title_${title.id}`]) {
-					rule[`title_${title.id}`] = yup.array(
-						yup.object({
-							personal_mark_level: yup
-								.number('Vui lòng nhập điểm số')
-								.typeError('Vui lòng nhập điểm số')
-								.required('Vui lòng nhập điểm số'),
-						})
-					);
+					if (item.control === 2 && item.required)
+						rule[`title_${title.id}`] = yup.array(
+							yup.object({
+								personal_mark_level: yup
+									.number('Vui lòng nhập điểm số')
+									.typeError('Vui lòng nhập điểm số')
+									.test('not-selected', 'Vui lòng chọn option', (value) => {
+										if (!value) return false;
+										return true;
+									})
+									.required('Vui lòng nhập điểm số'),
+							})
+						);
+					else
+						rule[`title_${title.id}`] = yup.array(
+							yup.object({
+								personal_mark_level: yup
+									.number('Vui lòng nhập điểm số')
+									.typeError('Vui lòng nhập điểm số')
+									.required('Vui lòng nhập điểm số'),
+							})
+						);
 				} else {
-					rule[`title_${title.id}`] = yup.array(
-						yup.object({
-							personal_mark_level: yup
-								.number('Vui lòng nhập điểm số')
-								.typeError('Vui lòng nhập điểm số')
-								.required('Vui lòng nhập điểm số'),
-						})
-					);
+					if (item.control === 2 && item.required)
+						rule[`title_${title.id}`] = yup.array(
+							yup.object({
+								personal_mark_level: yup
+									.number('Vui lòng nhập điểm số')
+									.typeError('Vui lòng nhập điểm số')
+									.test('not-selected', 'Vui lòng chọn option', (value) => {
+										if (!value) return false;
+										return true;
+									})
+									.required('Vui lòng nhập điểm số'),
+							})
+						);
+					else
+						rule[`title_${title.id}`] = yup.array(
+							yup.object({
+								personal_mark_level: yup
+									.number('Vui lòng nhập điểm số')
+									.typeError('Vui lòng nhập điểm số')
+									.required('Vui lòng nhập điểm số'),
+							})
+						);
 				}
 			});
 		});

@@ -22,7 +22,6 @@ export const CAutocomplete = forwardRef(
 			valueGet,
 			error,
 			helperText,
-			inputRef,
 			// getOptionLabel,
 			...props
 		},
@@ -82,9 +81,7 @@ export const CAutocomplete = forwardRef(
 
 		return (
 			<Autocomplete
-				ref={ref}
 				id={id}
-				name={name}
 				multiple={multiple}
 				className={classNames('c-autocomplete')}
 				value={currentValue}
@@ -95,10 +92,11 @@ export const CAutocomplete = forwardRef(
 				renderInput={(params) => (
 					<TextField
 						{...params}
+						name={name}
 						placeholder={placeholder}
 						error={error}
 						helperText={helperText}
-						inputRef={inputRef}
+						inputRef={ref}
 					/>
 				)}
 				renderOption={renderOption}

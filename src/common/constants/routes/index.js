@@ -21,9 +21,9 @@ export const ROUTES = {
 	STATISTIC: '/statistic',
 
 	ROLE: '/admin/roles',
-
 	CONFIG: '/admin/config',
-
 	ADMIN_SHEET: '/admin/sheets',
 	ADMIN_REMAKE: '/admin/sheets/:sheet_id',
+	ADMIN_HISTORY: '/admin/history',
+	ADMIN_STUDENTS: '/admin/students',
 };

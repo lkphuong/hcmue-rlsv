@@ -33,6 +33,10 @@ const FormCreatePage = lazy(() => import('_modules/form/pages/FormCreatePage'));
 const FormUpdatePage = lazy(() => import('_modules/form/pages/FormUpdatePage'));
 const ListFormsPage = lazy(() => import('_modules/form/pages/ListFormsPage'));
 
+const ListStudentsPage = lazy(() => import('_modules/student/pages/ListStudentsPage'));
+
+const ListHistory = lazy(() => import('_modules/history/pages/ListHistory'));
+
 export const browserRouter = [
 	{
 		path: ROUTES.HOME,
@@ -171,6 +175,24 @@ export const browserRouter = [
 				element: (
 					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
 						<SheetDetailPage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.ADMIN_STUDENTS,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
+						<ListStudentsPage />
+					</CPermission>
+				),
+			},
+			{
+				path: ROUTES.ADMIN_HISTORY,
+				errorElement: <CErrorPage />,
+				element: (
+					<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.FORMS.key}>
+						<ListHistory />
 					</CPermission>
 				),
 			},

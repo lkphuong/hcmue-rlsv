@@ -4,6 +4,7 @@ import {
 	Face,
 	SupervisorAccount,
 	TableView,
+	Groups,
 } from '@mui/icons-material';
 
 import { ENTITY_KEY } from '_config/permissions';
@@ -101,8 +102,33 @@ export const NAVIGATIONS = [
 				breadcrumbs: false,
 			},
 			{
+				id: 'admin-history',
+				title: 'Lịch sử phiếu đánh giá',
+				type: 'item',
+				path: '/admin/history',
+				entity: ENTITY_KEY.NOTES.key,
+				breadcrumbs: false,
+			},
+		],
+	},
+	{
+		id: 'admin-general',
+		title: 'Quản lý chung',
+		type: 'collapse',
+		icon: Groups,
+		entity: ENTITY_KEY.FORMS.key,
+		children: [
+			{
+				id: 'admin-students',
+				title: 'Quản lý sinh viên',
+				type: 'item',
+				path: '/admin/students',
+				entity: ENTITY_KEY.NOTES.key,
+				breadcrumbs: false,
+			},
+			{
 				id: 'admin-role',
-				title: 'Phân quyền',
+				title: 'Quản lý phân quyền',
 				type: 'item',
 				path: '/admin/roles',
 				entity: ENTITY_KEY.NOTES.key,
@@ -110,7 +136,7 @@ export const NAVIGATIONS = [
 			},
 			{
 				id: 'admin-config',
-				title: 'Học kỳ-Niên khóa',
+				title: 'Quản lý học kỳ-năm học',
 				type: 'item',
 				path: '/admin/config',
 				entity: ENTITY_KEY.NOTES.key,

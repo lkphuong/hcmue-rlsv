@@ -8,7 +8,7 @@ import { SheetEntity } from '../../entities/sheet.entity';
 
 import { SheetService } from './services/sheet.service';
 
-import { SheetController } from './controllers/sheet.controller';
+// import { SheetController } from './controllers/sheet.controller';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
@@ -32,6 +32,6 @@ export const modules = [
   LogModule,
 ];
 
-export const controllers = [SheetController];
+// export const controllers = [SheetController];
 export const providers = [SheetService];
 export const exporteds = [SheetService];

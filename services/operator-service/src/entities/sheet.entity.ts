@@ -7,14 +7,15 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { AcademicYearEntity } from './academic_year.entity';
-import { ApprovalEntity } from './approval.entity';
-import { EvaluationEntity } from './evaluation.entity';
-import { FormEntity } from './form.entity';
-import { SemesterEntity } from './semester.entity';
-import { SheetSignatures } from './sheet_signatures.entity';
-import { LevelEntity } from './level.entity';
 import { RootEntity } from './root.entity';
+import { EvaluationEntity } from './evaluation.entity';
+import { SheetSignatures } from './sheet_signatures.entity';
+import { SemesterEntity } from './semester.entity';
+import { AcademicYearEntity } from './academic_year.entity';
+import { LevelEntity } from './level.entity';
+import { FormEntity } from './form.entity';
+import { ApprovalEntity } from './approval.entity';
+import { FileEntity } from './file.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -32,26 +33,26 @@ export class SheetEntity extends RootEntity {
   ])
   form: FormEntity;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'department_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  department_id: string;
+  department_id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'user_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  user_id: string;
+  user_id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'class_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  class_id: string;
+  class_id: number;
 
   @ManyToOne(() => SemesterEntity, (semester) => semester.sheets)
   @JoinColumn([
@@ -71,12 +72,12 @@ export class SheetEntity extends RootEntity {
   ])
   academic_year: AcademicYearEntity;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'k',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  k: string;
+  k: number;
 
   @ManyToOne(() => LevelEntity, (level) => level.sheets)
   @JoinColumn([
@@ -133,4 +134,7 @@ export class SheetEntity extends RootEntity {
 
   @OneToMany(() => ApprovalEntity, (approval) => approval.sheet)
   approvals: ApprovalEntity[];
+
+  @OneToMany(() => FileEntity, (file) => file.sheet)
+  files: FileEntity[];
 }

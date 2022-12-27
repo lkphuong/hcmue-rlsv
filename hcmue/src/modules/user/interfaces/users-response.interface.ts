@@ -11,3 +11,11 @@ export interface UserResponse {
   classes: BaseMongoResponse;
   role: number;
 }
+
+export interface ExcelDataResponse {
+  academics: any[];
+  classes: any[];
+  departmentes: any[];
+  majors: any[];
+  statuses: any[];
+}

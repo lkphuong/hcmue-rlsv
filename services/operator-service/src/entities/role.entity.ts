@@ -1,7 +1,7 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { RoleUsersEntity } from './role_users.entity';
 
 import { RootEntity } from './root.entity';
-import { RoleUsersEntity } from './role_users.entity';
 
 @Entity('roles')
 export class RoleEntity extends RootEntity {

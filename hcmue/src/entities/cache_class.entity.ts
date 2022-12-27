@@ -18,17 +18,17 @@ export class CacheClassEntity extends RootEntity {
   })
   id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'department_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
   department_id: string;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'class_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
   class_id: string;
 

@@ -44,6 +44,10 @@ export const convertString2ObjectId = (raw: string) => {
   return new Types.ObjectId(raw);
 };
 
+export const removeDuplicates = <T>(data: T[]) => {
+  return Array.from(new Set(data));
+};
+
 export const generateRedisKeyFromUrl = (url: string, payload: any) => {
   const path = `${APP_PREFIX}-${url.substring(1).split('/').join('-')}`;
   const encode = payload ? JSON.stringify(payload) : null;

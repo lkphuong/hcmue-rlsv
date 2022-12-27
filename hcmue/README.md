@@ -19,6 +19,21 @@
 - signuatures
 - titles
 
+# Feedback date 23/12/2022
+
+## Thêm table
+
+- classes
+- departments
+- k
+- majors
+- status (tình trạng của sinh viên)
+- users
+
+## Update table
+
+- forms (chỉnh sửa thời gian phát hành)
+
 # Update
 
 - Table evaluations và level thêm field sort_order

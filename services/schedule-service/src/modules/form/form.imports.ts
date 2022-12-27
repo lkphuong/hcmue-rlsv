@@ -4,7 +4,7 @@ import { FormEntity } from '../../entities/form.entity';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
-import { FormService } from './services/form.service';
+import { FormService } from './services/form/form.service';
 
 export const modules = [
   SharedModule,

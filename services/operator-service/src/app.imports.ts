@@ -7,7 +7,7 @@ import { ConfigurationService } from './modules/shared/services/configuration/co
 import { LogModule } from './modules/log/log.module';
 import { SharedModule } from './modules/shared/shared.module';
 
-import { SheetModule } from './modules/sheet/sheet.module';
+// import { SheetModule } from './modules/sheet/sheet.module';
 
 export const modules = [
   SharedModule,
@@ -17,7 +17,7 @@ export const modules = [
     useFactory: mysqlFactory,
   }),
   LogModule,
-  SheetModule,
+  // SheetModule,
 ];
 
 export const controllers = [];

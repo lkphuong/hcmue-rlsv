@@ -5,7 +5,7 @@ import { isEmpty } from 'class-validator';
 
 import { isValidObjectId } from 'mongoose';
 
-import { convertString2Date, sprintf } from '../../../utils';
+import { sprintf } from '../../../utils';
 
 import { FormEntity } from '../../../entities/form.entity';
 import { ItemEntity } from '../../../entities/item.entity';

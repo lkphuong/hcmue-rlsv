@@ -60,7 +60,7 @@ export const generateCacheClassesResponse = async (
     //#endregion
 
     //#region Generate response
-    const classes = await class_service.getClasses(class_ids);
+    const classes = await class_service.getClassesByIds(class_ids);
     if (classes && classes.length > 0) {
       for await (const key of data.keys()) {
         const levels = data.get(key);

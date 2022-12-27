@@ -3,6 +3,7 @@ import { FormEntity } from './form.entity';
 
 import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
+import { UserEntity } from './user.entity';
 
 @Entity('semesters')
 export class SemesterEntity extends RootEntity {
@@ -23,4 +24,6 @@ export class SemesterEntity extends RootEntity {
 
   @OneToMany(() => FormEntity, (form) => form.semester)
   forms: FormEntity[];
+
+  users: UserEntity[] | null;
 }

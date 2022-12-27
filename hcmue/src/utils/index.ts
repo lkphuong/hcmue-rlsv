@@ -48,6 +48,10 @@ export const convertString2ObjectId = (raw: string) => {
   return new Types.ObjectId(raw);
 };
 
+export const removeDuplicates = <T>(data: T[]) => {
+  return Array.from(new Set(data));
+};
+
 export const removeFile = (
   url,
   configuration_service: ConfigurationService,

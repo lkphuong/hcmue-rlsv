@@ -18,10 +18,17 @@ export class CacheClassEntity extends RootEntity {
   })
   id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
+    name: 'department_id',
+    nullable: false,
+    default: 0,
+  })
+  department_id: string;
+
+  @Column('bigint', {
     name: 'class_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
   class_id: string;
 
@@ -50,7 +57,7 @@ export class CacheClassEntity extends RootEntity {
       referencedColumnName: 'id',
     },
   ])
-  level: LevelEntity;
+  level: LevelEntity | null;
 
   // Tổng số đánh giá theo xếp loại
   @Column('int', {

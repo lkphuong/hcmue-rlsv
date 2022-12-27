@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
-
-import { convertString2ObjectId } from '../../../utils';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 import { LogService } from '../../log/services/log.service';
 
-import { ClassDocument, Class } from '../../../schemas/class.schema';
+import { ClassEntity } from '../../../entities/class.entity';
+
+import { ClassResponse } from '../interfaces/class_response.interface';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
@@ -14,18 +14,21 @@ import { Methods } from '../../../constants/enums/method.enum';
 @Injectable()
 export class ClassService {
   constructor(
-    @InjectModel(Class.name)
-    private readonly _classModel: Model<ClassDocument>,
+    @InjectRepository(ClassEntity)
+    private readonly _classRepository: Repository<ClassEntity>,
     private _logger: LogService,
   ) {}
 
-  async getClasses(ids: Types.ObjectId[]): Promise<Class[] | null> {
+  async getClasses(): Promise<ClassResponse[] | null> {
     try {
-      const results = await this._classModel.find({
-        _id: { $in: ids },
-      });
+      const conditions = this._classRepository
+        .createQueryBuilder('class')
+        .select('class.id, class.name')
+        .where('class.deleted = :deleted', { deleted: false });
 
-      return results || null;
+      const classes = await conditions.getRawMany<ClassResponse>();
+
+      return classes || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
@@ -37,29 +40,46 @@ export class ClassService {
     }
   }
 
-  async getClassesByDepartmentId(
-    department_id: string,
-    class_id?: string,
-  ): Promise<Class[] | null> {
+  async getClassesByIds(ids: number[]): Promise<ClassEntity[] | null> {
     try {
-      let $class: Class[] = null;
+      const conditions = this._classRepository
+        .createQueryBuilder('class')
+        .where(`class.id IN (${ids.toString()})`);
 
-      if (!class_id) {
-        $class = await this._classModel
-          .find({
-            departmentId: convertString2ObjectId(department_id),
-          })
-          .sort({ name: -1 });
-      } else {
-        $class = await this._classModel
-          .find({
-            departmentId: convertString2ObjectId(department_id),
-            _id: convertString2ObjectId(class_id),
-          })
-          .sort({ name: -1 });
+      const classes = await conditions
+        .orderBy('class.created_at', 'DESC')
+        .getMany();
+      return classes || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ClassService.getClassesByIds()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getClassesByDepartmentId(
+    department_id: number,
+    class_id?: number,
+  ): Promise<ClassEntity[] | null> {
+    try {
+      let conditions = await this._classRepository
+        .createQueryBuilder('class')
+        .where('class.department_id = :department_id', { department_id })
+        .andWhere('class.deleted = :deleted', { deleted: false });
+
+      if (class_id && class_id == 0) {
+        conditions = conditions.andWhere('class.id = :class_id', { class_id });
       }
 
-      return $class || null;
+      const classes = await conditions
+        .orderBy('class.created_at', 'DESC')
+        .getMany();
+
+      return classes || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
@@ -71,14 +91,16 @@ export class ClassService {
     }
   }
 
-  async getClassById(id: string, department_id: string): Promise<Class | null> {
+  async getClassById(id: string): Promise<ClassEntity | null> {
     try {
-      const result = await this._classModel.findOne({
-        _id: convertString2ObjectId(id),
-        departmentId: convertString2ObjectId(department_id),
-      });
+      const conditions = this._classRepository
+        .createQueryBuilder('class')
+        .where('class.id = :id', { id })
+        .andWhere('class.deleted = :deleted', { deleted: false });
 
-      return result || null;
+      const $class = await conditions.getOne();
+
+      return $class || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

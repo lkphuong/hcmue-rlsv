@@ -2,14 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
-import { FormEntity } from '../../../entities/form.entity';
+import { FormEntity } from '../../../../entities/form.entity';
 
-import { LogService } from '../../log/services/log.service';
+import { LogService } from '../../../log/services/log.service';
 
-import { Levels } from '../../../constants/enums/level.enum';
-import { Methods } from '../../../constants/enums/method.enum';
+import { Levels } from '../../../../constants/enums/level.enum';
+import { Methods } from '../../../../constants/enums/method.enum';
 
-import { FormStatus } from '../constants/emuns/form_status.enum';
+import { FormStatus } from '../../constants/emuns/form_status.enum';
 
 @Injectable()
 export class FormService {

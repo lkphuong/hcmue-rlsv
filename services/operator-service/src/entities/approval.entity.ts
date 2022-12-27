@@ -6,8 +6,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
+import { RootEntity } from './root.entity';
+import { UserEntity } from './user.entity';
 
 @Entity('approvals')
 export class ApprovalEntity extends RootEntity {
@@ -25,12 +26,14 @@ export class ApprovalEntity extends RootEntity {
   ])
   sheet: SheetEntity;
 
-  @Column('varchar', {
-    name: 'user_id',
-    nullable: true,
-    length: 24,
-  })
-  user_id: string;
+  @ManyToOne(() => UserEntity, (user) => user.approvals)
+  @JoinColumn([
+    {
+      name: 'user_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  user: UserEntity;
 
   @Column('tinyint', {
     name: 'approved_status',

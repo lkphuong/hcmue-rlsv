@@ -12,7 +12,7 @@ import { send } from '../../funcs';
 import { sleep, sprintf } from '../../../../utils';
 
 import { ConfigurationService } from '../../../shared/services/configuration/configuration.service';
-import { FormService } from '../../../form/services/form.service';
+import { FormService } from '../../../form/services/form/form.service';
 import { UserService } from '../user/user.service';
 import { LogService } from '../../../log/services/log.service';
 

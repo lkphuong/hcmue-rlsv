@@ -3,7 +3,7 @@ import { mapRoleForUser } from '../utils';
 import { User } from '../../../schemas/user.schema';
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
 
-import { UserResponse } from '../interfaces/get-users-response.interface';
+import { UserResponse } from '../interfaces/users-response.interface';
 
 export const generateUsersArray = async (
   users: User[] | null,

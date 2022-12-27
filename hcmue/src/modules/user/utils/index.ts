@@ -7,7 +7,7 @@ import {
 import { generateUsersArray } from '../transforms';
 
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
-import { UserResponse } from '../interfaces/get-users-response.interface';
+import { UserResponse } from '../interfaces/users-response.interface';
 
 export const generateUserIds = (users: any) => {
   return users.map((item) => {

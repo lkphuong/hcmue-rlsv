@@ -8,12 +8,12 @@ export class SessionEntity extends RootEntity {
   })
   id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'user_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  user_id: string;
+  user_id: number;
 
   @Column('varchar', {
     name: 'username',
@@ -29,19 +29,19 @@ export class SessionEntity extends RootEntity {
   })
   fullname: string;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'class_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  class: string;
+  class: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'department_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  department: string;
+  department: number;
 
   @Column('varchar', {
     name: 'access_token',

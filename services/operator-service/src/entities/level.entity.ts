@@ -31,6 +31,13 @@ export class LevelEntity extends RootEntity {
   })
   to_mark: number;
 
+  @Column('tinyint', {
+    name: 'sort_order',
+    nullable: false,
+    default: 1,
+  })
+  sort_order: number;
+
   @OneToMany(() => SheetEntity, (sheet) => sheet.level)
   sheets: SheetEntity[];
 }

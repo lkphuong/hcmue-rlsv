@@ -1,16 +1,16 @@
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
-import { Class, ClassSchema } from '../../schemas/class.schema';
+import { ClassEntity } from 'src/entities/class.entity';
 
 import { ClassService } from './services/class.service';
 import { ClassController } from './controllers/class.controller';
 
 export const modules = [
   SharedModule,
-  MongooseModule.forFeature([{ name: Class.name, schema: ClassSchema }]),
+  TypeOrmModule.forFeature([ClassEntity]),
   LogModule,
 ];
 

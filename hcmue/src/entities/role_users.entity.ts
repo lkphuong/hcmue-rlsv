@@ -16,26 +16,26 @@ export class RoleUsersEntity extends RootEntity {
   })
   id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'user_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  user_id: string;
+  user_id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'class_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  class_id: string;
+  class_id: number;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'department_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  department_id: string;
+  department_id: number;
 
   @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn([

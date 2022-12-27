@@ -1,12 +1,10 @@
 import {
   Controller,
-  Post,
   HttpException,
   HttpStatus,
   Req,
   UsePipes,
   ValidationPipe,
-  Body,
   Get,
   Param,
   HttpCode,

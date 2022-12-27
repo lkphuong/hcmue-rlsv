@@ -4,7 +4,6 @@ import { ArrayNotEmpty, IsNotEmpty, IsOptional } from 'class-validator';
 import { generateValidationMessage } from '../../../utils';
 
 import { IsBooleanValidator } from '../../../validators/boolean.validator';
-import { IsObjectIdValidator } from '../../../validators/objectId.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class ApproveAllDto {
@@ -37,10 +36,10 @@ export class ApproveAllDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  department_id: string;
+  department_id: number;
 
   @IsNotEmpty({
     message: (arg) =>

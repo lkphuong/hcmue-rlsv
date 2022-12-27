@@ -1,6 +1,6 @@
-import { MongooseModule } from '@nestjs/mongoose';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { _KSchema, _K } from 'src/schemas/_k.schema';
+import { KEntity } from '../../entities/k.entity';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
@@ -9,7 +9,7 @@ import { KService } from './services/k.service';
 
 export const modules = [
   SharedModule,
-  MongooseModule.forFeature([{ name: _K.name, schema: _KSchema }]),
+  TypeOrmModule.forFeature([KEntity]),
   LogModule,
 ];
 

@@ -1,6 +1,12 @@
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { AcademicYearEntity } from './academic_year.entity';
 import { ApprovalEntity } from './approval.entity';
+import { ClassEntity } from './class.entity';
+import { DepartmentEntity } from './department.entity';
+import { MajorEntity } from './major.entity';
+import { RoleUsersEntity } from './role_users.entity';
 import { RootEntity } from './root.entity';
+import { SemesterEntity } from './semester.entity';
 
 @Entity('users')
 export class UserEntity extends RootEntity {
@@ -71,6 +77,18 @@ export class UserEntity extends RootEntity {
     default: 0,
   })
   semester_id: number;
+
+  class: ClassEntity | null;
+
+  department: DepartmentEntity | null;
+
+  major: MajorEntity | null;
+
+  academic: AcademicYearEntity | null;
+
+  semester: SemesterEntity | null;
+
+  role_user: RoleUsersEntity | null;
 
   @OneToMany(() => ApprovalEntity, (approvals) => approvals.user)
   approvals: ApprovalEntity[];

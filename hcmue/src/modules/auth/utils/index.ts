@@ -1,8 +1,6 @@
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
-import * as md5 from 'md5';
-
 import { returnObjects } from '../../../utils';
 
 import { SessionEntity } from '../../../entities/session.entity';
@@ -18,7 +16,7 @@ import { LoginResponse } from '../interfaces/login-response.interface';
 export const generateAccessToken = (
   jwtService: JwtService,
   configurationService: ConfigurationService,
-  user_id: string,
+  user_id: number,
   username: string,
   role: number,
 ): string => {
@@ -41,12 +39,12 @@ export const generateAccessToken = (
 export const generateRefreshToken = (
   jwtService: JwtService,
   configurationService: ConfigurationService,
-  username: string,
+  std_code: string,
 ) => {
   //#region generate refresh_token
   const refresh_token = jwtService.sign(
     {
-      username: username,
+      username: std_code,
     },
     {
       secret: configurationService.get(Configuration.REFRESH_SECRET_KEY),
@@ -94,7 +92,5 @@ export const validatePassword = async (
   password: string,
   user_password: string,
 ) => {
-  const hash = md5(password);
-
-  return hash == user_password;
+  return password === user_password;
 };

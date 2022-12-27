@@ -1,31 +1,32 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
-import { convertString2ObjectId } from '../../../utils';
+import { KEntity } from 'src/entities/k.entity';
 
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
 
-import { _KDocument, _K } from '../../../schemas/_k.schema';
-
 @Injectable()
 export class KService {
   constructor(
-    @InjectModel(_K.name)
-    private readonly _kModel: Model<_KDocument>,
+    @InjectRepository(KEntity)
+    private readonly _kRepository: Repository<KEntity>,
     private _logger: LogService,
   ) {}
 
-  async getKById(k_id: string): Promise<_K | null> {
+  async getKById(k_id: number): Promise<KEntity | null> {
     try {
-      const department = await this._kModel.findOne({
-        _id: convertString2ObjectId(k_id),
-      });
+      const conditions = await this._kRepository
+        .createQueryBuilder('k')
+        .where('k.id = :k_id', { k_id })
+        .andWhere('k.deleted = :deleted', { deleted: false });
 
-      return department || null;
+      const k = await conditions.getOne();
+
+      return k || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

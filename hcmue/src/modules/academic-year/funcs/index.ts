@@ -14,7 +14,7 @@ import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 export const createAcademic = async (
   from: number,
   to: number,
-  user_id: string,
+  user_id: number,
   academic_service: AcademicYearService,
   req: Request,
 ) => {
@@ -40,7 +40,7 @@ export const createAcademic = async (
 
 export const unlinkAcademic = async (
   academic_id: number,
-  user_id: string,
+  user_id: number,
   academic_service: AcademicYearService,
   req: Request,
 ) => {

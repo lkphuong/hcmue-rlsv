@@ -34,10 +34,10 @@ export class GetSheetsByClassDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  department_id: string;
+  department_id: number;
 
   @IsNotEmpty({
     message: (arg) =>

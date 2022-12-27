@@ -86,7 +86,7 @@ export class OptionService {
 
   async bulkUnlink(
     item_id: number,
-    user_id: string,
+    user_id: number,
     manager?: EntityManager,
   ): Promise<boolean> {
     try {

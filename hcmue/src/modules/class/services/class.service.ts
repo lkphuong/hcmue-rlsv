@@ -91,7 +91,7 @@ export class ClassService {
     }
   }
 
-  async getClassById(id: string): Promise<ClassEntity | null> {
+  async getClassById(id: number): Promise<ClassEntity | null> {
     try {
       const conditions = this._classRepository
         .createQueryBuilder('class')

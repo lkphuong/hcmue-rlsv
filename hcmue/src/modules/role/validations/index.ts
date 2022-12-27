@@ -8,9 +8,9 @@ import { sprintf } from '../../../utils';
 
 import { RoleEntity } from '../../../entities/role.entity';
 
-import { User } from '../../../schemas/user.schema';
-import { Department } from '../../../schemas/department.schema';
-import { Class } from '../../../schemas/class.schema';
+import { UserEntity } from '../../../entities/user.entity';
+import { DepartmentEntity } from '../../../entities/department.entity';
+import { ClassEntity } from '../../../entities/class.entity';
 
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
@@ -26,12 +26,11 @@ import {
 } from '../../../constants/enums/error-code.enum';
 
 export const validateClass = async (
-  class_id: string,
-  department_id: string,
+  class_id: number,
   class_service: ClassService,
   req: Request,
-): Promise<Class | HttpException> => {
-  const $class = await class_service.getClassById(class_id, department_id);
+): Promise<ClassEntity | HttpException> => {
+  const $class = await class_service.getClassById(class_id);
   if (!$class) {
     return new HandlerException(
       DATABASE_EXIT_CODE.UNKNOW_VALUE,
@@ -46,10 +45,10 @@ export const validateClass = async (
 };
 
 export const validateDepartment = async (
-  department_id: string,
+  department_id: number,
   department_service: DepartmentService,
   req: Request,
-): Promise<Department | HttpException> => {
+): Promise<DepartmentEntity | HttpException> => {
   const department = await department_service.getDepartmentById(department_id);
   if (!department) {
     return new HandlerException(
@@ -84,10 +83,10 @@ export const validateRole = async (
 };
 
 export const validateUser = async (
-  user_id: string,
+  user_id: number,
   user_service: UserService,
   req: Request,
-): Promise<User | HttpException> => {
+): Promise<UserEntity | HttpException> => {
   if (isEmpty(user_id)) {
     //#region throw HandlerException
     return new HandlerException(

@@ -7,15 +7,16 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { RootEntity } from './root.entity';
-import { EvaluationEntity } from './evaluation.entity';
-import { SheetSignatures } from './sheet_signatures.entity';
-import { SemesterEntity } from './semester.entity';
 import { AcademicYearEntity } from './academic_year.entity';
-import { LevelEntity } from './level.entity';
-import { FormEntity } from './form.entity';
 import { ApprovalEntity } from './approval.entity';
+import { EvaluationEntity } from './evaluation.entity';
 import { FileEntity } from './file.entity';
+import { FormEntity } from './form.entity';
+import { LevelEntity } from './level.entity';
+import { RootEntity } from './root.entity';
+import { SemesterEntity } from './semester.entity';
+import { SheetSignatures } from './sheet_signatures.entity';
+import { UserEntity } from './user.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -125,6 +126,8 @@ export class SheetEntity extends RootEntity {
     default: 0,
   })
   sum_of_department_marks: number;
+
+  user: UserEntity | null;
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.sheet)
   evaluations: EvaluationEntity[];

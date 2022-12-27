@@ -12,6 +12,13 @@ export class SemesterEntity extends RootEntity {
   })
   id: number;
 
+  @Column('bigint', {
+    name: 'academic_id',
+    nullable: false,
+    default: 0,
+  })
+  academic_id: number;
+
   @Column('varchar', {
     name: 'name',
     nullable: false,

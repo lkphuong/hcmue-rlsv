@@ -3,7 +3,7 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
-import { IsObjectIdValidator } from '../../../validators/objectId.validator';
+import { MinValidator } from '../../../validators/min.validator';
 
 export class GetClassDto {
   @IsOptional()
@@ -14,8 +14,8 @@ export class GetClassDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  class_id: string;
+  class_id: number;
 }

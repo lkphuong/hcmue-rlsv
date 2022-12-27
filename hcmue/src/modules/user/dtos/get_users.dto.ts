@@ -3,7 +3,6 @@ import { IsNotEmpty, IsOptional } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
-import { IsObjectIdValidator } from '../../../validators/objectId.validator';
 import { LengthValidator } from '../../../validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
@@ -28,6 +27,26 @@ export class GetUsersDto {
   })
   page: number;
 
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [năm học].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [năm học] tối thiểu bằng 0.'),
+  })
+  academic_id: number;
+
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),
+  })
+  @MinValidator(1, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [học kì] tối thiểu bằng 1.'),
+  })
+  semester_id: number;
+
   @IsOptional()
   @Transform((params) =>
     params.value ? params.value.toString().trim() : params.value,
@@ -36,10 +55,10 @@ export class GetUsersDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  department_id: string;
+  department_id: number;
 
   @IsOptional()
   @Transform((params) =>
@@ -49,10 +68,10 @@ export class GetUsersDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  class_id: string;
+  class_id: number;
 
   @IsOptional()
   @Transform((params) =>

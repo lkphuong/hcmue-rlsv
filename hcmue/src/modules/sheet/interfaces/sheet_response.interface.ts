@@ -5,7 +5,7 @@ export interface BaseResponse {
 }
 
 export interface UserResponse {
-  id: string;
+  id: number;
   fullname: string;
   std_code: string;
 }

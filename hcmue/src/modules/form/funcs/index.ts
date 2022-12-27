@@ -64,7 +64,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 
 export const createForm = async (
-  user_id: string,
+  user_id: number,
   params: FormDto,
   academic_service: AcademicYearService,
   form_service: FormService,
@@ -160,7 +160,7 @@ export const createForm = async (
 };
 
 export const createHeader = async (
-  user_id: string,
+  user_id: number,
   params: HeaderDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -226,7 +226,7 @@ export const createHeader = async (
 };
 
 export const createTitle = async (
-  user_id: string,
+  user_id: number,
   param: TitleDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -287,7 +287,7 @@ export const createTitle = async (
 };
 
 export const createItem = async (
-  user_id: string,
+  user_id: number,
   params: ItemDto,
   form_service: FormService,
   item_serviec: ItemService,
@@ -390,7 +390,7 @@ export const createItem = async (
 
 export const updateForm = async (
   form_id: number,
-  user_id: string,
+  user_id: number,
   params: FormDto,
   academic_service: AcademicYearService,
   form_service: FormService,
@@ -496,7 +496,7 @@ export const updateForm = async (
 
 export const updateHeader = async (
   header_id: number,
-  user_id: string,
+  user_id: number,
   params: HeaderDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -575,7 +575,7 @@ export const updateHeader = async (
 
 export const updateTitle = async (
   title_id: number,
-  user_id: string,
+  user_id: number,
   param: TitleDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -650,7 +650,7 @@ export const updateTitle = async (
 
 export const updateItem = async (
   item_id: number,
-  user_id: string,
+  user_id: number,
   params: ItemDto,
   form_service: FormService,
   item_service: ItemService,
@@ -764,7 +764,7 @@ export const updateItem = async (
 
 export const unlinkForm = async (
   form_id: number,
-  user_id: string,
+  user_id: number,
   form_service: FormService,
   req: Request,
 ): Promise<HttpResponse<FormResponse> | HttpException> => {
@@ -815,7 +815,7 @@ export const unlinkForm = async (
 export const unlinkHeader = async (
   form_id: number,
   header_id: number,
-  user_id: string,
+  user_id: number,
   form_service: FormService,
   header_service: HeaderService,
   req: Request,
@@ -875,7 +875,7 @@ export const unlinkHeader = async (
 export const unlinkTitle = async (
   form_id: number,
   title_id: number,
-  user_id: string,
+  user_id: number,
   form_service: FormService,
   title_service: TitleService,
   req: Request,
@@ -937,7 +937,7 @@ export const unlinkTitle = async (
 export const unlinkItem = async (
   form_id: number,
   item_id: number,
-  user_id: string,
+  user_id: number,
   form_service: FormService,
   item_service: ItemService,
   option_service: OptionService,
@@ -1007,7 +1007,7 @@ export const unlinkItem = async (
 
 export const cloneForm = async (
   form_id: number,
-  user_id: string,
+  user_id: number,
   form_service: FormService,
   header_service: HeaderService,
   item_service: ItemService,
@@ -1155,7 +1155,7 @@ export const cloneForm = async (
 };
 
 export const generateCreateItem = async (
-  user_id: string,
+  user_id: number,
   params: ItemDto,
   form: FormEntity,
   title: TitleEntity,
@@ -1201,7 +1201,7 @@ export const generateCreateItem = async (
 };
 
 export const generateUpdateItem = async (
-  user_id: string,
+  user_id: number,
   params: ItemDto,
   form: FormEntity,
   item: ItemEntity,
@@ -1246,7 +1246,7 @@ export const generateUpdateItem = async (
 };
 
 export const generateUnlinkItem = async (
-  user_id: string,
+  user_id: number,
   item: ItemEntity,
   item_service: ItemService,
   query_runner: QueryRunner,
@@ -1260,7 +1260,7 @@ export const generateUnlinkItem = async (
 };
 
 export const createItemOptions = async (
-  user_id: string,
+  user_id: number,
   options: OptionDto[],
   form: FormEntity,
   item: ItemEntity,
@@ -1292,7 +1292,7 @@ export const createItemOptions = async (
 
 export const removeItemOptions = async (
   item_id: number,
-  user_id: string,
+  user_id: number,
   option_service: OptionService,
   query_runner: QueryRunner,
   req: Request,
@@ -1319,7 +1319,7 @@ export const removeItemOptions = async (
 };
 
 export const setFormStatus = async (
-  user_id: string,
+  user_id: number,
   status: FormStatus,
   form: FormEntity,
   form_service: FormService,

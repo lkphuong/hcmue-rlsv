@@ -8,12 +8,11 @@ import {
   returnObjectsWithPaging,
 } from '../../../utils';
 
-import { Class } from '../../../schemas/class.schema';
-import { User } from '../../../schemas/user.schema';
-
+import { ClassEntity } from '../../../entities/class.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
+import { UserEntity } from '../../../entities/user.entity';
 
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
@@ -43,7 +42,7 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const generateClassesResponse = async (
-  data: Class[] | null,
+  data: ClassEntity[] | null,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
@@ -72,7 +71,7 @@ export const generateUserSheetsResponse = (
 
 export const generateClassSheetsResponse = async (
   sheets: SheetEntity[],
-  users: User[],
+  users: UserEntity[],
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
@@ -80,7 +79,7 @@ export const generateClassSheetsResponse = async (
   //console.log('data: ', sheets);
 
   // Transform SheetEntity to ClassSheetsResponse
-  const payload = await generateClassSheets(users, sheets);
+  const payload = await generateClassSheets(sheets);
 
   // Returns data
   return returnObjects(payload);
@@ -250,7 +249,6 @@ export const generateResponses = async (
   pages: number,
   page: number,
   sheets: SheetEntity[],
-  users: User[] | null,
   user_service: UserService,
   req: Request,
 ) => {
@@ -259,7 +257,7 @@ export const generateResponses = async (
   console.log('data: ', sheets);
 
   // Transform SheetEntity class to ClassSheetsResponse class
-  const payload = await generateAdminSheets(sheets, users, user_service);
+  const payload = await generateAdminSheets(sheets, user_service);
 
   // Returns objects
   return returnObjectsWithPaging<ClassSheetsResponse>(pages, page, payload);
@@ -269,10 +267,10 @@ export const generateObjectIDString = (object_ids: string[]) => {
   return object_ids.map((value) => `"${value}"`).join(',');
 };
 
-export const generateObjectIdFromUsers = (users: User[]) => {
-  let user_ids: string[] = null;
+export const generateObjectIdFromUsers = (users: UserEntity[]) => {
+  let user_ids: number[] = null;
   if (users && users.length > 0) {
-    user_ids = users.map((user) => user._id.toString());
+    user_ids = users.map((user) => user.id);
   }
 
   return user_ids;

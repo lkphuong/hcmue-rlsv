@@ -89,7 +89,7 @@ export class RoleController {
   @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateRole(
-    @Param('user_id') user_id: string,
+    @Param('user_id') user_id: number,
     @Body() params: RoleDto,
     @Req() req: Request,
   ): Promise<HttpResponse<RoleUserResponse> | HttpException> {
@@ -116,12 +116,7 @@ export class RoleController {
 
       //#region Validation
       //#region Validate class
-      const $class = await validateClass(
-        class_id,
-        department_id,
-        this._classService,
-        req,
-      );
+      const $class = await validateClass(class_id, this._classService, req);
 
       if ($class instanceof HttpException) throw $class;
       //#endregion

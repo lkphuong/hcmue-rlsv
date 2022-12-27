@@ -3,7 +3,6 @@ import { IsNotEmpty } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
-import { IsObjectIdValidator } from '../../../validators/objectId.validator';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class RoleDto {
@@ -14,10 +13,10 @@ export class RoleDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  department_id: string;
+  department_id: number;
 
   @Transform((params) =>
     params.value ? params.value.toString().trim() : params.value,
@@ -26,10 +25,10 @@ export class RoleDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  class_id: string;
+  class_id: number;
 
   @IsNotEmpty({
     message: (arg) =>

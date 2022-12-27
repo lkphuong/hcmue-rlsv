@@ -15,7 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { Request } from 'express';
 
-import { convertObjectId2String, returnObjects, sprintf } from '../../../utils';
+import { returnObjects, sprintf } from '../../../utils';
 
 import {
   generateAccessToken,
@@ -111,9 +111,7 @@ export class AuthController {
 
         if (isMatch) {
           //#region get role
-          const role_user = await this._authService.getRoleByUserId(
-            convertObjectId2String(result._id),
-          );
+          const role_user = await this._authService.getRoleByUserId(result.id);
 
           //#endregion
 
@@ -121,8 +119,8 @@ export class AuthController {
           const access_token = generateAccessToken(
             this._jwtService,
             this._configurationService,
-            convertObjectId2String(result._id),
-            result.username,
+            result.id,
+            result.std_code,
             role_user?.role?.code ?? 0,
           );
           //#endregion
@@ -131,7 +129,7 @@ export class AuthController {
           const refresh_token = generateRefreshToken(
             this._jwtService,
             this._configurationService,
-            result.username,
+            result.std_code,
           );
           //#endregion
 
@@ -140,11 +138,11 @@ export class AuthController {
 
           if (!session) {
             session = await this._authService.add(
-              convertObjectId2String(result._id),
-              result.username,
+              result.id,
+              result.std_code,
               result.fullname,
-              convertObjectId2String(result.classId),
-              convertObjectId2String(result.departmentId),
+              result.class_id,
+              result.department_id,
               access_token,
               refresh_token,
               new Date(),
@@ -329,16 +327,14 @@ export class AuthController {
           );
           if (user) {
             //#region get role
-            const role_user = await this._authService.getRoleByUserId(
-              convertObjectId2String(user._id),
-            );
+            const role_user = await this._authService.getRoleByUserId(user.id);
             //#endregion
             //#region Generate access_token
             const renew_access_token = generateAccessToken(
               this._jwtService,
               this._configurationService,
-              convertObjectId2String(user._id),
-              user.username,
+              user.id,
+              user.std_code,
               role_user?.role?.id ?? 0,
             );
             //#endregion
@@ -347,7 +343,7 @@ export class AuthController {
             const renew_refresh_token = generateRefreshToken(
               this._jwtService,
               this._configurationService,
-              user.username,
+              user.std_code,
             );
             //#endregion
 

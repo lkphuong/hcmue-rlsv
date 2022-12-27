@@ -21,7 +21,6 @@ import { UserService } from '../../user/services/user.service';
 
 import { UPLOAD_DEST } from '../../../constants';
 
-import { Configuration } from '../../shared/constants/configuration.enum';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const uploadFile = async (
@@ -29,7 +28,7 @@ export const uploadFile = async (
   extension: string,
   filename: string,
   original_name: string,
-  user_id: string,
+  user_id: number,
   configuration_service: ConfigurationService,
   file_service: FilesService,
   data_source: DataSource,
@@ -93,7 +92,7 @@ export const uploadFile = async (
 };
 
 export const unlinkFile = async (
-  user_id: string,
+  user_id: number,
   file: FileEntity,
   configuration_service: ConfigurationService,
   file_service: FilesService,

@@ -14,7 +14,7 @@ import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const createSemester = async (
   name: string,
-  user_id: string,
+  user_id: number,
   semester_service: SemesterService,
   req: Request,
 ) => {
@@ -37,7 +37,7 @@ export const createSemester = async (
 
 export const unlinkSemester = async (
   semester_id: number,
-  user_id: string,
+  user_id: number,
   semester_service: SemesterService,
   req: Request,
 ) => {

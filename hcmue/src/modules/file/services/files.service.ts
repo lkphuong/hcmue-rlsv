@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { count } from 'console';
-import { Levels } from 'src/constants/enums/level.enum';
-import { Methods } from 'src/constants/enums/method.enum';
-import { FileEntity } from 'src/entities/file.entity';
-import { LogService } from 'src/modules/log/services/log.service';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+
+import { FileEntity } from '../../../entities/file.entity';
+import { LogService } from '../../../modules/log/services/log.service';
+
+import { Levels } from '../../../constants/enums/level.enum';
+import { Methods } from '../../../constants/enums/method.enum';
 
 @Injectable()
 export class FilesService {
@@ -96,7 +97,7 @@ export class FilesService {
     extension: string,
     drafted: boolean,
     active: boolean,
-    user_id: string,
+    user_id: number,
     manager?: EntityManager,
   ): Promise<FileEntity | null> {
     try {
@@ -153,7 +154,7 @@ export class FilesService {
 
   async unlink(
     file_id: number,
-    user_id: string,
+    user_id: number,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {

@@ -1,15 +1,13 @@
-import { convertObjectId2String } from '../../../utils';
-
-import { Class } from '../../../schemas/class.schema';
+import { ClassEntity } from '../../../entities/class.entity';
 
 import { ClassResponse } from '../interfaces/class_response.interface';
 
-export const generateData2Array = ($class: Class[] | null) => {
+export const generateData2Array = ($class: ClassEntity[] | null) => {
   if ($class && $class.length > 0) {
     const payload: ClassResponse[] = [];
     for (const item of $class) {
       const result: ClassResponse = {
-        id: convertObjectId2String(item._id),
+        id: item.id,
         name: item.name,
       };
 

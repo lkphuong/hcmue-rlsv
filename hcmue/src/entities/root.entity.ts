@@ -15,7 +15,7 @@ export class RootEntity extends BaseEntity {
     default: 'system',
     length: 24,
   })
-  created_by: string;
+  created_by: number;
 
   @Column({
     name: 'created_at',
@@ -31,7 +31,7 @@ export class RootEntity extends BaseEntity {
     onUpdate: 'system',
     select: false,
   })
-  updated_by?: string;
+  updated_by?: number;
 
   @Column({
     name: 'updated_at',
@@ -47,7 +47,7 @@ export class RootEntity extends BaseEntity {
     length: 24,
     select: false,
   })
-  deleted_by?: string;
+  deleted_by?: number;
 
   @Column({
     name: 'deleted_at',

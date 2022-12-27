@@ -7,6 +7,8 @@ import {
 import { generateUsersArray } from '../transforms';
 
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
+import { UserEntity } from '../../../entities/user.entity';
+
 import { UserResponse } from '../interfaces/users-response.interface';
 
 export const generateUserIds = (users: any) => {
@@ -18,16 +20,15 @@ export const generateUserIds = (users: any) => {
 export const generateResponses = async (
   pages: number,
   page: number,
-  users: any,
-  role_users: RoleUsersEntity[],
+  users: UserEntity[],
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', users);
 
-  // Transform UserSchema class to UserResponse class
-  const payload = await generateUsersArray(users, role_users);
+  // Transform UserEntity class to UserResponse class
+  const payload = await generateUsersArray(users);
 
   // Returns objects
   return returnObjectsWithPaging<UserResponse>(pages, page, payload);

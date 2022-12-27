@@ -1,14 +1,14 @@
-export interface BaseMongoResponse {
-  id: string;
+export interface BaseResponse {
+  id: number;
   name: string;
 }
 
 export interface UserResponse {
-  user_id: string;
+  user_id: number;
   std_code: string;
   name: string;
-  department: BaseMongoResponse;
-  classes: BaseMongoResponse;
+  department: BaseResponse;
+  classes: BaseResponse;
   role: number;
 }
 

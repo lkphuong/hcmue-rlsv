@@ -132,12 +132,7 @@ export class ReportController {
       //#endregion
 
       //#region Validate class
-      const classes = await validateClass(
-        department_id,
-        class_id,
-        this._classService,
-        req,
-      );
+      const classes = await validateClass(class_id, this._classService, req);
 
       if (classes instanceof HttpException) throw classes;
       //#endregion

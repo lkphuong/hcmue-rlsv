@@ -5,7 +5,7 @@ export interface LevelResponse {
 }
 
 export interface ClassResponse {
-  id: string;
+  id: number;
   name: string;
   levels: LevelResponse[] | null;
   num_of_std: number;

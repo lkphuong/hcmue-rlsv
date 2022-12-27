@@ -52,6 +52,10 @@ export const removeDuplicates = <T>(data: T[]) => {
   return Array.from(new Set(data));
 };
 
+export const removeDuplicatesObject = <T>(data: T[], key: string) => {
+  return [...new Map(data.map((i) => [i[key], i])).values()];
+};
+
 export const removeFile = (
   url,
   configuration_service: ConfigurationService,

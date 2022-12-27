@@ -9,8 +9,8 @@ import { UserService } from 'src/modules/user/services/user.service';
 import { sprintf } from 'src/utils';
 
 export const validateFileUser = async (
-  request_id: string, //req
-  user_id: string, // created_by
+  request_id: number, //req
+  user_id: number, // created_by
   user_service: UserService,
   req: Request,
 ) => {

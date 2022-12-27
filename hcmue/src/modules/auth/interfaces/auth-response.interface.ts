@@ -1,9 +1,9 @@
 export interface ProfileResponse {
-  user_id: string;
+  user_id: number;
   username?: string;
   fullname?: string;
-  class_id?: string;
-  department_id?: string;
+  class_id?: number;
+  department_id?: number;
   role?: number;
 }
 

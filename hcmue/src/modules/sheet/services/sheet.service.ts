@@ -16,6 +16,7 @@ import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { UserEntity } from 'src/entities/user.entity';
 
 @Injectable()
 export class SheetService {
@@ -27,7 +28,7 @@ export class SheetService {
   ) {}
 
   async contains(
-    department_id: string,
+    department_id: number,
     academic_id: number,
     semester_id: number,
   ): Promise<number[] | null> {
@@ -60,13 +61,13 @@ export class SheetService {
   async getSheetsPaging(
     offset: number,
     length: number,
-    department_id: string,
-    class_id: string,
+    department_id: number,
+    class_id: number,
     academic_id: number,
     semester_id: number,
     status: number,
     role: number,
-    user_ids?: string[],
+    user_ids?: number[],
   ): Promise<SheetEntity[] | null> {
     try {
       let conditions = this._sheetRepository
@@ -78,6 +79,13 @@ export class SheetService {
           'level',
           `level.id = sheet.level AND 
           level.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.user_id',
+          UserEntity,
+          'user',
+          `user.id = sheet.user_id 
+          AND user.deleted = : 0`,
         )
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic_year.id = :academic_id', { academic_id })
@@ -93,7 +101,7 @@ export class SheetService {
 
       if (user_ids && user_ids.length > 0) {
         conditions = conditions.andWhere(
-          `sheet.user_id IN (${generateObjectIDString(user_ids)})`,
+          `sheet.user_id IN (${user_ids.toString()})`,
         );
       }
 
@@ -122,7 +130,7 @@ export class SheetService {
     }
   }
 
-  async getSheetsByUserId(user_id: string): Promise<SheetEntity[] | null> {
+  async getSheetsByUserId(user_id: number): Promise<SheetEntity[] | null> {
     try {
       const conditions = await this._sheetRepository
         .createQueryBuilder('sheet')
@@ -266,12 +274,12 @@ export class SheetService {
 
   async countSheets(
     academic_id: number,
-    class_id: string,
-    department_id: string,
+    class_id: number,
+    department_id: number,
     semester_id: number,
     status: SheetStatus,
     role?: number,
-    user_ids?: string[],
+    user_ids?: number[],
   ): Promise<number> {
     try {
       let conditions = this._sheetRepository
@@ -299,7 +307,7 @@ export class SheetService {
 
       if (user_ids && user_ids.length > 0) {
         conditions = conditions.andWhere(
-          `sheet.user_id IN (${generateObjectIDString(user_ids)})`,
+          `sheet.user_id IN (${user_ids.toString()})`,
         );
       }
 
@@ -347,7 +355,7 @@ export class SheetService {
 
   async ungraded(
     sheet_id: number,
-    user_id: string,
+    user_id: number,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {

@@ -17,10 +17,10 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const createRoleUser = async (
-  created_by: string,
-  class_id: string,
-  department_id: string,
-  user_id: string,
+  created_by: number,
+  class_id: number,
+  department_id: number,
+  user_id: number,
   role: RoleEntity,
   role_user_service: RoleUsersService,
   data_source: DataSource,

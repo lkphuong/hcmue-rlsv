@@ -43,13 +43,12 @@ export const validateAcademicYear = async (
 };
 
 export const validateClass = async (
-  department_id: string,
-  class_id: string | null,
+  class_id: number | null,
   class_service: ClassService,
   req: Request,
 ) => {
   if (class_id) {
-    const classes = await class_service.getClassById(class_id, department_id);
+    const classes = await class_service.getClassById(class_id);
     if (!classes) {
       //#region throw HandlerException
       return new UnknownException(
@@ -70,7 +69,7 @@ export const validateClass = async (
 };
 
 export const validateDepartment = async (
-  department_id: string,
+  department_id: number,
   department_service: DepartmentService,
   req: Request,
 ) => {
@@ -92,9 +91,9 @@ export const validateDepartment = async (
 };
 
 export const validateRole = async (
-  department_id: string,
+  department_id: number,
   role: number,
-  user_id: string,
+  user_id: number,
   user_service: UserService,
   req: Request,
 ) => {

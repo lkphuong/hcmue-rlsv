@@ -102,7 +102,8 @@ export class UserController implements OnModuleInit {
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
       //#region Get parrams
-      const { page, class_id, department_id, input } = params;
+      const { academic_id, class_id, department_id, input, page, semester_id } =
+        params;
       let { pages } = params;
 
       const itemsPerPage = parseInt(
@@ -113,6 +114,8 @@ export class UserController implements OnModuleInit {
       //#region Get pages
       if (pages === 0) {
         const count = await this._userService.count(
+          academic_id,
+          semester_id,
           class_id,
           department_id,
           input,
@@ -128,6 +131,8 @@ export class UserController implements OnModuleInit {
       const users = await this._userService.getUsersPaging(
         (page - 1) * itemsPerPage,
         itemsPerPage,
+        academic_id,
+        semester_id,
         class_id,
         department_id,
         input,
@@ -135,13 +140,8 @@ export class UserController implements OnModuleInit {
       //#endregion
 
       if (users && users.length > 0) {
-        //#region Generate user_ids
-        const user_ids = generateUserIds(users);
-        const role_users = await this._roleUserService.getRoleUsers(user_ids);
-        //#endregion
-
         //#region Generate response
-        return await generateResponses(pages, page, users, role_users, req);
+        return await generateResponses(pages, page, users, req);
         //#endregion
       } else {
         //#region throw HandlerException

@@ -44,5 +44,5 @@ export class RoleUsersEntity extends RootEntity {
       referencedColumnName: 'id',
     },
   ])
-  role: RoleEntity;
+  role: RoleEntity | null;
 }

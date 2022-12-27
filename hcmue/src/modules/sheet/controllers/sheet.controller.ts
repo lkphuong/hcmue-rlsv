@@ -49,6 +49,7 @@ import {
 } from '../validations';
 
 import { User } from '../../../schemas/user.schema';
+import { UserEntity } from '../../../entities/user.entity';
 
 import { ApproveAllDto } from '../dtos/approve_all.dto';
 
@@ -429,8 +430,8 @@ export class SheetController {
       } = params;
 
       let { pages } = params;
-      let users: User[] = null;
-      let user_ids: string[] = null;
+      let users: UserEntity[] = null;
+      let user_ids: number[] = null;
 
       const itemsPerPage = parseInt(
         this._configurationService.get(Configuration.ITEMS_PER_PAGE),
@@ -440,6 +441,8 @@ export class SheetController {
       //#region Get users if input != null
       if (input) {
         users = await this._userService.getUsersByInput(
+          academic_id,
+          semester_id,
           class_id,
           department_id,
           input,
@@ -495,14 +498,7 @@ export class SheetController {
 
       if (sheets && sheets.length > 0) {
         //#region Generate reponse
-        return generateResponses(
-          pages,
-          page,
-          sheets,
-          users,
-          this._userService,
-          req,
-        );
+        return generateResponses(pages, page, sheets, this._userService, req);
         //#endregion
       }
 
@@ -542,7 +538,7 @@ export class SheetController {
   @Get('student/:user_id')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getSheetsByUser(
-    @Param('user_id') user_id: string,
+    @Param('user_id') user_id: number,
     @Req() req: Request,
   ): Promise<HttpResponse<UserSheetsResponse> | HttpException> {
     try {
@@ -633,7 +629,7 @@ export class SheetController {
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getSheetsByClass(
-    @Param('class_id') class_id: string,
+    @Param('class_id') class_id: number,
     @Body() params: GetSheetsByClassDto,
     @Req() req: Request,
   ): Promise<HttpPagingResponse<ClassSheetsResponse> | HttpException> {
@@ -658,8 +654,8 @@ export class SheetController {
       const { academic_id, department_id, input, page, semester_id } = params;
 
       let { pages } = params;
-      let users: User[] = null;
-      let user_ids: string[] = null;
+      let users: UserEntity[] = null;
+      let user_ids: number[] = null;
 
       const itemsPerPage = parseInt(
         this._configurationService.get(Configuration.ITEMS_PER_PAGE),
@@ -672,12 +668,7 @@ export class SheetController {
 
       //#region Validation
       //#region Validate class
-      const $class = validateClass(
-        class_id,
-        department_id,
-        this._classService,
-        req,
-      );
+      const $class = validateClass(class_id, this._classService, req);
 
       if ($class instanceof HttpException) throw $class;
       //#endregion
@@ -709,6 +700,8 @@ export class SheetController {
       //#region Get users if input != null
       if (input) {
         users = await this._userService.getUsersByInput(
+          academic_id,
+          semester_id,
           class_id,
           department_id,
           input,
@@ -762,24 +755,9 @@ export class SheetController {
       //#endregion
 
       if (sheets && sheets.length > 0) {
-        const user_ids = sheets.map((sheet) => {
-          return convertString2ObjectId(sheet.user_id);
-        });
-
-        const users = await this._userService.getUserByIds(user_ids);
-
-        if (users && users.length > 0) {
-          //#region Generate reponse
-          return generateResponses(
-            pages,
-            page,
-            sheets,
-            users,
-            this._userService,
-            req,
-          );
-          //#endregion
-        }
+        //#region Generate reponse
+        return generateResponses(pages, page, sheets, this._userService, req);
+        //#endregion
       }
 
       //#region throw HandlerException
@@ -821,7 +799,7 @@ export class SheetController {
   @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassesByDepartment(
-    @Param('department_id') department_id: string,
+    @Param('department_id') department_id: number,
     @Body() params: GetClassDto,
     @Req() req: Request,
   ): Promise<HttpResponse<BaseResponse> | null | HttpException> {

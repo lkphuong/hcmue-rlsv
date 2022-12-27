@@ -1,4 +1,4 @@
 export interface ClassResponse {
-  id: string;
+  id: number;
   name: string;
 }

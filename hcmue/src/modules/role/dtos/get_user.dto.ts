@@ -1,6 +1,5 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { IsObjectIdValidator } from 'src/validators/objectId.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -14,10 +13,10 @@ export class GetUserDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  department_id: string;
+  department_id: number;
 
   @IsOptional()
   @Transform((params) =>
@@ -27,10 +26,10 @@ export class GetUserDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
-  @IsObjectIdValidator({
+  @MinValidator(0, {
     message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
   })
-  class_id: string;
+  class_id: number;
 
   @IsNotEmpty({
     message: (arg) =>

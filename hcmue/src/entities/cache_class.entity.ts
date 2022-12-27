@@ -23,14 +23,14 @@ export class CacheClassEntity extends RootEntity {
     nullable: false,
     default: 0,
   })
-  department_id: string;
+  department_id: number;
 
   @Column('bigint', {
     name: 'class_id',
     nullable: false,
     default: 0,
   })
-  class_id: string;
+  class_id: number;
 
   @ManyToOne(() => SemesterEntity, (semester) => semester.sheets)
   @JoinColumn([

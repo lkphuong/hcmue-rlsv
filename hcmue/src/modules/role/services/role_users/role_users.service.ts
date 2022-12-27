@@ -42,9 +42,9 @@ export class RoleUsersService {
   }
 
   async getRoleUserByRoleId(
-    department_id: string,
+    department_id: number,
     role_id: number,
-    class_id?: string,
+    class_id?: number,
   ): Promise<RoleUsersEntity | null> {
     try {
       let conditions = this._roleUserRepository
@@ -72,7 +72,7 @@ export class RoleUsersService {
     }
   }
 
-  async getRoleUserByUserId(user_id: string): Promise<RoleUsersEntity | null> {
+  async getRoleUserByUserId(user_id: number): Promise<RoleUsersEntity | null> {
     try {
       const conditions = this._roleUserRepository
         .createQueryBuilder('role_user')
@@ -93,9 +93,9 @@ export class RoleUsersService {
   }
 
   async checkRoleUser(
-    department_id: string,
+    department_id: number,
     role_id: number,
-    class_id?: string,
+    class_id?: number,
   ): Promise<RoleUsersEntity | null> {
     try {
       let conditions = this._roleUserRepository
@@ -174,8 +174,8 @@ export class RoleUsersService {
   async buklUnlink(
     role_code: number,
     role_id: number,
-    department_id: string,
-    class_id: string,
+    department_id: number,
+    class_id: number,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {

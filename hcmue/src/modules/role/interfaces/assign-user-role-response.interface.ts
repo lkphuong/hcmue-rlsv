@@ -14,6 +14,6 @@ export interface RoleResponse {
 }
 
 export interface UserResponse {
-  id: string;
+  id: number;
   name: string;
 }

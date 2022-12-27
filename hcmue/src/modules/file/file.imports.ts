@@ -1,3 +1,4 @@
+import { forwardRef } from '@nestjs/common';
 import { MulterModule } from '@nestjs/platform-express';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -8,12 +9,11 @@ import { FileEntity } from '../../entities/file.entity';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
-import { UserModule } from '../user/user.module';
-
 import { FilesController } from './controllers/files.controller';
 
 import { FilesService } from './services/files.service';
 import { ConfigurationService } from '../shared/services/configuration/configuration.service';
+import { UserModule } from '../user/user.module';
 
 export const modules = [
   SharedModule,
@@ -24,7 +24,7 @@ export const modules = [
   }),
   TypeOrmModule.forFeature([FileEntity]),
   LogModule,
-  UserModule,
+  forwardRef(() => UserModule),
 ];
 
 export const controllers = [FilesController];

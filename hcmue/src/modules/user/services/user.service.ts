@@ -1,48 +1,91 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Brackets, Repository } from 'typeorm';
 
-import {
-  generateCountUserPipeline,
-  generateGetUserByIdPipeline,
-  generateGetUserByUserIds,
-  generateGetUsersByClassPipeline,
-  generateGetUsersByInputPipeline,
-  generateGetUsersPagingPipeline,
-} from '../pipelines';
-
-import { UserDocument, User } from '../../../schemas/user.schema';
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import { ClassEntity } from '../../../entities/class.entity';
+import { DepartmentEntity } from '../../../entities/department.entity';
+import { SemesterEntity } from '../../../entities/semester.entity';
+import { RoleUsersEntity } from '../../../entities/role_users.entity';
+import { UserEntity } from '../../../entities/user.entity';
 
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { RoleEntity } from 'src/entities/role.entity';
 
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private readonly _userModule: Model<UserDocument>,
+    @InjectRepository(UserEntity)
+    private readonly _userRepository: Repository<UserEntity>,
     private _logger: LogService,
   ) {}
 
   async count(
-    class_id: string,
-    department_id: string,
+    academic_id: number,
+    semester_id: number,
+    class_id: number,
+    department_id: number,
     input?: string,
-  ): Promise<any> {
+  ): Promise<number> {
     try {
-      const pipeline = generateCountUserPipeline(
-        class_id,
-        department_id,
-        input,
-      );
+      let conditions = this._userRepository
+        .createQueryBuilder('user')
+        .select('COUNT(user.id)', 'count')
+        .innerJoin(
+          AcademicYearEntity,
+          'academic',
+          `user.academic_id = academic_id AND
+           academic.deleted = 0`,
+        )
+        .innerJoin(
+          SemesterEntity,
+          'semester',
+          `semester.academic_id = academic_id AND
+           semester.deleted = 0`,
+        )
+        .innerJoin(
+          DepartmentEntity,
+          'department',
+          `department.id = user.department_id AND 
+           department.deleted = 0`,
+        )
+        .innerJoin(
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND
+           class.deleted = 0`,
+        )
+        .where('semester.id = :semester_id', { semester_id })
+        .andWhere('academic.id = :academic_id', { academic_id })
+        .andWhere('user.deleted = :deleted', { deleted: false });
 
-      const result = await this._userModule.aggregate<{ count: number }>(
-        pipeline,
-      );
+      if (class_id && class_id !== 0) {
+        conditions = conditions.andWhere('user.class_id = :class_id', {
+          class_id,
+        });
+      }
 
-      const count = result[0]?.count ?? 0;
-      return count || null;
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere('user.department_id', {
+          department_id,
+        });
+      }
+
+      if (input) {
+        conditions = conditions.andWhere(
+          new Brackets((qb) => {
+            qb.where(`user.std_code LIKE '%${input}%'`);
+            qb.orWhere(`user.fullname LIKE '%${input}%'`);
+          }),
+        );
+      }
+
+      const { count } = await conditions.getRawOne();
+
+      return count;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
@@ -57,20 +100,88 @@ export class UserService {
   async getUsersPaging(
     offset: number,
     length: number,
-    class_id: string,
-    department_id: string,
+    academic_id: number,
+    semester_id: number,
+    class_id: number,
+    department_id: number,
     input?: string,
-  ): Promise<User[]> {
+  ): Promise<UserEntity[]> {
     try {
-      const pipeline = generateGetUsersPagingPipeline(
-        offset,
-        length,
-        class_id,
-        department_id,
-        input,
-      );
+      let conditions = this._userRepository
+        .createQueryBuilder('user')
+        .innerJoinAndMapOne(
+          'user.academic',
+          AcademicYearEntity,
+          'academic',
+          `user.academic_id = academic_id AND 
+          academic.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.semester',
+          SemesterEntity,
+          'semester',
+          `semester.academic_id = academic_id AND
+           semester.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.department',
+          DepartmentEntity,
+          'department',
+          `department.id = user.department_id AND 
+           department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.class',
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND
+           class.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.role_user',
+          RoleUsersEntity,
+          'role_user',
+          `user.id = role_user.user_id AND 
+          role_user.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'role_user.role',
+          RoleEntity,
+          'role',
+          `role.id = role_user.role_id AND
+           role.deleted = 0`,
+        )
+        .where('semester.id = :semester_id', { semester_id })
+        .andWhere('academic.id = :academic_id', { academic_id })
+        .andWhere('user.deleted = :deleted', { deleted: false });
 
-      const users = await this._userModule.aggregate<User>(pipeline);
+      if (class_id && class_id !== 0) {
+        conditions = conditions.andWhere('user.class_id = :class_id', {
+          class_id,
+        });
+      }
+
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere('user.department_id', {
+          department_id,
+        });
+      }
+
+      if (input) {
+        conditions = conditions.andWhere(
+          new Brackets((qb) => {
+            qb.where(`user.std_code LIKE '%${input}%'`);
+            qb.orWhere(`user.fullname LIKE '%${input}%'`);
+          }),
+        );
+      }
+
+      const users = await conditions
+        .orderBy('user.created_at', 'DESC')
+        .skip(offset)
+        .take(length)
+        .getMany();
+
       return users || null;
     } catch (e) {
       this._logger.writeLog(
@@ -84,12 +195,59 @@ export class UserService {
   }
 
   async getUsersByClass(
-    class_id: string,
+    academic_id: number,
+    semester_id: number,
+    class_id: number,
     input?: string,
-  ): Promise<User[] | null> {
+  ): Promise<UserEntity[] | null> {
     try {
-      const pipeline = generateGetUsersByClassPipeline(class_id, input);
-      const users = this._userModule.aggregate<User>(pipeline);
+      let conditions = this._userRepository
+        .createQueryBuilder('user')
+        .innerJoinAndMapOne(
+          'user.academic',
+          AcademicYearEntity,
+          'academic',
+          `user.academic_id = academic_id AND 
+          academic.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.semester',
+          SemesterEntity,
+          'semester',
+          `semester.academic_id = academic_id AND
+           semester.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.department',
+          DepartmentEntity,
+          'department',
+          `department.id = user.department_id AND 
+           department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.class',
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND
+           class.deleted = 0`,
+        )
+        .where('academic.id = :academic_id', { academic_id })
+        .andWhere('semester.id = :semester_id', { semester_id })
+        .andWhere('class.id = :class_id', { class_id });
+
+      if (input) {
+        conditions = conditions.andWhere(
+          new Brackets((qb) => {
+            qb.where(`user.std_code LIKE '%${input}%'`);
+            qb.orWhere(`user.fullname LIKE '%${input}%'`);
+          }),
+        );
+      }
+
+      const users = await conditions
+        .orderBy('user.created_at', 'DESC')
+        .getMany();
+
       return users || null;
     } catch (e) {
       this._logger.writeLog(
@@ -103,18 +261,62 @@ export class UserService {
   }
 
   async getUsersByInput(
-    class_id: string,
-    department_id: string,
+    academic_id: number,
+    semester_id: number,
+    class_id: number,
+    department_id: number,
     input: string,
-  ): Promise<User[]> {
+  ): Promise<UserEntity[]> {
     try {
-      const pipeline = generateGetUsersByInputPipeline(
-        class_id,
-        department_id,
-        input,
-      );
+      let conditions = this._userRepository
+        .createQueryBuilder('user')
+        .innerJoinAndMapOne(
+          'user.academic',
+          AcademicYearEntity,
+          'academic',
+          `user.academic_id = academic_id AND 
+          academic.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.semester',
+          SemesterEntity,
+          'semester',
+          `semester.academic_id = academic_id AND
+           semester.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.department',
+          DepartmentEntity,
+          'department',
+          `department.id = user.department_id AND 
+           department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.class',
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND
+           class.deleted = 0`,
+        )
+        .where('academic.id = :academic_id', { academic_id })
+        .andWhere('semester.id = :semester_id', { semester_id })
+        .andWhere('class.id = :class_id', { class_id })
+        .andWhere('department.id = :department_id', { department_id })
+        .andWhere('user.deleted = :deleted', { deleted: 0 });
 
-      const users = await this._userModule.aggregate<User>(pipeline);
+      if (input) {
+        conditions = conditions.andWhere(
+          new Brackets((qb) => {
+            qb.where(`user.std_code LIKE '%${input}%'`);
+            qb.orWhere(`user.fullname LIKE '%${input}%'`);
+          }),
+        );
+      }
+
+      const users = await conditions
+        .orderBy('user.created_at', 'DESC')
+        .getMany();
+
       return users || null;
     } catch (e) {
       this._logger.writeLog(
@@ -127,11 +329,44 @@ export class UserService {
     }
   }
 
-  async getUserById(id: string): Promise<any | null> {
+  async getUserById(id: number): Promise<any | null> {
     try {
-      const pipeline = generateGetUserByIdPipeline(id);
-      const users = await this._userModule.aggregate<any>(pipeline).exec();
-      return users && users.length > 0 ? users[0] : null;
+      const conditions = this._userRepository
+        .createQueryBuilder('user')
+        .innerJoinAndMapOne(
+          'user.academic',
+          AcademicYearEntity,
+          'academic',
+          `user.academic_id = academic_id AND 
+        academic.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.semester',
+          SemesterEntity,
+          'semester',
+          `semester.academic_id = academic_id AND
+         semester.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.department',
+          DepartmentEntity,
+          'department',
+          `department.id = user.department_id AND 
+         department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.class',
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND
+         class.deleted = 0`,
+        )
+        .where('user.id = :id', { id })
+        .andWhere('user.deleted = :deleted', { deleted: 0 });
+
+      const user = await conditions.getOne();
+
+      return user || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
@@ -143,10 +378,45 @@ export class UserService {
     }
   }
 
-  async getUserByIds(user_ids: Types.ObjectId[]): Promise<User[] | null> {
+  async getUserByIds(user_ids: number[]): Promise<UserEntity[] | null> {
     try {
-      const pipeline = generateGetUserByUserIds(user_ids);
-      const users = await this._userModule.aggregate<User>(pipeline).exec();
+      const conditions = this._userRepository
+        .createQueryBuilder('user')
+        .innerJoinAndMapOne(
+          'user.academic',
+          AcademicYearEntity,
+          'academic',
+          `user.academic_id = academic_id AND 
+        academic.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.semester',
+          SemesterEntity,
+          'semester',
+          `semester.academic_id = academic_id AND
+         semester.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.department',
+          DepartmentEntity,
+          'department',
+          `department.id = user.department_id AND 
+         department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.class',
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND
+         class.deleted = 0`,
+        )
+        .where(`user.id IN (${user_ids.toString()})`)
+        .andWhere('user.deleted = :deleted', { deleted: 0 });
+
+      const users = await conditions
+        .orderBy('user.created_at', 'DESC')
+        .getMany();
+
       return users || null;
     } catch (e) {
       this._logger.writeLog(

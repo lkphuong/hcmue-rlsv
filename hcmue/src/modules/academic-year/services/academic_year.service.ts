@@ -171,7 +171,7 @@ export class AcademicYearService {
 
   async unlink(
     academic_year_id: number,
-    user_id: string,
+    user_id: number,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {

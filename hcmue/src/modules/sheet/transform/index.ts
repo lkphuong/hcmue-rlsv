@@ -10,6 +10,7 @@ import { mapUserForSheet } from '../utils';
 import { Class } from '../../../schemas/class.schema';
 import { User } from '../../../schemas/user.schema';
 
+import { ClassEntity } from '../../../entities/class.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
@@ -37,19 +38,19 @@ import {
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
+import { UserEntity } from 'src/entities/user.entity';
 
 export const generateAdminSheets = async (
   sheets: SheetEntity[] | null,
-  users: User[] | null,
   user_service: UserService,
 ) => {
   if (sheets && sheets.length > 0) {
-    const user_ids: Types.ObjectId[] = [];
+    const user_ids: number[] = [];
     const payload: ClassSheetsResponse[] = [];
 
     //#region Loop of sheets
     for (const sheet of sheets) {
-      user_ids.push(convertString2ObjectId(sheet.user_id));
+      user_ids.push(sheet.user_id);
 
       const item: ClassSheetsResponse = {
         id: sheet.id,
@@ -64,33 +65,12 @@ export const generateAdminSheets = async (
         sum_of_personal_marks: sheet.sum_of_personal_marks,
         user: {
           id: sheet.user_id,
-          fullname: null,
-          std_code: null,
+          fullname: sheet.user.fullname,
+          std_code: sheet.user.std_code,
         },
       };
 
       payload.push(item);
-    }
-    //#endregion
-
-    //#region Get users
-    if (!users) users = await user_service.getUserByIds(user_ids);
-    if (users && users.length > 0) {
-      //#region Map user to each of item in payload
-      payload.map((item) => {
-        const user = users.find(
-          (e) => convertObjectId2String(e._id) == item.user.id,
-        );
-
-        if (user) {
-          item.user = {
-            ...item.user,
-            fullname: user.fullname,
-            std_code: user.username,
-          };
-        }
-      });
-      //#endregion
     }
     //#endregion
 
@@ -135,21 +115,17 @@ export const generateUserSheets = (sheets: SheetEntity[] | null) => {
   return null;
 };
 
-export const generateClassSheets = async (
-  users: User[] | null,
-  sheets: SheetEntity[] | null,
-) => {
+export const generateClassSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
     const payload: ClassSheetsResponse[] = [];
-    for (const user of users) {
-      const sheet = mapUserForSheet(convertObjectId2String(user._id), sheets);
+    for (const sheet of sheets) {
       if (sheet) {
         const item: ClassSheetsResponse = {
           id: sheet.id,
           user: {
-            id: convertObjectId2String(user._id),
-            fullname: user.fullname,
-            std_code: user.username,
+            id: sheet.user.id,
+            fullname: sheet.user.fullname,
+            std_code: sheet.user.std_code,
           },
           level: sheet.level
             ? {
@@ -173,14 +149,14 @@ export const generateClassSheets = async (
   return null;
 };
 
-export const generateClasses2Array = async (classes: Class[]) => {
+export const generateClasses2Array = async (classes: ClassEntity[]) => {
   if (classes && classes.length > 0) {
     const payload: BaseResponse[] = [];
 
     for (const $class of classes) {
       //#region Get class by class_id
       const item: BaseResponse = {
-        id: convertObjectId2String($class._id),
+        id: $class.id,
         name: $class.name,
       };
       payload.push(item);
@@ -213,10 +189,7 @@ export const generateData2Object = async (
     //#endregion
 
     //#region Get class by class_id
-    const classes = await class_service.getClassById(
-      sheet.class_id,
-      sheet.department_id,
-    );
+    const classes = await class_service.getClassById(sheet.class_id);
     //#endregion
 
     //#region Get k by _id
@@ -226,19 +199,19 @@ export const generateData2Object = async (
       id: sheet.id,
       department: department
         ? {
-            id: convertObjectId2String(department._id),
+            id: department.id,
             name: department.name,
           }
         : null,
       class: classes
         ? {
-            id: convertObjectId2String(classes._id),
+            id: classes.id,
             name: classes.name,
           }
         : null,
       user: user
         ? {
-            id: convertObjectId2String(user._id),
+            id: user.id,
             fullname: user.fullname,
             std_code: user.username,
           }
@@ -253,7 +226,7 @@ export const generateData2Object = async (
       },
       k: k
         ? {
-            id: convertObjectId2String(k._id),
+            id: k.id,
             name: k.name,
           }
         : null,

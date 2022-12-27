@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Model } from 'mongoose';
 import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
 import { SessionEntity } from '../../../entities/session.entity';
-import { User, UserDocument } from '../../../schemas/user.schema';
+import { UserEntity } from '../../../entities/user.entity';
 
 import { LogService } from '../../log/services/log.service';
 
@@ -20,7 +18,8 @@ export class AuthService {
     private readonly _roleUserRepository: Repository<RoleUsersEntity>,
     @InjectRepository(SessionEntity)
     private readonly _sessionRepository: Repository<SessionEntity>,
-    @InjectModel(User.name) private readonly _userModel: Model<UserDocument>,
+    @InjectRepository(UserEntity)
+    private readonly _userRepository: Repository<UserEntity>,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
@@ -46,9 +45,15 @@ export class AuthService {
     }
   }
 
-  async getUserByUsername(username: string): Promise<User | null> {
+  async getUserByUsername(username: string): Promise<UserEntity | null> {
     try {
-      const user = await this._userModel.findOne({ username: username });
+      const conditions = await this._userRepository
+        .createQueryBuilder('user')
+        .where('user.std_code = :username', { username })
+        .andWhere('user.deleted = :deleted', { deleted: false });
+
+      const user = await conditions.orderBy('user.created_at', 'DESC').getOne();
+
       return user || null;
     } catch (e) {
       this._logger.writeLog(
@@ -61,7 +66,7 @@ export class AuthService {
     }
   }
 
-  async getRoleByUserId(user_id: string): Promise<RoleUsersEntity | null> {
+  async getRoleByUserId(user_id: number): Promise<RoleUsersEntity | null> {
     try {
       const conditions = await this._roleUserRepository
         .createQueryBuilder('role_user')
@@ -108,7 +113,7 @@ export class AuthService {
     }
   }
 
-  async getProfile(user_id: string): Promise<SessionEntity | null> {
+  async getProfile(user_id: number): Promise<SessionEntity | null> {
     try {
       console.log('user_id: ', user_id);
       const conditions = this._sessionRepository
@@ -131,11 +136,11 @@ export class AuthService {
   }
 
   async add(
-    user_id: string,
+    user_id: number,
     username: string,
     fullname: string,
-    class_id: string,
-    department_id: string,
+    class_id: number,
+    department_id: number,
     access_token: string,
     refresh_token: string,
     login_time: Date,
@@ -148,7 +153,7 @@ export class AuthService {
       }
 
       let session = new SessionEntity();
-      session.user_id = user_id.toString();
+      session.user_id = user_id;
       session.username = username;
       session.fullname = fullname;
       session.class = class_id;
@@ -158,7 +163,7 @@ export class AuthService {
       session.login_time = login_time;
       session.active = active;
       session.created_at = new Date();
-      session.created_by = 'system';
+      session.created_by = 0;
       session.deleted = false;
 
       session = await manager.save(session);
@@ -189,7 +194,7 @@ export class AuthService {
       session.access_token = access_token;
       session.refresh_token = refresh_token;
       session.updated_at = new Date();
-      session.updated_by = 'system';
+      session.updated_by = 0;
 
       session = await manager.save(session);
       return session || null;
@@ -219,7 +224,7 @@ export class AuthService {
       session.expired_time = expired_time;
       session.logout_time = logout_time;
       session.updated_at = new Date();
-      session.updated_by = 'system';
+      session.updated_by = 0;
       session.deleted = false;
 
       session = await manager.save(session);

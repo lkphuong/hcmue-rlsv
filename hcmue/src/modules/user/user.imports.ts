@@ -1,13 +1,15 @@
-import { MongooseModule } from '@nestjs/mongoose';
 import { forwardRef } from '@nestjs/common';
-
-import { User, UserSchema } from '../../schemas/user.schema';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { UserEntity } from '../../entities/user.entity';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { AcademicYearModule } from '../academic-year/academic_year.module';
+import { ClassModule } from '../class/class.module';
+import { DepartmentModule } from '../department/department.module';
 import { FileModule } from '../file/file.module';
+import { KModule } from '../k/k.module';
 import { RoleModule } from '../role/role.module';
 import { SemesterModule } from '../semester/semester.module';
 
@@ -16,9 +18,12 @@ import { UserService } from './services/user.service';
 
 export const modules = [
   SharedModule,
-  MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
+  TypeOrmModule.forFeature([UserEntity]),
   AcademicYearModule,
+  ClassModule,
+  DepartmentModule,
   forwardRef(() => FileModule),
+  KModule,
   LogModule,
   RoleModule,
   SemesterModule,

@@ -19,9 +19,9 @@ export class CacheClassService {
 
   async getCacheClasses(
     academic_id: number,
-    department_id: string,
+    department_id: number,
     semester_id: number,
-    class_id?: string,
+    class_id?: number,
   ): Promise<CacheClassEntity[] | null> {
     try {
       let conditions = this._cacheClassRepository

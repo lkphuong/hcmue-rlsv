@@ -54,7 +54,7 @@ export const validateClassId = (id: string, req: Request) => {
   return null;
 };
 
-export const validateDepartmentId = (id: string, req: Request) => {
+export const validateDepartmentId = (id: number, req: Request) => {
   if (isEmpty(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.EMPTY,
@@ -63,7 +63,7 @@ export const validateDepartmentId = (id: string, req: Request) => {
       ErrorMessage.DEPARTMENT_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
-  } else if (!isValidObjectId(id)) {
+  } else if (isNaN(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,
@@ -98,7 +98,7 @@ export const validateSheetId = (id: number, req: Request) => {
   return null;
 };
 
-export const validateUserId = (id: string, req: Request) => {
+export const validateUserId = (id: number, req: Request) => {
   if (isEmpty(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.EMPTY,
@@ -107,7 +107,7 @@ export const validateUserId = (id: string, req: Request) => {
       ErrorMessage.USER_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
-  } else if (!isValidObjectId(id)) {
+  } else if (isNaN(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,
@@ -159,8 +159,8 @@ export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
 
 export const validateStudentRole = async (
   role: number,
-  request_id: string,
-  user_id: string,
+  request_id: number,
+  user_id: number,
   user_service: UserService,
   req: Request,
 ) => {
@@ -184,9 +184,9 @@ export const validateStudentRole = async (
 
 export const validateOthersRole = async (
   role: number,
-  class_id: string,
-  department_id: string,
-  request_id: string,
+  class_id: number,
+  department_id: number,
+  request_id: number,
   user_service: UserService,
   req: Request,
 ) => {
@@ -228,8 +228,8 @@ export const validateOthersRole = async (
 
 export const validateOthersDepartment = async (
   role: number,
-  department_id: string,
-  user_id: string,
+  department_id: number,
+  user_id: number,
   user_service: UserService,
   req: Request,
 ) => {
@@ -256,8 +256,7 @@ export const validateOthersDepartment = async (
 };
 
 export const validateClass = async (
-  class_id: string,
-  department_id: string,
+  class_id: number,
   class_service: ClassService,
   req: Request,
 ) => {
@@ -282,7 +281,7 @@ export const validateClass = async (
     );
     //#endregion
   } else {
-    const $class = await class_service.getClassById(class_id, department_id);
+    const $class = await class_service.getClassById(class_id);
     if (!$class) {
       //#region throw HandlerException
       return new HandlerException(
@@ -300,7 +299,7 @@ export const validateClass = async (
 };
 
 export const validateDepartment = async (
-  department_id: string,
+  department_id: number,
   department_service: DepartmentService,
   req: Request,
 ) => {
@@ -384,7 +383,7 @@ export const validateSheet = async (
 };
 
 export const validateUser = async (
-  user_id: string,
+  user_id: number,
   user_service: UserService,
   req: Request,
 ) => {
@@ -428,8 +427,8 @@ export const validateUser = async (
 
 export const validateTime = async (
   form: FormEntity,
-  user_id: string,
-  request_id: string,
+  user_id: number,
+  request_id: number,
   role: RoleCode,
   req: Request,
 ) => {

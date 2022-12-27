@@ -19,8 +19,8 @@ import { SheetStatus } from 'src/modules/sheet/constants/enums/status.enum';
 
 export const generateCacheClassesResponse = async (
   academic_id: number,
-  class_id: string,
-  department_id: string,
+  class_id: number,
+  department_id: number,
   semester_id: number,
   cache_classes: CacheClassEntity[] | null,
   levels: LevelEntity[],
@@ -38,13 +38,13 @@ export const generateCacheClassesResponse = async (
     let sum_of_levels = generateLevelsResponse(levels);
 
     const class_response: ClassResponse[] = [];
-    const class_ids: Types.ObjectId[] = [];
-    const data: Map<string, LevelResponse[]> = new Map();
+    const class_ids: number[] = [];
+    const data: Map<number, LevelResponse[]> = new Map();
 
     //#region Generate map data
     for await (const cache_class of cache_classes) {
       let items: LevelResponse[] = [];
-      class_ids.push(convertString2ObjectId(cache_class.class_id));
+      class_ids.push(cache_class.class_id);
 
       if (data.has(cache_class.class_id)) {
         items = data.get(cache_class.class_id);
@@ -64,7 +64,7 @@ export const generateCacheClassesResponse = async (
     if (classes && classes.length > 0) {
       for await (const key of data.keys()) {
         const levels = data.get(key);
-        const $class = classes.find((c) => c._id.toString() === key);
+        const $class = classes.find((c) => c.id === key);
 
         //#region Get num_of_std by class
         const num_of_std = await sheet_service.countSheets(
@@ -80,7 +80,7 @@ export const generateCacheClassesResponse = async (
 
         //#region Push data to class_response
         class_response.push({
-          id: $class._id.toString(),
+          id: $class.id,
           name: $class.name,
           levels: levels,
           num_of_std: num_of_std,

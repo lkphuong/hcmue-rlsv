@@ -10,8 +10,8 @@ import { SheetService } from '../../sheet/services/sheet.service';
 
 export const generateReportsResponse = async (
   academic_id: number,
-  class_id: string,
-  department_id: string,
+  class_id: number,
+  department_id: number,
   semester_id: number,
   cache_classes: CacheClassEntity[],
   levels: LevelEntity[],

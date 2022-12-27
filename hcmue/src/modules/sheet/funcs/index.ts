@@ -71,7 +71,7 @@ import {
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 
 export const generatePersonalMarks = async (
-  user_id: string,
+  user_id: number,
   role_id: number,
   params: UpdateStudentMarkDto,
   sheet: SheetEntity,
@@ -197,7 +197,7 @@ export const generatePersonalMarks = async (
 };
 
 export const generateClassMarks = async (
-  user_id: string,
+  user_id: number,
   role_id: number,
   params: UpdateClassMarkDto,
   sheet: SheetEntity,
@@ -319,7 +319,7 @@ export const generateClassMarks = async (
 };
 
 export const generateDepartmentMarks = async (
-  user_id: string,
+  user_id: number,
   role_id: number,
   params: UpdateDepartmentMarkDto,
   sheet: SheetEntity,
@@ -442,7 +442,7 @@ export const generateDepartmentMarks = async (
 };
 
 export const generateUngradeSheet = async (
-  user_id: string,
+  user_id: number,
   sheet: SheetEntity,
   role: number,
   class_service: ClassService,
@@ -477,7 +477,7 @@ export const generateUngradeSheet = async (
 
 export const generateUpdateStudentEvaluation = async (
   sheet_id: number,
-  user_id: string,
+  user_id: number,
   params: UpdateStudentMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
@@ -723,7 +723,7 @@ export const generateUpdateStudentEvaluation = async (
 
 export const generateUpdateClassEvaluation = async (
   sheet_id: number,
-  user_id: string,
+  user_id: number,
   params: UpdateClassMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
@@ -834,7 +834,7 @@ export const generateUpdateClassEvaluation = async (
 
 export const generateUpdateDepartmentEvaluation = async (
   sheet_id: number,
-  user_id: string,
+  user_id: number,
   params: UpdateDepartmentMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
@@ -945,7 +945,7 @@ export const generateUpdateDepartmentEvaluation = async (
 };
 
 export const generateUpdateSheet = async (
-  user_id: string,
+  user_id: number,
   category: SheetCategory,
   status: SheetStatus,
   params: UpdateStudentMarkDto | UpdateClassMarkDto | UpdateDepartmentMarkDto,

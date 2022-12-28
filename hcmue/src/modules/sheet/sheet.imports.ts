@@ -9,7 +9,7 @@ import { AcademicYearModule } from '../academic-year/academic_year.module';
 import { ClassModule } from '../class/class.module';
 import { EvaluationModule } from '../evaluation/evaluation.module';
 import { FileModule } from '../file/file.module';
-import { HeaderModule } from '../header/header.modules';
+import { HeaderModule } from '../header/header.module';
 import { KModule } from '../k/k.module';
 import { DepartmentModule } from '../department/department.module';
 import { LevelModule } from '../level/level.module';

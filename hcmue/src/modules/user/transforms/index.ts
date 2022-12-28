@@ -1,6 +1,9 @@
 import { UserEntity } from '../../../entities/user.entity';
 
-import { UserResponse } from '../interfaces/users-response.interface';
+import {
+  BaseResponse,
+  UserResponse,
+} from '../interfaces/users-response.interface';
 
 export const generateUsersArray = async (users: UserEntity[] | null) => {
   if (users && users.length > 0) {
@@ -39,5 +42,20 @@ export const generateUsersArray = async (users: UserEntity[] | null) => {
     return payload;
   }
 
+  return null;
+};
+
+export const generateBaseResponse = (data: any[]) => {
+  if (data) {
+    const payload: BaseResponse[] = [];
+    for (const i of data) {
+      const item: BaseResponse = {
+        id: i.id,
+        name: i.name,
+      };
+
+      payload.push(item);
+    }
+  }
   return null;
 };

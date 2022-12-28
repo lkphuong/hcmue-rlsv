@@ -9,11 +9,9 @@ export class RootEntity extends BaseEntity {
   })
   active?: boolean = true;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'created_by',
     nullable: false,
-    default: 'system',
-    length: 24,
   })
   created_by: number;
 
@@ -24,11 +22,9 @@ export class RootEntity extends BaseEntity {
   })
   created_at: Date;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'updated_by',
     nullable: true,
-    length: 24,
-    onUpdate: 'system',
     select: false,
   })
   updated_by?: number;
@@ -44,7 +40,6 @@ export class RootEntity extends BaseEntity {
   @Column('varchar', {
     name: 'deleted_by',
     nullable: true,
-    length: 24,
     select: false,
   })
   deleted_by?: number;

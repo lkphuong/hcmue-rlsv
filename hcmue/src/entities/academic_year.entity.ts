@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
-import { AcademicYearClassesEntity } from './academic_year_classes.entity';
+// import { AcademicYearClassesEntity } from './academic_year_classes.entity';
 import { FormEntity } from './form.entity';
 import { RootEntity } from './root.entity';
 import { SheetEntity } from './sheet.entity';
@@ -13,21 +13,28 @@ export class AcademicYearEntity extends RootEntity {
   })
   id: number;
 
-  @Column('varchar', {
-    name: 'name',
+  @Column('int', {
+    name: 'start',
     nullable: false,
-    length: 50,
+    default: 0,
   })
-  name: string;
+  start: number;
+
+  @Column('int', {
+    name: 'end',
+    nullable: false,
+    default: 0,
+  })
+  end: number;
 
   @OneToMany(() => SheetEntity, (sheet) => sheet.academic_year)
   sheets: SheetEntity[];
 
-  @OneToMany(
-    () => AcademicYearClassesEntity,
-    (classes) => classes.academic_year,
-  )
-  classes: AcademicYearClassesEntity[];
+  // @OneToMany(
+  //   () => AcademicYearClassesEntity,
+  //   (classes) => classes.academic_year,
+  // )
+  // classes: AcademicYearClassesEntity[];
 
   @OneToMany(() => FormEntity, (form) => form.academic_year)
   forms: FormEntity[];

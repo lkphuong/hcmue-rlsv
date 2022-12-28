@@ -12,4 +12,6 @@ export enum ErrorMessage {
   SEMESTER_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [học kì].',
 
   INVALID_EXTENSION_ERROR = `[File] sinh viên phải là file excel (extension: '.xlsx')`,
+
+  STATUS_OPERATOR_ERROR = 'Lưu thông tin [trạng thái] thất bại.',
 }

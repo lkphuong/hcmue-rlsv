@@ -2,7 +2,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FormEntity } from '../../entities/form.entity';
 import { AcademicYearModule } from '../academic-year/academic_year.module';
-import { HeaderModule } from '../header/header.modules';
+import { HeaderModule } from '../header/header.module';
 import { ItemModule } from '../item/item.module';
 import { LogModule } from '../log/log.module';
 import { SemesterModule } from '../semester/semester.module';

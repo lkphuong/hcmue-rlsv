@@ -493,7 +493,7 @@ export const isAnyPublished = async (
       req.url,
       sprintf(
         ErrorMessage.ACADEMIC_EXISTS_FORM_PUBLISHED_IN_SEMESTER_ERROR,
-        form.academic_year.name,
+        form.academic_year.start + ' - ' + form.academic_year.end,
         form.semester.name,
       ),
       HttpStatus.BAD_REQUEST,

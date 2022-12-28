@@ -52,3 +52,28 @@ export const mapRoleForUser = (
 
   return 0;
 };
+
+/**
+ *
+ * @param array1 sql
+ * @param array2 excel
+ * @param key
+ * @returns
+ */
+export const arrayObjectDifference = (
+  array1: any[],
+  array2: any[],
+  key: string,
+) => {
+  return array2.filter((x) => array1.every((y) => !y[key].includes(x[key])));
+};
+
+/**
+ *
+ * @param array1 sql
+ * @param array2 excel
+ * @returns
+ */
+export const arrayDifference = (array1: any[], array2: any[]) => {
+  return array2.filter((x) => !array1.includes(x));
+};

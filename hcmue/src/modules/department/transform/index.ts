@@ -1,7 +1,6 @@
-import { DepartmentEntity } from '../../../entities/department.entity';
 import { DepartmentResponse } from '../interfaces/department_response';
 
-export const generateData2Array = (departments: DepartmentEntity[]) => {
+export const generateData2Array = (departments: DepartmentResponse[]) => {
   if (departments) {
     const payload: DepartmentResponse[] = [];
     for (const department of departments) {

@@ -92,7 +92,7 @@ export const generateUserSheets = (sheets: SheetEntity[] | null) => {
         },
         academic: {
           id: sheet.academic_year.id,
-          name: sheet.academic_year.name,
+          name: sheet.academic_year.start + ' - ' + sheet.academic_year.end,
         },
         level: sheet.level
           ? {
@@ -222,7 +222,7 @@ export const generateData2Object = async (
       },
       academic: {
         id: sheet.academic_year.id,
-        name: sheet.academic_year.name,
+        name: sheet.academic_year.start + ' - ' + sheet.academic_year.end,
       },
       k: k
         ? {

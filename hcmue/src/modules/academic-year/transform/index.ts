@@ -9,7 +9,7 @@ export const generateData2Array = (
     for (const academic_year of academic_years) {
       const item: AcademicYearResponse = {
         id: academic_year.id,
-        name: academic_year.name,
+        name: academic_year.start + ' - ' + academic_year.end,
       };
 
       payload.push(item);
@@ -26,7 +26,7 @@ export const generateData2Object = (
   if (academic_year) {
     const payload: AcademicYearResponse = {
       id: academic_year.id,
-      name: academic_year.name,
+      name: academic_year.start + ' - ' + academic_year.end,
     };
 
     return payload;

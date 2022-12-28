@@ -1,21 +1,22 @@
 import {
   Body,
+  CACHE_MANAGER,
   Controller,
   HttpCode,
   HttpException,
   HttpStatus,
+  Inject,
   Post,
   Req,
   UseGuards,
   UsePipes,
   ValidationPipe,
-  OnModuleInit,
 } from '@nestjs/common';
+import { Cache } from 'cache-manager';
 import { Request } from 'express';
 import { DataSource } from 'typeorm';
-import * as NodeCache from 'node-cache';
 
-import { generateResponses, generateUserIds } from '../utils';
+import { generateResponses } from '../utils';
 import { generateImportUsers } from '../funcs';
 
 import { GetUsersDto } from '../dtos/get_users.dto';
@@ -26,9 +27,13 @@ import { LogService } from '../../log/services/log.service';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { ClassService } from '../../class/services/class.service';
+import { DepartmentService } from '../../department/services/department.service';
 import { FilesService } from '../../file/services/files.service';
+import { KService } from '../../k/services/k.service';
+import { MajorService } from '../../major/services/major.service';
 import { RoleUsersService } from '../../role/services/role_users/role_users.service';
 import { SemesterService } from '../../semester/services/semester.service';
+import { StatusService } from '../../status/status/status.service';
 import { UserService } from '../services/user.service';
 
 import { HttpPagingResponse } from '../../../interfaces/http-paging-response.interface';
@@ -52,27 +57,50 @@ import {
 import { CACHE_KEY } from '../constants/enums/cache_key.enum';
 
 @Controller('users')
-export class UserController implements OnModuleInit {
-  onModuleInit() {
-    //#region Get data
-    const classes = this._classService.getClasses();
-    const departments = null;
-    //#endregion
-    const cache = new NodeCache({ deleteOnExpire: false });
-    cache.set(CACHE_KEY.CLASS, classes);
-  }
+export class UserController {
   constructor(
+    @Inject(CACHE_MANAGER) private readonly _cacheManager: Cache,
     private readonly _academicYearService: AcademicYearService,
     private readonly _configurationService: ConfigurationService,
     private readonly _classService: ClassService,
+    private readonly _departmentService: DepartmentService,
     private readonly _fileService: FilesService,
+    private readonly _kService: KService,
     private readonly _roleUserService: RoleUsersService,
     private readonly _semesterService: SemesterService,
     private readonly _userService: UserService,
+    private readonly _statusService: StatusService,
+    private readonly _majorService: MajorService,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
+  async onModuleInit() {
+    //#region get classes and cache
+    const $class = await this._classService.getClasses();
+    await this._cacheManager.set(CACHE_KEY.CLASS, $class, 0);
+    //#endregion
+
+    //#region get status and cache
+    const statuses = await this._statusService.getStatuses();
+    await this._cacheManager.set(CACHE_KEY.STATUS, statuses, 0);
+    //#endregion
+
+    //#region get department and cache
+    const departments = await this._departmentService.getDepartments();
+    await this._cacheManager.set(CACHE_KEY.DEPARTMENT, departments, 0);
+    //#endregion
+
+    //#region get k and cache
+    const k = await this._kService.getAll();
+    await this._cacheManager.set(CACHE_KEY.K, k, 0);
+    //#endregion
+
+    //#region  get major and cache
+    const majors = await this._majorService.getMajors();
+    await this._cacheManager.set(CACHE_KEY.MAJOR, majors, 0);
+    //#endregion
+  }
   /**
    * @method POST
    * @url /api/users
@@ -211,6 +239,7 @@ export class UserController implements OnModuleInit {
         this._academicYearService,
         this._fileService,
         this._semesterService,
+        this._cacheManager,
         this._dataSource,
         req,
       );

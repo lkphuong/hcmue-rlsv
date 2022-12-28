@@ -18,14 +18,14 @@ import { Configuration } from 'src/modules/shared/constants/configuration.enum';
 import { Levels } from 'src/constants/enums/level.enum';
 
 export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
-  consumer
-    .apply(VerifyTokenMiddleware)
-    .exclude(
-      { path: '/api/auth/login', method: RequestMethod.POST },
-      { path: '/api/auth/renew-token', method: RequestMethod.POST },
-      'uploads/(.*)',
-    )
-    .forRoutes({ path: '*', method: RequestMethod.ALL });
+  // consumer
+  //   .apply(VerifyTokenMiddleware)
+  //   .exclude(
+  //     { path: '/api/auth/login', method: RequestMethod.POST },
+  //     { path: '/api/auth/renew-token', method: RequestMethod.POST },
+  //     'uploads/(.*)',
+  //   )
+  //   .forRoutes({ path: '*', method: RequestMethod.ALL });
 };
 
 export const convertString2Date = (raw: string) => {

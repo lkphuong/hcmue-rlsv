@@ -17,7 +17,7 @@ import { ClassModule } from './modules/class/class.module';
 import { EvaluationModule } from './modules/evaluation/evaluation.module';
 import { FileModule } from './modules/file/file.module';
 import { FormModule } from './modules/form/form.module';
-import { HeaderModule } from './modules/header/header.modules';
+import { HeaderModule } from './modules/header/header.module';
 import { LevelModule } from './modules/level/level.module';
 import { ReportModule } from './modules/report/report.module';
 import { RoleModule } from './modules/role/role.module';

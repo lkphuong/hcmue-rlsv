@@ -9,19 +9,12 @@ export class ClassEntity extends RootEntity {
   })
   id: number;
 
-  @Column('varchar', {
-    name: 'name',
-    nullable: false,
-    length: 255,
-  })
-  name: string;
-
   @Column('bigint', {
-    name: 'k_id',
+    name: 'k',
     nullable: false,
     default: 0,
   })
-  k_id: number;
+  k: number;
 
   @Column('bigint', {
     name: 'department_id',
@@ -29,6 +22,20 @@ export class ClassEntity extends RootEntity {
     default: 0,
   })
   department_id: number;
+
+  @Column('varchar', {
+    name: 'code',
+    nullable: false,
+    length: 45,
+  })
+  code: string;
+
+  @Column('varchar', {
+    name: 'name',
+    nullable: false,
+    length: 255,
+  })
+  name: string;
 
   users: UserEntity[] | null;
 }

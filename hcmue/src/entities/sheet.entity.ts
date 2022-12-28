@@ -132,8 +132,8 @@ export class SheetEntity extends RootEntity {
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.sheet)
   evaluations: EvaluationEntity[];
 
-  @OneToMany(() => SheetSignatures, (signature) => signature.sheet)
-  signatures: SheetSignatures[];
+  // @OneToMany(() => SheetSignatures, (signature) => signature.sheet)
+  // signatures: SheetSignatures[];
 
   @OneToMany(() => ApprovalEntity, (approval) => approval.sheet)
   approvals: ApprovalEntity[];

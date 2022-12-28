@@ -17,5 +17,11 @@ export class MajorEntity extends RootEntity {
   })
   name: string;
 
+  @Column('bigint', {
+    name: 'department_id',
+    nullable: false,
+  })
+  department_id: number;
+
   users: UserEntity[] | null;
 }

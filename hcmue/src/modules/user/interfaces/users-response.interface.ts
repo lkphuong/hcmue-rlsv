@@ -13,9 +13,20 @@ export interface UserResponse {
 }
 
 export interface ExcelDataResponse {
-  academics: any[];
-  classes: any[];
-  departmentes: any[];
-  majors: any[];
-  statuses: any[];
+  k: string[];
+  classes: ExcelClassResponse[];
+  departmentes: string[];
+  majors: ExcelMajorResponse[];
+  statuses: string[];
+}
+
+export interface ExcelMajorResponse {
+  name: string;
+  department: string;
+}
+
+export interface ExcelClassResponse {
+  code: string;
+  name: string;
+  department: string;
 }

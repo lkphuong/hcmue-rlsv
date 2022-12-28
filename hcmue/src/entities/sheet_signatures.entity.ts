@@ -11,14 +11,14 @@ export class SheetSignatures extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => SheetEntity, (sheet) => sheet.signatures)
-  @JoinColumn([
-    {
-      name: 'sheet_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  sheet: SheetEntity;
+  // @ManyToOne(() => SheetEntity, (sheet) => sheet.signatures)
+  // @JoinColumn([
+  //   {
+  //     name: 'sheet_id',
+  //     referencedColumnName: 'id',
+  //   },
+  // ])
+  // sheet: SheetEntity;
 
   @ManyToOne(() => SignatureEntity, (signature) => signature.sheets)
   @JoinColumn([

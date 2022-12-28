@@ -150,7 +150,7 @@ export const generateFormsArray = async (forms: FormEntity[] | null) => {
         id: form.id,
         academic: {
           id: form.academic_year.id,
-          name: form.academic_year.name,
+          name: form.academic_year.start + ' - ' + form.academic_year.end,
         },
         semester: {
           id: form.semester.id,
@@ -187,7 +187,7 @@ export const generateFormObject = (form: FormEntity | null) => {
       id: form.id,
       academic: {
         id: form.academic_year.id,
-        name: form.academic_year.name,
+        name: form.academic_year.start + ' - ' + form.academic_year.end,
       },
       semester: {
         id: form.semester.id,
@@ -220,7 +220,7 @@ export const generateDetailFormObject = (form: FormEntity | null) => {
       id: form.id,
       academic: {
         id: form.academic_year.id,
-        name: form.academic_year.name,
+        name: form.academic_year.start + ' - ' + form.academic_year.end,
       },
       semester: {
         id: form.semester.id,

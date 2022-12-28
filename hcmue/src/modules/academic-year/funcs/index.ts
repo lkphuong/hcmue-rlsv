@@ -19,7 +19,8 @@ export const createAcademic = async (
   req: Request,
 ) => {
   let academic = new AcademicYearEntity();
-  academic.name = `${from}-${to}`;
+  academic.start = from;
+  academic.end = to;
   academic.active = true;
   academic.created_at = new Date();
   academic.created_by = user_id;

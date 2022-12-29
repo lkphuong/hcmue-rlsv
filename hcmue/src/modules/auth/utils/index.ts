@@ -1,6 +1,8 @@
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 
+import * as md5 from 'md5';
+
 import { returnObjects } from '../../../utils';
 
 import { SessionEntity } from '../../../entities/session.entity';
@@ -92,5 +94,5 @@ export const validatePassword = async (
   password: string,
   user_password: string,
 ) => {
-  return password === user_password;
+  return md5(password) === user_password;
 };

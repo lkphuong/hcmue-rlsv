@@ -37,11 +37,19 @@ export class UserEntity extends RootEntity {
   })
   fullname: string;
 
-  @Column('date', {
+  @Column('varchar', {
     name: 'birthday',
     nullable: true,
+    length: 20,
   })
-  birthday: Date;
+  birthday: string;
+
+  @Column('bigint', {
+    name: 'status_id',
+    nullable: false,
+    default: 0,
+  })
+  status_id: number;
 
   @Column('bigint', {
     name: 'class_id',

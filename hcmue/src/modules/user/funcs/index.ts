@@ -3,15 +3,23 @@ import { Request } from 'express';
 import { DataSource, QueryRunner } from 'typeorm';
 import * as xlsx from 'xlsx';
 import * as path from 'path';
+import * as md5 from 'md5';
 import { Cache } from 'cache-manager';
 
 import { removeDuplicates, removeDuplicatesObject } from '../../../utils';
-import { arrayDifference, arrayObjectDifference } from '../utils';
+import {
+  arrayDifference,
+  arrayObjectDifference,
+  generateImportSuccessResponse,
+} from '../utils';
+import { generateBaseResponse, generateClassResponse } from '../transforms';
 
+import { MajorEntity } from '../../../entities/major.entity';
 import { ClassEntity } from '../../../entities/class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
 import { KEntity } from '../../../entities/k.entity';
-import { MajorEntity } from '../../../entities/major.entity';
+import { StatusEntity } from '../../../entities/status.entity';
+import { UserEntity } from '../../../entities/user.entity';
 
 import {
   validateAcademic,
@@ -28,7 +36,6 @@ import { DepartmentService } from '../../department/services/department.service'
 import { FilesService } from '../../file/services/files.service';
 import { KService } from '../../k/services/k.service';
 import { MajorService } from '../../major/services/major.service';
-import { RoleUsersService } from '../../role/services/role_users/role_users.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { StatusService } from '../../status/status/status.service';
 import { UserService } from '../services/user.service';
@@ -54,9 +61,7 @@ import {
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { CACHE_KEY } from '../constants/enums/cache_key.enum';
-import { StatusEntity } from 'src/entities/status.entity';
 import { ErrorMessage } from '../constants/enums/errors.enum';
-import { generateBaseResponse } from '../transforms';
 
 export const generateImportUsers = async (
   params: ImportUsersDto,
@@ -69,6 +74,7 @@ export const generateImportUsers = async (
   major_service: MajorService,
   semester_service: SemesterService,
   status_service: StatusService,
+  user_service: UserService,
   cache_manager: Cache,
   data_source: DataSource,
   req: Request,
@@ -106,8 +112,14 @@ export const generateImportUsers = async (
     // Start transaction
     await query_runner.startTransaction();
 
-    //#region Get Cache
-    const cache = await readDataFromCache(cache_manager);
+    //#region Get data
+    const data_query = await generateData(
+      class_service,
+      department_service,
+      k_service,
+      major_service,
+      status_service,
+    );
     //#endregion
 
     //#region read file
@@ -117,39 +129,48 @@ export const generateImportUsers = async (
     //#region compare two array
     //#region comapre class
     const class_difference = arrayObjectDifference(
-      cache.classes,
+      data_query.classes,
       data.classes,
       'code',
     );
     //#endregion
 
     //#region compare department
-    const array_department = cache.departments.map((i) => {
-      return i.name;
-    });
+    const array_department =
+      data_query.departments && data_query.departments.length > 0
+        ? data_query.departments.map((i) => {
+            return i.name;
+          })
+        : [];
     const department_difference = arrayDifference(
       array_department,
-      data.departmentes,
+      data.departments,
     );
     //#endregion
 
     //#region compare status
-    const array_status = cache.statuses.map((i) => {
-      return i.name;
-    });
+    const array_status =
+      data_query.statuses && data_query.statuses.length > 0
+        ? data_query.statuses.map((i) => {
+            return i.name;
+          })
+        : [];
     const status_difference = arrayDifference(array_status, data.statuses);
     //#endregion
 
     //#region compare k
-    const array_k = cache.k.map((i) => {
-      return i.name;
-    });
+    const array_k =
+      data_query.k && data_query.k.length > 0
+        ? data_query.k.map((i) => {
+            return i.name;
+          })
+        : [];
     const k_difference = arrayDifference(array_k, data.k);
     //#endregion
 
     //#region compare major
     const major_difference = arrayObjectDifference(
-      cache.majors,
+      data_query.majors,
       data.majors,
       'name',
     );
@@ -157,32 +178,192 @@ export const generateImportUsers = async (
 
     //#endregion
 
-    //#region Add new data
-
     //#region Create status
-    const new_status = await generateCreateStatus(
-      status_difference,
-      status_service,
+    let new_cache_status: StatusResponse[] = [...data_query.statuses];
+    if (status_difference) {
+      const new_status = await generateCreateStatus(
+        status_difference,
+        status_service,
+        query_runner,
+      );
+      if (!new_status) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.STATUS_OPERATOR_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      } else {
+        //#region transform data and new cache
+        const result = generateBaseResponse(new_status);
+        new_cache_status = [...new_cache_status, ...result];
+        //#endregion
+      }
+    }
+
+    //#endregion
+
+    //#region Create department
+    let new_cache_department: DepartmentResponse[] = [
+      ...data_query.departments,
+    ];
+    if (department_difference && department_difference.length > 0) {
+      const new_department = await generateCreateDepartment(
+        department_difference,
+        department_service,
+        query_runner,
+      );
+      if (!new_department) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.DEPARTMENT_OPERATOR_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      } else {
+        //#region transform data and new cache
+        const result = generateBaseResponse(new_department);
+        new_cache_department = [...new_cache_department, ...result];
+        //#endregion
+      }
+    }
+
+    //#endregion
+
+    //#region Create major
+    let new_cache_major: MajorResponse[] = [...data_query.majors];
+    if (major_difference && major_difference.length > 0) {
+      const new_major = await generateCreateMajor(
+        major_difference,
+        new_cache_department,
+        major_service,
+        query_runner,
+      );
+      if (!new_major) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.MAJOR_OPERATOR_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      } else {
+        //#region transform data and new cache
+        const result = generateBaseResponse(new_major);
+        new_cache_major = [...new_cache_major, ...result];
+        //#endregion
+      }
+    }
+
+    //#endregion
+
+    //#region Create k
+    let new_cache_k: KResponse[] = [...data_query.k];
+    if (k_difference && k_difference.length > 0) {
+      const new_k = await generateCreateK(
+        k_difference,
+        k_service,
+        query_runner,
+      );
+      if (!new_k) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.K_OPERATOR_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      } else {
+        //#region transform data and new cache
+        const result = generateBaseResponse(new_k);
+        new_cache_k = [...new_cache_k, ...result];
+        await cache_manager.set(CACHE_KEY.K, new_cache_k, 0);
+        //#endregion
+      }
+    }
+
+    //#endregion
+
+    //#region Create class
+    let new_cache_class: ClassResponse[] = [...data_query.classes];
+    if (class_difference && class_difference.length > 0) {
+      const new_class = await generateCreateClass(
+        class_difference,
+        new_cache_department,
+        new_cache_k,
+        class_service,
+        query_runner,
+      );
+      if (!new_class) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.CLASS_OPERATOR_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      } else {
+        //#region transform data and new cache
+        const result = generateClassResponse(new_class);
+        new_cache_class = [...new_cache_class, ...result];
+        //#endregion
+      }
+    }
+    //#endregion
+
+    //#region Update old users
+    const old_users = await user_service.countUsersByAcademicAndSemester(
+      academic_id,
+      semester_id,
+    );
+    if (old_users > 0) {
+      const delte_users = await user_service.bulkUnlink(
+        academic_id,
+        semester_id,
+        query_runner.manager,
+      );
+      if (!delte_users) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.STUDENT_OPERATOR_ERROR,
+          HttpStatus.EXPECTATION_FAILED,
+        );
+      }
+    }
+    //#endregion
+
+    //#region Create user
+    const users = await generateCreateUser(
+      path.join(root, file.fileName),
+      academic_id,
+      semester_id,
+      new_cache_class,
+      new_cache_status,
+      new_cache_department,
+      new_cache_major,
+      user_service,
       query_runner,
     );
-    if (!new_status) {
+    if (!users) {
       throw new HandlerException(
         DATABASE_EXIT_CODE.OPERATOR_ERROR,
         req.method,
         req.url,
-        ErrorMessage.STATUS_OPERATOR_ERROR,
+        ErrorMessage.STUDENT_OPERATOR_ERROR,
         HttpStatus.EXPECTATION_FAILED,
       );
-    } else {
-      //#region transform data and new cache
-      const result = generateBaseResponse(new_status);
-      const new_cache = [...cache.statuses, ...result];
-      await cache_manager.set(CACHE_KEY.STATUS, new_cache, 0);
-      //#endregion
     }
-    //#endregion
 
+    //#endregion
     //#region
+
+    //#region response
+    return await generateImportSuccessResponse(query_runner, req);
+    //#endregion
   } catch (err) {
     console.log('err: ', err);
     // Rollback transaction
@@ -241,6 +422,7 @@ export const readDataFromFile = async (path: string) => {
         code: data[i][7],
         name: data[i][8],
         department: data[i][5],
+        k: data[i][4],
       });
     }
   }
@@ -255,7 +437,7 @@ export const readDataFromFile = async (path: string) => {
 
   const result: ExcelDataResponse = {
     k: k,
-    departmentes: departments,
+    departments: departments,
     majors: majors,
     classes: classes,
     statuses: statuses,
@@ -264,24 +446,25 @@ export const readDataFromFile = async (path: string) => {
   return result;
 };
 
-export const readDataFromCache = async (cache_manager: Cache) => {
-  const $class = (await cache_manager.get(CACHE_KEY.CLASS)) as ClassResponse[];
-  const statuses = (await cache_manager.get(
-    CACHE_KEY.STATUS,
-  )) as StatusResponse[];
-
-  const departments = (await cache_manager.get(
-    CACHE_KEY.DEPARTMENT,
-  )) as DepartmentResponse[];
-  const k = (await cache_manager.get(CACHE_KEY.K)) as KResponse[];
-  const majors = (await cache_manager.get(CACHE_KEY.MAJOR)) as MajorResponse[];
+export const generateData = async (
+  class_service: ClassService,
+  department_service: DepartmentService,
+  k_service: KService,
+  major_service: MajorService,
+  status_service: StatusService,
+) => {
+  const $class = await class_service.getClasses();
+  const departments = await department_service.getDepartments();
+  const k = await k_service.getAll();
+  const majors = await major_service.getMajors();
+  const statuses = await status_service.getStatuses();
 
   return {
     classes: $class,
     statuses: statuses,
     departments: departments,
     k: k,
-    majors,
+    majors: majors,
   };
 };
 
@@ -392,6 +575,7 @@ export const generateCreateStatus = async (
 export const generateCreateClass = async (
   data: ExcelClassResponse[],
   departments: DepartmentResponse[],
+  ks: KResponse[],
   class_service: ClassService,
   query_runner: QueryRunner,
 ) => {
@@ -401,9 +585,9 @@ export const generateCreateClass = async (
     $class.code = i.code;
     $class.name = i.name;
     $class.department_id = departments.find(
-      (department) => (department.name = i.department),
+      (department) => department.name == i.department,
     ).id;
-
+    $class.k = ks.find((k) => k.name == i.k).id;
     add_class.push($class);
   }
 
@@ -411,5 +595,63 @@ export const generateCreateClass = async (
   const results = await class_service.bulkAdd(add_class, query_runner.manager);
 
   return results || null;
+  //#endregion
+};
+
+export const generateCreateUser = async (
+  path: string,
+  academic_id: number,
+  semester_id: number,
+  classes: ClassResponse[],
+  statuses: StatusResponse[],
+  departments: DepartmentResponse[],
+  majors: MajorResponse[],
+  user_service: UserService,
+  query_runner: QueryRunner,
+) => {
+  const workbook = xlsx.readFile(path);
+  const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+  const data = xlsx.utils.sheet_to_json(worksheet, { header: 1 }).slice(1);
+
+  //#region loop file excel
+  let add_users: UserEntity[] = [];
+  let counter = 0;
+  console.log('start: ', new Date());
+  for await (const i of data) {
+    const item = new UserEntity();
+    item.academic_id = academic_id;
+    item.semester_id = semester_id;
+    item.std_code = i[0];
+    item.status_id = i[1]
+      ? statuses.find((status) => status.name == i[1]).id
+      : null;
+    item.fullname = i[2];
+    item.password = md5(i[3]);
+    item.birthday = i[3];
+    item.class_id = i[7]
+      ? classes.find(($class) => $class.code == i[7]).id
+      : null;
+    item.department_id = i[5]
+      ? departments.find((department) => department.name == i[5]).id
+      : null;
+    item.major_id = majors.find((major) => major.name == i[6]).id;
+    add_users.push(item);
+    counter++;
+    if (counter % 1000 == 0) {
+      console.log('insert: ', new Date());
+      const result = await user_service.bulkAdd(
+        add_users,
+        query_runner.manager,
+      );
+      if (!result) return null;
+      add_users = [];
+    }
+  }
+  console.log('end: ', new Date());
+  //#endregion
+
+  //#region Add user
+  const result = await user_service.bulkAdd(add_users, query_runner.manager);
+  return result || null;
   //#endregion
 };

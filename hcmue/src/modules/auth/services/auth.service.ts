@@ -66,12 +66,12 @@ export class AuthService {
     }
   }
 
-  async getRoleByUserId(user_id: number): Promise<RoleUsersEntity | null> {
+  async getRoleByUserCode(std_code: string): Promise<RoleUsersEntity | null> {
     try {
       const conditions = await this._roleUserRepository
         .createQueryBuilder('role_user')
         .innerJoinAndSelect('role_user.role', 'role')
-        .where('role_user.user_id = :user_id', { user_id })
+        .where('role_user.std_code = :std_code', { std_code })
         .andWhere('role.deleted = :deleted', { deleted: false });
 
       const role = await conditions.getOne();

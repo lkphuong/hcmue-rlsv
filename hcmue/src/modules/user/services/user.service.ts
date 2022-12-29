@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 import { ClassEntity } from '../../../entities/class.entity';
@@ -20,6 +20,7 @@ export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly _userRepository: Repository<UserEntity>,
+    private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
@@ -91,6 +92,34 @@ export class UserService {
         Levels.ERROR,
         Methods.SELECT,
         'UserService.count()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async countUsersByAcademicAndSemester(
+    academic_id: number,
+    semester_id: number,
+  ): Promise<number> {
+    try {
+      const conditions = await this._userRepository
+        .createQueryBuilder('user')
+        .select('COUNT(user.id)', 'count')
+        .where('user.academic_id = :academic_id', { academic_id })
+        .andWhere('user.semester_id = :semester_id', { semester_id })
+        .andWhere('user.deleted = :deleted', { deleted: false });
+
+      console.log('sql: ', conditions.getSql());
+
+      const { count } = await conditions.getRawOne();
+
+      return count;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.countUsersByAcademicAndSemester()',
         e,
       );
       return null;
@@ -329,7 +358,7 @@ export class UserService {
     }
   }
 
-  async getUserById(id: number): Promise<any | null> {
+  async getUserById(id: number): Promise<UserEntity | null> {
     try {
       const conditions = this._userRepository
         .createQueryBuilder('user')
@@ -423,6 +452,56 @@ export class UserService {
         Levels.ERROR,
         Methods.SELECT,
         'UserService.getUserByIds()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async bulkAdd(users: UserEntity[], manager?: EntityManager) {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.insert(UserEntity, users);
+
+      return results || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.bulkAdd()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async bulkUnlink(
+    academic_id: number,
+    semester_id: number,
+    manager?: EntityManager,
+  ) {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+      const results = await manager.update(
+        UserEntity,
+        {
+          academic_id: academic_id,
+          semester_id: semester_id,
+          deleted: false,
+        },
+        { deleted: true, deleted_at: new Date(), deleted_by: 0 },
+      );
+      return results.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'UserService.bulkUnlink()',
         e,
       );
       return null;

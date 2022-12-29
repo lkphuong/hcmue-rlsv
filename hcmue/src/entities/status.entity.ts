@@ -3,7 +3,7 @@ import { RootEntity } from './root.entity';
 
 import { UserEntity } from './user.entity';
 
-@Entity('status')
+@Entity('statuses')
 export class StatusEntity extends RootEntity {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',

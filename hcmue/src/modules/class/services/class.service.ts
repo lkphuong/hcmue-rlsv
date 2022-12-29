@@ -113,17 +113,14 @@ export class ClassService {
     }
   }
 
-  async bulkAdd(
-    classes: ClassEntity[],
-    manager?: EntityManager,
-  ): Promise<ClassEntity[] | null> {
+  async bulkAdd(classes: ClassEntity[], manager?: EntityManager) {
     try {
       if (!manager) {
         manager = this._dataSource.manager;
       }
-      classes = await manager.save(classes);
+      const result = await manager.save(ClassEntity, classes);
 
-      return classes || null;
+      return result || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

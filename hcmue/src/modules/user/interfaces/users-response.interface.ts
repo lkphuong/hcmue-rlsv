@@ -15,7 +15,7 @@ export interface UserResponse {
 export interface ExcelDataResponse {
   k: string[];
   classes: ExcelClassResponse[];
-  departmentes: string[];
+  departments: string[];
   majors: ExcelMajorResponse[];
   statuses: string[];
 }
@@ -29,4 +29,5 @@ export interface ExcelClassResponse {
   code: string;
   name: string;
   department: string;
+  k: string;
 }

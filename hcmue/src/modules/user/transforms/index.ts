@@ -1,3 +1,5 @@
+import { ClassEntity } from '../../../entities/class.entity';
+import { ClassResponse } from '../../class/interfaces/class_response.interface';
 import { UserEntity } from '../../../entities/user.entity';
 
 import {
@@ -45,9 +47,9 @@ export const generateUsersArray = async (users: UserEntity[] | null) => {
   return null;
 };
 
-export const generateBaseResponse = (data: any[]) => {
-  if (data) {
-    const payload: BaseResponse[] = [];
+export const generateBaseResponse = (data: any[] | null) => {
+  const payload: BaseResponse[] = [];
+  if (data && data.length > 0) {
     for (const i of data) {
       const item: BaseResponse = {
         id: i.id,
@@ -56,6 +58,23 @@ export const generateBaseResponse = (data: any[]) => {
 
       payload.push(item);
     }
+    return payload;
   }
-  return null;
+  return payload;
+};
+
+export const generateClassResponse = (classes: ClassEntity[] | null) => {
+  const payload: ClassResponse[] = [];
+  if (classes && classes.length > 0) {
+    for (const i of classes) {
+      const item: ClassResponse = {
+        id: i.id,
+        code: i.code,
+        name: i.name,
+      };
+      payload.push(item);
+    }
+  }
+
+  return payload;
 };

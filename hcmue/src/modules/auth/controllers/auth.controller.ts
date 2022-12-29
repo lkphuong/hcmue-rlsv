@@ -111,7 +111,9 @@ export class AuthController {
 
         if (isMatch) {
           //#region get role
-          const role_user = await this._authService.getRoleByUserId(result.id);
+          const role_user = await this._authService.getRoleByUserCode(
+            result.std_code,
+          );
 
           //#endregion
 
@@ -327,7 +329,9 @@ export class AuthController {
           );
           if (user) {
             //#region get role
-            const role_user = await this._authService.getRoleByUserId(user.id);
+            const role_user = await this._authService.getRoleByUserCode(
+              user.std_code,
+            );
             //#endregion
             //#region Generate access_token
             const renew_access_token = generateAccessToken(

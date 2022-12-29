@@ -227,7 +227,7 @@ export class RoleController {
       );
 
       if (role_user) {
-        const user = await this._userService.getUserById(role_user.user_id);
+        const user = await this._userService.getUserById(role_user.std_code);
         if (user) {
           return generateCheckRoleUserSuccessResponse(
             role_user,

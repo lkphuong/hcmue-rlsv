@@ -16,12 +16,12 @@ export class RoleUsersEntity extends RootEntity {
   })
   id: number;
 
-  @Column('bigint', {
-    name: 'user_id',
+  @Column('varchar', {
+    name: 'std_code',
     nullable: false,
-    default: 0,
+    length: 20,
   })
-  user_id: number;
+  std_code: string;
 
   @Column('bigint', {
     name: 'class_id',

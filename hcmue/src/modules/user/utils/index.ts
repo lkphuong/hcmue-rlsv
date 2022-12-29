@@ -10,6 +10,7 @@ import { RoleUsersEntity } from '../../../entities/role_users.entity';
 import { UserEntity } from '../../../entities/user.entity';
 
 import { UserResponse } from '../interfaces/users-response.interface';
+import { QueryRunner } from 'typeorm';
 
 export const generateUserIds = (users: any) => {
   return users.map((item) => {
@@ -32,6 +33,25 @@ export const generateResponses = async (
 
   // Returns objects
   return returnObjectsWithPaging<UserResponse>(pages, page, payload);
+};
+
+export const generateImportSuccessResponse = async (
+  query_runner: QueryRunner,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+
+  // Commit transaction
+  if (query_runner) await query_runner.commitTransaction();
+
+  // Return object
+  return {
+    data: 'Thành công',
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
 };
 
 export const mapRoleForUser = (

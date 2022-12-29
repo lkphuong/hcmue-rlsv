@@ -31,7 +31,6 @@ import { DepartmentService } from '../../department/services/department.service'
 import { FilesService } from '../../file/services/files.service';
 import { KService } from '../../k/services/k.service';
 import { MajorService } from '../../major/services/major.service';
-import { RoleUsersService } from '../../role/services/role_users/role_users.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { StatusService } from '../../status/status/status.service';
 import { UserService } from '../services/user.service';
@@ -54,7 +53,6 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import { CACHE_KEY } from '../constants/enums/cache_key.enum';
 
 @Controller('users')
 export class UserController {
@@ -66,7 +64,6 @@ export class UserController {
     private readonly _departmentService: DepartmentService,
     private readonly _fileService: FilesService,
     private readonly _kService: KService,
-    private readonly _roleUserService: RoleUsersService,
     private readonly _semesterService: SemesterService,
     private readonly _userService: UserService,
     private readonly _statusService: StatusService,
@@ -75,32 +72,6 @@ export class UserController {
     private _logger: LogService,
   ) {}
 
-  async onModuleInit() {
-    //#region get classes and cache
-    const $class = await this._classService.getClasses();
-    await this._cacheManager.set(CACHE_KEY.CLASS, $class, 0);
-    //#endregion
-
-    //#region get status and cache
-    const statuses = await this._statusService.getStatuses();
-    await this._cacheManager.set(CACHE_KEY.STATUS, statuses, 0);
-    //#endregion
-
-    //#region get department and cache
-    const departments = await this._departmentService.getDepartments();
-    await this._cacheManager.set(CACHE_KEY.DEPARTMENT, departments, 0);
-    //#endregion
-
-    //#region get k and cache
-    const k = await this._kService.getAll();
-    await this._cacheManager.set(CACHE_KEY.K, k, 0);
-    //#endregion
-
-    //#region  get major and cache
-    const majors = await this._majorService.getMajors();
-    await this._cacheManager.set(CACHE_KEY.MAJOR, majors, 0);
-    //#endregion
-  }
   /**
    * @method POST
    * @url /api/users
@@ -237,8 +208,14 @@ export class UserController {
         params,
         root,
         this._academicYearService,
+        this._classService,
+        this._departmentService,
         this._fileService,
+        this._kService,
+        this._majorService,
         this._semesterService,
+        this._statusService,
+        this._userService,
         this._cacheManager,
         this._dataSource,
         req,

@@ -1,22 +1,25 @@
-import { VALIDATION_EXIT_CODE } from 'src/constants/enums/error-code.enum';
-import { ErrorMessage } from '../constants/enums/errors.enum';
+import { HttpStatus } from '@nestjs/common';
 import { isEmpty } from 'class-validator';
 import { Request } from 'express';
 
-import { HandlerException } from 'src/exceptions/HandlerException';
-import { HttpStatus } from '@nestjs/common';
-import { UserService } from 'src/modules/user/services/user.service';
-import { sprintf } from 'src/utils';
+import { sprintf } from '../../../utils';
+
+import { VALIDATION_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import { ErrorMessage } from '../constants/enums/errors.enum';
+
+import { HandlerException } from '../../../exceptions/HandlerException';
+
+import { UserService } from '../../user/services/user.service';
 
 export const validateFileUser = async (
-  request_id: number, //req
-  user_id: number, // created_by
+  request_code: string, //req
+  std_code: string, // created_by
   user_service: UserService,
   req: Request,
 ) => {
-  const user = await user_service.getUserById(user_id);
+  const user = await user_service.getUserByCode(request_code);
 
-  if (user._id.toString() !== request_id) {
+  if (user.std_code !== std_code) {
     //#region throw HandlerException
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_VALUE,

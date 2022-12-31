@@ -6,8 +6,7 @@ import { generateCheckRoleUser, generateRoleUser } from '../transform';
 
 import { RoleEntity } from '../../../entities/role.entity';
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
-
-import { User } from '../../../schemas/user.schema';
+import { UserEntity } from '../../../entities/user.entity';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
@@ -38,7 +37,7 @@ export const generateSuccessResponse = async (
 
 export const generateCheckRoleUserSuccessResponse = async (
   role_user: RoleUsersEntity,
-  user: User,
+  user: UserEntity,
   query_runner: QueryRunner,
   req: Request,
 ) => {

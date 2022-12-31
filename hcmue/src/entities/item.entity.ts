@@ -125,6 +125,13 @@ export class ItemEntity extends RootEntity {
   })
   required?: boolean = false;
 
+  @Column('boolean', {
+    name: 'discipline',
+    nullable: true,
+    default: true,
+  })
+  discipline?: boolean = false;
+
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.item)
   evaluations: EvaluationEntity[];
 

@@ -123,13 +123,15 @@ export class AcademicYearService {
     }
   }
 
-  async getAcademicYearByName(
-    name: string,
+  async getAcademicYearByTime(
+    start: number,
+    end: number,
   ): Promise<AcademicYearEntity | null> {
     try {
       const conditions = this._academicYearRepository
         .createQueryBuilder('academic_year')
-        .where('academic_year.name = :name', { name })
+        .where('academic_year.start = :start', { start })
+        .andWhere('academic_year.end = :end', { end })
         .andWhere('academic_year.deleted = :deleted', { deleted: false });
 
       const academic_year = await conditions.getOne();
@@ -171,7 +173,7 @@ export class AcademicYearService {
 
   async unlink(
     academic_year_id: number,
-    user_id: number,
+    request_code: string,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {
@@ -182,7 +184,7 @@ export class AcademicYearService {
       const result = await manager.update(
         AcademicYearEntity,
         { id: academic_year_id },
-        { deleted: true, deleted_by: user_id, deleted_at: new Date() },
+        { deleted: true, deleted_by: request_code, deleted_at: new Date() },
       );
 
       return result.affected > 0;

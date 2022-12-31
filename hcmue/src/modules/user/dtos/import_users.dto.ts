@@ -1,9 +1,9 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty } from 'class-validator';
 
-import { generateValidationMessage } from 'src/utils';
+import { generateValidationMessage } from '../../../utils';
 
-import { MinValidator } from 'src/validators/min.validator';
+import { MinValidator } from '../../../validators/min.validator';
 
 export class ImportUsersDto {
   @Transform((params) => parseInt(params.value) ?? 0)

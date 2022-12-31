@@ -8,12 +8,12 @@ import { LogService } from '../../log/services/log.service';
 
 import { FormStatus } from '../constants/enums/statuses.enum';
 
+import { HeaderEntity } from '../../../entities/header.entity';
+import { ItemEntity } from '../../../entities/item.entity';
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
-import { HeaderEntity } from 'src/entities/header.entity';
-import { TitleEntity } from 'src/entities/title.entity';
-import { ItemEntity } from 'src/entities/item.entity';
-import { OptionEntity } from 'src/entities/option.entity';
+import { OptionEntity } from '../../../entities/option.entity';
+import { TitleEntity } from '../../../entities/title.entity';
 
 @Injectable()
 export class FormService {

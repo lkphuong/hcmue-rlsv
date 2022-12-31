@@ -260,7 +260,7 @@ export class FormController {
         //#endregion
       } else {
         //#region throw HandlerException
-        return new UnknownException(
+        throw new UnknownException(
           id,
           DATABASE_EXIT_CODE.UNKNOW_VALUE,
           req.method,
@@ -329,7 +329,7 @@ export class FormController {
         //#endregion
       } else {
         //#region throw HandlerException
-        return new UnknownException(
+        throw new UnknownException(
           id,
           DATABASE_EXIT_CODE.UNKNOW_VALUE,
           req.method,
@@ -413,17 +413,17 @@ export class FormController {
         //#endregion
 
         //#region Validate time publish
-        const valid_time = validateTimePublish(form.student_start, req);
+        const valid_time = validateTimePublish(form.start, req);
         if (valid_time instanceof HttpException) throw valid_time;
         //#endregion
 
         //#region Get jwt payload
-        const { user_id } = req.user as JwtPayload;
+        const { username: request_code } = req.user as JwtPayload;
         //#endregion
 
         //#region Set form status
         return await setFormStatus(
-          user_id,
+          request_code,
           FormStatus.PUBLISHED,
           form,
           this._formService,
@@ -432,7 +432,7 @@ export class FormController {
         //#endregion
       } else {
         //#region throw HandlerException
-        return new UnknownException(
+        throw new UnknownException(
           id,
           DATABASE_EXIT_CODE.UNKNOW_VALUE,
           req.method,
@@ -502,12 +502,12 @@ export class FormController {
         //#endregion
 
         //#region Get jwt payload
-        const { user_id } = req.user as JwtPayload;
+        const { username: request_code } = req.user as JwtPayload;
         //#endregion
 
         //#region Set form status
         return await setFormStatus(
-          user_id,
+          request_code,
           FormStatus.DRAFTED,
           form,
           this._formService,
@@ -516,7 +516,7 @@ export class FormController {
         //#endregion
       } else {
         //#region throw HandlerException
-        return new UnknownException(
+        throw new UnknownException(
           id,
           DATABASE_EXIT_CODE.UNKNOW_VALUE,
           req.method,
@@ -815,12 +815,12 @@ export class FormController {
       );
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Create form
       const form = await createForm(
-        user_id,
+        request_code,
         params,
         this._academicYearService,
         this._formService,
@@ -879,12 +879,12 @@ export class FormController {
       );
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Create header
       const header = await createHeader(
-        user_id,
+        request_code,
         params,
         this._formService,
         this._headerService,
@@ -948,12 +948,12 @@ export class FormController {
       );
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Create title
       const result = await createTitle(
-        user_id,
+        request_code,
         params,
         this._formService,
         this._headerService,
@@ -1030,12 +1030,12 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Create item
       const result = await createItem(
-        user_id,
+        request_code,
         params,
         this._formService,
         this._itemService,
@@ -1112,13 +1112,13 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Update form
       const form = await updateForm(
         id,
-        user_id,
+        request_code,
         params,
         this._academicYearService,
         this._formService,
@@ -1191,13 +1191,13 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Update header
       const header = await updateHeader(
         id,
-        user_id,
+        request_code,
         params,
         this._formService,
         this._headerService,
@@ -1268,13 +1268,13 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Update title
       const result = await updateTitle(
         id,
-        user_id,
+        request_code,
         params,
         this._formService,
         this._headerService,
@@ -1360,13 +1360,13 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Update item
       const result = await updateItem(
         id,
-        user_id,
+        request_code,
         params,
         this._formService,
         this._itemService,
@@ -1433,11 +1433,11 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Unlink form
-      const form = await unlinkForm(id, user_id, this._formService, req);
+      const form = await unlinkForm(id, request_code, this._formService, req);
       //#endregion
 
       //#region Generate response
@@ -1496,13 +1496,13 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Clone form
       const form = await cloneForm(
         id,
-        user_id,
+        request_code,
         this._formService,
         this._headerService,
         this._itemService,
@@ -1582,14 +1582,14 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Update header
       const header = await unlinkHeader(
         form_id,
         header_id,
-        user_id,
+        request_code,
         this._formService,
         this._headerService,
         req,
@@ -1664,14 +1664,14 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Unlink title
       const title = await unlinkTitle(
         form_id,
         title_id,
-        user_id,
+        request_code,
         this._formService,
         this._titleService,
         req,
@@ -1746,14 +1746,14 @@ export class FormController {
       //#endregion
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Unlink item
       const result = await unlinkItem(
         form_id,
         item_id,
-        user_id,
+        request_code,
         this._formService,
         this._itemService,
         this._optionService,

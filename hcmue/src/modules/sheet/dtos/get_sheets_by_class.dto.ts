@@ -1,6 +1,5 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { IsObjectIdValidator } from 'src/validators/objectId.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -27,9 +26,7 @@ export class GetSheetsByClassDto {
   })
   page: number;
 
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),

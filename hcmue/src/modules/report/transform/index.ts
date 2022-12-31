@@ -1,6 +1,4 @@
-import { Types } from 'mongoose';
-
-import { convertString2Float, convertString2ObjectId } from '../../../utils';
+import { convertString2Float } from '../../../utils';
 
 import { CacheClassEntity } from '../../../entities/cache_class.entity';
 import { LevelEntity } from '../../../entities/level.entity';
@@ -15,7 +13,7 @@ import {
 } from '../interfaces/report-response.interface';
 
 import { NO_LEVEL } from '../constants';
-import { SheetStatus } from 'src/modules/sheet/constants/enums/status.enum';
+import { SheetStatus } from '../../sheet/constants/enums/status.enum';
 
 export const generateCacheClassesResponse = async (
   academic_id: number,

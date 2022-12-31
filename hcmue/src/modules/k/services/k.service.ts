@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
-import { KEntity } from 'src/entities/k.entity';
+import { KEntity } from '../../../entities/k.entity';
 
 import { LogService } from '../../log/services/log.service';
 

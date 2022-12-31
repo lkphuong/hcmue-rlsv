@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
-import { ClassEntity } from 'src/entities/class.entity';
+import { ClassEntity } from '../../entities/class.entity';
 
 import { ClassService } from './services/class.service';
 import { ClassController } from './controllers/class.controller';

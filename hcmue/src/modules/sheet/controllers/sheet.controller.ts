@@ -34,8 +34,6 @@ import {
   generateUserSheetsResponse,
 } from '../utils';
 
-import { convertString2ObjectId } from '../../../utils';
-
 import {
   validateClass,
   validateDepartment,
@@ -48,7 +46,6 @@ import {
   validateUserId,
 } from '../validations';
 
-import { User } from '../../../schemas/user.schema';
 import { UserEntity } from '../../../entities/user.entity';
 
 import { ApproveAllDto } from '../dtos/approve_all.dto';
@@ -157,7 +154,7 @@ export class SheetController {
         JSON.stringify({ sheet_id: id }),
       );
 
-      const { role, user_id: request_id } = req.user as JwtPayload;
+      const { role, username } = req.user as JwtPayload;
 
       //#region Validation
       const valid = validateSheetId(id, req);
@@ -172,23 +169,15 @@ export class SheetController {
         //#region Validate role
         const valid = await validateStudentRole(
           role,
-          request_id,
-          sheet.user_id,
+          username,
+          sheet.std_code,
           this._userService,
           req,
         );
         if (valid instanceof HttpException) throw valid;
         //#endregion
         //#region Generate response
-        return await generateSheet(
-          sheet,
-          role,
-          this._departmentService,
-          this._classService,
-          this._userService,
-          this._kService,
-          req,
-        );
+        return await generateSheet(sheet, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -498,7 +487,7 @@ export class SheetController {
 
       if (sheets && sheets.length > 0) {
         //#region Generate reponse
-        return generateResponses(pages, page, sheets, this._userService, req);
+        return generateResponses(pages, page, sheets, req);
         //#endregion
       }
 
@@ -535,10 +524,10 @@ export class SheetController {
    * @return  HttpResponse<UserSheetsResponse> | HttpException
    * @page sheets page
    */
-  @Get('student/:user_id')
+  @Get('student/:std_code')
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getSheetsByUser(
-    @Param('user_id') user_id: number,
+    @Param('std_code') std_code: string,
     @Req() req: Request,
   ): Promise<HttpResponse<UserSheetsResponse> | HttpException> {
     try {
@@ -548,31 +537,30 @@ export class SheetController {
           ' - ' +
           req.url +
           ': ' +
-          JSON.stringify({ user_id: user_id }),
+          JSON.stringify({ std_code: std_code }),
       );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ user_id: user_id }),
+        JSON.stringify({ std_code: std_code }),
       );
 
       //#region Get Jwt Payload
-      const { role, user_id: request_id } = req.user as JwtPayload;
+      const { role, username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation
-      //#region Validate user_id
-      let valid = validateUserId(user_id, req);
+      //#region Validate std_code
+      let valid = validateUserId(std_code, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
-
       //#region Validate role
       valid = await validateStudentRole(
         role,
-        request_id,
-        user_id,
+        request_code,
+        std_code,
         this._userService,
         req,
       );
@@ -580,10 +568,10 @@ export class SheetController {
       if (valid instanceof HttpException) throw valid;
       //#endregion
       //#endregion
-
       //#region Get sheets by user
-      const sheets = await this._sheetService.getSheetsByUserId(user_id);
-      //#
+      const sheets = await this._sheetService.getSheetsByCode(std_code);
+      //#endregion
+
       if (sheets && sheets.length > 0) {
         //#region Generate response
         return generateUserSheetsResponse(sheets, req);
@@ -625,7 +613,13 @@ export class SheetController {
    */
   @Post('class/:class_id')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.CLASS)
+  @Roles(
+    Role.ADMIN,
+    Role.DEPARTMENT,
+    Role.MONITOR,
+    Role.SECRETARY,
+    Role.CHAIRMAN,
+  )
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getSheetsByClass(
@@ -663,7 +657,7 @@ export class SheetController {
       //#endregion
 
       //#region Get Jwt Payload
-      const { role, user_id: request_id } = req.user as JwtPayload;
+      const { role, username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation
@@ -688,7 +682,7 @@ export class SheetController {
         role,
         class_id,
         department_id,
-        request_id,
+        request_code,
         this._userService,
         req,
       );
@@ -756,7 +750,7 @@ export class SheetController {
 
       if (sheets && sheets.length > 0) {
         //#region Generate reponse
-        return generateResponses(pages, page, sheets, this._userService, req);
+        return generateResponses(pages, page, sheets, req);
         //#endregion
       }
 
@@ -878,7 +872,7 @@ export class SheetController {
    */
   @Put('student/:id')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.STUDENT, Role.CLASS)
+  @Roles(Role.STUDENT, Role.MONITOR, Role.CHAIRMAN, Role.SECRETARY)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkStudent(
     @Param('id') id: number,
@@ -903,7 +897,7 @@ export class SheetController {
       );
 
       //#region Get payload
-      const { role, user_id: request_id } = req.user as JwtPayload;
+      const { role, username } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation
@@ -915,8 +909,8 @@ export class SheetController {
       //#region Validate role
       const valid = await validateStudentRole(
         role,
-        request_id,
-        sheet.user_id,
+        username,
+        sheet.std_code,
         this._userService,
         req,
       );
@@ -927,21 +921,17 @@ export class SheetController {
 
       //#region Update student sheet
       const result = await generatePersonalMarks(
-        request_id,
+        username,
         role,
         params,
         sheet,
-        this._classService,
-        this._departmentService,
         this._evaluationService,
         this._fileService,
         this._headerService,
         this._itemService,
-        this._kService,
         this._levelService,
         this._optionService,
         this._sheetService,
-        this._userService,
         this._dataSource,
         req,
       );
@@ -977,7 +967,7 @@ export class SheetController {
    */
   @Put('class/:id')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.CLASS)
+  @Roles(Role.MONITOR, Role.SECRETARY, Role.CHAIRMAN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkClass(
     @Param('id') id: number,
@@ -1002,7 +992,7 @@ export class SheetController {
       );
 
       //#region Get payload
-      const { role, user_id: request_id } = req.user as JwtPayload;
+      const { role, username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Get params
@@ -1020,7 +1010,7 @@ export class SheetController {
         role,
         sheet.class_id,
         sheet.department_id,
-        request_id,
+        request_code,
         this._userService,
         req,
       );
@@ -1032,20 +1022,16 @@ export class SheetController {
       if (graded) {
         //#region Graded & update class marks
         const result = await generateClassMarks(
-          request_id,
+          request_code,
           role,
           params,
           sheet,
-          this._classService,
-          this._departmentService,
           this._evaluationService,
           this._headerService,
           this._itemService,
-          this._kService,
           this._levelService,
           this._optionService,
           this._sheetService,
-          this._userService,
           this._dataSource,
           req,
         );
@@ -1058,14 +1044,9 @@ export class SheetController {
       } else {
         //#region Ungraded
         const result = await generateUngradeSheet(
-          request_id,
+          request_code,
           sheet,
-          role,
-          this._classService,
-          this._departmentService,
-          this._kService,
           this._sheetService,
-          this._userService,
           req,
         );
         //#endregion
@@ -1210,7 +1191,7 @@ export class SheetController {
       );
 
       //#region Get payload
-      const { role, user_id: request_id } = req.user as JwtPayload;
+      const { role, username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Get params
@@ -1228,7 +1209,7 @@ export class SheetController {
         role,
         sheet.class_id,
         sheet.department_id,
-        request_id,
+        request_code,
         this._userService,
         req,
       );
@@ -1240,20 +1221,16 @@ export class SheetController {
       if (graded) {
         //#region Graded & update department marks
         const result = await generateDepartmentMarks(
-          request_id,
+          request_code,
           role,
           params,
           sheet,
-          this._classService,
-          this._departmentService,
           this._evaluationService,
           this._headerService,
           this._itemService,
-          this._kService,
           this._levelService,
           this._optionService,
           this._sheetService,
-          this._userService,
           this._dataSource,
           req,
         );
@@ -1266,14 +1243,9 @@ export class SheetController {
       } else {
         //#region Ungraded
         const result = await generateUngradeSheet(
-          request_id,
+          request_code,
           sheet,
-          role,
-          this._classService,
-          this._departmentService,
-          this._kService,
           this._sheetService,
-          this._userService,
           req,
         );
         //#endregion

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, EntityManager, Repository } from 'typeorm';
 
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 import { SemesterEntity } from '../../../entities/semester.entity';
 
 import { LogService } from '../../log/services/log.service';
@@ -48,6 +49,13 @@ export class SemesterService {
     try {
       const conditions = this._semesterRepository
         .createQueryBuilder('semester')
+        .innerJoinAndMapOne(
+          'semester.academic',
+          AcademicYearEntity,
+          'academic',
+          `semester.academic_id = academic.id 
+          AND academic.deleted = 0`,
+        )
         .where('semester.active = :active', { active: 1 })
         .andWhere('semester.deleted = :deleted', { deleted: 0 });
 
@@ -63,6 +71,29 @@ export class SemesterService {
         e,
       );
 
+      return null;
+    }
+  }
+
+  async getSemesterByAcademicId(
+    academic_id: number,
+  ): Promise<SemesterEntity[] | null> {
+    try {
+      const conditions = this._semesterRepository
+        .createQueryBuilder('semester')
+        .where('semester.academic_id = :academic_id', { academic_id })
+        .andWhere('semester.deleted = :deleted', { deleted: 0 });
+
+      const semesters = await conditions.getMany();
+
+      return semesters || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SemesterService.getSemesterByAcademicId()',
+        e,
+      );
       return null;
     }
   }
@@ -131,7 +162,7 @@ export class SemesterService {
 
   async unlink(
     semester_id: number,
-    user_id: number,
+    request_code: string,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {
@@ -142,7 +173,7 @@ export class SemesterService {
       const result = await manager.update(
         SemesterEntity,
         { id: semester_id },
-        { deleted: true, deleted_at: new Date(), deleted_by: user_id },
+        { deleted: true, deleted_at: new Date(), deleted_by: request_code },
       );
 
       return result.affected > 0;

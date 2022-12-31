@@ -73,14 +73,16 @@ export const isDuplicated = async (
   academic_year_service: AcademicYearService,
   req: Request,
 ): Promise<HttpException | null> => {
-  const name = `${from}-${to}`;
-  const academic_year = await academic_year_service.getAcademicYearByName(name);
+  const academic_year = await academic_year_service.getAcademicYearByTime(
+    from,
+    to,
+  );
   if (academic_year) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.UNIQUE_VALUE,
       req.method,
       req.url,
-      sprintf(ErrorMessage.ACADEMIC_YEAR_DUPLICATE_ERROR, name),
+      sprintf(ErrorMessage.ACADEMIC_YEAR_DUPLICATE_ERROR, from + ' - ' + to),
       HttpStatus.AMBIGUOUS,
     );
   }

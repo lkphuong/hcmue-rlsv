@@ -24,8 +24,8 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
-} from 'src/constants/enums/error-code.enum';
-import { Levels } from 'src/constants/enums/level.enum';
+} from '../../../constants/enums/error-code.enum';
+import { Levels } from '../../../constants/enums/level.enum';
 
 @Controller('departments')
 export class DepartmentController {

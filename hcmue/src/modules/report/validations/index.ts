@@ -99,7 +99,7 @@ export const validateRole = async (
 ) => {
   if (role !== RoleCode.ADMIN) {
     const user = await user_service.getUserById(user_id);
-    if (user && user.departmentId.toString() !== department_id) {
+    if (user && user.department_id !== department_id) {
       //#region throw HandlerException
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_VALUE,

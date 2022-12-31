@@ -39,17 +39,13 @@ import {
   UpdateStudentMarkDto,
 } from '../dtos/update_student_mark.dto';
 
-import { ClassService } from '../../class/services/class.service';
-import { DepartmentService } from '../../department/services/department.service';
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
 import { ItemService } from '../../item/services/item.service';
 import { FilesService } from '../../file/services/files.service';
-import { KService } from '../../k/services/k.service';
 import { HeaderService } from '../../header/services/header.service';
 import { LevelService } from '../../level/services/level.service';
 import { OptionService } from '../../option/services/option.service';
 import { SheetService } from '../services/sheet.service';
-import { UserService } from '../../user/services/user.service';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { SheetDetailsResponse } from '../interfaces/sheet_response.interface';
@@ -71,33 +67,25 @@ import {
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 
 export const generatePersonalMarks = async (
-  user_id: number,
+  request_code: string,
   role_id: number,
   params: UpdateStudentMarkDto,
   sheet: SheetEntity,
-  class_service: ClassService,
-  department_service: DepartmentService,
   evaluation_service: EvaluationService,
   file_service: FilesService,
   header_service: HeaderService,
   item_service: ItemService,
-  k_service: KService,
   level_service: LevelService,
   option_service: OptionService,
   sheet_service: SheetService,
-  user_service: UserService,
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(
-    sheet.form,
-    sheet.user_id,
-    user_id,
-    role_id,
-    req,
-  );
+  console.log('2', sheet.form);
+  const valid = await validateTime(sheet.form, role_id, req);
+  console.log('3', sheet.form);
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion
@@ -112,7 +100,7 @@ export const generatePersonalMarks = async (
 
     //#region Update sheet
     const result = await generateUpdateSheet(
-      user_id,
+      request_code,
       SheetCategory.STUDENT,
       SheetStatus.WAITING_CLASS,
       params,
@@ -131,7 +119,7 @@ export const generatePersonalMarks = async (
       //#region Update student evaluation
       const evaluations = await generateUpdateStudentEvaluation(
         result.id,
-        user_id,
+        request_code,
         params,
         result,
         evaluation_service,
@@ -156,16 +144,7 @@ export const generatePersonalMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(
-        sheet,
-        role_id,
-        class_service,
-        department_service,
-        k_service,
-        user_service,
-        query_runner,
-        req,
-      );
+      return await generateSuccessResponse(sheet, query_runner, req);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -197,32 +176,22 @@ export const generatePersonalMarks = async (
 };
 
 export const generateClassMarks = async (
-  user_id: number,
+  request_code: string,
   role_id: number,
   params: UpdateClassMarkDto,
   sheet: SheetEntity,
-  class_service: ClassService,
-  department_service: DepartmentService,
   evaluation_service: EvaluationService,
   header_service: HeaderService,
   item_service: ItemService,
-  k_service: KService,
   level_service: LevelService,
   option_service: OptionService,
   sheet_service: SheetService,
-  user_service: UserService,
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(
-    sheet.form,
-    sheet.user_id,
-    user_id,
-    role_id,
-    req,
-  );
+  const valid = await validateTime(sheet.form, role_id, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion
@@ -237,7 +206,7 @@ export const generateClassMarks = async (
 
     //#region Update sheet
     const result = await generateUpdateSheet(
-      user_id,
+      request_code,
       SheetCategory.CLASS,
       SheetStatus.WAITING_DEPARTMENT,
       params,
@@ -255,7 +224,7 @@ export const generateClassMarks = async (
       //#region Update class evaluation
       const evaluations = await generateUpdateClassEvaluation(
         result.id,
-        user_id,
+        request_code,
         params,
         result,
         evaluation_service,
@@ -279,16 +248,7 @@ export const generateClassMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(
-        result,
-        role_id,
-        class_service,
-        department_service,
-        k_service,
-        user_service,
-        query_runner,
-        req,
-      );
+      return await generateSuccessResponse(result, query_runner, req);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -319,32 +279,22 @@ export const generateClassMarks = async (
 };
 
 export const generateDepartmentMarks = async (
-  user_id: number,
+  request_code: string,
   role_id: number,
   params: UpdateDepartmentMarkDto,
   sheet: SheetEntity,
-  class_service: ClassService,
-  department_service: DepartmentService,
   evaluation_service: EvaluationService,
   header_service: HeaderService,
   item_service: ItemService,
-  k_service: KService,
   level_service: LevelService,
   option_service: OptionService,
   sheet_service: SheetService,
-  user_service: UserService,
   data_source: DataSource,
   req: Request,
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(
-    sheet.form,
-    sheet.user_id,
-    user_id,
-    role_id,
-    req,
-  );
+  const valid = await validateTime(sheet.form, role_id, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion
@@ -359,7 +309,7 @@ export const generateDepartmentMarks = async (
 
     //#region Update sheet
     const result = await generateUpdateSheet(
-      user_id,
+      request_code,
       SheetCategory.DEPARTMENT,
       SheetStatus.SUCCESS,
       params,
@@ -378,7 +328,7 @@ export const generateDepartmentMarks = async (
       //#region Update department evaluation
       const evaluations = await generateUpdateDepartmentEvaluation(
         result.id,
-        user_id,
+        request_code,
         params,
         result,
         evaluation_service,
@@ -402,16 +352,7 @@ export const generateDepartmentMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(
-        result,
-        role_id,
-        class_service,
-        department_service,
-        k_service,
-        user_service,
-        query_runner,
-        req,
-      );
+      return await generateSuccessResponse(result, query_runner, req);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -442,27 +383,18 @@ export const generateDepartmentMarks = async (
 };
 
 export const generateUngradeSheet = async (
-  user_id: number,
+  request_code: string,
   sheet: SheetEntity,
-  role: number,
-  class_service: ClassService,
-  department_service: DepartmentService,
-  k_service: KService,
   sheet_service: SheetService,
-  user_service: UserService,
   req: Request,
 ) => {
   //#region Ungrade (không xếp loại sinh viên)
-  const result = await sheet_service.ungraded(sheet.id, user_id);
+  const result = await sheet_service.ungraded(sheet.id, request_code);
   if (result) {
     //#region Generate response
     return await generateSuccessResponse(
       sheet,
-      role,
-      class_service,
-      department_service,
-      k_service,
-      user_service,
+
       null,
       req,
     );
@@ -477,7 +409,7 @@ export const generateUngradeSheet = async (
 
 export const generateUpdateStudentEvaluation = async (
   sheet_id: number,
-  user_id: number,
+  request_code: string,
   params: UpdateStudentMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
@@ -561,7 +493,7 @@ export const generateUpdateStudentEvaluation = async (
                       //#region Unlink file
                       file.drafted = true;
                       file.deleted_at = new Date();
-                      file.deleted_by = user_id;
+                      file.deleted_by = request_code;
                       file.drafted = true;
 
                       files.push(file);
@@ -596,7 +528,7 @@ export const generateUpdateStudentEvaluation = async (
               //#region Check deleted
               evaluation.deleted = true;
               evaluation.deleted_at = new Date();
-              evaluation.deleted_by = user_id;
+              evaluation.deleted_by = request_code;
 
               evaluations.push(evaluation);
               //#endregion
@@ -607,7 +539,7 @@ export const generateUpdateStudentEvaluation = async (
               evaluation.option = option ?? null;
               evaluation.personal_mark_level = j.personal_mark_level;
               evaluation.updated_at = new Date();
-              evaluation.updated_by = user_id;
+              evaluation.updated_by = request_code;
               evaluations.push(evaluation);
               //#endregion
             }
@@ -620,7 +552,7 @@ export const generateUpdateStudentEvaluation = async (
             evaluation.option = option;
             evaluation.personal_mark_level = j.personal_mark_level;
             evaluation.created_at = new Date();
-            evaluation.created_by = user_id;
+            evaluation.created_by = request_code;
 
             evaluations.push(evaluation);
             //#endregion
@@ -647,7 +579,7 @@ export const generateUpdateStudentEvaluation = async (
                       //#region Unlink file
                       file.drafted = true;
                       file.deleted_at = new Date();
-                      file.deleted_by = user_id;
+                      file.deleted_by = request_code;
                       file.drafted = true;
 
                       files.push(file);
@@ -723,7 +655,7 @@ export const generateUpdateStudentEvaluation = async (
 
 export const generateUpdateClassEvaluation = async (
   sheet_id: number,
-  user_id: number,
+  request_code: string,
   params: UpdateClassMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
@@ -771,7 +703,7 @@ export const generateUpdateClassEvaluation = async (
             if (j.deleted) {
               class_evaluation.deleted = true;
               class_evaluation.deleted_at = new Date();
-              class_evaluation.deleted_by = user_id;
+              class_evaluation.deleted_by = request_code;
 
               evaluations.push(class_evaluation);
             } else {
@@ -781,7 +713,7 @@ export const generateUpdateClassEvaluation = async (
               class_evaluation.option = option ?? null;
               class_evaluation.class_mark_level = j.class_mark_level;
               class_evaluation.updated_at = new Date();
-              class_evaluation.updated_by = user_id;
+              class_evaluation.updated_by = request_code;
               evaluations.push(class_evaluation);
               //#endregion
             }
@@ -795,7 +727,7 @@ export const generateUpdateClassEvaluation = async (
             new_evaluation.category = EvaluationCategory.CLASS;
             new_evaluation.class_mark_level = j.class_mark_level;
             new_evaluation.created_at = new Date();
-            new_evaluation.created_by = user_id;
+            new_evaluation.created_by = request_code;
             evaluations.push(new_evaluation);
             //#endregion
           }
@@ -834,7 +766,7 @@ export const generateUpdateClassEvaluation = async (
 
 export const generateUpdateDepartmentEvaluation = async (
   sheet_id: number,
-  user_id: number,
+  request_code: string,
   params: UpdateDepartmentMarkDto,
   sheet: SheetEntity,
   evaluation_service: EvaluationService,
@@ -882,7 +814,7 @@ export const generateUpdateDepartmentEvaluation = async (
               //#region delete evaluation
               department_evaluation.deleted = true;
               department_evaluation.deleted_at = new Date();
-              department_evaluation.deleted_by = user_id;
+              department_evaluation.deleted_by = request_code;
 
               evaluations.push(department_evaluation);
               //#endregion
@@ -894,7 +826,7 @@ export const generateUpdateDepartmentEvaluation = async (
               department_evaluation.department_mark_level =
                 j.department_mark_level;
               department_evaluation.updated_at = new Date();
-              department_evaluation.updated_by = user_id;
+              department_evaluation.updated_by = request_code;
               evaluations.push(department_evaluation);
               //#endregion
             }
@@ -907,7 +839,7 @@ export const generateUpdateDepartmentEvaluation = async (
             new_evaluation.category = EvaluationCategory.DEPARTMENT;
             new_evaluation.department_mark_level = j.department_mark_level;
             new_evaluation.created_at = new Date();
-            new_evaluation.created_by = user_id;
+            new_evaluation.created_by = request_code;
             evaluations.push(new_evaluation);
             //#endregion
           }
@@ -945,7 +877,7 @@ export const generateUpdateDepartmentEvaluation = async (
 };
 
 export const generateUpdateSheet = async (
-  user_id: number,
+  request_code: string,
   category: SheetCategory,
   status: SheetStatus,
   params: UpdateStudentMarkDto | UpdateClassMarkDto | UpdateDepartmentMarkDto,
@@ -1036,7 +968,7 @@ export const generateUpdateSheet = async (
   sheet.status = status;
   sheet.level = new_level;
   sheet.updated_at = new Date();
-  sheet.updated_by = user_id;
+  sheet.updated_by = request_code;
 
   sheet = await sheet_service.update(sheet, query_runner.manager);
   return sheet;

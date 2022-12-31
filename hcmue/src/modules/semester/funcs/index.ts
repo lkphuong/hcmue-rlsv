@@ -5,24 +5,32 @@ import { sprintf } from '../../../utils';
 
 import { SemesterEntity } from '../../../entities/semester.entity';
 
+import { SemesterDto } from '../dtos/semester.dto';
+
 import { SemesterService } from '../services/semester.service';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
 import { UnknownException } from '../../../exceptions/UnknownException';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const createSemester = async (
-  name: string,
-  user_id: number,
+  params: SemesterDto,
+  request_code: string,
   semester_service: SemesterService,
   req: Request,
 ) => {
+  //#region Get params
+  const { academic_id, end, name, start } = params;
+  //#endregion
   let semester = new SemesterEntity();
   semester.name = name;
+  semester.academic_id = academic_id;
+  semester.start = new Date(start);
+  semester.end = new Date(end);
   semester.active = true;
   semester.created_at = new Date();
-  semester.created_by = user_id;
+  semester.created_by = request_code;
   semester = await semester_service.add(semester);
   if (semester) {
     //#region Generate response
@@ -37,13 +45,13 @@ export const createSemester = async (
 
 export const unlinkSemester = async (
   semester_id: number,
-  user_id: number,
+  request_code: string,
   semester_service: SemesterService,
   req: Request,
 ) => {
   const semester = await semester_service.getSemesterById(semester_id);
   if (semester) {
-    const result = await semester_service.unlink(semester_id, user_id);
+    const result = await semester_service.unlink(semester_id, request_code);
     if (result) {
       //#region Generate response
       return await generateSuccessResponse(semester, req, null);

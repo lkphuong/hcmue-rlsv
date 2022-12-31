@@ -1,7 +1,6 @@
 import { MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { ValidationArguments } from 'class-validator';
 import { Request } from 'express';
-import { Types } from 'mongoose';
 
 import * as fs from 'fs';
 import * as moment from 'moment';
@@ -12,20 +11,20 @@ import { HttpPagingResponse } from '../interfaces/http-paging-response.interface
 import { HttpResponse } from '../interfaces/http-response.interface';
 
 import { UPLOAD_DEST } from '../constants';
-import { ConfigurationService } from 'src/modules/shared/services/configuration/configuration.service';
-import { LogService } from 'src/modules/log/services/log.service';
-import { Configuration } from 'src/modules/shared/constants/configuration.enum';
-import { Levels } from 'src/constants/enums/level.enum';
+import { ConfigurationService } from '../modules/shared/services/configuration/configuration.service';
+import { LogService } from '../modules/log/services/log.service';
+import { Configuration } from '../modules/shared/constants/configuration.enum';
+import { Levels } from '../constants/enums/level.enum';
 
 export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
-  // consumer
-  //   .apply(VerifyTokenMiddleware)
-  //   .exclude(
-  //     { path: '/api/auth/login', method: RequestMethod.POST },
-  //     { path: '/api/auth/renew-token', method: RequestMethod.POST },
-  //     'uploads/(.*)',
-  //   )
-  //   .forRoutes({ path: '*', method: RequestMethod.ALL });
+  consumer
+    .apply(VerifyTokenMiddleware)
+    .exclude(
+      { path: '/api/auth/login', method: RequestMethod.POST },
+      { path: '/api/auth/renew-token', method: RequestMethod.POST },
+      'uploads/(.*)',
+    )
+    .forRoutes({ path: '*', method: RequestMethod.ALL });
 };
 
 export const convertString2Date = (raw: string) => {
@@ -42,10 +41,6 @@ export const convertString2Boolean = (raw: string) => {
 
 export const convertObjectId2String = (raw: any) => {
   return raw.toString();
-};
-
-export const convertString2ObjectId = (raw: string) => {
-  return new Types.ObjectId(raw);
 };
 
 export const removeDuplicates = <T>(data: T[]) => {

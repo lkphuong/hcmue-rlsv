@@ -8,6 +8,7 @@ export const generateData2Array = ($class: ClassEntity[] | null) => {
     for (const item of $class) {
       const result: ClassResponse = {
         id: item.id,
+        code: item.code,
         name: item.name,
       };
 

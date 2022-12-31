@@ -330,7 +330,7 @@ export const valiadteTitle = async (
 
 export const validateTime = (start: string, end: string, req: Request) => {
   if (
-    new Date(start) > new Date(end) ||
+    new Date(start) >= new Date(end) ||
     new Date(start) < new Date() ||
     new Date(end) < new Date()
   ) {
@@ -341,15 +341,8 @@ export const validateTime = (start: string, end: string, req: Request) => {
       ErrorMessage.TIME_NAN_ERROR,
       HttpStatus.BAD_REQUEST,
     );
-  } else if (start === end) {
-    return new HandlerException(
-      VALIDATION_EXIT_CODE.INVALID_VALUE,
-      req.method,
-      req.url,
-      ErrorMessage.INVALID_TIME_ERROR,
-      HttpStatus.BAD_REQUEST,
-    );
   }
+  return null;
 };
 
 export const validateItemDto = (params: ItemDto, req: Request) => {

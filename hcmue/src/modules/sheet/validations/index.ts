@@ -3,8 +3,6 @@ import { Request } from 'express';
 
 import { isEmpty } from 'class-validator';
 
-import { isValidObjectId } from 'mongoose';
-
 import { sprintf } from '../../../utils';
 
 import { FormEntity } from '../../../entities/form.entity';
@@ -32,7 +30,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { ItemCategory } from '../constants/enums/item_category.enum';
 
-export const validateClassId = (id: string, req: Request) => {
+export const validateClassId = (id: number, req: Request) => {
   if (isEmpty(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.EMPTY,
@@ -41,7 +39,7 @@ export const validateClassId = (id: string, req: Request) => {
       ErrorMessage.CLASS_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
-  } else if (!isValidObjectId(id)) {
+  } else if (isNaN(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,
@@ -98,21 +96,13 @@ export const validateSheetId = (id: number, req: Request) => {
   return null;
 };
 
-export const validateUserId = (id: number, req: Request) => {
+export const validateUserId = (id: string, req: Request) => {
   if (isEmpty(id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.EMPTY,
       req.method,
       req.url,
       ErrorMessage.USER_ID_EMPTY_ERROR,
-      HttpStatus.BAD_REQUEST,
-    );
-  } else if (isNaN(id)) {
-    return new HandlerException(
-      VALIDATION_EXIT_CODE.INVALID_FORMAT,
-      req.method,
-      req.url,
-      ErrorMessage.ID_NAN_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   }
@@ -159,21 +149,33 @@ export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
 
 export const validateStudentRole = async (
   role: number,
-  request_id: number,
-  user_id: number,
+  request_code: string,
+  std_code: string,
   user_service: UserService,
   req: Request,
 ) => {
   if (role === RoleCode.STUDENT) {
-    const user = await user_service.getUserById(request_id);
-    if (user._id.toString() !== user_id) {
+    const user = await user_service.getUserByCode(request_code);
+    if (user) {
+      if (user.std_code !== std_code) {
+        //#region throw HandlerException
+        return new HandlerException(
+          VALIDATION_EXIT_CODE.INVALID_VALUE,
+          req.method,
+          req.url,
+          sprintf(ErrorMessage.STUDENT_ROLE_INVALID_ERROR, user.fullname),
+          HttpStatus.BAD_REQUEST,
+        );
+        //#endregion
+      }
+    } else {
       //#region throw HandlerException
       return new HandlerException(
-        VALIDATION_EXIT_CODE.INVALID_VALUE,
+        DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.STUDENT_ROLE_INVALID_ERROR, user.fullname),
-        HttpStatus.BAD_REQUEST,
+        sprintf(ErrorMessage.STUDENT_NOT_FOUND_ERROR, std_code),
+        HttpStatus.NOT_FOUND,
       );
       //#endregion
     }
@@ -186,14 +188,14 @@ export const validateOthersRole = async (
   role: number,
   class_id: number,
   department_id: number,
-  request_id: number,
+  request_code: string,
   user_service: UserService,
   req: Request,
 ) => {
   if (role !== RoleCode.ADMIN) {
-    const user = await user_service.getUserById(request_id);
+    const user = await user_service.getUserByCode(request_code);
     if (role === RoleCode.DEPARTMENT) {
-      if (user && user.departmentId.toString() !== department_id) {
+      if (user && user.department_id !== department_id) {
         //#region throw HandlerException
         return new HandlerException(
           VALIDATION_EXIT_CODE.INVALID_VALUE,
@@ -208,7 +210,7 @@ export const validateOthersRole = async (
         //#endregion
       }
     } else {
-      if (user && user.classId.toString() !== class_id) {
+      if (user && user.class_id !== class_id) {
         //#region throw HandlerException
         console.log(user);
         return new HandlerException(
@@ -236,7 +238,7 @@ export const validateOthersDepartment = async (
   const user = await user_service.getUserById(user_id);
 
   if (role !== RoleCode.ADMIN) {
-    if (user && user.departmentId.toString() !== department_id) {
+    if (user && user.department_id !== department_id) {
       //#region throw HandlerException
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_VALUE,
@@ -270,7 +272,7 @@ export const validateClass = async (
       HttpStatus.BAD_REQUEST,
     );
     //#endregion
-  } else if (!isValidObjectId(class_id)) {
+  } else if (isNaN(class_id)) {
     //#region throw HandlerException
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
@@ -311,7 +313,7 @@ export const validateDepartment = async (
       ErrorMessage.DEPARTMENT_ID_EMPTY_ERROR,
       HttpStatus.BAD_REQUEST,
     );
-  } else if (!isValidObjectId(department_id)) {
+  } else if (isNaN(department_id)) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
       req.method,
@@ -397,7 +399,7 @@ export const validateUser = async (
       HttpStatus.BAD_REQUEST,
     );
     //#endregion
-  } else if (!isValidObjectId(user_id)) {
+  } else if (isNaN(user_id)) {
     //#region throw HandlerException
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_FORMAT,
@@ -427,62 +429,22 @@ export const validateUser = async (
 
 export const validateTime = async (
   form: FormEntity,
-  user_id: number,
-  request_id: number,
   role: RoleCode,
   req: Request,
 ) => {
   const current = new Date();
-  if (role === RoleCode.STUDENT) {
-    //#region Validate student time
-    if (
-      current < new Date(form.student_start) ||
-      current > new Date(form.student_end)
-    ) {
-      return new HandlerException(
-        VALIDATION_EXIT_CODE.NO_MATCHING,
-        req.method,
-        req.url,
-        sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    //#endregion
-  } else if (role === RoleCode.CLASS) {
-    //#region Validate class time
-    if (request_id !== user_id) {
-      if (
-        current < new Date(form.class_start) ||
-        current > new Date(form.class_end)
-      ) {
-        return new HandlerException(
-          VALIDATION_EXIT_CODE.NO_MATCHING,
-          req.method,
-          req.url,
-          sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
-          HttpStatus.BAD_REQUEST,
-        );
-      }
-    }
-
-    //#endregion
-  } else if (role == RoleCode.DEPARTMENT) {
-    //#region Validate department time
-    if (
-      current < new Date(form.department_start) ||
-      current > new Date(form.department_end)
-    ) {
-      return new HandlerException(
-        VALIDATION_EXIT_CODE.NO_MATCHING,
-        req.method,
-        req.url,
-        sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-    //#endregion
+  const start = form.start;
+  const end = new Date(form.end);
+  const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
+  if (current < start || current > deadline) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.NO_MATCHING,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
+      HttpStatus.BAD_REQUEST,
+    );
   }
-
   return null;
 };
 

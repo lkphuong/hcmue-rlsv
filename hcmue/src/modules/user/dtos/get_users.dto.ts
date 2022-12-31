@@ -48,9 +48,7 @@ export class GetUsersDto {
   semester_id: number;
 
   @IsOptional()
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
@@ -61,9 +59,7 @@ export class GetUsersDto {
   department_id: number;
 
   @IsOptional()
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),

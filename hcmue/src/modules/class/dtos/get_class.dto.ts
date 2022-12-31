@@ -6,9 +6,7 @@ import { generateValidationMessage } from '../../../utils';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class GetClassDto {
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [khoa].'),

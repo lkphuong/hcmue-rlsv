@@ -6,9 +6,10 @@ import { HeaderEntity } from '../../../entities/header.entity';
 
 import { LogService } from '../../log/services/log.service';
 
+import { StoreProcedureResponse } from '../../form/interfaces/store-procedure-response.interface';
+
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
-import { StoreProcedureResponse } from 'src/modules/form/interfaces/store-procedure-response.interface';
 
 @Injectable()
 export class HeaderService {

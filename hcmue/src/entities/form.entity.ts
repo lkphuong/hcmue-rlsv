@@ -42,40 +42,16 @@ export class FormEntity extends RootEntity {
   semester: SemesterEntity;
 
   @Column('datetime', {
-    name: 'student_start',
+    name: 'start',
     nullable: false,
   })
-  student_start: Date;
+  start: Date;
 
   @Column('datetime', {
-    name: 'student_end',
+    name: 'end',
     nullable: false,
   })
-  student_end: Date;
-
-  @Column('datetime', {
-    name: 'class_start',
-    nullable: false,
-  })
-  class_start: Date;
-
-  @Column('datetime', {
-    name: 'class_end',
-    nullable: false,
-  })
-  class_end: Date;
-
-  @Column('datetime', {
-    name: 'department_start',
-    nullable: false,
-  })
-  department_start: Date;
-
-  @Column('datetime', {
-    name: 'department_end',
-    nullable: false,
-  })
-  department_end: Date;
+  end: Date;
 
   // Trạng thái của biểu mẫu (0: drafted, 1: published, 2: in-progress, 3: done)
   // 0: Allow delete & update the form

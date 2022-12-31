@@ -26,7 +26,7 @@ import { GetReportsByClassDto } from '../dtos/get_reports_by_class.dto';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { CacheClassService } from '../services/cache-class.service';
 import { ClassService } from '../../class/services/class.service';
-import { DepartmentService } from 'src/modules/department/services/department.service';
+import { DepartmentService } from '../../department/services/department.service';
 import { LevelService } from '../../level/services/level.service';
 import { LogService } from '../../log/services/log.service';
 import { SemesterService } from '../../semester/services/semester.service';

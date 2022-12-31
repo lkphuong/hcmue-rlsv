@@ -17,10 +17,16 @@ import { Request } from 'express';
 
 import { createSemester, unlinkSemester } from '../funcs';
 import { generateSemestersResponse } from '../utils';
-import { isDuplicated, isUsed, validateSemesterId } from '../validations/index';
+import {
+  validateDateAcademic,
+  isUsed,
+  validateId,
+  validateTime,
+} from '../validations/index';
 
 import { SemesterDto } from '../dtos/semester.dto';
 
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { LogService } from '../../log/services/log.service';
 import { SemesterService } from '../services/semester.service';
 
@@ -31,7 +37,10 @@ import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
-import { SemesterResponse } from '../interfaces/semester_response.interface';
+import {
+  CreateSemesterResponse,
+  SemesterResponse,
+} from '../interfaces/semester_response.interface';
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
@@ -46,6 +55,7 @@ import {
 @Controller('semesters')
 export class SemesterController {
   constructor(
+    private readonly _academicService: AcademicYearService,
     private readonly _semesterService: SemesterService,
     private _logger: LogService,
   ) {}
@@ -119,7 +129,7 @@ export class SemesterController {
   async createSemester(
     @Body() params: SemesterDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<SemesterResponse> | HttpException> {
+  ): Promise<HttpResponse<CreateSemesterResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -134,22 +144,40 @@ export class SemesterController {
       );
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Get params
-      const { name } = params;
+      const { academic_id, end, start } = params;
       //#endregion
 
       //#region Validation
-      const valid = await isDuplicated(name, this._semesterService, req);
+      //#region Validate academic_id
+      let valid = await validateId(academic_id, req);
       if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Validate time
+      valid = validateTime(start, end, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Validate date academic
+      valid = await validateDateAcademic(
+        academic_id,
+        start,
+        end,
+        this._academicService,
+        req,
+      );
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
       //#endregion
 
       //#region Create semester
       const result = await createSemester(
-        name,
-        user_id,
+        params,
+        request_code,
         this._semesterService,
         req,
       );
@@ -190,7 +218,7 @@ export class SemesterController {
   async unlinkSemester(
     @Param('id') id: number,
     @Req() req: Request,
-  ): Promise<HttpResponse<SemesterResponse> | HttpException> {
+  ): Promise<HttpResponse<CreateSemesterResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -206,12 +234,12 @@ export class SemesterController {
       );
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation
       //#region Validate semester_id
-      let valid = validateSemesterId(id, req);
+      let valid = validateId(id, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
@@ -224,7 +252,7 @@ export class SemesterController {
       //#region Unlink semester
       const result = await unlinkSemester(
         id,
-        user_id,
+        request_code,
         this._semesterService,
         req,
       );

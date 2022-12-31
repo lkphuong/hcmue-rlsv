@@ -15,7 +15,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { RoleEntity } from '../../entities/role.entity';
 import { RoleUsersEntity } from '../../entities/role_users.entity';
 import { SessionEntity } from '../../entities/session.entity';
-import { UserEntity } from 'src/entities/user.entity';
+import { UserEntity } from '../../entities/user.entity';
 
 import { AuthService } from './services/auth.service';
 import { ConfigurationService } from '../shared/services/configuration/configuration.service';

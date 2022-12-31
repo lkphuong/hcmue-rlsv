@@ -7,7 +7,10 @@ import { returnObjects } from '../../../utils';
 
 import { SemesterEntity } from '../../../entities/semester.entity';
 
-import { SemesterResponse } from '../interfaces/semester_response.interface';
+import {
+  CreateSemesterResponse,
+  SemesterResponse,
+} from '../interfaces/semester_response.interface';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
@@ -35,12 +38,17 @@ export const generateSuccessResponse = async (
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', semester);
 
-  const payload = await generateData2Object(semester);
+  const payload: CreateSemesterResponse = {
+    id: semester.id,
+    name: semester.name,
+    start: semester.start,
+    end: semester.end,
+  };
 
   //Commit transaction
   if (query_runner) await query_runner.commitTransaction();
 
-  return returnObjects<SemesterResponse>(payload);
+  return returnObjects<CreateSemesterResponse>(payload);
 };
 
 export const generateFailedResponse = (req: Request, message?: string) => {

@@ -30,12 +30,6 @@ export class AcademicYearEntity extends RootEntity {
   @OneToMany(() => SheetEntity, (sheet) => sheet.academic_year)
   sheets: SheetEntity[];
 
-  // @OneToMany(
-  //   () => AcademicYearClassesEntity,
-  //   (classes) => classes.academic_year,
-  // )
-  // classes: AcademicYearClassesEntity[];
-
   @OneToMany(() => FormEntity, (form) => form.academic_year)
   forms: FormEntity[];
 

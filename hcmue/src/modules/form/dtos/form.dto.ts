@@ -1,32 +1,9 @@
-import { Type } from 'class-transformer';
-import { IsNotEmpty, ValidateNested } from 'class-validator';
-import { DateStringValidator } from 'src/validators/date.string.validator';
+import { IsNotEmpty } from 'class-validator';
+import { DateStringValidator } from '../../../validators/date.string.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
 import { MinValidator } from '../../../validators/min.validator';
-
-class TimeDto {
-  @IsNotEmpty({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [ngày bắt đầu].'),
-  })
-  @DateStringValidator({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [ngày bắt đầu] không hợp lệ.'),
-  })
-  start: string;
-
-  @IsNotEmpty({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [ngày kết thúc].'),
-  })
-  @DateStringValidator({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [ngày kết thúc] không hợp lệ.'),
-  })
-  end: string;
-}
 
 export class FormDto {
   @IsNotEmpty({
@@ -49,15 +26,23 @@ export class FormDto {
   })
   semester_id: number;
 
-  @ValidateNested({ each: true })
-  @Type(() => TimeDto)
-  student: TimeDto;
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [ngày bắt đầu].'),
+  })
+  @DateStringValidator({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [ngày bắt đầu] không hợp lệ.'),
+  })
+  start: string;
 
-  @ValidateNested({ each: true })
-  @Type(() => TimeDto)
-  classes: TimeDto;
-
-  @ValidateNested({ each: true })
-  @Type(() => TimeDto)
-  department: TimeDto;
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [ngày kết thúc].'),
+  })
+  @DateStringValidator({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [ngày kết thúc] không hợp lệ.'),
+  })
+  end: string;
 }

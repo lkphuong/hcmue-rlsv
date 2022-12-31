@@ -1,10 +1,8 @@
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { jwtFactory } from './factories/jwt.factory';
-import { mongoFactory } from './factories/mongo.factory';
 import { mysqlFactory } from './factories/mysql.factory';
 import { staticFactory } from './factories/static.factory';
 
@@ -44,11 +42,6 @@ export const modules = [
     imports: [SharedModule],
     inject: [ConfigurationService],
     useFactory: mysqlFactory,
-  }),
-  MongooseModule.forRootAsync({
-    imports: [SharedModule],
-    inject: [ConfigurationService],
-    useFactory: mongoFactory,
   }),
   AcademicYearModule,
   AuthModule,

@@ -163,7 +163,7 @@ export class AuthService {
       session.login_time = login_time;
       session.active = active;
       session.created_at = new Date();
-      session.created_by = 0;
+      session.created_by = 'system';
       session.deleted = false;
 
       session = await manager.save(session);
@@ -194,7 +194,7 @@ export class AuthService {
       session.access_token = access_token;
       session.refresh_token = refresh_token;
       session.updated_at = new Date();
-      session.updated_by = 0;
+      session.updated_by = 'system';
 
       session = await manager.save(session);
       return session || null;
@@ -224,7 +224,7 @@ export class AuthService {
       session.expired_time = expired_time;
       session.logout_time = logout_time;
       session.updated_at = new Date();
-      session.updated_by = 0;
+      session.updated_by = 'system';
       session.deleted = false;
 
       session = await manager.save(session);

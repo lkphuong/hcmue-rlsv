@@ -28,8 +28,7 @@ export const uploadFile = async (
   extension: string,
   filename: string,
   original_name: string,
-  user_id: number,
-  configuration_service: ConfigurationService,
+  request_code: string,
   file_service: FilesService,
   data_source: DataSource,
   req: Request,
@@ -53,7 +52,7 @@ export const uploadFile = async (
       extension,
       true,
       true,
-      user_id,
+      request_code,
       query_runner.manager,
     );
 
@@ -92,7 +91,7 @@ export const uploadFile = async (
 };
 
 export const unlinkFile = async (
-  user_id: number,
+  request_code: string,
   file: FileEntity,
   configuration_service: ConfigurationService,
   file_service: FilesService,
@@ -103,7 +102,7 @@ export const unlinkFile = async (
 ) => {
   //#region Validate delete file
   const valid = await validateFileUser(
-    user_id,
+    request_code,
     file.created_by,
     user_service,
     req,
@@ -123,7 +122,7 @@ export const unlinkFile = async (
 
     const success = await file_service.unlink(
       file.id,
-      user_id,
+      request_code,
       query_runner.manager,
     );
 

@@ -17,10 +17,10 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const createRoleUser = async (
-  created_by: number,
+  request_code: string,
   class_id: number,
   department_id: number,
-  user_id: number,
+  std_code: string,
   role: RoleEntity,
   role_user_service: RoleUsersService,
   data_source: DataSource,
@@ -56,14 +56,14 @@ export const createRoleUser = async (
     }
 
     //#region Get role user
-    let role_user = await role_user_service.getRoleUserByUserId(user_id);
+    let role_user = await role_user_service.getRoleUserByStdCode(std_code);
     if (role_user) {
       //#region Update role_user
       role_user.department_id = department_id;
       role_user.class_id = class_id;
       role_user.role = role;
       role_user.updated_at = new Date();
-      role_user.updated_by = created_by;
+      role_user.updated_by = request_code;
 
       role_user = await role_user_service.update(
         role_user,
@@ -73,12 +73,12 @@ export const createRoleUser = async (
     } else {
       //#region Create new role_user
       role_user = new RoleUsersEntity();
-      role_user.user_id = user_id;
+      role_user.std_code = std_code;
       role_user.department_id = department_id;
       role_user.class_id = class_id;
       role_user.role = role;
       role_user.created_at = new Date();
-      role_user.created_by = created_by;
+      role_user.created_by = request_code;
       role_user = await role_user_service.add(role_user, query_runner.manager);
       //#endregion
     }

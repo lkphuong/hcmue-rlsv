@@ -27,9 +27,7 @@ export class GetSheetsByAdminDto {
   })
   page: number;
 
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
@@ -39,9 +37,7 @@ export class GetSheetsByAdminDto {
   })
   department_id: number;
 
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),

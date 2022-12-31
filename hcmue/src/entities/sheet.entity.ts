@@ -9,13 +9,15 @@ import {
 
 import { AcademicYearEntity } from './academic_year.entity';
 import { ApprovalEntity } from './approval.entity';
+import { ClassEntity } from './class.entity';
+import { DepartmentEntity } from './department.entity';
 import { EvaluationEntity } from './evaluation.entity';
 import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
+import { KEntity } from './k.entity';
 import { LevelEntity } from './level.entity';
 import { RootEntity } from './root.entity';
 import { SemesterEntity } from './semester.entity';
-import { SheetSignatures } from './sheet_signatures.entity';
 import { UserEntity } from './user.entity';
 
 @Entity('sheets')
@@ -41,12 +43,12 @@ export class SheetEntity extends RootEntity {
   })
   department_id: number;
 
-  @Column('bigint', {
-    name: 'user_id',
+  @Column('varchar', {
+    name: 'std_code',
     nullable: false,
-    default: 0,
+    length: 20,
   })
-  user_id: number;
+  std_code: string;
 
   @Column('bigint', {
     name: 'class_id',
@@ -128,6 +130,12 @@ export class SheetEntity extends RootEntity {
   sum_of_department_marks: number;
 
   user: UserEntity | null;
+
+  class: ClassEntity | null;
+
+  department: DepartmentEntity | null;
+
+  K: KEntity | null;
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.sheet)
   evaluations: EvaluationEntity[];

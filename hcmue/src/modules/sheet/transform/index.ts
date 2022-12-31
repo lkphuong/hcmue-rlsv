@@ -1,14 +1,4 @@
-import { Types } from 'mongoose';
-
-import {
-  convertObjectId2String,
-  convertString2Date,
-  convertString2ObjectId,
-} from '../../../utils';
-import { mapUserForSheet } from '../utils';
-
-import { Class } from '../../../schemas/class.schema';
-import { User } from '../../../schemas/user.schema';
+import { convertString2Date } from '../../../utils';
 
 import { ClassEntity } from '../../../entities/class.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
@@ -38,20 +28,13 @@ import {
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
-import { UserEntity } from 'src/entities/user.entity';
 
-export const generateAdminSheets = async (
-  sheets: SheetEntity[] | null,
-  user_service: UserService,
-) => {
+export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
-    const user_ids: number[] = [];
     const payload: ClassSheetsResponse[] = [];
 
     //#region Loop of sheets
     for (const sheet of sheets) {
-      user_ids.push(sheet.user_id);
-
       const item: ClassSheetsResponse = {
         id: sheet.id,
 
@@ -64,7 +47,6 @@ export const generateAdminSheets = async (
         sum_of_department_marks: sheet.sum_of_department_marks,
         sum_of_personal_marks: sheet.sum_of_personal_marks,
         user: {
-          id: sheet.user_id,
           fullname: sheet.user.fullname,
           std_code: sheet.user.std_code,
         },
@@ -123,7 +105,6 @@ export const generateClassSheets = async (sheets: SheetEntity[] | null) => {
         const item: ClassSheetsResponse = {
           id: sheet.id,
           user: {
-            id: sheet.user.id,
             fullname: sheet.user.fullname,
             std_code: sheet.user.std_code,
           },
@@ -169,51 +150,26 @@ export const generateClasses2Array = async (classes: ClassEntity[]) => {
   return null;
 };
 
-export const generateData2Object = async (
-  sheet: SheetEntity | null,
-  role: number,
-  class_service: ClassService,
-  department_service: DepartmentService,
-  k_service: KService,
-  user_service: UserService,
-) => {
+export const generateData2Object = async (sheet: SheetEntity | null) => {
   if (sheet) {
-    //#region Get user by user_id
-    const user = await user_service.getUserById(sheet.user_id);
-    //#endregion
-
-    //#region Get department by department_id
-    const department = await department_service.getDepartmentById(
-      sheet.department_id,
-    );
-    //#endregion
-
-    //#region Get class by class_id
-    const classes = await class_service.getClassById(sheet.class_id);
-    //#endregion
-
-    //#region Get k by _id
-    const k = await k_service.getKById(sheet.k);
-    //#endregion
     const payload: SheetDetailsResponse = {
       id: sheet.id,
-      department: department
+      department: sheet.department
         ? {
-            id: department.id,
-            name: department.name,
+            id: sheet.department.id,
+            name: sheet.department.name,
           }
         : null,
-      class: classes
+      class: sheet.class
         ? {
-            id: classes.id,
-            name: classes.name,
+            id: sheet.class.id,
+            name: sheet.class.name,
           }
         : null,
-      user: user
+      user: sheet.user
         ? {
-            id: user.id,
-            fullname: user.fullname,
-            std_code: user.username,
+            fullname: sheet.user.fullname,
+            std_code: sheet.user.std_code,
           }
         : null,
       semester: {
@@ -224,10 +180,10 @@ export const generateData2Object = async (
         id: sheet.academic_year.id,
         name: sheet.academic_year.start + ' - ' + sheet.academic_year.end,
       },
-      k: k
+      k: sheet.K
         ? {
-            id: k.id,
-            name: k.name,
+            id: sheet.K.id,
+            name: sheet.K.name,
           }
         : null,
       level: sheet.level
@@ -241,18 +197,8 @@ export const generateData2Object = async (
       sum_of_class_marks: sheet.sum_of_class_marks,
       sum_of_department_marks: sheet.sum_of_department_marks,
       headers: [],
-      time_student: {
-        start: convertString2Date(sheet.form.student_start.toString()),
-        end: convertString2Date(sheet.form.student_end.toString()),
-      },
-      time_class: {
-        start: convertString2Date(sheet.form.class_start.toString()),
-        end: convertString2Date(sheet.form.class_end.toString()),
-      },
-      time_department: {
-        start: convertString2Date(sheet.form.department_start.toString()),
-        end: convertString2Date(sheet.form.department_end.toString()),
-      },
+      start: sheet.form.start,
+      end: sheet.form.end,
     };
 
     //#region Get headers
@@ -287,6 +233,7 @@ export const generateData2Object = async (
                   required: item.required,
                   is_file: item.is_file,
                   sort_order: item.sort_order,
+                  discipline: item.discipline,
                   options:
                     item.options && item.options.length > 0
                       ? item.options.map((option) => {
@@ -366,7 +313,9 @@ export const generateItemsArray = async (
         }
         return payload;
 
-      case RoleCode.CLASS:
+      case RoleCode.MONITOR:
+      case RoleCode.SECRETARY:
+      case RoleCode.CHAIRMAN:
         for (const item of items) {
           const class_evaluation = item.evaluations.find(
             (e) => e.category == EvaluationCategory.CLASS,
@@ -532,7 +481,9 @@ export const generateEvaluationsArray = async (
             }
           }
         }
-      case RoleCode.CLASS:
+      case RoleCode.MONITOR:
+      case RoleCode.SECRETARY:
+      case RoleCode.CHAIRMAN:
         for (const evaluation of evaluations) {
           if (evaluation.category === EvaluationCategory.CLASS) {
             const student_evaluation = evaluations.find(

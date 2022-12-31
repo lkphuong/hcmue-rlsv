@@ -6,9 +6,7 @@ import { generateValidationMessage } from '../../../utils';
 import { MinValidator } from '../../../validators/min.validator';
 
 export class RoleDto {
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
@@ -18,9 +16,7 @@ export class RoleDto {
   })
   department_id: number;
 
-  @Transform((params) =>
-    params.value ? params.value.toString().trim() : params.value,
-  )
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
@@ -30,6 +26,7 @@ export class RoleDto {
   })
   class_id: number;
 
+  @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng chọn [vai trò].'),

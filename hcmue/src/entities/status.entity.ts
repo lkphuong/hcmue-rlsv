@@ -17,5 +17,12 @@ export class StatusEntity extends RootEntity {
   })
   name: string;
 
+  @Column('boolean', {
+    name: 'flag',
+    nullable: false,
+    default: false,
+  })
+  flag: boolean;
+
   users: UserEntity[] | null;
 }

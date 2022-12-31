@@ -2,13 +2,15 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
-import { generateObjectIDString } from '../utils';
-
+import { ClassEntity } from '../../../entities/class.entity';
+import { DepartmentEntity } from '../../../entities/department.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
 import { ItemEntity } from '../../../entities/item.entity';
+import { KEntity } from '../../../entities/k.entity';
 import { OptionEntity } from '../../../entities/option.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 import { TitleEntity } from '../../../entities/title.entity';
+import { UserEntity } from '../../../entities/user.entity';
 
 import { LogService } from '../../log/services/log.service';
 
@@ -16,7 +18,6 @@ import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
-import { UserEntity } from 'src/entities/user.entity';
 
 @Injectable()
 export class SheetService {
@@ -130,7 +131,7 @@ export class SheetService {
     }
   }
 
-  async getSheetsByUserId(user_id: number): Promise<SheetEntity[] | null> {
+  async getSheetsByCode(std_code: string): Promise<SheetEntity[] | null> {
     try {
       const conditions = await this._sheetRepository
         .createQueryBuilder('sheet')
@@ -143,7 +144,7 @@ export class SheetService {
             qb.orWhere('level.deleted IS NULL');
           }),
         )
-        .andWhere('sheet.user_id = :user_id', { user_id })
+        .andWhere('sheet.std_code = :std_code', { std_code })
         .andWhere('academic_year.deleted = :deleted', { deleted: false })
         .andWhere('semester.deleted = :deleted', { deleted: false })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
@@ -216,6 +217,30 @@ export class SheetService {
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
         .leftJoinAndSelect('sheet.level', 'level')
         .innerJoinAndSelect('sheet.form', 'form')
+        .innerJoinAndMapOne(
+          'sheet.class',
+          ClassEntity,
+          'class',
+          `class.id = sheet.class_id AND class.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.department',
+          DepartmentEntity,
+          'department',
+          `department.id = sheet.department_id AND department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.K',
+          KEntity,
+          'k',
+          `k.id = sheet.k AND k.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.user',
+          UserEntity,
+          'user',
+          `user.std_code = sheet.std_code AND user.deleted = 0`,
+        )
         .leftJoinAndMapMany(
           'form.headers',
           HeaderEntity,
@@ -355,7 +380,7 @@ export class SheetService {
 
   async ungraded(
     sheet_id: number,
-    user_id: number,
+    request_code: string,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {
@@ -371,7 +396,7 @@ export class SheetService {
           graded: 0,
           level: null,
           updated_at: new Date(),
-          updated_by: user_id,
+          updated_by: request_code,
         },
       );
 
@@ -392,7 +417,9 @@ export class SheetService {
       case RoleCode.ADMIN:
       case RoleCode.STUDENT:
         return SheetStatus.WAITING_STUDENT;
-      case RoleCode.CLASS:
+      case RoleCode.MONITOR:
+      case RoleCode.SECRETARY:
+      case RoleCode.CHAIRMAN:
         return SheetStatus.WAITING_CLASS;
       case RoleCode.DEPARTMENT:
         return SheetStatus.WAITING_DEPARTMENT;

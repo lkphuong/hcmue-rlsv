@@ -7,13 +7,13 @@ import { ClassEntity } from '../../../entities/class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
 import { SemesterEntity } from '../../../entities/semester.entity';
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
+import { RoleEntity } from '../../../entities/role.entity';
 import { UserEntity } from '../../../entities/user.entity';
 
 import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
-import { RoleEntity } from 'src/entities/role.entity';
 
 @Injectable()
 export class UserService {
@@ -393,7 +393,7 @@ export class UserService {
         .where('user.id = :id', { id })
         .andWhere('user.deleted = :deleted', { deleted: 0 });
 
-      const user = await conditions.getOne();
+      const user = await conditions.orderBy('user.created_at', 'DESC').getOne();
 
       return user || null;
     } catch (e) {
@@ -401,6 +401,27 @@ export class UserService {
         Levels.ERROR,
         Methods.SELECT,
         'UserService.getUserById()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getUserByCode(std_code: string): Promise<UserEntity | null> {
+    try {
+      const conditions = this._userRepository
+        .createQueryBuilder('user')
+        .where('user.std_code = :std_code', { std_code })
+        .andWhere('user.deleted = :deleted', { deleted: 0 });
+
+      const user = await conditions.orderBy('user.created_at', 'DESC').getOne();
+
+      return user || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.getUserByCode()',
         e,
       );
       return null;
@@ -494,7 +515,7 @@ export class UserService {
           semester_id: semester_id,
           deleted: false,
         },
-        { deleted: true, deleted_at: new Date(), deleted_by: 0 },
+        { deleted: true, deleted_at: new Date(), deleted_by: 'system' },
       );
       return results.affected > 0;
     } catch (e) {

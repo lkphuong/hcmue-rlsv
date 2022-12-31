@@ -80,7 +80,7 @@ export class UserEntity extends RootEntity {
   academic_id: number;
 
   @Column('bigint', {
-    name: 'semester',
+    name: 'semester_id',
     nullable: false,
     default: 0,
   })

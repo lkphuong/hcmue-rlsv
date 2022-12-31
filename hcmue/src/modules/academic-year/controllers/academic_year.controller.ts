@@ -144,7 +144,7 @@ export class AcademicYearController {
       );
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Get params
@@ -167,7 +167,7 @@ export class AcademicYearController {
       const result = await createAcademic(
         from,
         to,
-        user_id,
+        request_code,
         this._academicYearService,
         req,
       );
@@ -224,7 +224,7 @@ export class AcademicYearController {
       );
 
       //#region Get jwt payload
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation
@@ -242,7 +242,7 @@ export class AcademicYearController {
       //#region  Unlink academic-year
       const result = await unlinkAcademic(
         id,
-        user_id,
+        request_code,
         this._academicYearService,
         req,
       );

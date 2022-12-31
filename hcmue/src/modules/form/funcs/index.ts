@@ -1,7 +1,6 @@
 import { HttpException } from '@nestjs/common';
 import { Request } from 'express';
 import { DataSource, QueryRunner } from 'typeorm';
-
 import { randomUUID } from 'crypto';
 
 import {
@@ -64,7 +63,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 
 export const createForm = async (
-  user_id: number,
+  request_code: string,
   params: FormDto,
   academic_service: AcademicYearService,
   form_service: FormService,
@@ -72,33 +71,14 @@ export const createForm = async (
   req: Request,
 ) => {
   //#region Get params
-  const { academic_id, classes, department, semester_id, student } = params;
+  const { academic_id, end, semester_id, start } = params;
   //#endregion
 
   //#region Validation
-  //#region Validate student times
-  let valid = validateTime(student.start, student.end, req);
+  //#region Validate times
+  const valid = validateTime(start, end, req);
   if (valid instanceof HttpException) return valid;
   //#endregion
-
-  //#region Valiate student_end -> class_start
-  valid = validateTime(student.end, classes.start, req);
-  if (valid instanceof HttpException) return valid;
-  //#endregion
-
-  //#region Validate class times
-  valid = validateTime(classes.start, classes.end, req);
-  if (valid instanceof HttpException) return valid;
-  //#endregion
-
-  //#region Validate class_end -> department_start
-  valid = validateTime(classes.end, department.start, req);
-  if (valid instanceof HttpException) return valid;
-  //#endregion
-
-  //#region Validate department times
-  valid = validateTime(department.start, department.end, req);
-  if (valid instanceof HttpException) return valid;
   //#endregion
 
   //#region Validate academic year
@@ -122,15 +102,11 @@ export const createForm = async (
     let form = new FormEntity();
     form.academic_year = academic;
     form.semester = semester;
-    form.student_start = new Date(student.start);
-    form.student_end = new Date(student.end);
-    form.class_start = new Date(classes.start);
-    form.class_end = new Date(classes.end);
-    form.department_start = new Date(department.start);
-    form.department_end = new Date(department.end);
+    form.start = new Date(start);
+    form.end = new Date(end);
     form.status = FormStatus.DRAFTED;
 
-    form.created_by = user_id;
+    form.created_by = request_code;
     form.created_at = new Date();
     //#endregion
 
@@ -160,7 +136,7 @@ export const createForm = async (
 };
 
 export const createHeader = async (
-  user_id: number,
+  request_code: string,
   params: HeaderDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -197,7 +173,7 @@ export const createHeader = async (
     header.max_mark = max_mark;
     header.is_return = is_return;
 
-    header.created_by = user_id;
+    header.created_by = request_code;
     header.created_at = new Date();
     //#endregion
 
@@ -226,7 +202,7 @@ export const createHeader = async (
 };
 
 export const createTitle = async (
-  user_id: number,
+  request_code: string,
   param: TitleDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -258,7 +234,7 @@ export const createTitle = async (
     title.name = name;
 
     title.created_at = new Date();
-    title.created_by = user_id;
+    title.created_by = request_code;
     //#endregion
 
     //#region Generate response
@@ -287,7 +263,7 @@ export const createTitle = async (
 };
 
 export const createItem = async (
-  user_id: number,
+  request_code: string,
   params: ItemDto,
   form_service: FormService,
   item_serviec: ItemService,
@@ -327,7 +303,7 @@ export const createItem = async (
 
     //#region Create item
     let item = await generateCreateItem(
-      user_id,
+      request_code,
       params,
       form,
       title,
@@ -341,7 +317,7 @@ export const createItem = async (
       const options = params.options;
       if (options && options.length > 0) {
         const results = await createItemOptions(
-          user_id,
+          request_code,
           options,
           form,
           item,
@@ -390,7 +366,7 @@ export const createItem = async (
 
 export const updateForm = async (
   form_id: number,
-  user_id: number,
+  request_code: string,
   params: FormDto,
   academic_service: AcademicYearService,
   form_service: FormService,
@@ -398,7 +374,7 @@ export const updateForm = async (
   req: Request,
 ): Promise<HttpResponse<FormResponse> | HttpException> => {
   //#region Get params
-  const { academic_id, classes, department, semester_id, student } = params;
+  const { academic_id, end, semester_id, start } = params;
   //#endregion
 
   //#region Validation
@@ -412,28 +388,8 @@ export const updateForm = async (
   if (valid instanceof HttpException) return valid;
   //#endregion
 
-  //#region Validate student times
-  valid = validateTime(student.start, student.end, req);
-  if (valid instanceof HttpException) return valid;
-  //#endregion
-
-  //#region Valiate student_end -> class_start
-  valid = validateTime(student.end, classes.start, req);
-  if (valid instanceof HttpException) return valid;
-  //#endregion
-
-  //#region Validate class times
-  valid = validateTime(classes.start, classes.end, req);
-  if (valid instanceof HttpException) return valid;
-  //#endregion
-
-  //#region Validate class_end -> department_start
-  valid = validateTime(classes.end, department.start, req);
-  if (valid instanceof HttpException) return valid;
-  //#endregion
-
-  //#region Validate department times
-  valid = validateTime(department.start, department.end, req);
+  //#region Validate times
+  valid = validateTime(start, end, req);
   if (valid instanceof HttpException) return valid;
   //#endregion
 
@@ -457,15 +413,10 @@ export const updateForm = async (
     //#region Update form
     form.academic_year = academic;
     form.semester = semester;
-    form.student_start = new Date(student.start);
-    form.student_end = new Date(student.end);
-    form.class_start = new Date(classes.start);
-    form.class_end = new Date(classes.end);
-    form.department_start = new Date(department.start);
-    form.department_end = new Date(department.end);
+    form.start = new Date(start);
+    form.end = new Date(end);
     form.status = FormStatus.DRAFTED;
-
-    form.updated_by = user_id;
+    form.updated_by = request_code;
     form.updated_at = new Date();
     //#endregion
 
@@ -496,7 +447,7 @@ export const updateForm = async (
 
 export const updateHeader = async (
   header_id: number,
-  user_id: number,
+  request_code: string,
   params: HeaderDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -546,7 +497,7 @@ export const updateHeader = async (
     header.max_mark = max_mark;
     header.is_return = is_return;
 
-    header.updated_by = user_id;
+    header.updated_by = request_code;
     header.updated_at = new Date();
     //#endregion
 
@@ -575,7 +526,7 @@ export const updateHeader = async (
 
 export const updateTitle = async (
   title_id: number,
-  user_id: number,
+  request_code: string,
   param: TitleDto,
   form_service: FormService,
   header_service: HeaderService,
@@ -620,7 +571,7 @@ export const updateTitle = async (
     title.name = name;
 
     title.updated_at = new Date();
-    title.updated_by = user_id;
+    title.updated_by = request_code;
     //#endregion
 
     //#region Generate response
@@ -650,7 +601,7 @@ export const updateTitle = async (
 
 export const updateItem = async (
   item_id: number,
-  user_id: number,
+  request_code: string,
   params: ItemDto,
   form_service: FormService,
   item_service: ItemService,
@@ -706,7 +657,7 @@ export const updateItem = async (
     //#region Remove old options if available`
     const results = await removeItemOptions(
       item_id,
-      user_id,
+      request_code,
       option_service,
       query_runner,
       req,
@@ -717,7 +668,7 @@ export const updateItem = async (
 
     //#region Update item
     item = await generateUpdateItem(
-      user_id,
+      request_code,
       params,
       form,
       item,
@@ -732,7 +683,7 @@ export const updateItem = async (
       const options = params.options;
       if (options && options.length > 0) {
         const results = await createItemOptions(
-          user_id,
+          request_code,
           options,
           form,
           item,
@@ -764,7 +715,7 @@ export const updateItem = async (
 
 export const unlinkForm = async (
   form_id: number,
-  user_id: number,
+  request_code: string,
   form_service: FormService,
   req: Request,
 ): Promise<HttpResponse<FormResponse> | HttpException> => {
@@ -783,7 +734,7 @@ export const unlinkForm = async (
   try {
     //#region Update form
     form.deleted = true;
-    form.deleted_by = user_id;
+    form.deleted_by = request_code;
     form.deleted_at = new Date();
     //#endregion
 
@@ -815,7 +766,7 @@ export const unlinkForm = async (
 export const unlinkHeader = async (
   form_id: number,
   header_id: number,
-  user_id: number,
+  request_code: string,
   form_service: FormService,
   header_service: HeaderService,
   req: Request,
@@ -845,7 +796,7 @@ export const unlinkHeader = async (
   try {
     //#region Update header
     header.deleted = true;
-    header.deleted_by = user_id;
+    header.deleted_by = request_code;
     header.deleted_at = new Date();
     //#endregion
 
@@ -875,7 +826,7 @@ export const unlinkHeader = async (
 export const unlinkTitle = async (
   form_id: number,
   title_id: number,
-  user_id: number,
+  request_code: string,
   form_service: FormService,
   title_service: TitleService,
   req: Request,
@@ -906,7 +857,7 @@ export const unlinkTitle = async (
     //#region Update title
     title.deleted = true;
     title.deleted_at = new Date();
-    title.deleted_by = user_id;
+    title.deleted_by = request_code;
     //#endregion
 
     //#region Generate response
@@ -937,7 +888,7 @@ export const unlinkTitle = async (
 export const unlinkItem = async (
   form_id: number,
   item_id: number,
-  user_id: number,
+  request_code: string,
   form_service: FormService,
   item_service: ItemService,
   option_service: OptionService,
@@ -977,7 +928,7 @@ export const unlinkItem = async (
     //#region Remove old options if available`
     const results = await removeItemOptions(
       item_id,
-      user_id,
+      request_code,
       option_service,
       query_runner,
       req,
@@ -987,7 +938,12 @@ export const unlinkItem = async (
     //#endregion
 
     //#region Update item
-    item = await generateUnlinkItem(user_id, item, item_service, query_runner);
+    item = await generateUnlinkItem(
+      request_code,
+      item,
+      item_service,
+      query_runner,
+    );
     //#endregion
 
     if (item) {
@@ -1007,7 +963,7 @@ export const unlinkItem = async (
 
 export const cloneForm = async (
   form_id: number,
-  user_id: number,
+  request_code: string,
   form_service: FormService,
   header_service: HeaderService,
   item_service: ItemService,
@@ -1035,15 +991,11 @@ export const cloneForm = async (
     let target_form = new FormEntity();
     target_form.academic_year = source_form.academic_year;
     target_form.semester = source_form.semester;
-    target_form.student_start = source_form.student_start;
-    target_form.student_end = source_form.student_end;
-    target_form.class_start = source_form.class_start;
-    target_form.class_end = source_form.class_end;
-    target_form.department_start = source_form.department_start;
-    target_form.department_end = source_form.department_end;
+    target_form.start = source_form.start;
+    target_form.end = source_form.end;
     target_form.status = FormStatus.DRAFTED;
 
-    target_form.created_by = user_id;
+    target_form.created_by = request_code;
     target_form.created_at = new Date();
     //#endregion
 
@@ -1155,7 +1107,7 @@ export const cloneForm = async (
 };
 
 export const generateCreateItem = async (
-  user_id: number,
+  request_code: string,
   params: ItemDto,
   form: FormEntity,
   title: TitleEntity,
@@ -1194,14 +1146,14 @@ export const generateCreateItem = async (
   item.sort_order = sort_order;
 
   item.created_at = new Date();
-  item.created_by = user_id;
+  item.created_by = request_code;
 
   item = await item_serviec.add(item, query_runner.manager);
   return item;
 };
 
 export const generateUpdateItem = async (
-  user_id: number,
+  request_code: string,
   params: ItemDto,
   form: FormEntity,
   item: ItemEntity,
@@ -1239,28 +1191,28 @@ export const generateUpdateItem = async (
   item.sort_order = sort_order;
 
   item.updated_at = new Date();
-  item.updated_by = user_id;
+  item.updated_by = request_code;
 
   item = await item_service.update(item, query_runner.manager);
   return item;
 };
 
 export const generateUnlinkItem = async (
-  user_id: number,
+  request_code: string,
   item: ItemEntity,
   item_service: ItemService,
   query_runner: QueryRunner,
 ) => {
   item.deleted = true;
   item.deleted_at = new Date();
-  item.deleted_by = user_id;
+  item.deleted_by = request_code;
 
   item = await item_service.unlink(item, query_runner.manager);
   return item;
 };
 
 export const createItemOptions = async (
-  user_id: number,
+  request_code: string,
   options: OptionDto[],
   form: FormEntity,
   item: ItemEntity,
@@ -1276,7 +1228,7 @@ export const createItemOptions = async (
     option.content = i.content;
     option.mark = i.mark;
     option.created_at = new Date();
-    option.created_by = user_id;
+    option.created_by = request_code;
     item_options.push(option);
   }
 
@@ -1292,7 +1244,7 @@ export const createItemOptions = async (
 
 export const removeItemOptions = async (
   item_id: number,
-  user_id: number,
+  request_code: string,
   option_service: OptionService,
   query_runner: QueryRunner,
   req: Request,
@@ -1305,7 +1257,7 @@ export const removeItemOptions = async (
     //#region Delete options
     const success = await option_service.bulkUnlink(
       item_id,
-      user_id,
+      request_code,
       query_runner.manager,
     );
 
@@ -1319,7 +1271,7 @@ export const removeItemOptions = async (
 };
 
 export const setFormStatus = async (
-  user_id: number,
+  request_code: string,
   status: FormStatus,
   form: FormEntity,
   form_service: FormService,
@@ -1328,7 +1280,7 @@ export const setFormStatus = async (
   try {
     //#region Update form
     form.status = status;
-    form.updated_by = user_id;
+    form.updated_by = request_code;
     form.updated_at = new Date();
     //#endregion
 

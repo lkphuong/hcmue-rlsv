@@ -3,7 +3,7 @@ import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
-import { BetweenValidator } from 'src/validators/between.validator';
+import { BetweenValidator } from '../../../validators/between.validator';
 import { MinValidator } from '../../../validators/min.validator';
 import { IsNumberValidator } from '../../../validators/number.validator';
 

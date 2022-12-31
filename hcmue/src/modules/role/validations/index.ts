@@ -2,7 +2,6 @@ import { HttpException, HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 
 import { isEmpty } from 'class-validator';
-import { isValidObjectId } from 'mongoose';
 
 import { sprintf } from '../../../utils';
 
@@ -97,7 +96,7 @@ export const validateUser = async (
       HttpStatus.BAD_REQUEST,
     );
     //#endregion
-  } else if (!isValidObjectId(user_id)) {
+  } else if (isNaN(user_id)) {
     //#region throw HandlerException
     return new HandlerException(
       VALIDATION_EXIT_CODE.INVALID_VALUE,

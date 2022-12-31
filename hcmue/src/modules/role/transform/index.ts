@@ -1,6 +1,6 @@
+import { UserEntity } from '../../../entities/user.entity';
 import { RoleEntity } from '../../../entities/role.entity';
 import { RoleUsersEntity } from '../../../entities/role_users.entity';
-import { User } from '../../../schemas/user.schema';
 
 import {
   CheckRoleUserResponse,
@@ -21,11 +21,11 @@ export const generateRoleUser = (role: RoleEntity) => {
 
 export const generateCheckRoleUser = (
   role_user: RoleUsersEntity,
-  user: User,
+  user: UserEntity,
 ) => {
   const payload: CheckRoleUserResponse = {
     user: {
-      id: role_user.user_id,
+      id: user.id,
       name: user.fullname,
     },
     role: {

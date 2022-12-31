@@ -29,6 +29,8 @@ export class HttpExceptionFilter implements ExceptionFilter {
     let errorCode = 6001;
     let message = null;
 
+    console.log('err: ', error.response);
+
     if (error.response) {
       status = error.response.status ?? error.getStatus();
       if (error.response.statusCode == HttpStatus.FORBIDDEN) {

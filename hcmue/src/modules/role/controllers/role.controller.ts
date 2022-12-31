@@ -143,15 +143,15 @@ export class RoleController {
       //#endregion
 
       //#region Get data jwt payload
-      const { user_id: created_by } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region Create role_user
       const result = await createRoleUser(
-        created_by,
+        request_code,
         class_id,
         department_id,
-        user_id,
+        user.std_code,
         role,
         this._roleUserService,
         this._dataSource,
@@ -227,7 +227,7 @@ export class RoleController {
       );
 
       if (role_user) {
-        const user = await this._userService.getUserById(role_user.std_code);
+        const user = await this._userService.getUserByCode(role_user.std_code);
         if (user) {
           return generateCheckRoleUserSuccessResponse(
             role_user,

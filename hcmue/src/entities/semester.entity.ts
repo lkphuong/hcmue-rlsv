@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { AcademicYearEntity } from './academic_year.entity';
 import { FormEntity } from './form.entity';
 
 import { RootEntity } from './root.entity';
@@ -26,11 +27,25 @@ export class SemesterEntity extends RootEntity {
   })
   name: string;
 
+  @Column('date', {
+    name: 'start',
+    nullable: false,
+  })
+  start: Date;
+
+  @Column('date', {
+    name: 'end',
+    nullable: false,
+  })
+  end: Date;
+
   @OneToMany(() => SheetEntity, (sheet) => sheet.semester)
   sheets: SheetEntity[];
 
   @OneToMany(() => FormEntity, (form) => form.semester)
   forms: FormEntity[];
+
+  academic: AcademicYearEntity;
 
   users: UserEntity[] | null;
 }

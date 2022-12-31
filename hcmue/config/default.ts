@@ -41,6 +41,4 @@ export default {
 
   STATIC_PATH: '../../../static',
   MULTER_DEST: './static/uploads',
-
-  SALT: 10,
 };

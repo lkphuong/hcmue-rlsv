@@ -1,10 +1,10 @@
 import { Transform } from 'class-transformer';
 import { IsNotEmpty, IsOptional } from 'class-validator';
-import { IsBooleanValidator } from 'src/validators/boolean.validator';
-import { GreaterValidator } from 'src/validators/greater.validator';
 
 import { generateValidationMessage } from '../../../utils';
 
+import { GreaterValidator } from '../../../validators/greater.validator';
+import { IsBooleanValidator } from '../../../validators/boolean.validator';
 import { LengthValidator } from '../../../validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
 

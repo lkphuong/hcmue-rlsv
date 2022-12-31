@@ -2,11 +2,7 @@ import { HttpStatus } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
-import {
-  convertObjectId2String,
-  returnObjects,
-  returnObjectsWithPaging,
-} from '../../../utils';
+import { returnObjects, returnObjectsWithPaging } from '../../../utils';
 
 import { ClassEntity } from '../../../entities/class.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
@@ -97,11 +93,6 @@ export const generateFailedResponse = (req: Request, message?: string) => {
 
 export const generateSuccessResponse = async (
   sheet: SheetEntity,
-  role: number,
-  class_service: ClassService,
-  department_service: DepartmentService,
-  k_service: KService,
-  user_service: UserService,
   query_runner: QueryRunner,
   req: Request,
 ) => {
@@ -109,14 +100,7 @@ export const generateSuccessResponse = async (
   console.log(req.method + ' - ' + req.url);
 
   // Transform SheetEntity class to SheetResponse class
-  const payload = await generateData2Object(
-    sheet,
-    role,
-    class_service,
-    department_service,
-    k_service,
-    user_service,
-  );
+  const payload = await generateData2Object(sheet);
 
   // Commit transaction
   if (query_runner) await query_runner.commitTransaction();
@@ -141,27 +125,12 @@ export const generateApproveAllResponse = (
   return returnObjects<ApproveAllResponse>(payload);
 };
 
-export const generateSheet = async (
-  sheet: SheetEntity,
-  role: number,
-  department_service: DepartmentService,
-  class_service: ClassService,
-  user_service: UserService,
-  k_service: KService,
-  req: Request,
-) => {
+export const generateSheet = async (sheet: SheetEntity, req: Request) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', sheet);
 
-  const payload = await generateData2Object(
-    sheet,
-    role,
-    class_service,
-    department_service,
-    k_service,
-    user_service,
-  );
+  const payload = await generateData2Object(sheet);
 
   return returnObjects(payload);
 };
@@ -231,25 +200,10 @@ export const groupItemsByHeader = <T>(
   return null;
 };
 
-export const mapUserForSheet = (
-  user_id: string,
-  sheets: SheetEntity[] | null,
-) => {
-  if (sheets) {
-    const result = sheets.find(
-      (e) => e.user_id == convertObjectId2String(user_id),
-    );
-
-    if (result) return result;
-  }
-  return null;
-};
-
 export const generateResponses = async (
   pages: number,
   page: number,
   sheets: SheetEntity[],
-  user_service: UserService,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
@@ -257,7 +211,7 @@ export const generateResponses = async (
   console.log('data: ', sheets);
 
   // Transform SheetEntity class to ClassSheetsResponse class
-  const payload = await generateAdminSheets(sheets, user_service);
+  const payload = await generateAdminSheets(sheets);
 
   // Returns objects
   return returnObjectsWithPaging<ClassSheetsResponse>(pages, page, payload);

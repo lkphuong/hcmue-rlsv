@@ -66,6 +66,7 @@ export const generateItemsArray = async (items: ItemEntity[] | null) => {
         required: ite.required,
         is_file: ite.is_file,
         sort_order: ite.sort_order,
+        discipline: ite.discipline,
         options:
           ite.options && ite.options.length > 0
             ? ite.options.map((option) => {
@@ -99,6 +100,7 @@ export const generateItemObject = async (item: ItemEntity | null) => {
       required: item.required,
       is_file: item.is_file,
       sort_order: item.sort_order,
+      discipline: item.discipline,
       options:
         item.options && item.options.length > 0
           ? item.options.map((option) => {
@@ -156,18 +158,8 @@ export const generateFormsArray = async (forms: FormEntity[] | null) => {
           id: form.semester.id,
           name: form.semester.name,
         },
-        student: {
-          start: form.student_start,
-          end: form.student_end,
-        },
-        classes: {
-          start: form.class_start,
-          end: form.class_end,
-        },
-        department: {
-          start: form.department_start,
-          end: form.department_end,
-        },
+        start: new Date(form.start),
+        end: new Date(form.end),
         status: form.status,
         created_at: convertString2Date(form.created_at.toString()),
       };
@@ -193,18 +185,8 @@ export const generateFormObject = (form: FormEntity | null) => {
         id: form.semester.id,
         name: form.semester.name,
       },
-      student: {
-        start: form.student_start,
-        end: form.student_end,
-      },
-      classes: {
-        start: form.class_start,
-        end: form.class_end,
-      },
-      department: {
-        start: form.department_start,
-        end: form.department_end,
-      },
+      start: form.start,
+      end: form.end,
       status: form.status,
     };
 
@@ -226,18 +208,8 @@ export const generateDetailFormObject = (form: FormEntity | null) => {
         id: form.semester.id,
         name: form.semester.name,
       },
-      student: {
-        start: form.student_start,
-        end: form.student_end,
-      },
-      classes: {
-        start: form.class_start,
-        end: form.class_end,
-      },
-      department: {
-        start: form.department_start,
-        end: form.department_end,
-      },
+      start: new Date(form.start),
+      end: new Date(form.end),
       status: form.status,
       headers: [],
     };
@@ -272,6 +244,7 @@ export const generateDetailFormObject = (form: FormEntity | null) => {
                   required: item.required,
                   is_file: item.is_file,
                   sort_order: item.sort_order,
+                  discipline: item.discipline,
                   options:
                     item.options && item.options.length > 0
                       ? item.options.map((option) => {

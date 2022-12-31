@@ -10,9 +10,8 @@ export interface FormResponse {
   id: number;
   academic: BaseResponse;
   semester: BaseResponse;
-  student: TimeResponse;
-  classes: TimeResponse;
-  department: TimeResponse;
+  start: Date;
+  end: Date;
   status: FormStatus;
   created_at?: Date;
 }
@@ -40,6 +39,7 @@ export interface ItemResponse {
   required: boolean;
   is_file: boolean;
   sort_order: number;
+  discipline: boolean;
   options?: OptionResponse[] | null;
 }
 

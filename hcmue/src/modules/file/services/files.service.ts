@@ -97,7 +97,7 @@ export class FilesService {
     extension: string,
     drafted: boolean,
     active: boolean,
-    user_id: number,
+    request_code: string,
     manager?: EntityManager,
   ): Promise<FileEntity | null> {
     try {
@@ -113,7 +113,7 @@ export class FilesService {
       file.extension = extension;
       file.drafted = drafted;
       file.active = active;
-      file.created_by = user_id;
+      file.created_by = request_code;
       file.created_at = new Date();
 
       file = await manager.save(file);
@@ -154,7 +154,7 @@ export class FilesService {
 
   async unlink(
     file_id: number,
-    user_id: number,
+    request_code: string,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {
@@ -165,7 +165,7 @@ export class FilesService {
       const results = await manager.update(
         FileEntity,
         { id: file_id },
-        { deleted_by: user_id, deleted_at: new Date(), deleted: true },
+        { deleted_by: request_code, deleted_at: new Date(), deleted: true },
       );
 
       return results.affected > 0;

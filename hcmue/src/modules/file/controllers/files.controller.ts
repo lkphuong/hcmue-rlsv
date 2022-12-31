@@ -81,7 +81,7 @@ export class FilesController {
         JSON.stringify(file),
       );
 
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
 
       const { originalname, filename, destination } = file;
       const extension = path.parse(originalname).ext;
@@ -92,8 +92,7 @@ export class FilesController {
         extension,
         filename,
         originalname,
-        user_id,
-        this._configurationService,
+        request_code,
         this._fileService,
         this._dataSource,
         req,
@@ -156,7 +155,7 @@ export class FilesController {
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
-      const { user_id } = req.user as JwtPayload;
+      const { username: request_code } = req.user as JwtPayload;
 
       const file = await this._fileService.getFileById(id);
       if (file) {
@@ -164,7 +163,7 @@ export class FilesController {
 
         //#region Unlink file
         const response = await unlinkFile(
-          user_id,
+          request_code,
           file,
           this._configurationService,
           this._fileService,

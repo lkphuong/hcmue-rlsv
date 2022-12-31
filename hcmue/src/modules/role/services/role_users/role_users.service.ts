@@ -92,6 +92,28 @@ export class RoleUsersService {
     }
   }
 
+  async getRoleUserByStdCode(
+    std_code: string,
+  ): Promise<RoleUsersEntity | null> {
+    try {
+      const conditions = this._roleUserRepository
+        .createQueryBuilder('role_user')
+        .where('role_user.std_code = :std_code', { std_code })
+        .andWhere('role_user.deleted = :deleted', { deleted: false });
+
+      const role_user = await conditions.getOne();
+      return role_user || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'RoleUsersService.getRoleUserByStdCode()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async checkRoleUser(
     department_id: number,
     role_id: number,
@@ -198,23 +220,24 @@ export class RoleUsersService {
           });
         } else return true;
         //#endregion
-      } else if (role_code === RoleCode.CLASS) {
-        //#region RoleCode.CLASS
-        const role_user = await this.getRoleUserByRoleId(
-          department_id,
-          role_id,
-          class_id,
-        );
-
-        if (role_user) {
-          result = await manager.delete(RoleUsersEntity, {
-            department_id: department_id,
-            class_id: class_id,
-            role: role_id,
-          });
-        } else return true;
-        //#endregion
       }
+      // else if (role_code === RoleCode.CLASS) {
+      //   //#region RoleCode.CLASS
+      //   const role_user = await this.getRoleUserByRoleId(
+      //     department_id,
+      //     role_id,
+      //     class_id,
+      //   );
+
+      //   if (role_user) {
+      //     result = await manager.delete(RoleUsersEntity, {
+      //       department_id: department_id,
+      //       class_id: class_id,
+      //       role: role_id,
+      //     });
+      //   } else return true;
+      //   //#endregion
+      // }
 
       return result.affected > 0;
     } catch (e) {

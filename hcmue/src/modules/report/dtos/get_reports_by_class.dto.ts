@@ -38,5 +38,9 @@ export class GetReportsByClassDto {
   department_id: number;
 
   @IsOptional()
+  @MinValidator(1, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [khoa] tối thiểu bằng 1.'),
+  })
   class_id: number;
 }

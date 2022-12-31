@@ -9,6 +9,12 @@ export const generateData2Array = (semesters: SemesterEntity[] | null) => {
       const item: SemesterResponse = {
         id: semester.id,
         name: semester.name,
+        academic: {
+          id: semester.academic.id,
+          name: semester.academic.start + ' - ' + semester.academic.end,
+        },
+        start: semester.start,
+        end: semester.end,
       };
 
       payload.push(item);
@@ -23,6 +29,12 @@ export const generateData2Object = (semester: SemesterEntity | null) => {
     const payload: SemesterResponse = {
       id: semester.id,
       name: semester.name,
+      academic: {
+        id: semester.id,
+        name: semester.academic.start + ' - ' + semester.academic.end,
+      },
+      start: semester.start,
+      end: semester.end,
     };
     return payload;
   }

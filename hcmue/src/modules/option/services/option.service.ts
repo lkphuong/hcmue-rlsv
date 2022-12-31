@@ -86,7 +86,7 @@ export class OptionService {
 
   async bulkUnlink(
     item_id: number,
-    user_id: number,
+    request_code: string,
     manager?: EntityManager,
   ): Promise<boolean> {
     try {
@@ -97,7 +97,7 @@ export class OptionService {
       const results = await manager.update(
         OptionEntity,
         { item: item_id },
-        { deleted: true, deleted_at: new Date(), deleted_by: user_id },
+        { deleted: true, deleted_at: new Date(), deleted_by: request_code },
       );
 
       return results.affected > 0;

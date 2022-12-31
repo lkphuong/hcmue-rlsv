@@ -14,7 +14,7 @@ import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 export const createAcademic = async (
   from: number,
   to: number,
-  user_id: number,
+  request_code: string,
   academic_service: AcademicYearService,
   req: Request,
 ) => {
@@ -23,7 +23,7 @@ export const createAcademic = async (
   academic.end = to;
   academic.active = true;
   academic.created_at = new Date();
-  academic.created_by = user_id;
+  academic.created_by = request_code;
   academic = await academic_service.add(academic);
   if (academic) {
     //#region Generate response
@@ -41,13 +41,13 @@ export const createAcademic = async (
 
 export const unlinkAcademic = async (
   academic_id: number,
-  user_id: number,
+  request_code: string,
   academic_service: AcademicYearService,
   req: Request,
 ) => {
   const academic = await academic_service.getAcademicYearById(academic_id);
   if (academic) {
-    const result = await academic_service.unlink(academic_id, user_id);
+    const result = await academic_service.unlink(academic_id, request_code);
     if (result) {
       //#region Generate response
       return await generateSuccessResponse(academic, req, null);

@@ -158,6 +158,7 @@ export class AuthController {
             );
           }
 
+          console.log('session: ', session);
           //#region Generate response
           return await generateResponse(
             session,
@@ -226,6 +227,7 @@ export class AuthController {
 
       //#region Session
       const payload = req.user as JwtPayload;
+      console.log('payload: ', payload);
       const session = await this._authService.getProfile(payload.user_id);
       if (session) {
         //#region Generate response

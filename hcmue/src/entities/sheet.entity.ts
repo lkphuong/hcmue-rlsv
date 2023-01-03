@@ -108,21 +108,28 @@ export class SheetEntity extends RootEntity {
   })
   graded: number;
 
-  @Column('int', {
+  @Column('float', {
     name: 'sum_of_personal_marks',
     nullable: true,
     default: 0,
   })
   sum_of_personal_marks: number;
 
-  @Column('int', {
+  @Column('float', {
     name: 'sum_of_class_marks',
     nullable: true,
     default: 0,
   })
   sum_of_class_marks: number;
 
-  @Column('int', {
+  @Column('float', {
+    name: 'sum_of_adviser_marks',
+    nullable: true,
+    default: 0,
+  })
+  sum_of_adviser_marks: number;
+
+  @Column('float', {
     name: 'sum_of_department_marks',
     nullable: true,
     default: 0,

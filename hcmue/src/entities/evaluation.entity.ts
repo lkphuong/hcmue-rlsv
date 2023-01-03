@@ -74,6 +74,13 @@ export class EvaluationEntity extends RootEntity {
   class_mark_level: number;
 
   @Column('float', {
+    name: 'adviser_mark_level',
+    nullable: true,
+    default: null,
+  })
+  adviser_mark_level: number;
+
+  @Column('float', {
     name: 'department_mark_level',
     nullable: true,
     default: null,

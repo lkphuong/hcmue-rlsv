@@ -1,5 +1,6 @@
 export enum SheetCategory {
   STUDENT = 0,
   CLASS = 1,
-  DEPARTMENT = 2,
+  ADVISER = 2,
+  DEPARTMENT = 3,
 }

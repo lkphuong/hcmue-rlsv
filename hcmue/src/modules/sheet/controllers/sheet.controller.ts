@@ -17,6 +17,7 @@ import { DataSource } from 'typeorm';
 import { Request } from 'express';
 
 import {
+  generateAdviserMarks,
   generateClassMarks,
   generateDepartmentMarks,
   generatePersonalMarks,
@@ -54,6 +55,7 @@ import { GetClassDto } from '../dtos/get_class.dto';
 import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
 import { GetSheetsByClassDto } from '../dtos/get_sheets_by_class.dto';
 
+import { UpdateAdviserMarkDto } from '../dtos/update_adviser_mark.dto';
 import { UpdateClassMarkDto } from '../dtos/update_class_mark.dto';
 import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
 import { UpdateStudentMarkDto } from '../dtos/update_student_mark.dto';
@@ -1073,15 +1075,129 @@ export class SheetController {
 
   /**
    * @method PUT
+   * @url /api/adviser/:id
+   * @access private
+   * @description Cố vấn học tập cập nhật kết quả phiếu rèn luyện
+   * @return HttpResponse<SheetDetailsResponse> | HttpException
+   * @page sheets page
+   */
+  @Put('adviser/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.MONITOR, Role.SECRETARY, Role.CHAIRMAN)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async updateMarkAdviser(
+    @Param('id') id: number,
+    @Body() params: UpdateAdviserMarkDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ sheet_id: id, params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ sheet_id: id, params }),
+      );
+
+      //#region Get payload
+      const { role, username: request_code } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Get params
+      const { graded } = params;
+      //#endregion
+
+      //#region Validation
+      //#region Validate sheet
+      const sheet = await validateSheet(id, this._sheetService, req);
+      if (sheet instanceof HttpException) throw sheet;
+      //#endregion
+
+      //#region Validate role
+      const valid = await validateOthersRole(
+        role,
+        sheet.class_id,
+        sheet.department_id,
+        request_code,
+        this._userService,
+        req,
+      );
+
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      if (graded) {
+        //#region Graded & update class marks
+        const result = await generateAdviserMarks(
+          request_code,
+          role,
+          params,
+          sheet,
+          this._evaluationService,
+          this._headerService,
+          this._itemService,
+          this._levelService,
+          this._optionService,
+          this._sheetService,
+          this._dataSource,
+          req,
+        );
+        //#endregion
+
+        //#region Generate response
+        if (result instanceof HttpException) throw result;
+        else return result;
+        //#endregion
+      } else {
+        //#region Ungraded
+        const result = await generateUngradeSheet(
+          request_code,
+          sheet,
+          this._sheetService,
+          req,
+        );
+        //#endregion
+
+        //#region Generate response
+        if (result instanceof HttpException) throw result;
+        else return result;
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
    * @url /api/department/multi-approval
    * @access private
    * @description Khoa cập nhật kết quả cho nhiều sinh viên
    * @return HttpResponse<ApproveAllResponse> | HttpException
    * @page sheets page
    */
-  @Put('department/approve-all')
+  @Put('approve-all')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN, Role.DEPARTMENT)
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async approveAll(
     @Body() params: ApproveAllDto,
@@ -1103,7 +1219,7 @@ export class SheetController {
       //#endregion
 
       //#region Get params
-      const { all, academic_id, department_id, semester_id } = params;
+      const { all, academic_id, class_id, department_id, semester_id } = params;
       let { include_ids } = params;
       //#endregion
 
@@ -1123,6 +1239,7 @@ export class SheetController {
           department_id,
           academic_id,
           semester_id,
+          class_id,
         );
       }
       const success = await this._evaluationService.bulkApprove(include_ids);

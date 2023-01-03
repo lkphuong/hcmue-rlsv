@@ -22,6 +22,7 @@ export enum ErrorMessage {
   RANGE_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] tối thiểu [%s] & tối đa là [%s].',
 
   OUT_OF_EVALUATE_TIME_ERROR = 'Bạn đã quá hạn đánh giá (level: %s, time: %s).',
+  ADVISER_APPROVED_ERROR = 'Cố vấn học tập đã đánh giá. Bạn không thể chỉnh sửa.',
 
   OPERATOR_EVALUATION_ERROR = 'Cập nhật điểm thất bại.',
   OPERATOR_SHEET_ERROR = 'Cập nhật phiếu thất bại.',

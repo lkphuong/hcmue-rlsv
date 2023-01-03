@@ -29,6 +29,7 @@ import {
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { ItemCategory } from '../constants/enums/item_category.enum';
+import { SheetStatus } from '../constants/enums/status.enum';
 
 export const validateClassId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -212,7 +213,6 @@ export const validateOthersRole = async (
     } else {
       if (user && user.class_id !== class_id) {
         //#region throw HandlerException
-        console.log(user);
         return new HandlerException(
           VALIDATION_EXIT_CODE.INVALID_VALUE,
           req.method,
@@ -445,6 +445,23 @@ export const validateTime = async (
       HttpStatus.BAD_REQUEST,
     );
   }
+  return null;
+};
+
+export const validateStatusApproval = async (
+  sheet: SheetEntity,
+  req: Request,
+) => {
+  if (sheet.status > SheetStatus.WAITING_ADVISER) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.NO_MATCHING,
+      req.method,
+      req.url,
+      ErrorMessage.ADVISER_APPROVED_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
   return null;
 };
 

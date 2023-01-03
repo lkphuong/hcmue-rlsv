@@ -3,7 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SheetEntity } from '../../entities/sheet.entity';
 
-import { ApprovalService } from './services/approval/approval.service';
 import { CronService } from './services/cron/cron.service';
 import { SheetService } from './services/sheet/sheet.service';
 
@@ -21,5 +20,5 @@ export const modules = [
 ];
 
 export const controllers = [];
-export const providers = [ApprovalService, CronService, SheetService];
-export const exporteds = [ApprovalService, CronService, SheetService];
+export const providers = [CronService, SheetService];
+export const exporteds = [CronService, SheetService];

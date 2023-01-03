@@ -4,6 +4,7 @@ import { FormEntity } from '../../entities/form.entity';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
+import { CronService } from './services/cron/cron.service';
 import { FormService } from './services/form/form.service';
 
 export const modules = [
@@ -12,6 +13,6 @@ export const modules = [
   LogModule,
 ];
 
-export const providers = [FormService];
+export const providers = [CronService, FormService];
 
-export const exporteds = [FormService];
+export const exporteds = [CronService, FormService];

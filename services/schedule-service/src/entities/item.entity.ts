@@ -96,6 +96,14 @@ export class ItemEntity extends RootEntity {
   })
   category: number;
 
+  // 1.Xuất sắc, 2. Tốt, 3. Khá, 4.Trung bình, 5.Yếu, 6.Kém
+  @Column('tinyint', {
+    name: 'sort_order',
+    default: 1,
+    nullable: true,
+  })
+  sort_order: number;
+
   @Column('boolean', {
     name: 'is_file', //true: có file, false: không file
     default: false,
@@ -116,6 +124,13 @@ export class ItemEntity extends RootEntity {
     default: true,
   })
   required?: boolean = false;
+
+  @Column('boolean', {
+    name: 'discipline',
+    nullable: true,
+    default: true,
+  })
+  discipline?: boolean = false;
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.item)
   evaluations: EvaluationEntity[];

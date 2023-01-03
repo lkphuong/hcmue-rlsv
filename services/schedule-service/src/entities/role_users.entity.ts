@@ -17,11 +17,25 @@ export class RoleUsersEntity extends RootEntity {
   id: number;
 
   @Column('varchar', {
-    name: 'user_id',
+    name: 'std_code',
     nullable: false,
-    length: 24,
+    length: 20,
   })
-  user_id: string;
+  std_code: string;
+
+  @Column('bigint', {
+    name: 'class_id',
+    nullable: false,
+    default: 0,
+  })
+  class_id: number;
+
+  @Column('bigint', {
+    name: 'department_id',
+    nullable: false,
+    default: 0,
+  })
+  department_id: number;
 
   @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn([
@@ -30,5 +44,5 @@ export class RoleUsersEntity extends RootEntity {
       referencedColumnName: 'id',
     },
   ])
-  role: RoleEntity;
+  role: RoleEntity | null;
 }

@@ -12,8 +12,8 @@ export class RootEntity extends BaseEntity {
   @Column('varchar', {
     name: 'created_by',
     nullable: false,
+    length: 20,
     default: 'system',
-    length: 24,
   })
   created_by: string;
 
@@ -27,9 +27,8 @@ export class RootEntity extends BaseEntity {
   @Column('varchar', {
     name: 'updated_by',
     nullable: true,
-    length: 24,
-    onUpdate: 'system',
     select: false,
+    default: 'system',
   })
   updated_by?: string;
 
@@ -44,10 +43,9 @@ export class RootEntity extends BaseEntity {
   @Column('varchar', {
     name: 'deleted_by',
     nullable: true,
-    length: 24,
     select: false,
   })
-  deleted_by?: string;
+  deleted_by: string;
 
   @Column({
     name: 'deleted_at',

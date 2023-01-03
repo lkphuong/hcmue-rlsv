@@ -1,5 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
-import { DATABASE_EXIT_CODE } from 'src/constants/enums/error-code.enum';
+import { DATABASE_EXIT_CODE } from '../constants/enums/error-code.enum';
 
 import { Levels } from '../constants/enums/level.enum';
 import { LogService } from '../modules/log/services/log.service';

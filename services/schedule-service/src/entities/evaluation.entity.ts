@@ -45,6 +45,20 @@ export class EvaluationEntity extends RootEntity {
   ])
   option: OptionEntity;
 
+  @Column('varchar', {
+    name: 'ref',
+    nullable: false,
+    length: 50,
+  })
+  ref: string;
+
+  @Column('tinyint', {
+    name: 'category',
+    nullable: true,
+    default: 1,
+  })
+  category: number;
+
   @Column('float', {
     name: 'personal_mark_level',
     nullable: true,
@@ -58,6 +72,13 @@ export class EvaluationEntity extends RootEntity {
     default: null,
   })
   class_mark_level: number;
+
+  @Column('float', {
+    name: 'adviser_mark_level',
+    nullable: true,
+    default: null,
+  })
+  adviser_mark_level: number;
 
   @Column('float', {
     name: 'department_mark_level',

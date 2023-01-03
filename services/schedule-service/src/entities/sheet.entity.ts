@@ -9,13 +9,16 @@ import {
 
 import { AcademicYearEntity } from './academic_year.entity';
 import { ApprovalEntity } from './approval.entity';
+import { ClassEntity } from './class.entity';
+import { DepartmentEntity } from './department.entity';
 import { EvaluationEntity } from './evaluation.entity';
 import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
-import { SemesterEntity } from './semester.entity';
-import { SheetSignatures } from './sheet_signatures.entity';
+import { KEntity } from './k.entity';
 import { LevelEntity } from './level.entity';
 import { RootEntity } from './root.entity';
+import { SemesterEntity } from './semester.entity';
+import { UserEntity } from './user.entity';
 
 @Entity('sheets')
 export class SheetEntity extends RootEntity {
@@ -33,26 +36,26 @@ export class SheetEntity extends RootEntity {
   ])
   form: FormEntity;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'department_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  department_id: string;
+  department_id: number;
 
   @Column('varchar', {
-    name: 'user_id',
+    name: 'std_code',
     nullable: false,
-    length: 24,
+    length: 20,
   })
-  user_id: string;
+  std_code: string;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'class_id',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  class_id: string;
+  class_id: number;
 
   @ManyToOne(() => SemesterEntity, (semester) => semester.sheets)
   @JoinColumn([
@@ -72,12 +75,12 @@ export class SheetEntity extends RootEntity {
   ])
   academic_year: AcademicYearEntity;
 
-  @Column('varchar', {
+  @Column('bigint', {
     name: 'k',
     nullable: false,
-    length: 24,
+    default: 0,
   })
-  k: string;
+  k: number;
 
   @ManyToOne(() => LevelEntity, (level) => level.sheets)
   @JoinColumn([
@@ -105,32 +108,47 @@ export class SheetEntity extends RootEntity {
   })
   graded: number;
 
-  @Column('int', {
+  @Column('float', {
     name: 'sum_of_personal_marks',
     nullable: true,
     default: 0,
   })
   sum_of_personal_marks: number;
 
-  @Column('int', {
+  @Column('float', {
     name: 'sum_of_class_marks',
     nullable: true,
     default: 0,
   })
   sum_of_class_marks: number;
 
-  @Column('int', {
+  @Column('float', {
+    name: 'sum_of_adviser_marks',
+    nullable: true,
+    default: 0,
+  })
+  sum_of_adviser_marks: number;
+
+  @Column('float', {
     name: 'sum_of_department_marks',
     nullable: true,
     default: 0,
   })
   sum_of_department_marks: number;
 
+  user: UserEntity | null;
+
+  class: ClassEntity | null;
+
+  department: DepartmentEntity | null;
+
+  K: KEntity | null;
+
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.sheet)
   evaluations: EvaluationEntity[];
 
-  @OneToMany(() => SheetSignatures, (signature) => signature.sheet)
-  signatures: SheetSignatures[];
+  // @OneToMany(() => SheetSignatures, (signature) => signature.sheet)
+  // signatures: SheetSignatures[];
 
   @OneToMany(() => ApprovalEntity, (approval) => approval.sheet)
   approvals: ApprovalEntity[];

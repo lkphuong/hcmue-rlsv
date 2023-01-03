@@ -1,12 +1,12 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import { DataSource } from 'typeorm';
 
 import * as config from 'config';
 
-import { generateUpdateSheets } from '../../funcs';
+import { sprintf } from '../../../../utils';
 import { handleLog } from '../../utils';
 
+import { FormService } from '../../../form/services/form/form.service';
 import { SheetService } from '../sheet/sheet.service';
 import { LogService } from '../../../log/services/log.service';
 
@@ -14,19 +14,17 @@ import { ErrorMessage } from '../../constants/enums/errors.enum';
 
 import { Crons } from '../../constants/enums/crons.enum';
 import { Pattern } from '../../../../constants/enums/pattern.enum';
-
-import { ApprovalService } from '../approval/approval.service';
+import { FormStatus } from '../../../form/constants/emuns/form_status.enum';
 
 const CRON_JOB_TIME =
-  process.env['UPDATE_STATUS_SHEETS_CRON_JOB_TIME'] ||
-  config.get('UPDATE_STATUS_SHEETS_CRON_JOB_TIME');
+  process.env['GENERATE_CREATE_SHEETS_CRON_JOB_TIME'] ||
+  config.get('GENERATE_CREATE_SHEETS_CRON_JOB_TIME');
 
 @Injectable()
 export class CronService {
   constructor(
-    private readonly _approvalService: ApprovalService,
     private readonly _sheetService: SheetService,
-    private readonly _dataSource: DataSource,
+    private readonly _formService: FormService,
     private _logger: LogService,
   ) {}
 
@@ -35,29 +33,45 @@ export class CronService {
     try {
       console.log('----------------------------------------------------------');
       console.log(
-        `${Pattern.CRON_JOB_PATTERN}: /${Crons.UPDATE_SHEETS_STATUS_CRON_JOB}`,
+        `${Pattern.CRON_JOB_PATTERN}: /${Crons.GENERATE_CREATE_SHEETS_CRON_JOB}`,
       );
       console.log('Cron time: ', CRON_JOB_TIME);
 
-      //#region Count out of date sheets
-      const count = await this._sheetService.countOutOfDateSheets();
-      //#endregion
+      const form = await this._formService.getFormPublished();
 
-      if (count > 0) {
-        //#region Generate update sheets
-        const results = await generateUpdateSheets(
-          this._approvalService,
-          this._sheetService,
-          this._dataSource,
+      if (form && new Date() >= form.start) {
+        //#region Create sheets
+        const result = await this._sheetService.generateSheets(
+          form.id,
+          form.academic_year.id,
+          form.semester.id,
         );
 
-        if (results instanceof HttpException) {
-          console.log('Lưu thông tin thất bại.');
-        } else console.log('Lưu thông tin thành công.');
-        //#endregion
-      } else {
-        //#region Handle log
-        handleLog(ErrorMessage.NO_CONTENT_ERROR, this._logger);
+        if (result) {
+          //#region Update form status: PUBLISHED -> IN_PROGRESS
+          const success = await this._formService.updateForm(
+            form.id,
+            FormStatus.IN_PROGRESS,
+          );
+          if (!success) {
+            //#region Handle log
+            handleLog(
+              sprintf(
+                ErrorMessage.UPDATE_FORM_STATUS_ERROR,
+                form.id,
+                FormStatus.PUBLISHED,
+                FormStatus.IN_PROGRESS,
+              ),
+              this._logger,
+            );
+            //#endregion
+          }
+          //#endregion
+        } else {
+          //#region Handle log
+          handleLog(ErrorMessage.GENERATE_SHEETS_OPERATOR_ERROR, this._logger);
+          //#endregion
+        }
         //#endregion
       }
     } catch (err) {

@@ -2,7 +2,7 @@ export default {
   MYSQL_TYPE: 'mysql',
   MYSQL_HOST: '103.154.176.80',
   MYSQL_PORT: 3306,
-  MYSQL_DATABASE_NAME: 'hcmue_rlsv_v1',
+  MYSQL_DATABASE_NAME: 'hcmue_rlsv',
   MYSQL_USERNAME: 'uat',
   MYSQL_PASSWORD: 'Uatvtcode@2022',
 
@@ -20,7 +20,7 @@ export default {
 
   ITEMS_PER_PAGE: 10,
 
-  MULTER_DEST: './static/uploads',
+  MULTER_DEST: '../../../hcmue/static/uploads',
 
   BACKGROUND_JOB_SERVICE_HOST: 'localhost',
   BACKGROUND_JOB_SERVICE_PORT: 5672,
@@ -48,4 +48,5 @@ export default {
   GENERATE_CREATE_SHEETS_CRON_JOB_TIME: '0 0 1 * * *',
   UPDATE_STATUS_SHEETS_CRON_JOB_TIME: '0 */5 * * * *',
   UNLINK_FILES_CRON_JOB_TIME: '0 0 1 * * *',
+  UPDATE_STATUS_FORMS_CRON_JOB_TIME: '* * * * * *',
 };

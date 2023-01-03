@@ -1,3 +1,3 @@
 export enum Crons {
-  UPDATE_SHEETS_STATUS_CRON_JOB = 'hcmue-update-sheets-status-cron-job',
+  GENERATE_CREATE_SHEETS_CRON_JOB = 'hcmue-generate-create-sheets-cron-job',
 }

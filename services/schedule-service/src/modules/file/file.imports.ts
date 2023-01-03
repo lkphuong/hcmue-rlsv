@@ -1,6 +1,6 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { FileEntity } from 'src/entities/file.entity';
+import { FileEntity } from '../../entities/file.entity';
 
 import { CronService } from './services/cron/cron.service';
 import { FileService } from './services/file/file.service';

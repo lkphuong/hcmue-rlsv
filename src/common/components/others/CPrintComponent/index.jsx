@@ -147,6 +147,61 @@ export const CPrintComponent = forwardRef(({ data, marks }, ref) => {
 							</MarkContext.Provider>
 						</Table>
 					</TableContainer>
+
+					<Box className='sign'>
+						<Box ml={7} mt={3}>
+							<Typography fontWeight={600} className='label' mb={0.5}>
+								Tổng điểm:
+								<Typography component='span'>
+									&nbsp;{data?.sum_of_department_marks}
+								</Typography>
+							</Typography>
+							<Typography fontWeight={600} className='label'>
+								Xếp loại:
+								<Typography component='span'>
+									&nbsp;{data?.level?.name || 'Chưa đánh giá'}
+								</Typography>
+							</Typography>
+						</Box>
+
+						<Typography textAlign='right' my={2}>
+							TP.Hồ Chí Minh, ngày.....tháng.....năm 20.....
+						</Typography>
+						<Grid container spacing={2}>
+							<Grid item xs={3}>
+								<Box textAlign='center'>
+									<Typography fontWeight={600} className='label'>
+										CỐ VẤN HỌC TẬP
+									</Typography>
+									<Typography>(Kí và ghi rõ họ tên)</Typography>
+								</Box>
+							</Grid>
+							<Grid item xs={3}>
+								<Box textAlign='center'>
+									<Typography fontWeight={600} className='label'>
+										LỚP TRƯỞNG
+									</Typography>
+									<Typography>(Kí và ghi rõ họ tên)</Typography>
+								</Box>
+							</Grid>
+							<Grid item xs={3}>
+								<Box textAlign='center'>
+									<Typography fontWeight={600} className='label'>
+										TM. BCH CHI ĐOÀN
+									</Typography>
+									<Typography>(Kí và ghi rõ họ tên)</Typography>
+								</Box>
+							</Grid>
+							<Grid item xs={3}>
+								<Box textAlign='center'>
+									<Typography fontWeight={600} className='label'>
+										SINH VIÊN
+									</Typography>
+									<Typography>(Kí và ghi rõ họ tên)</Typography>
+								</Box>
+							</Grid>
+						</Grid>
+					</Box>
 				</Container>
 			</Box>
 		</Box>

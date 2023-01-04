@@ -19,7 +19,7 @@ export class RoleUsersEntity extends RootEntity {
   @Column('varchar', {
     name: 'std_code',
     nullable: false,
-    length: 20,
+    length: 255,
   })
   std_code: string;
 

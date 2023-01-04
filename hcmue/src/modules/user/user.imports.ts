@@ -9,6 +9,7 @@ import { AcademicYearModule } from '../academic-year/academic_year.module';
 import { ClassModule } from '../class/class.module';
 import { DepartmentModule } from '../department/department.module';
 import { FileModule } from '../file/file.module';
+import { FormModule } from '../form/form.module';
 import { KModule } from '../k/k.module';
 import { MajorModule } from '../major/major.module';
 import { RoleModule } from '../role/role.module';
@@ -25,6 +26,7 @@ export const modules = [
   ClassModule,
   DepartmentModule,
   forwardRef(() => FileModule),
+  FormModule,
   KModule,
   LogModule,
   MajorModule,

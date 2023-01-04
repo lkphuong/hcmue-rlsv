@@ -1,18 +1,15 @@
 import {
   Body,
-  CACHE_MANAGER,
   Controller,
   HttpCode,
   HttpException,
   HttpStatus,
-  Inject,
   Post,
   Req,
   UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { Cache } from 'cache-manager';
 import { Request } from 'express';
 import { DataSource } from 'typeorm';
 
@@ -29,6 +26,7 @@ import { AcademicYearService } from '../../academic-year/services/academic_year.
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { FilesService } from '../../file/services/files.service';
+import { FormService } from '../../form/services/form.service';
 import { KService } from '../../k/services/k.service';
 import { MajorService } from '../../major/services/major.service';
 import { SemesterService } from '../../semester/services/semester.service';
@@ -57,12 +55,12 @@ import {
 @Controller('users')
 export class UserController {
   constructor(
-    @Inject(CACHE_MANAGER) private readonly _cacheManager: Cache,
     private readonly _academicYearService: AcademicYearService,
     private readonly _configurationService: ConfigurationService,
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
     private readonly _fileService: FilesService,
+    private readonly _formService: FormService,
     private readonly _kService: KService,
     private readonly _semesterService: SemesterService,
     private readonly _userService: UserService,
@@ -181,8 +179,8 @@ export class UserController {
    */
   @HttpCode(HttpStatus.OK)
   @Post('import')
-  // @UseGuards(JwtAuthGuard)
-  // @Roles(Role.ADMIN)
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async importUsers(@Body() params: ImportUsersDto, @Req() req: Request) {
     try {
@@ -211,12 +209,12 @@ export class UserController {
         this._classService,
         this._departmentService,
         this._fileService,
+        this._formService,
         this._kService,
         this._majorService,
         this._semesterService,
         this._statusService,
         this._userService,
-        this._cacheManager,
         this._dataSource,
         req,
       );

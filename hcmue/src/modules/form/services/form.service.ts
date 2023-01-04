@@ -53,6 +53,30 @@ export class FormService {
     }
   }
 
+  async getFormInProgress(): Promise<FormEntity | null> {
+    try {
+      const conditions = this._formRepository
+        .createQueryBuilder('form')
+        .innerJoinAndSelect('form.academic_year', 'academic_year')
+        .innerJoinAndSelect('form.semester', 'semester')
+        .where('form.status = :status', { status: FormStatus.IN_PROGRESS })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('form.deleted = :deleted', { deleted: false });
+
+      const form = await conditions.getOne();
+      return form || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FormService.getFormInProgress()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getFormById(id: number): Promise<FormEntity | null> {
     try {
       const conditions = this._formRepository

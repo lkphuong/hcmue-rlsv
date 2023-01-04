@@ -6,26 +6,26 @@ import { returnObjects, returnObjectsWithPaging } from '../../../utils';
 
 import { ClassEntity } from '../../../entities/class.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { FilesService } from '../../file/services/files.service';
+import { FormEntity } from '../../../entities/form.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
+import { SheetService } from '../services/sheet.service';
 import { UserEntity } from '../../../entities/user.entity';
-
-import { ClassService } from '../../class/services/class.service';
-import { DepartmentService } from '../../department/services/department.service';
-import { KService } from '../../k/services/k.service';
-import { UserService } from '../../user/services/user.service';
-import { FilesService } from '../../file/services/files.service';
 
 import {
   ApproveAllResponse,
   BaseResponse,
+  ClassResponse,
   ClassSheetsResponse,
+  ClassStatusResponse,
 } from '../interfaces/sheet_response.interface';
 
 import {
   generateAdminSheets,
   generateClasses2Array,
   generateClassSheets,
+  generateClassStatusAdviserHistory,
   generateData2Object,
   generateEvaluationsArray,
   generateItemsArray,
@@ -36,6 +36,7 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
 
 export const generateClassesResponse = async (
   data: ClassEntity[] | null,
@@ -180,6 +181,68 @@ export const generateEvaluationsResponse = async (
     message: null,
     errors: null,
   };
+};
+
+export const generateClassStatusAdviserResponse = (
+  form: FormEntity,
+  $class: ClassEntity,
+  count: number,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', $class);
+  console.log('count: ', count);
+
+  const payload: ClassStatusResponse = {
+    academic: {
+      id: form.academic_year.id,
+      name: form.academic_year.start + ' - ' + form.academic_year.end,
+    },
+    semester: {
+      id: form.semester.id,
+      name: form.semester.name,
+      start: form.semester.start,
+      end: form.semester.end,
+    },
+    class: {
+      id: $class.id,
+      code: $class.code,
+      status: count > 0 ? false : true,
+    },
+  };
+
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};
+
+export const generateClassStatusAdviserHistoryResponse = async (
+  pages: number,
+  page: number,
+  params: GetClassStatusAdviserHistoryDto,
+  forms: FormEntity[],
+  $class: ClassEntity,
+  sheet_service: SheetService,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', $class);
+  console.log('forms: ', forms);
+
+  const payload = await generateClassStatusAdviserHistory(
+    params,
+    $class,
+    forms,
+    sheet_service,
+  );
+
+  // Returns objects
+  return returnObjectsWithPaging<ClassResponse>(pages, page, payload);
 };
 
 export const groupItemsByHeader = <T>(

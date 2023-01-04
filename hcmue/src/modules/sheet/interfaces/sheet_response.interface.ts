@@ -105,3 +105,27 @@ export interface SheetEvaluationResponse {
   academic: BaseResponse;
   evaluations: EvaluationResponse[];
 }
+
+export interface SemesterResponse {
+  id: number;
+  name: string;
+  start: Date;
+  end: Date;
+}
+
+export interface AcademicYearResponse {
+  id: number;
+  name: string;
+}
+
+export interface ClassResponse {
+  id: number;
+  code: string;
+  status: boolean;
+}
+
+export interface ClassStatusResponse {
+  academic?: AcademicYearResponse;
+  semester?: SemesterResponse;
+  class: ClassResponse;
+}

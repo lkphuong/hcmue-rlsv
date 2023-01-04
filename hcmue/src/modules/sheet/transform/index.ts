@@ -2,17 +2,22 @@ import { convertString2Date } from '../../../utils';
 
 import { ClassEntity } from '../../../entities/class.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
+import { FormEntity } from '../../../entities/form.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
-import { KService } from '../../k/services/k.service';
-import { UserService } from '../../user/services/user.service';
 import { FilesService } from '../../file/services/files.service';
+import { KService } from '../../k/services/k.service';
+import { SheetService } from '../services/sheet.service';
+import { UserService } from '../../user/services/user.service';
+
+import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
 
 import {
   BaseResponse,
+  ClassResponse,
   ClassSheetsResponse,
   EvaluationsResponse,
   SheetDetailsResponse,
@@ -28,6 +33,7 @@ import {
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
+import { SheetStatus } from '../constants/enums/status.enum';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -574,4 +580,36 @@ export const generateEvaluationsArray = async (
   }
 
   return null;
+};
+
+export const generateClassStatusAdviserHistory = async (
+  params: GetClassStatusAdviserHistoryDto,
+  $class: ClassEntity,
+  forms: FormEntity[],
+  sheet_service: SheetService,
+) => {
+  const payload: ClassResponse[] = [];
+
+  //#region Get params
+  const { class_id, department_id, academic_id, semester_id } = params;
+  //#endregion
+  for (const i of forms) {
+    const count = await sheet_service.countSheetByStatus(
+      academic_id,
+      semester_id,
+      SheetStatus.WAITING_ADVISER,
+      department_id,
+      class_id,
+      i.id,
+    );
+    const item: ClassResponse = {
+      id: $class.id,
+      code: $class.code,
+      status: count > 0 ? false : true,
+    };
+
+    payload.push(item);
+  }
+
+  return payload;
 };

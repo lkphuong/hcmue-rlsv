@@ -98,34 +98,6 @@ export class UserService {
     }
   }
 
-  async countUsersByAcademicAndSemester(
-    academic_id: number,
-    semester_id: number,
-  ): Promise<number> {
-    try {
-      const conditions = await this._userRepository
-        .createQueryBuilder('user')
-        .select('COUNT(user.id)', 'count')
-        .where('user.academic_id = :academic_id', { academic_id })
-        .andWhere('user.semester_id = :semester_id', { semester_id })
-        .andWhere('user.deleted = :deleted', { deleted: false });
-
-      console.log('sql: ', conditions.getSql());
-
-      const { count } = await conditions.getRawOne();
-
-      return count;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'UserService.countUsersByAcademicAndSemester()',
-        e,
-      );
-      return null;
-    }
-  }
-
   async getUsersPaging(
     offset: number,
     length: number,
@@ -411,6 +383,12 @@ export class UserService {
     try {
       const conditions = this._userRepository
         .createQueryBuilder('user')
+        .innerJoinAndMapOne(
+          'user.class',
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND class.delete_flag = 0`,
+        )
         .where('user.std_code = :std_code', { std_code })
         .andWhere('user.deleted = :deleted', { deleted: 0 });
 
@@ -499,11 +477,7 @@ export class UserService {
     }
   }
 
-  async bulkUnlink(
-    academic_id: number,
-    semester_id: number,
-    manager?: EntityManager,
-  ) {
+  async bulkUnlink(manager?: EntityManager) {
     try {
       if (!manager) {
         manager = this._dataSource.manager;
@@ -511,11 +485,10 @@ export class UserService {
       const results = await manager.update(
         UserEntity,
         {
-          academic_id: academic_id,
-          semester_id: semester_id,
+          active: 1,
           deleted: false,
         },
-        { deleted: true, deleted_at: new Date(), deleted_by: 'system' },
+        { updated_at: new Date(), updated_by: 'system', active: false },
       );
       return results.affected > 0;
     } catch (e) {

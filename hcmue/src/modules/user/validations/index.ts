@@ -6,6 +6,7 @@ import { sprintf } from '../../../utils';
 
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { FilesService } from '../../file/services/files.service';
+import { FormService } from '../../form/services/form.service';
 import { SemesterService } from '../../semester/services/semester.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
@@ -143,4 +144,23 @@ export const validateFile = async (
       return file;
     }
   }
+};
+
+export const validateTime = async (form_service: FormService, req: Request) => {
+  const form = await form_service.getFormInProgress();
+
+  if (form && form.start <= new Date() && form.end >= new Date()) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.NO_MATCHING,
+      req.method,
+      req.url,
+      sprintf(
+        ErrorMessage.IMPORT_USERS_NO_MATCHING_TIME_ERROR,
+        form.start,
+        form.end,
+      ),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+  return null;
 };

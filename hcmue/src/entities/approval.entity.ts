@@ -1,14 +1,6 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import { SheetEntity } from './sheet.entity';
 import { RootEntity } from './root.entity';
-import { UserEntity } from './user.entity';
 
 @Entity('approvals')
 export class ApprovalEntity extends RootEntity {
@@ -17,23 +9,19 @@ export class ApprovalEntity extends RootEntity {
   })
   id: number;
 
-  @ManyToOne(() => SheetEntity, (sheet) => sheet.approvals)
-  @JoinColumn([
-    {
-      name: 'sheet_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  sheet: SheetEntity;
+  @Column('tinyint', {
+    name: 'sheet_id',
+    nullable: false,
+    default: 0,
+  })
+  sheet_id: number;
 
-  @ManyToOne(() => UserEntity, (user) => user.approvals)
-  @JoinColumn([
-    {
-      name: 'user_id',
-      referencedColumnName: 'id',
-    },
-  ])
-  user: UserEntity;
+  @Column('varchar', {
+    name: 'std_code',
+    nullable: false,
+    length: 255,
+  })
+  std_code: number;
 
   @Column('tinyint', {
     name: 'approved_status',
@@ -49,24 +37,10 @@ export class ApprovalEntity extends RootEntity {
   })
   approved_at: Date;
 
-  @Column('datetime', {
-    name: 'start_at',
-    nullable: true,
-    default: null,
-  })
-  start_at: Date;
-
-  @Column('datetime', {
-    name: 'end_at',
-    nullable: true,
-    default: null,
-  })
-  end_at: Date;
-
   @Column('tinyint', {
-    name: 'category',
+    name: 'role_id',
     nullable: true,
     default: 0,
   })
-  category: number;
+  role_id: number;
 }

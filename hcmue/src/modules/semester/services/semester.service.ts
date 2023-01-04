@@ -45,7 +45,10 @@ export class SemesterService {
     }
   }
 
-  async getSemesters(): Promise<SemesterEntity[] | null> {
+  async getSemestersPaging(
+    offset: number,
+    length: number,
+  ): Promise<SemesterEntity[] | null> {
     try {
       const conditions = this._semesterRepository
         .createQueryBuilder('semester')
@@ -61,6 +64,8 @@ export class SemesterService {
 
       const semesters = conditions
         .orderBy('semester.created_at', 'DESC')
+        .skip(offset)
+        .take(length)
         .getMany();
       return semesters || null;
     } catch (e) {
@@ -92,6 +97,27 @@ export class SemesterService {
         Levels.ERROR,
         Methods.SELECT,
         'SemesterService.getSemesterByAcademicId()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async count(): Promise<number> {
+    try {
+      const conditions = this._semesterRepository
+        .createQueryBuilder('semester')
+        .select('COUNT(semester.id)', 'count')
+        .where('semester.deleted = :deleted', { deleted: 0 });
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SemesterService.count()',
         e,
       );
       return null;

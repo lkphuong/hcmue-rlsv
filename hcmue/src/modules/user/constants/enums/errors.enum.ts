@@ -21,4 +21,6 @@ export enum ErrorMessage {
   K_OPERATOR_ERROR = 'Lưu thông tin [niên khóa] thất bại.',
 
   DATE_INVALID_FORMAT_ERROR = '[Ngày sinh] không hợp lệ (date: %s).',
+
+  IMPORT_USERS_NO_MATCHING_TIME_ERROR = 'Tải danh sách thất bại do đang trong thời gian phát hành phiếu chấm điểm rèn luyện (from: %s, to: %s).',
 }

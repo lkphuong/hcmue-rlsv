@@ -48,6 +48,7 @@ import {
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
 import { ItemService } from '../../item/services/item.service';
 import { FilesService } from '../../file/services/files.service';
+import { FormService } from '../../form/services/form.service';
 import { HeaderService } from '../../header/services/header.service';
 import { LevelService } from '../../level/services/level.service';
 import { OptionService } from '../../option/services/option.service';
@@ -57,7 +58,10 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
-import { SheetDetailsResponse } from '../interfaces/sheet_response.interface';
+import {
+  ClassStatusResponse,
+  SheetDetailsResponse,
+} from '../interfaces/sheet_response.interface';
 
 import { SheetCategory } from '../constants/enums/categories.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
@@ -496,6 +500,55 @@ export const generateDepartmentMarks = async (
     await query_runner.release();
   }
 };
+
+// export const generateClassStatus = async (
+//   params: GetClassStatusDto,
+//   from_service: FormService,
+//   sheet_service: SheetService,
+//   req: Request,
+// ) => {
+//   try {
+//     //#region Get params
+//     const { academic_id, class_id, department_id, semester_id, status } =
+//       params;
+//     //#endregion
+
+//     const form = await from_service.getFormInProgress();
+//     if (form) {
+//       if (class_id) {
+//         //#region count sheet by class
+//         //#endregion
+//       } else {
+//         //#region count sheet by department
+//         //#endregion
+//       }
+//     } else {
+//       //#region throw HandlerException
+//       throw new HandlerException(
+//         DATABASE_EXIT_CODE.NO_CONTENT,
+//         req.method,
+//         req.url,
+//         ErrorMessage.NO_CONTENT,
+//         HttpStatus.NOT_FOUND,
+//       );
+//       //#endregion
+//     }
+//   } catch (err) {
+//     console.log('--------------------------------------------------------');
+//     console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+//     if (err instanceof HttpException) return err;
+//     else {
+//       //#region throw HandlerException
+//       return new HandlerException(
+//         SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+//         req.method,
+//         req.url,
+//       );
+//       //#endregion
+//     }
+//   }
+// };
 
 export const generateUngradeSheet = async (
   request_code: string,
@@ -1196,8 +1249,9 @@ export const generateUpdateSheet = async (
     sheet.sum_of_adviser_marks = sum_of_marks;
   else sheet.sum_of_department_marks = sum_of_marks;
 
-  sheet.status = status;
-  sheet.level = new_level;
+  sheet.status = sheet.status > status ? status : sheet.status;
+  sheet.graded = 1;
+  sheet.level = sheet.status >= status ? new_level : sheet.level;
   sheet.updated_at = new Date();
   sheet.updated_by = request_code;
 

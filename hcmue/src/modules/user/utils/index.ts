@@ -53,25 +53,6 @@ export const generateImportSuccessResponse = async (
   };
 };
 
-// export const mapRoleForUser = (
-//   user_id: string,
-//   roles: RoleUsersEntity[] | null,
-// ) => {
-//   if (roles) {
-//     const result = roles.find(
-//       (e) => e.user_id == convertObjectId2String(user_id),
-//     );
-
-//     if (result && result.role) {
-//       return result.role.code;
-//     }
-
-//     return 0;
-//   }
-
-//   return 0;
-// };
-
 /**
  *
  * @param array1 sql

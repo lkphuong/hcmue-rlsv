@@ -2,8 +2,8 @@ import { HttpStatus } from '@nestjs/common';
 import { QueryRunner } from 'typeorm';
 import { Request } from 'express';
 
-import { generateData2Array, generateData2Object } from '../transform';
-import { returnObjects } from '../../../utils';
+import { generateData2Array } from '../transform';
+import { returnObjects, returnObjectsWithPaging } from '../../../utils';
 
 import { SemesterEntity } from '../../../entities/semester.entity';
 
@@ -27,6 +27,24 @@ export const generateSemestersResponse = async (
 
   const payload = await generateData2Array(semesters);
   return returnObjects<SemesterResponse>(payload);
+};
+
+export const generateSemestersPagingResponse = async (
+  pages: number,
+  page: number,
+  semesters: SemesterEntity[],
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('pages' + ' - ' + pages);
+  console.log('page' + ' - ' + page);
+  console.log('data: ', semesters);
+
+  const payload = await generateData2Array(semesters);
+
+  // Returns objects
+  return returnObjectsWithPaging<SemesterResponse>(pages, page, payload);
 };
 
 export const generateSuccessResponse = async (

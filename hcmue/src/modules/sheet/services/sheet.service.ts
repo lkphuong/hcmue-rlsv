@@ -367,6 +367,69 @@ export class SheetService {
     }
   }
 
+  async countSheetByStatus(
+    academic_id: number,
+    semester_id: number,
+    status: number,
+    department_id: number,
+    class_id?: number,
+    form_id?: number,
+  ): Promise<number> {
+    try {
+      let conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .select('COUNT(sheet.id)', 'count')
+        .innerJoin('sheet.academic_year', 'academic_year')
+        .innerJoin('sheet.semester', 'semester')
+        .innerJoin('sheet.form', 'form');
+
+      if (academic_id && academic_id !== 0) {
+        conditions = conditions.andWhere('academic_year.id = :academic_id', {
+          academic_id,
+        });
+      }
+
+      if (semester_id && semester_id !== 0) {
+        conditions = conditions.andWhere('semester.id = :semester_id', {
+          semester_id,
+        });
+      }
+
+      if (status !== 0) {
+        conditions = conditions.andWhere('sheet.status < :status', { status });
+      }
+
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere(
+          'sheet.department_id = :department_id',
+          { department_id },
+        );
+      }
+
+      if (class_id && class_id !== 0) {
+        conditions = conditions.andWhere('sheet.class_id = :class_id', {
+          class_id,
+        });
+      }
+
+      if (form_id && form_id !== 0) {
+        conditions = conditions.andWhere('form.id = :form_id', { form_id });
+      }
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.countSheetByStatus()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async update(
     sheet: SheetEntity,
     manager: EntityManager,

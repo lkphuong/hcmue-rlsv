@@ -50,6 +50,7 @@ export class AuthService {
       const conditions = await this._userRepository
         .createQueryBuilder('user')
         .where('user.std_code = :username', { username })
+        .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: false });
 
       const user = await conditions.orderBy('user.created_at', 'DESC').getOne();

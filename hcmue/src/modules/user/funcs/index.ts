@@ -25,6 +25,7 @@ import {
   validateAcademic,
   validateFile,
   validateSemester,
+  validateTime,
 } from '../validations';
 
 import { ImportUsersDto } from '../dtos/import_users.dto';
@@ -34,6 +35,7 @@ import { AcademicYearService } from '../../academic-year/services/academic_year.
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { FilesService } from '../../file/services/files.service';
+import { FormService } from '../../form/services/form.service';
 import { KService } from '../../k/services/k.service';
 import { MajorService } from '../../major/services/major.service';
 import { SemesterService } from '../../semester/services/semester.service';
@@ -60,7 +62,6 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import { CACHE_KEY } from '../constants/enums/cache_key.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 
 export const generateImportUsers = async (
@@ -70,12 +71,12 @@ export const generateImportUsers = async (
   class_service: ClassService,
   department_service: DepartmentService,
   file_service: FilesService,
+  form_service: FormService,
   k_service: KService,
   major_service: MajorService,
   semester_service: SemesterService,
   status_service: StatusService,
   user_service: UserService,
-  cache_manager: Cache,
   data_source: DataSource,
   req: Request,
 ) => {
@@ -101,6 +102,11 @@ export const generateImportUsers = async (
   //#region Validate semester
   const semester = await validateSemester(semester_id, semester_service, req);
   if (semester instanceof HttpException) throw semester;
+  //#endregion
+
+  //#region Validate time
+  const form = await validateTime(form_service, req);
+  if (form instanceof HttpException) throw form;
   //#endregion
   //#endregion
 
@@ -279,7 +285,6 @@ export const generateImportUsers = async (
         //#region transform data and new cache
         const result = generateBaseResponse(new_k);
         new_cache_k = [...new_cache_k, ...result];
-        await cache_manager.set(CACHE_KEY.K, new_cache_k, 0);
         //#endregion
       }
     }
@@ -314,26 +319,7 @@ export const generateImportUsers = async (
     //#endregion
 
     //#region Update old users
-    const old_users = await user_service.countUsersByAcademicAndSemester(
-      academic_id,
-      semester_id,
-    );
-    if (old_users > 0) {
-      const delte_users = await user_service.bulkUnlink(
-        academic_id,
-        semester_id,
-        query_runner.manager,
-      );
-      if (!delte_users) {
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.OPERATOR_ERROR,
-          req.method,
-          req.url,
-          ErrorMessage.STUDENT_OPERATOR_ERROR,
-          HttpStatus.EXPECTATION_FAILED,
-        );
-      }
-    }
+    await user_service.bulkUnlink();
     //#endregion
 
     //#region Create user

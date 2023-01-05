@@ -2,21 +2,23 @@ import { Request } from 'express';
 
 import { ClassEntity } from '../../../entities/class.entity';
 
-import { returnObjects } from '../../../utils';
+import { returnObjectsWithPaging } from '../../../utils';
 import { generateData2Array } from '../transform';
 
 import { ClassResponse } from '../interfaces/class_response.interface';
 
 export const generateClassesResponse = async (
-  $class: ClassEntity[],
+  pages: number,
+  page: number,
+  classes: ClassEntity[],
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', $class);
+  console.log('data: ', classes);
 
-  const payload = await generateData2Array($class);
+  const payload = await generateData2Array(classes);
 
   // Returns object
-  return returnObjects<ClassResponse>(payload);
+  return returnObjectsWithPaging<ClassResponse>(pages, page, payload);
 };

@@ -29,6 +29,8 @@ import {
   generateClassesResponse,
   generateClassStatusAdviserHistoryResponse,
   generateClassStatusAdviserResponse,
+  generateClassStatusDepartmentResponse,
+  generateDepartmentStatusResponse,
   generateEvaluationsResponse,
   generateItemsResponse,
   generateObjectIdFromUsers,
@@ -52,17 +54,20 @@ import {
 import { UserEntity } from '../../../entities/user.entity';
 
 import { ApproveAllDto } from '../dtos/approve_all.dto';
-import { GetClassStatusAdviserDto } from '../dtos/get_classes_status_adviser.dto';
 import { GetClassDto } from '../dtos/get_class.dto';
-import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
-import { GetSheetsByClassDto } from '../dtos/get_sheets_by_class.dto';
+import { GetClassStatusAdviserDto } from '../dtos/get_classes_status_adviser.dto';
 import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
-
+import { GetClassStatusDepartmentDto } from '../dtos/get_classes_status_department.dto';
+import { GetClassStatusDepartmentHistoryDto } from '../dtos/get_classes_status_department_history.dto';
+import { GetDepartmentStatusDto } from '../dtos/get_department_status.dto';
+import { GetDepartmentStatusHistoryDto } from '../dtos/get_department_status_history.dto';
+import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
+import { GetSheetsByAdminDto } from '../dtos/get_sheets_admin.dto';
+import { GetSheetsByClassDto } from '../dtos/get_sheets_by_class.dto';
 import { UpdateAdviserMarkDto } from '../dtos/update_adviser_mark.dto';
 import { UpdateClassMarkDto } from '../dtos/update_class_mark.dto';
 import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
 import { UpdateStudentMarkDto } from '../dtos/update_student_mark.dto';
-import { GetSheetsByAdminDto } from '../dtos/get_sheets_admin.dto';
 
 import { ClassService } from '../../class/services/class.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
@@ -91,6 +96,7 @@ import {
   ApproveAllResponse,
   ClassStatusResponse,
   ClassResponse,
+  DepartmentResponse,
 } from '../interfaces/sheet_response.interface';
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
@@ -377,7 +383,7 @@ export class SheetController {
 
   /**
    * @method Post
-   * @url /api/sheets/admin/
+   * @url /api/sheets/admin/class
    * @access private
    * @param pages
    * @param pages
@@ -391,7 +397,7 @@ export class SheetController {
    * @return  HttpResponse<ClassSheetsResponse> | HttpException
    * @page sheets page
    */
-  @Post('admin')
+  @Post('admin/class')
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.OK)
@@ -976,6 +982,429 @@ export class SheetController {
 
   /**
    * @method POST
+   * @url /api/sheets/department
+   * @access private
+   * @param department_id
+   * @param pages
+   * @param page
+   * @description Hiển thị danh sách tình trạng biểu mẫu cho khoa
+   * @return HttpPagingResponse<ClassResponse> | HttpException
+   * @page sheets page
+   */
+  @Post('department')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getClassStatusDepartment(
+    @Body() params: GetClassStatusDepartmentDto,
+    @Req() req: Request,
+  ): Promise<HttpPagingResponse<ClassResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      //#region Get params
+      const { department_id, page } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
+      );
+      //#endregion
+
+      //#region Get form in progress
+      const form = await this._formService.getFormInProgress();
+      //#endregion
+
+      if (form) {
+        if (pages === 0) {
+          //#region Get pages
+          const count = await this._classService.count(department_id);
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+
+        const classes = await this._classService.getClassesByDepartmentId(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          department_id,
+        );
+
+        if (classes && classes.length > 0) {
+          return await generateClassStatusDepartmentResponse(
+            pages,
+            page,
+            form.academic_year.id,
+            form.semester.id,
+            department_id,
+            classes,
+            this._sheetService,
+            req,
+          );
+        } else {
+          //#region throw HandlerException
+          throw new HandlerException(
+            DATABASE_EXIT_CODE.NO_CONTENT,
+            req.method,
+            req.url,
+            ErrorMessage.NO_CONTENT,
+            HttpStatus.NOT_FOUND,
+          );
+          //#endregion
+        }
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/sheets/department/history
+   * @access private
+   * @param pages
+   * @param page
+   * @description Hiển thị danh sách lịch sử tình trạng biểu mẫu cho khoa
+   * @return HttpPagingResponse<ClassResponse> | HttpException
+   * @page sheet page
+   */
+  @Post('department/history')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getClassStatusDepartmentHistory(
+    @Body() params: GetClassStatusDepartmentHistoryDto,
+    @Req() req: Request,
+  ): Promise<HttpPagingResponse<ClassResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params }),
+      );
+
+      //#region Get params
+      const { academic_id, department_id, page, semester_id } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
+      );
+      //#endregion
+
+      //#region Get form
+      const form = await this._formService.isAnyPublish(
+        semester_id,
+        academic_id,
+      );
+      //#endregion
+
+      if (form && form.status == FormStatus.DONE) {
+        if (pages === 0) {
+          //#region get pages
+          const count = await this._classService.count(department_id);
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+
+        const classes = await this._classService.getClassesByDepartmentId(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          department_id,
+        );
+
+        if (classes && classes.length > 0) {
+          return await generateClassStatusDepartmentResponse(
+            pages,
+            page,
+            form.academic_year.id,
+            form.semester.id,
+            department_id,
+            classes,
+            this._sheetService,
+            req,
+          );
+        } else {
+          //#region throw HandlerException
+          throw new HandlerException(
+            DATABASE_EXIT_CODE.NO_CONTENT,
+            req.method,
+            req.url,
+            ErrorMessage.NO_CONTENT,
+            HttpStatus.NOT_FOUND,
+          );
+          //#endregion
+        }
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/sheets/admin
+   * @access private
+   * @param department_id
+   * @description Danh sachs trạng thái chấm điểm của cấc khoa
+   * @page sheets page
+   */
+  @Post('admin')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getDepartmentStatus(
+    @Body() params: GetDepartmentStatusDto,
+    @Req() req: Request,
+  ): Promise<HttpPagingResponse<DepartmentResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params }),
+      );
+
+      //#region Get params
+      const { page, department_id } = params;
+      let { pages } = params;
+
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
+      );
+      //#endregion
+
+      //#region Get form
+      const form = await this._formService.getFormInProgress();
+      //#endregion
+      if (form) {
+        if (pages === 0) {
+          //#region get pages
+          const count = await this._departmentService.count(department_id);
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+
+        const departments = await this._departmentService.getDepartmentPaging(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          department_id,
+        );
+        if (departments && departments.length > 0) {
+          return await generateDepartmentStatusResponse(
+            pages,
+            page,
+            form.academic_year.id,
+            form.semester.id,
+            departments,
+            this._sheetService,
+            req,
+          );
+        } else {
+          //#region throw HandlerException
+          throw new HandlerException(
+            DATABASE_EXIT_CODE.NO_CONTENT,
+            req.method,
+            req.url,
+            ErrorMessage.NO_CONTENT,
+            HttpStatus.NOT_FOUND,
+          );
+          //#endregion
+        }
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/sheets/admin
+   * @access private
+   * @param department_id
+   * @description Danh sachs trạng thái chấm điểm của cấc khoa
+   * @page sheets page
+   */
+  @Post('admin/history')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getDepartmentStatusHistory(
+    @Body() params: GetDepartmentStatusHistoryDto,
+    @Req() req: Request,
+  ): Promise<HttpPagingResponse<DepartmentResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params }),
+      );
+
+      //#region Get params
+      const { page, academic_id, department_id, semester_id } = params;
+      let { pages } = params;
+
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
+      );
+      //#endregion
+
+      //#region Get form
+      const form = await this._formService.isAnyPublish(
+        semester_id,
+        academic_id,
+      );
+      //#endregion
+      if (form && form.status == FormStatus.DONE) {
+        if (pages === 0) {
+          //#region get pages
+          const count = await this._departmentService.count(department_id);
+
+          if (count > 0) pages = Math.ceil(count / itemsPerPage);
+          //#endregion
+        }
+
+        const departments = await this._departmentService.getDepartmentPaging(
+          (page - 1) * itemsPerPage,
+          itemsPerPage,
+          department_id,
+        );
+        if (departments && departments.length > 0) {
+          return await generateDepartmentStatusResponse(
+            pages,
+            page,
+            semester_id,
+            academic_id,
+            departments,
+            this._sheetService,
+            req,
+          );
+        } else {
+          //#region throw HandlerException
+          throw new HandlerException(
+            DATABASE_EXIT_CODE.NO_CONTENT,
+            req.method,
+            req.url,
+            ErrorMessage.NO_CONTENT,
+            HttpStatus.NOT_FOUND,
+          );
+          //#endregion
+        }
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
    * @url /api/department/:department_id
    * @access private
    * @param department_id
@@ -1016,19 +1445,32 @@ export class SheetController {
       //#endregion
 
       //#region Get params
-      const { class_id } = params;
-      //#endregion
-
-      //#region Get classess
-      const $class = await this._classService.getClassesByDepartmentId(
-        department_id,
-        class_id,
+      const { class_id, page } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
       );
       //#endregion
 
-      if ($class && $class.length > 0) {
+      if (pages === 0) {
+        //#region Get pages
+        const count = await this._classService.count(department_id);
+
+        if (count > 0) pages = Math.ceil(count / itemsPerPage);
+        //#endregion
+      }
+
+      //#region Get classess
+      const classes = await this._classService.getClassesByDepartmentId(
+        (page - 1) * itemsPerPage,
+        itemsPerPage,
+        department_id,
+      );
+      //#endregion
+
+      if (classes && classes.length > 0) {
         //#region Generate response
-        return await generateClassesResponse($class, req);
+        return await generateClassesResponse(classes, req);
         //#endregion
       } else {
         //#region throw HandlerException

@@ -63,6 +63,8 @@ export class ClassService {
   }
 
   async getClassesByDepartmentId(
+    offset: number,
+    length: number,
     department_id: number,
     class_id?: number,
   ): Promise<ClassEntity[] | null> {
@@ -76,8 +78,12 @@ export class ClassService {
         conditions = conditions.andWhere('class.id = :class_id', { class_id });
       }
 
+      console.log(offset, length);
+
       const classes = await conditions
         .orderBy('class.created_at', 'DESC')
+        .skip(offset)
+        .take(length)
         .getMany();
 
       return classes || null;
@@ -107,6 +113,38 @@ export class ClassService {
         Levels.ERROR,
         Methods.SELECT,
         'ClassService.getClassById()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async count(department_id?: number, class_id?: number): Promise<number> {
+    try {
+      let conditions = this._classRepository
+        .createQueryBuilder('class')
+        .select('COUNT(id)', 'count')
+        .where('class.deleted = :deleted', { deleted: 0 });
+
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere(
+          'class.department_id = :department_id',
+          { department_id },
+        );
+      }
+
+      if (class_id && class_id !== 0) {
+        conditions = conditions.andWhere('class.id = :class_id', { class_id });
+      }
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ClassService.count()',
         e,
       );
       return null;

@@ -1,17 +1,12 @@
-import { convertString2Date } from '../../../utils';
-
 import { ClassEntity } from '../../../entities/class.entity';
+import { DepartmentEntity } from '../../../entities/department.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { FormEntity } from '../../../entities/form.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 
-import { ClassService } from '../../class/services/class.service';
-import { DepartmentService } from '../../department/services/department.service';
 import { FilesService } from '../../file/services/files.service';
-import { KService } from '../../k/services/k.service';
 import { SheetService } from '../services/sheet.service';
-import { UserService } from '../../user/services/user.service';
 
 import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
 
@@ -19,6 +14,7 @@ import {
   BaseResponse,
   ClassResponse,
   ClassSheetsResponse,
+  DepartmentResponse,
   EvaluationsResponse,
   SheetDetailsResponse,
   UserSheetsResponse,
@@ -605,6 +601,61 @@ export const generateClassStatusAdviserHistory = async (
     const item: ClassResponse = {
       id: $class.id,
       code: $class.code,
+      status: count > 0 ? false : true,
+    };
+
+    payload.push(item);
+  }
+
+  return payload;
+};
+
+export const generateClassStatusDepartment = async (
+  academic_id: number,
+  semester_id: number,
+  department_id: number,
+  classes: ClassEntity[],
+  sheet_service: SheetService,
+) => {
+  const payload: ClassResponse[] = [];
+  for await (const i of classes) {
+    const count = await sheet_service.countSheetByStatus(
+      academic_id,
+      semester_id,
+      SheetStatus.WAITING_DEPARTMENT,
+      department_id,
+      i.id,
+    );
+    const item: ClassResponse = {
+      id: i.id,
+      code: i.code,
+      status: count > 0 ? false : true,
+    };
+
+    payload.push(item);
+  }
+
+  return payload;
+};
+
+export const generateDepartStatus = async (
+  academic_id: number,
+  semester_id: number,
+  departments: DepartmentEntity[],
+  sheet_service: SheetService,
+) => {
+  const payload: DepartmentResponse[] = [];
+  for await (const i of departments) {
+    const count = await sheet_service.countSheetByStatus(
+      academic_id,
+      semester_id,
+      SheetStatus.WAITING_DEPARTMENT,
+      i.id,
+    );
+
+    const item: DepartmentResponse = {
+      id: i.id,
+      name: i.name,
       status: count > 0 ? false : true,
     };
 

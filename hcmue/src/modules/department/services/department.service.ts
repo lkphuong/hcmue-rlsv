@@ -64,6 +64,67 @@ export class DepartmentService {
     }
   }
 
+  async getDepartmentPaging(
+    offset: number,
+    length: number,
+    department_id?: number,
+  ): Promise<DepartmentEntity[] | null> {
+    try {
+      let conditions = this._departmentRepository
+        .createQueryBuilder('department')
+        .where('department.deleted = :deleted', { deleted: 0 });
+
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere('department.id = :department_id', {
+          department_id,
+        });
+      }
+
+      const departments = await conditions
+        .orderBy('department.created_at', 'DESC')
+        .skip(offset)
+        .take(length)
+        .getMany();
+
+      return departments || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'DepartmentService.getDepartmentPaging()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async count(department_id?: number): Promise<number> {
+    try {
+      let conditions = this._departmentRepository
+        .createQueryBuilder('department')
+        .select('COUNT(id)', 'count')
+        .where('department.deleted = :deleted', { deleted: 0 });
+
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere('department.id = :department_id', {
+          department_id,
+        });
+      }
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'DepartmentService.count()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async bulkAdd(
     departments: DepartmentEntity[],
     manager?: EntityManager,

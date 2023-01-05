@@ -5,9 +5,9 @@ import {
   Req,
   UsePipes,
   ValidationPipe,
-  Get,
-  Param,
   HttpCode,
+  Post,
+  Body,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -15,11 +15,11 @@ import { generateClassesResponse } from '../utils';
 
 import { GetClassDto } from '../dtos/get_class.dto';
 
-import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { HttpPagingResponse } from '../../../interfaces/http-paging-response.interface';
 import { ClassResponse } from '../interfaces/class_response.interface';
 
 import { LogService } from '../../log/services/log.service';
-
+import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { ClassService } from '../services/class.service';
 
 import { ErrorMessage } from '../constants/errors.enum';
@@ -31,11 +31,12 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-
+import { Configuration } from '../../shared/constants/configuration.enum';
 @Controller('classes')
 export class ClassController {
   constructor(
     private readonly _classService: ClassService,
+    private readonly _configurationService: ConfigurationService,
     private _logger: LogService,
   ) {
     // Due to transient scope, ClassController has its own unique instance of LogService,
@@ -44,7 +45,7 @@ export class ClassController {
   }
 
   /**
-   * @method Get
+   * @method POST
    * @url /api/classes/all
    * @access private
    * @param department_id
@@ -52,13 +53,13 @@ export class ClassController {
    * @return HttpResponse<ClassResponse> | HttpException | null
    * @page Any page
    */
-  @Get(':department_id')
+  @Post('all')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassesByDepartment(
-    @Param() params: GetClassDto,
+    @Body() params: GetClassDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<ClassResponse> | null | HttpException> {
+  ): Promise<HttpPagingResponse<ClassResponse> | null | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
@@ -71,17 +72,33 @@ export class ClassController {
       );
 
       //#region Get params
-      const { department_id } = params;
-      //#endregion
-
-      //#region Get classes
-      const $class = await this._classService.getClassesByDepartmentId(
-        department_id,
+      const { department_id, page } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
       );
       //#endregion
-      if ($class && $class.length > 0) {
+
+      if (pages === 0) {
+        //#region Get pages
+        const count = await this._classService.count(department_id);
+        if (count > 0) pages = Math.ceil(count / itemsPerPage);
+        //#endregion
+        console.log('count: ', count);
+      }
+
+      //#region Get classes
+      const classes = await this._classService.getClassesByDepartmentId(
+        (page - 1) * itemsPerPage,
+        itemsPerPage,
+        department_id,
+      );
+
+      console.log('class: ', classes);
+      //#endregion
+      if (classes && classes.length > 0) {
         //#region Generate response
-        return await generateClassesResponse($class, req);
+        return generateClassesResponse(pages, page, classes, req);
         //#endregion
       } else {
         //#region throw HandlerException

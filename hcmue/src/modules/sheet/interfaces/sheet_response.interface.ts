@@ -124,6 +124,12 @@ export interface ClassResponse {
   status: boolean;
 }
 
+export interface DepartmentResponse {
+  id: number;
+  name: string;
+  status: boolean;
+}
+
 export interface ClassStatusResponse {
   academic?: AcademicYearResponse;
   semester?: SemesterResponse;

@@ -5,6 +5,7 @@ import { Request } from 'express';
 import { returnObjects, returnObjectsWithPaging } from '../../../utils';
 
 import { ClassEntity } from '../../../entities/class.entity';
+import { DepartmentEntity } from '../../../entities/department.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { FilesService } from '../../file/services/files.service';
 import { FormEntity } from '../../../entities/form.entity';
@@ -13,12 +14,15 @@ import { SheetEntity } from '../../../entities/sheet.entity';
 import { SheetService } from '../services/sheet.service';
 import { UserEntity } from '../../../entities/user.entity';
 
+import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
+
 import {
   ApproveAllResponse,
   BaseResponse,
   ClassResponse,
   ClassSheetsResponse,
   ClassStatusResponse,
+  DepartmentResponse,
 } from '../interfaces/sheet_response.interface';
 
 import {
@@ -26,7 +30,9 @@ import {
   generateClasses2Array,
   generateClassSheets,
   generateClassStatusAdviserHistory,
+  generateClassStatusDepartment,
   generateData2Object,
+  generateDepartStatus,
   generateEvaluationsArray,
   generateItemsArray,
   generateUserSheets,
@@ -36,7 +42,6 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
-import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
 
 export const generateClassesResponse = async (
   data: ClassEntity[] | null,
@@ -243,6 +248,56 @@ export const generateClassStatusAdviserHistoryResponse = async (
 
   // Returns objects
   return returnObjectsWithPaging<ClassResponse>(pages, page, payload);
+};
+
+export const generateClassStatusDepartmentResponse = async (
+  pages: number,
+  page: number,
+  academic_id: number,
+  semester_id: number,
+  department_id: number,
+  classes: ClassEntity[],
+  sheet_service: SheetService,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('classes: ', classes);
+
+  const payload = await generateClassStatusDepartment(
+    academic_id,
+    semester_id,
+    department_id,
+    classes,
+    sheet_service,
+  );
+
+  // Returns objects
+  return returnObjectsWithPaging<ClassResponse>(pages, page, payload);
+};
+
+export const generateDepartmentStatusResponse = async (
+  pages: number,
+  page: number,
+  academic_id: number,
+  semester_id: number,
+  departments: DepartmentEntity[],
+  sheet_service: SheetService,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('departments: ', departments);
+
+  const payload = await generateDepartStatus(
+    academic_id,
+    semester_id,
+    departments,
+    sheet_service,
+  );
+
+  // Returns objects
+  return returnObjectsWithPaging<DepartmentResponse>(pages, page, payload);
 };
 
 export const groupItemsByHeader = <T>(

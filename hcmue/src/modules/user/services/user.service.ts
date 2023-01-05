@@ -14,6 +14,9 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { StatusEntity } from '../../../entities/status.entity';
+import { MajorEntity } from '../../../entities/major.entity';
+import { KEntity } from '../../../entities/k.entity';
 
 @Injectable()
 export class UserService {
@@ -29,6 +32,8 @@ export class UserService {
     semester_id: number,
     class_id: number,
     department_id: number,
+    status_id: number,
+    major_id: number,
     input?: string,
   ): Promise<number> {
     try {
@@ -38,13 +43,13 @@ export class UserService {
         .innerJoin(
           AcademicYearEntity,
           'academic',
-          `user.academic_id = academic_id AND
+          `user.academic_id = user.academic_id AND
            academic.deleted = 0`,
         )
         .innerJoin(
           SemesterEntity,
           'semester',
-          `semester.academic_id = academic_id AND
+          `semester.academic_id = user.academic_id AND
            semester.deleted = 0`,
         )
         .innerJoin(
@@ -59,8 +64,22 @@ export class UserService {
           `class.id = user.class_id AND
            class.deleted = 0`,
         )
+        .innerJoin(
+          StatusEntity,
+          'status',
+          `status.id = user.status_id AND
+           status.deleted = 0`,
+        )
+        .innerJoin(
+          MajorEntity,
+          'major',
+          `major.id = user.major_id AND 
+          major.deleted = 0`,
+        )
+        .innerJoin(KEntity, 'k', `class.k = k.id AND k.deleted = 0`)
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic.id = :academic_id', { academic_id })
+        .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: false });
 
       if (class_id && class_id !== 0) {
@@ -70,8 +89,23 @@ export class UserService {
       }
 
       if (department_id && department_id !== 0) {
-        conditions = conditions.andWhere('user.department_id', {
-          department_id,
+        conditions = conditions.andWhere(
+          'user.department_id = :department_id',
+          {
+            department_id,
+          },
+        );
+      }
+
+      if (status_id && status_id !== 0) {
+        conditions = conditions.andWhere('user.status_id = :status_id', {
+          status_id,
+        });
+      }
+
+      if (major_id && major_id !== 0) {
+        conditions = conditions.andWhere('user.major_id = :major_id', {
+          major_id,
         });
       }
 
@@ -105,6 +139,8 @@ export class UserService {
     semester_id: number,
     class_id: number,
     department_id: number,
+    status_id: number,
+    major_id: number,
     input?: string,
   ): Promise<UserEntity[]> {
     try {
@@ -114,14 +150,14 @@ export class UserService {
           'user.academic',
           AcademicYearEntity,
           'academic',
-          `user.academic_id = academic_id AND 
+          `user.academic_id = user.academic_id AND 
           academic.deleted = 0`,
         )
         .innerJoinAndMapOne(
           'user.semester',
           SemesterEntity,
           'semester',
-          `semester.academic_id = academic_id AND
+          `semester.academic_id = user.academic_id AND
            semester.deleted = 0`,
         )
         .innerJoinAndMapOne(
@@ -138,22 +174,44 @@ export class UserService {
           `class.id = user.class_id AND
            class.deleted = 0`,
         )
+
         .innerJoinAndMapOne(
+          'class.K',
+          KEntity,
+          'k',
+          `k.id = class.k AND k.deleted = 0`,
+        )
+        .leftJoinAndMapOne(
           'user.role_user',
           RoleUsersEntity,
           'role_user',
-          `user.id = role_user.user_id AND 
+          `user.std_code = role_user.std_code AND 
           role_user.deleted = 0`,
         )
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'role_user.role',
           RoleEntity,
           'role',
-          `role.id = role_user.role_id AND
+          `role.code = role_user.role_id AND
            role.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.status',
+          StatusEntity,
+          'status',
+          `status.id = user.status_id AND
+           status.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'user.major',
+          MajorEntity,
+          'major',
+          `major.id = user.major_id AND 
+          major.deleted = 0`,
         )
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic.id = :academic_id', { academic_id })
+        .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: false });
 
       if (class_id && class_id !== 0) {
@@ -163,8 +221,23 @@ export class UserService {
       }
 
       if (department_id && department_id !== 0) {
-        conditions = conditions.andWhere('user.department_id', {
-          department_id,
+        conditions = conditions.andWhere(
+          'user.department_id = :department_id',
+          {
+            department_id,
+          },
+        );
+      }
+
+      if (status_id && status_id !== 0) {
+        conditions = conditions.andWhere('user.status_id = :status_id', {
+          status_id,
+        });
+      }
+
+      if (major_id && major_id !== 0) {
+        conditions = conditions.andWhere('user.major_id = :major_id', {
+          major_id,
         });
       }
 
@@ -176,6 +249,8 @@ export class UserService {
           }),
         );
       }
+
+      console.log('sql: ', conditions.getSql());
 
       const users = await conditions
         .orderBy('user.created_at', 'DESC')

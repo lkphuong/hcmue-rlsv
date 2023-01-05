@@ -13,9 +13,17 @@ export const generateUsersArray = async (users: UserEntity[] | null) => {
 
     for await (const user of users) {
       const item: UserResponse = {
-        user_id: user.id,
+        id: user.id,
         std_code: user.std_code,
         name: user.fullname,
+        birthday: user.birthday,
+
+        academic: user.academic
+          ? {
+              id: user.academic.id,
+              name: user.academic.start + ' - ' + user.academic.end,
+            }
+          : null,
 
         department: user.department
           ? {
@@ -27,15 +35,28 @@ export const generateUsersArray = async (users: UserEntity[] | null) => {
         classes: user.class
           ? {
               id: user.class_id,
+              code: user.class.code,
               name: user.class.name,
             }
           : null,
 
-        role: user.role_user
-          ? user.role_user.role
-            ? user.role_user.role.id
+        major: user.major ? { id: user.major_id, name: user.major.name } : null,
+
+        status: user.status
+          ? { id: user.status_id, name: user.status.name }
+          : null,
+
+        k: user.class
+          ? user.class.k
+            ? { id: user.class.k, name: user.class.K.name }
             : null
           : null,
+
+        role: user.role_user
+          ? user.role_user.role
+            ? user.role_user.role.code
+            : 0
+          : 0,
       };
 
       payload.push(item);

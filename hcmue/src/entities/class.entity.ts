@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { KEntity } from './k.entity';
 import { RootEntity } from './root.entity';
 import { UserEntity } from './user.entity';
 
@@ -38,4 +39,6 @@ export class ClassEntity extends RootEntity {
   name: string;
 
   users: UserEntity[] | null;
+
+  K: KEntity | null;
 }

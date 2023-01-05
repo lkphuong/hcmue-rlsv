@@ -54,7 +54,8 @@ export class GetUsersDto {
       generateValidationMessage(arg, 'Bạn vui lòng chọn [khoa].'),
   })
   @MinValidator(0, {
-    message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [khoa] không hợp lệ.'),
   })
   department_id: number;
 
@@ -65,9 +66,34 @@ export class GetUsersDto {
       generateValidationMessage(arg, 'Bạn vui lòng chọn [lớp].'),
   })
   @MinValidator(0, {
-    message: (arg) => generateValidationMessage(arg, 'Giá trị không hợp lệ.'),
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [lớp] không hợp lệ.'),
   })
   class_id: number;
+
+  @IsOptional()
+  @Transform((params) => parseInt(params.value) ?? 0)
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [ngành học].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [ngành học] không hợp lệ.'),
+  })
+  major_id: number;
+
+  @IsOptional()
+  @Transform((params) => parseInt(params.value) ?? 0)
+  @IsNotEmpty({
+    message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng chọn [tình trạng học].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [tình trạng học] không hợp lệ.'),
+  })
+  status_id: number;
 
   @IsOptional()
   @Transform((params) =>

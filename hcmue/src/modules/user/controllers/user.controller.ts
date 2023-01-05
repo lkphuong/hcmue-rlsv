@@ -99,8 +99,16 @@ export class UserController {
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
       //#region Get parrams
-      const { academic_id, class_id, department_id, input, page, semester_id } =
-        params;
+      const {
+        academic_id,
+        class_id,
+        department_id,
+        input,
+        major_id,
+        page,
+        semester_id,
+        status_id,
+      } = params;
       let { pages } = params;
 
       const itemsPerPage = parseInt(
@@ -115,6 +123,8 @@ export class UserController {
           semester_id,
           class_id,
           department_id,
+          status_id,
+          class_id,
           input,
         );
 
@@ -132,6 +142,8 @@ export class UserController {
         semester_id,
         class_id,
         department_id,
+        status_id,
+        major_id,
         input,
       );
       //#endregion

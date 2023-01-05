@@ -6,6 +6,7 @@ import { MajorEntity } from './major.entity';
 import { RoleUsersEntity } from './role_users.entity';
 import { RootEntity } from './root.entity';
 import { SemesterEntity } from './semester.entity';
+import { StatusEntity } from './status.entity';
 
 @Entity('users')
 export class UserEntity extends RootEntity {
@@ -84,6 +85,8 @@ export class UserEntity extends RootEntity {
     default: 0,
   })
   semester_id: number;
+
+  status: StatusEntity | null;
 
   class: ClassEntity | null;
 

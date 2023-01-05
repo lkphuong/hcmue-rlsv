@@ -3,12 +3,23 @@ export interface BaseResponse {
   name: string;
 }
 
+export interface ClassResponse {
+  id: number;
+  code: string;
+  name: string;
+}
+
 export interface UserResponse {
-  user_id: number;
+  id: number;
   std_code: string;
   name: string;
+  birthday: string;
+  status: BaseResponse;
+  academic: BaseResponse;
   department: BaseResponse;
-  classes: BaseResponse;
+  major: BaseResponse;
+  classes: ClassResponse;
+  k: BaseResponse;
   role: number;
 }
 

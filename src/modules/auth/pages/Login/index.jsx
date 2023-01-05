@@ -1,7 +1,4 @@
-import React from 'react';
-
 import { Controller, useForm } from 'react-hook-form';
-
 import { useDispatch } from 'react-redux';
 
 import { Box, Button, Container, Paper, Stack } from '@mui/material';
@@ -15,7 +12,6 @@ import { CInput } from '_controls/';
 import logo from '_assets/images/logo.png';
 
 import { alert } from '_func/alert';
-
 import { isSuccess } from '_func/';
 
 import { login } from '_api/auth.api';

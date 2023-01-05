@@ -123,8 +123,7 @@ export const getProfile = async (token) => {
 		const res = await profile();
 
 		if (isSuccess(res)) {
-			// const role_id = res?.data?.role;
-			const role_id = 2;
+			const role_id = res?.data?.role;
 
 			updateAbility(role_id);
 

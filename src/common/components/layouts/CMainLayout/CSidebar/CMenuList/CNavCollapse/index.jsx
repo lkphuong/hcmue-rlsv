@@ -27,8 +27,6 @@ const CNavCollapse = ({ menu, level }) => {
 	//#region Data
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
-	console.log(role_id);
-
 	const theme = useTheme();
 	const { pathname } = useLocation();
 

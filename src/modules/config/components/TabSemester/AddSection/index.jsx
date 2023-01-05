@@ -137,7 +137,10 @@ export const AddSection = ({ refetch }) => {
 										<Controller
 											control={control}
 											name='start'
-											render={({ field: { value, onChange, name, ref } }) => (
+											render={({
+												field: { value, onChange, name, ref },
+												fieldState: { error },
+											}) => (
 												<CDatePicker
 													ref={ref}
 													name={name}
@@ -146,6 +149,8 @@ export const AddSection = ({ refetch }) => {
 													inputFormat='MM/YYYY'
 													value={value}
 													onChange={onChange}
+													error={!!error}
+													helperText={error?.message}
 												/>
 											)}
 										/>
@@ -159,7 +164,10 @@ export const AddSection = ({ refetch }) => {
 										<Controller
 											control={control}
 											name='end'
-											render={({ field: { value, onChange, name, ref } }) => (
+											render={({
+												field: { value, onChange, name, ref },
+												fieldState: { error },
+											}) => (
 												<CDatePicker
 													ref={ref}
 													name={name}
@@ -168,14 +176,16 @@ export const AddSection = ({ refetch }) => {
 													inputFormat='MM/YYYY'
 													value={value}
 													onChange={onChange}
+													error={!!error}
+													helperText={error?.message}
 												/>
 											)}
 										/>
 									</Stack>
 								</Grid>
 
-								<Grid xs={12} textAlign='center'>
-									<Stack direction='row' spacing={1.5}>
+								<Grid xs={12}>
+									<Stack direction='row' spacing={1.5} justifyContent='center'>
 										<Button type='button' variant='contained'>
 											Mặc định
 										</Button>

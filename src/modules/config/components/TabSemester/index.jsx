@@ -1,4 +1,3 @@
-import React from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Typography } from '@mui/material';
@@ -31,11 +30,11 @@ export const TabSemester = () => {
 	//#region Render
 	return (
 		<Box>
+			<AddSection refetch={updateData} />
+
 			<Typography fontSize='1.5rem' fontWeight={600}>
 				Danh sách học kỳ
 			</Typography>
-
-			<AddSection refetch={updateData} />
 
 			<MTable data={semesters} refetch={updateData} />
 		</Box>

@@ -1,19 +1,22 @@
-import React, { memo } from 'react';
+import { forwardRef } from 'react';
 
 import { TextField } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 
 import { any, string, func, bool } from 'prop-types';
 
-export const CDatePicker = memo(
-	({ name, value, onChange, placeholder, error, helperText, inputRef, onBlur, ...props }) => {
+export const CDatePicker = forwardRef(
+	(
+		{ name, value, onChange, placeholder, inputFormat, error, helperText, onBlur, ...props },
+		ref
+	) => {
 		return (
 			<DatePicker
 				className='c-datepicker'
 				value={value}
 				onChange={onChange}
-				inputFormat='DD/MM/YYYY'
-				inputRef={inputRef}
+				inputFormat={inputFormat}
+				inputRef={ref}
 				{...props}
 				renderInput={(params) => (
 					<TextField
@@ -37,4 +40,9 @@ CDatePicker.propTypes = {
 	onChange: func,
 	error: bool,
 	helperText: string,
+	inputFormat: string,
+};
+
+CDatePicker.defaultProps = {
+	inputFormat: 'DD/MM/YYYY',
 };

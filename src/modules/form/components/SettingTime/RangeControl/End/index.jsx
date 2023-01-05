@@ -67,7 +67,7 @@ export const MDateEnd = ({ control, name, beforeCondition, disabled }) => {
 						disablePast
 						minDate={dayjs()}
 						name={name}
-						inputRef={ref}
+						ref={ref}
 						value={value}
 						onChange={onChangeEndDate(onChange)}
 						onBlur={onBlur}

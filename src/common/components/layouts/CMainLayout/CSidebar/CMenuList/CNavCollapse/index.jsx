@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { useTheme } from '@mui/material/styles';
 import {
@@ -15,9 +16,19 @@ import { ExpandMore, ExpandLess, FiberManualRecord } from '@mui/icons-material';
 import PropTypes from 'prop-types';
 
 import CNavItem from '../CNavItem';
-import { useMemo } from 'react';
+
+const SPECIFIC_TITLE = {
+	1: 'Lớp trưởng',
+	2: 'Bí thư chi đoàn',
+	3: 'Chi hội trưởng',
+};
 
 const CNavCollapse = ({ menu, level }) => {
+	//#region Data
+	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
+
+	console.log(role_id);
+
 	const theme = useTheme();
 	const { pathname } = useLocation();
 
@@ -30,10 +41,6 @@ const CNavCollapse = ({ menu, level }) => {
 	}, [menu, pathname]);
 
 	const [open, setOpen] = useState(selected || false);
-
-	const handleClick = () => {
-		setOpen(!open);
-	};
 
 	// menu collapse & item
 	const menus = menu.children?.map((item) => {
@@ -63,7 +70,15 @@ const CNavCollapse = ({ menu, level }) => {
 			fontSize={level > 0 ? 'inherit' : 'medium'}
 		/>
 	);
+	//#endregion
 
+	//#region Event
+	const handleClick = () => {
+		setOpen(!open);
+	};
+	//#endregion
+
+	//#region Render
 	return (
 		<>
 			<ListItemButton
@@ -84,7 +99,7 @@ const CNavCollapse = ({ menu, level }) => {
 				<ListItemText
 					primary={
 						<Typography variant='h5' color='inherit' sx={{ my: 'auto' }}>
-							{menu.title}
+							{(menu.title === 'Lớp trưởng' && SPECIFIC_TITLE[role_id]) || menu.title}
 						</Typography>
 					}
 					secondary={
@@ -129,6 +144,7 @@ const CNavCollapse = ({ menu, level }) => {
 			</Collapse>
 		</>
 	);
+	//#endregion
 };
 
 CNavCollapse.propTypes = {

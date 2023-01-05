@@ -49,7 +49,7 @@ const Filter = ({ filter, onChangeFilter }) => {
 						<Box p={1}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-									Niên khóa
+									Năm học
 								</Typography>
 								<CAutocomplete
 									placeholder='Tất cả'

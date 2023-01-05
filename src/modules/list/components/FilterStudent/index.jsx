@@ -67,7 +67,7 @@ export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_year
 												pl={1}
 												mb={0.7}
 											>
-												Niên khóa
+												Năm học
 											</Typography>
 											<CAutocomplete
 												disableClearable

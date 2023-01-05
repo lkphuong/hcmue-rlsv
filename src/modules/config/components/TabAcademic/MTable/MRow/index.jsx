@@ -24,7 +24,7 @@ export const MRow = ({ data, index, refetch }) => {
 				if (isSuccess(res)) {
 					refetch();
 
-					alert.success({ text: 'Xóa niên khóa thành công.' });
+					alert.success({ text: 'Xóa năm học thành công.' });
 				} else {
 					alert.fail({ text: res?.message || ERRORS.FAIL });
 				}

@@ -3,8 +3,7 @@ import axios from 'axios';
 import { Navigate } from 'react-router-dom';
 
 import { logout, profile } from '_api/auth.api';
-
-import { isSuccess } from '_func/';
+import { AUTH } from '_api/url';
 
 import { store } from '_store';
 
@@ -12,8 +11,9 @@ import { actions } from '_slices/auth.slice';
 import { actions as actionsForm } from '_slices/form.slice';
 
 import { updateAbility } from '_func/permissions';
+import { isSuccess } from '_func/';
+
 import { post } from './request';
-import { AUTH } from '_api/url';
 
 const apiInstance = axios.create({
 	baseURL: process.env.REACT_APP_API_URL,
@@ -123,7 +123,8 @@ export const getProfile = async (token) => {
 		const res = await profile();
 
 		if (isSuccess(res)) {
-			const role_id = res?.data?.role;
+			// const role_id = res?.data?.role;
+			const role_id = 2;
 
 			updateAbility(role_id);
 

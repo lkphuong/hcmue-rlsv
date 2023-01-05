@@ -109,7 +109,7 @@ const SettingTime = memo(() => {
 					<Grid container mb={2} spacing={2}>
 						<Grid item xs={12} md={8} lg={6} xl={5}>
 							<Typography mb={0.8} fontWeight={500}>
-								Học kỳ - Niên khóa
+								Học kỳ - Năm học
 							</Typography>
 							<Stack direction='row'>
 								<Box flex={1} mr={1}>

@@ -48,9 +48,9 @@ const MIN_DATE = dayjs();
 //#region Validation
 export const validationSchema = yup.object({
 	academic_id: yup
-		.number('Vui lòng chọn niên khóa.')
-		.nullable('Vui lòng chọn niên khóa.')
-		.required('Vui lòng chọn niên khóa.'),
+		.number('Vui lòng chọn năm học.')
+		.nullable('Vui lòng chọn năm học.')
+		.required('Vui lòng chọn năm học.'),
 	semester_id: yup
 		.number('Vui lòng chọn học kỳ.')
 		.nullable('Vui lòng chọn học kỳ.')

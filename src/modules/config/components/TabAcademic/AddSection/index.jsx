@@ -56,7 +56,7 @@ export const AddSection = ({ refetch }) => {
 		const res = await createAcademicYear({ from, to });
 		if (isSuccess(res)) {
 			refetch();
-			alert.success({ text: 'Thêm niên khóa thành công.' });
+			alert.success({ text: 'Thêm năm học thành công.' });
 			reset();
 		} else {
 			alert.fail({ text: res?.message || ERRORS.FAIL });

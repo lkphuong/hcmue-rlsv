@@ -19,11 +19,46 @@ export const ROUTES = {
 	FORM_UPDATE: '/admin/forms/update/:form_id',
 
 	STATISTIC: '/statistic',
+	//
+	STUDENT: {
+		SELF: '/student-sheets',
+		HISTORY: '/student-history',
+	},
 
-	ROLE: '/admin/roles',
-	CONFIG: '/admin/config',
-	ADMIN_SHEET: '/admin/sheets',
-	ADMIN_REMAKE: '/admin/sheets/:sheet_id',
-	ADMIN_HISTORY: '/admin/history',
-	ADMIN_STUDENTS: '/admin/students',
+	CLASS_OFFICER: {
+		SELF: 'student/student-sheets',
+		SELF_HISTORY: 'student/student-history',
+
+		CLASS: '/class/class-sheets',
+		CLASS_HISTORY: '/class/class-history',
+	},
+
+	ADVISER: {
+		CLASS: '/adviser/class-sheets',
+		HISTORY: '/adviser/class-history',
+
+		REPORT: '/adviser/report',
+
+		ROLE: '/adviser/role',
+	},
+
+	DEPARTMENT: {
+		DEPARTMENT: '/department/department-sheets',
+		HISTORY: '/department/department-history',
+
+		REPORT: '/department/report',
+	},
+
+	ADMIN: {
+		REPORT: '/admin/report',
+
+		FORMS: '/admin/forms',
+		SHEETS: '/admin/sheets',
+		HISTORY: '/admin/history',
+
+		STUDENTS: '/admin/students',
+		ADVISERS: '/admin/advisers',
+		DEPARTMENTS: '/admin/departments',
+		SETTING: '/admin/setting',
+	},
 };

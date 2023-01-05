@@ -29,7 +29,7 @@ export const ListSemester = ({ data }) => {
 						<TableRow>
 							<TableCell align='center'>STT</TableCell>
 							<TableCell align='center'>Học kỳ</TableCell>
-							<TableCell align='center'>Niên khóa</TableCell>
+							<TableCell align='center'>Năm học</TableCell>
 							<TableCell align='center'>Tổng điểm</TableCell>
 							<TableCell align='center'>Xếp loại</TableCell>
 							<TableCell align='center'>Trạng thái</TableCell>

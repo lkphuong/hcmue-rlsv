@@ -81,6 +81,13 @@ const CNavItem = ({ item, level }) => {
 				backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
 				py: level > 1 ? 1 : 1.25,
 				pl: `${level * 24}px`,
+				'&:hover': {
+					backgroundColor: 'rgb(151 171 224 / 27%)!important',
+					left: '3%',
+					'& .MuiListItemText-root p': {
+						fontWeight: 600,
+					},
+				},
 			}}
 			selected={pathname.includes(item?.path)}
 			onClick={() => itemHandler(item.id)}

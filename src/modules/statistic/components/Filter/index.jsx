@@ -100,7 +100,7 @@ const Filter = ({
 								<Box p={2}>
 									<Stack>
 										<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-											Niên khóa
+											Năm học
 										</Typography>
 										<CAutocomplete
 											disableClearable

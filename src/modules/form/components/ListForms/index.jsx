@@ -29,7 +29,7 @@ const ListSemester = ({ data, refetch, saveFilter }) => {
 						<TableRow>
 							<TableCell align='center'>STT</TableCell>
 							<TableCell align='center'>Học kỳ</TableCell>
-							<TableCell align='center'>Niên khóa</TableCell>
+							<TableCell align='center'>Năm học</TableCell>
 							<TableCell align='center'>Ngày tạo</TableCell>
 							<TableCell align='center'>Trạng thái phiếu</TableCell>
 							<TableCell />

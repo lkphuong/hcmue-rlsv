@@ -32,7 +32,7 @@ export const TabAcademic = () => {
 	return (
 		<Box>
 			<Typography fontSize='1.5rem' fontWeight={600}>
-				Danh sách niên khóa
+				Danh sách năm học
 			</Typography>
 
 			<AddSection refetch={updateData} />

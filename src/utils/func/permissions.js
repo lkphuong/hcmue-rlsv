@@ -1,6 +1,6 @@
 import { AbilityBuilder } from '@casl/ability';
-import ability from '_config/casl_ability';
 
+import ability from '_config/casl_ability';
 import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
 
 export const updateAbility = (roleId) => {

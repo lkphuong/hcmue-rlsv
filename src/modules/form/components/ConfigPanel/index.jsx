@@ -14,7 +14,7 @@ const ConfigPanel = () => {
 			<Grid container spacing={2}>
 				<Grid item xs={12} md={6} xl={3}>
 					<Stack direction='column'>
-						<Typography>Học kỳ - Niên khóa</Typography>
+						<Typography>Học kỳ - Năm học</Typography>
 						<Box display='flex'>
 							<Stack flex={1} mr={1}>
 								<CAutocomplete

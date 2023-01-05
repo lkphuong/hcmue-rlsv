@@ -141,7 +141,7 @@ const SemesterDetail = () => {
 						<Paper className='paper-wrapper'>
 							<Stack direction='row' justifyContent='space-between'>
 								<Typography fontSize={20} p={1.5} fontWeight={600}>
-									{`${data?.semester?.name} - Niên khóa ${data?.academic?.name}`}
+									{`${data?.semester?.name} - Năm học ${data?.academic?.name}`}
 								</Typography>
 								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
 									In phiếu

@@ -6,7 +6,7 @@ import { TabAcademic, TabSemester } from '_modules/config/components';
 
 const TABS = [
 	{ id: 1, value: 1, label: 'Học kỳ' },
-	{ id: 2, value: 2, label: 'Niên khóa' },
+	{ id: 2, value: 2, label: 'Năm học' },
 ];
 
 const ConfigPage = () => {

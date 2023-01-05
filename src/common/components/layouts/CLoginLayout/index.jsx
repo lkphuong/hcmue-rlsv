@@ -28,9 +28,6 @@ export const CLoginLayout = () => {
 	if (!isLogined) return <LoginPage />;
 
 	const { role_id } = profile;
-	console.log('🚀 ~ file: index.jsx:32 ~ CLoginLayout ~ role_id', role_id);
-	console.log(ROUTES.ADMIN.REPORT);
-	console.log(`/${HOME_ROUTE[role_id]}`);
 
 	return <Navigate to={`${HOME_ROUTE[role_id]}`} replace={true} />;
 };

@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 // material-ui
 import { useTheme } from '@mui/material/styles';
 import {
+	Fade,
 	ListItemButton,
 	ListItemIcon,
 	ListItemText,
@@ -18,7 +19,7 @@ import PropTypes from 'prop-types';
 import { actions } from '_slices/menu.slice';
 import { actions as filterActions } from '_slices/filter.slice';
 
-const CNavItem = ({ item, level }) => {
+const CNavItem = ({ item, level, index }) => {
 	const { pathname } = useLocation();
 
 	const theme = useTheme();
@@ -71,41 +72,43 @@ const CNavItem = ({ item, level }) => {
 	}, []);
 
 	return (
-		<ListItemButton
-			{...listItemProps}
-			disabled={item.disabled}
-			sx={{
-				borderRadius: `12px`,
-				mb: 0.5,
-				alignItems: 'flex-start',
-				backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
-				py: level > 1 ? 1 : 1.25,
-				pl: `${level * 24}px`,
-				'&:hover': {
-					backgroundColor: 'rgb(151 171 224 / 27%)!important',
-					left: '3%',
-					'& .MuiListItemText-root p': {
-						fontWeight: 600,
+		<Fade in timeout={550} style={{ transitionDelay: index * 150 }}>
+			<ListItemButton
+				{...listItemProps}
+				disabled={item.disabled}
+				sx={{
+					borderRadius: `12px`,
+					mb: 0.5,
+					alignItems: 'flex-start',
+					backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
+					py: level > 1 ? 1 : 1.25,
+					pl: `${level * 24}px`,
+					'&:hover': {
+						backgroundColor: 'rgb(151 171 224 / 27%)!important',
+						left: '3%',
+						'& .MuiListItemText-root p': {
+							fontWeight: 600,
+						},
 					},
-				},
-			}}
-			selected={pathname.includes(item?.path)}
-			onClick={() => itemHandler(item.id)}
-		>
-			<ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>
-				{itemIcon}
-			</ListItemIcon>
-			<ListItemText
-				primary={
-					<Typography
-						variant={pathname.includes(item?.path) ? 'h5' : 'body1'}
-						color='inherit'
-					>
-						{item.title}
-					</Typography>
-				}
-			/>
-		</ListItemButton>
+				}}
+				selected={pathname.includes(item?.path)}
+				onClick={() => itemHandler(item.id)}
+			>
+				<ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>
+					{itemIcon}
+				</ListItemIcon>
+				<ListItemText
+					primary={
+						<Typography
+							variant={pathname.includes(item?.path) ? 'h5' : 'body1'}
+							color='inherit'
+						>
+							{item.title}
+						</Typography>
+					}
+				/>
+			</ListItemButton>
+		</Fade>
 	);
 };
 

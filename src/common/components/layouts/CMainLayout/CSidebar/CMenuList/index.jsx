@@ -20,9 +20,11 @@ const CMenuList = () => {
 				{() => {
 					switch (item.type) {
 						case 'collapse':
-							return <CNavCollapse key={item.id} menu={item} level={0.5} />;
+							return (
+								<CNavCollapse key={item.id} menu={item} level={0.5} index={index} />
+							);
 						case 'item':
-							return <CNavItem key={item.id} item={item} level={0.5} />;
+							return <CNavItem key={item.id} item={item} level={0.5} index={index} />;
 						default:
 							return (
 								<Typography key={item.id} variant='h6' color='error' align='center'>

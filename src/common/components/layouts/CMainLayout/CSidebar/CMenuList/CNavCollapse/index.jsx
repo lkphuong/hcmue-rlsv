@@ -5,6 +5,7 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { useTheme } from '@mui/material/styles';
 import {
 	Collapse,
+	Fade,
 	List,
 	ListItemButton,
 	ListItemIcon,
@@ -23,7 +24,7 @@ const SPECIFIC_TITLE = {
 	3: 'Chi hội trưởng',
 };
 
-const CNavCollapse = ({ menu, level }) => {
+const CNavCollapse = ({ menu, level, index }) => {
 	//#region Data
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
@@ -41,12 +42,12 @@ const CNavCollapse = ({ menu, level }) => {
 	const [open, setOpen] = useState(selected || false);
 
 	// menu collapse & item
-	const menus = menu.children?.map((item) => {
+	const menus = menu.children?.map((item, i) => {
 		switch (item.type) {
 			case 'collapse':
-				return <CNavCollapse key={item.id} menu={item} level={level + 1} />;
+				return <CNavCollapse key={item.id} menu={item} level={level + 1} index={i} />;
 			case 'item':
-				return <CNavItem key={item.id} item={item} level={level + 1} />;
+				return <CNavItem key={item.id} item={item} level={level + 1} index={i} />;
 			default:
 				return (
 					<Typography key={item.id} variant='h6' color='error' align='center'>
@@ -79,46 +80,38 @@ const CNavCollapse = ({ menu, level }) => {
 	//#region Render
 	return (
 		<>
-			<ListItemButton
-				sx={{
-					borderRadius: `12px`,
-					mb: 0.5,
-					alignItems: 'flex-start',
-					backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
-					py: level > 1 ? 1 : 1.25,
-					pl: `${level * 24}px`,
-				}}
-				selected={selected}
-				onClick={handleClick}
-			>
-				<ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
-					{menuIcon}
-				</ListItemIcon>
-				<ListItemText
-					primary={
-						<Typography variant='h5' color='inherit' sx={{ my: 'auto' }}>
-							{(menu.title === 'Lớp trưởng' && SPECIFIC_TITLE[role_id]) || menu.title}
-						</Typography>
-					}
-					secondary={
-						menu.caption && (
-							<Typography
-								variant='caption'
-								sx={{ ...theme.typography.subMenuCaption }}
-								display='block'
-								gutterBottom
-							>
-								{menu.caption}
+			<Fade in timeout={500} style={{ transitionDelay: index * 150 }}>
+				<ListItemButton
+					sx={{
+						borderRadius: `12px`,
+						mb: 0.5,
+						alignItems: 'flex-start',
+						backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
+						py: level > 1 ? 1 : 1.25,
+						pl: `${level * 24}px`,
+					}}
+					selected={selected}
+					onClick={handleClick}
+				>
+					<ListItemIcon sx={{ my: 'auto', minWidth: !menu.icon ? 18 : 36 }}>
+						{menuIcon}
+					</ListItemIcon>
+					<ListItemText
+						primary={
+							<Typography variant='h5' color='inherit' sx={{ my: 'auto' }}>
+								{(menu.title === 'Lớp trưởng' && SPECIFIC_TITLE[role_id]) ||
+									menu.title}
 							</Typography>
-						)
-					}
-				/>
-				{open ? (
-					<ExpandLess style={{ marginTop: 'auto', marginBottom: 'auto' }} />
-				) : (
-					<ExpandMore style={{ marginTop: 'auto', marginBottom: 'auto' }} />
-				)}
-			</ListItemButton>
+						}
+					/>
+					{open ? (
+						<ExpandLess style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+					) : (
+						<ExpandMore style={{ marginTop: 'auto', marginBottom: 'auto' }} />
+					)}
+				</ListItemButton>
+			</Fade>
+
 			<Collapse in={open} timeout='auto' unmountOnExit>
 				<List
 					component='div'

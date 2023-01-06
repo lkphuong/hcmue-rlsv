@@ -4,9 +4,10 @@ import dayjs from 'dayjs';
 
 export const validationSchema = yup.object({
 	name: yup.string().required(),
-	acedemic_id: yup.number().required(),
+	academic_id: yup.number().required(),
 	start: yup
 		.date('Vui lòng chọn thời gian bắt đầu')
+		.nullable()
 		.typeError('Định dạng không hợp lệ (mm/yyyy).')
 		.required('Vui lòng chọn thời gian bắt đầu')
 		.test('wrong', 'Thời gian bắt đầu phải trước khi kết thúc', (value, context) => {
@@ -17,6 +18,7 @@ export const validationSchema = yup.object({
 		}),
 	end: yup
 		.date('Vui lòng chọn thời gian kết thúc.')
+		.nullable()
 		.typeError('Định dạng không hợp lệ (mm/yyyy).')
 		.required('Vui lòng chọn thời gian kết thúc.')
 		.test('wrong', 'Thời gian kết thúc phải sau bắt đầu.', (value, context) => {
@@ -29,7 +31,7 @@ export const validationSchema = yup.object({
 
 export const initialValues = {
 	name: 'Học kỳ I',
-	acedemic_id: '',
-	start: '',
-	end: '',
+	academic_id: null,
+	start: null,
+	end: null,
 };

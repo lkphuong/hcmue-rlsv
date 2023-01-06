@@ -1,4 +1,5 @@
 import { Controller, useForm } from 'react-hook-form';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import {
 	Accordion,
@@ -11,7 +12,7 @@ import {
 	Typography,
 	Unstable_Grid2 as Grid,
 } from '@mui/material';
-import { ExpandMore } from '@mui/icons-material';
+import { ExpandMore, RestartAlt } from '@mui/icons-material';
 
 import { CAutocomplete, CDatePicker } from '_controls/';
 
@@ -25,6 +26,7 @@ import { alert } from '_func/alert';
 import { ERRORS } from '_constants/messages';
 
 import { initialValues, validationSchema } from './form';
+import dayjs from 'dayjs';
 
 const SEMESTERS_OPTIONS = [
 	{ id: 'Học kỳ I', name: 'Học kỳ I' },
@@ -33,31 +35,46 @@ const SEMESTERS_OPTIONS = [
 
 export const AddSection = ({ refetch }) => {
 	//#region Data
+	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+
 	const resolver = useResolver(validationSchema);
 
-	const { control, handleSubmit, reset } = useForm({
-		defaultValues: initialValues,
+	const { control, handleSubmit, reset, trigger } = useForm({
+		defaultValues: { ...initialValues, academic_id: academic_years[0]?.id || '' },
 		mode: 'all',
 		shouldFocusError: true,
 		resolver,
 	});
-	//#endregion
-
+	////#endregion
 	//#region Event
+	const onReset = () => reset({ ...initialValues, academic_id: academic_years[0]?.id || '' });
+
 	const onSubmit = async (values) => {
 		alert.loading();
 
-		const res = await createSemester(values);
+		const _values = { ...values };
+		_values.start = dayjs(_values.start).format('YYYY-MM-DD');
+		_values.end = dayjs(_values.end).format('YYYY-MM-DD');
+
+		const res = await createSemester(_values);
 
 		if (isSuccess(res)) {
 			refetch();
 
 			alert.success({ text: 'Thêm học kỳ thành công.' });
 
-			reset();
+			onReset();
 		} else {
 			alert.fail({ text: res?.message || ERRORS.FAIL });
 		}
+	};
+
+	const onSelectChange = (CallbackFunc) => (option) => CallbackFunc(option?.id);
+
+	const onTimeChange = (CallbackFunc) => (value) => {
+		CallbackFunc(value);
+		trigger('start');
+		trigger('end');
 	};
 	//#endregion
 
@@ -90,8 +107,8 @@ export const AddSection = ({ refetch }) => {
 													display='name'
 													disableClearable
 													name={name}
-													re={ref}
-													onChange={onChange}
+													ref={ref}
+													onChange={onSelectChange(onChange)}
 													value={value}
 													options={SEMESTERS_OPTIONS}
 													renderOption={(props, option) => (
@@ -114,11 +131,13 @@ export const AddSection = ({ refetch }) => {
 											name='academic_id'
 											render={({ field: { value, onChange, name, ref } }) => (
 												<CAutocomplete
+													disableClearable
 													display='name'
 													name={name}
-													re={ref}
-													onChange={onChange}
+													ref={ref}
+													onChange={onSelectChange(onChange)}
 													value={value}
+													options={academic_years}
 													renderOption={(props, option) => (
 														<Box {...props} key={option.id}>
 															{option.name}
@@ -148,7 +167,7 @@ export const AddSection = ({ refetch }) => {
 													openTo='month'
 													inputFormat='MM/YYYY'
 													value={value}
-													onChange={onChange}
+													onChange={onTimeChange(onChange)}
 													error={!!error}
 													helperText={error?.message}
 												/>
@@ -175,7 +194,7 @@ export const AddSection = ({ refetch }) => {
 													openTo='month'
 													inputFormat='MM/YYYY'
 													value={value}
-													onChange={onChange}
+													onChange={onTimeChange(onChange)}
 													error={!!error}
 													helperText={error?.message}
 												/>
@@ -186,7 +205,12 @@ export const AddSection = ({ refetch }) => {
 
 								<Grid xs={12}>
 									<Stack direction='row' spacing={1.5} justifyContent='center'>
-										<Button type='button' variant='contained'>
+										<Button
+											type='button'
+											variant='contained'
+											endIcon={<RestartAlt />}
+											onClick={onReset}
+										>
 											Mặc định
 										</Button>
 										<Button type='submit' variant='contained'>

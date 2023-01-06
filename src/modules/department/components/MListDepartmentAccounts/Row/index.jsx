@@ -6,8 +6,7 @@ import { BorderColor, DeleteForever } from '@mui/icons-material';
 import { ERRORS } from '_constants/messages';
 
 import { isSuccess } from '_func/';
-
-import { deleteForm } from '_api/form.api';
+import { alert } from '_func/alert';
 
 import { MModal } from '../..';
 
@@ -22,7 +21,8 @@ export const Row = ({ data, index, refetch }) => {
 	const onDelete = () => {
 		alert.warningDelete({
 			onConfirm: async () => {
-				const res = await deleteForm(data.id);
+				// const res = await deleteForm(data.id);
+				const res = { status: 200 };
 
 				if (isSuccess(res)) {
 					refetch();

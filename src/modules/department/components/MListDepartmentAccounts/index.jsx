@@ -10,7 +10,7 @@ import {
 
 import { Row } from './Row';
 
-export const ListDepartmentAccounts = ({ data, refetch }) => {
+export const MListDepartmentAccounts = ({ data, refetch }) => {
 	//#region Data
 
 	//#endregion

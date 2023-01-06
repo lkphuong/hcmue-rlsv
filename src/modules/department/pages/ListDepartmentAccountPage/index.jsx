@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Box, Button, Stack } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
@@ -7,7 +7,7 @@ import { CPagination } from '_controls/';
 
 import { isSuccess } from '_func/';
 
-import { Filter, ListDepartmentAccounts, Search } from '_modules/department/components';
+import { MFilter, MListDepartmentAccounts, MModal, MSearch } from '_modules/department/components';
 
 const FAKE_DATA = [
 	{
@@ -74,6 +74,8 @@ const FAKE_DATA = [
 
 const ListDepartmentAccountPage = () => {
 	//#region Data
+	const modalRef = useRef();
+
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
@@ -116,24 +118,31 @@ const ListDepartmentAccountPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<Filter />
+			<MFilter filter={filter} onFilterChange={setFilter} />
 
 			<Stack
 				direction={{ xs: 'column', md: 'row' }}
 				spacing={1.5}
 				justifyContent='space-between'
 				alignItems='center'
+				mb={2}
 			>
-				<Search />
+				<MSearch onFilterChange={setFilter} />
 
-				<Button variant='contained' endIcon={<AddCircleOutline />}>
+				<Button
+					variant='contained'
+					endIcon={<AddCircleOutline />}
+					onClick={() => modalRef.current.open()}
+				>
 					Thêm mới
 				</Button>
 			</Stack>
 
-			<ListDepartmentAccounts data={listData} refetch={getData} />
+			<MListDepartmentAccounts data={listData} refetch={getData} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
+
+			<MModal ref={modalRef} />
 		</Box>
 	);
 	//#endregion

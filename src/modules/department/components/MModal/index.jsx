@@ -58,7 +58,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 				<Paper className='center' sx={{ borderRadius: 3 }}>
 					<Box p={4} minWidth={330}>
 						<Typography fontSize={30} fontWeight={700} lineHeight='36px' mb={4}>
-							Thêm mới tài khoản khoa
+							{!!editData ? 'Chỉnh sửa tài khoản' : 'Thêm mới tài khoản khoa'}
 						</Typography>
 
 						<form onSubmit={handleSubmit(onSubmit)}>
@@ -115,7 +115,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 
 							{editData && (
 								<Stack direction='column' spacing={1} mb={3}>
-									<Typography>Mật khẩu cũ</Typography>
+									<Typography>Mật khẩu hiện tại</Typography>
 									<Controller
 										control={control}
 										name='old_password'
@@ -138,7 +138,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 							)}
 
 							<Stack direction='column' spacing={1} mb={3}>
-								<Typography>Mật khẩu</Typography>
+								<Typography>Mật khẩu mới</Typography>
 								<Controller
 									control={control}
 									name='password'

@@ -15,6 +15,8 @@ const ListHistory = lazy(() => import('_modules/history/pages/ListHistory'));
 
 const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
 
+const ListStudentsPage = lazy(() => import('_modules/students/pages/ListStudentsPage'));
+
 const ListDepartmentAccountPage = lazy(() =>
 	import('_modules/department/pages/ListDepartmentAccountPage')
 );
@@ -61,7 +63,7 @@ export const ADMIN_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
-				<div>Danh sách sinh viên</div>
+				<ListStudentsPage />
 			</CPermission>
 		),
 	},

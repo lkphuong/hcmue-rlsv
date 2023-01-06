@@ -370,6 +370,11 @@ export default function componentStyleOverrides(theme) {
 				},
 			},
 		},
+		MuiTableRow: {
+			defaultProps: {
+				hover: true,
+			},
+		},
 		MuiTabs: {
 			defaultProps: {
 				selectionFollowsFocus: true,

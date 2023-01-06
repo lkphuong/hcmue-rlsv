@@ -1,7 +1,7 @@
 import React from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { getAcademicYears } from '_api/options.api';
 
@@ -31,11 +31,18 @@ export const TabAcademic = () => {
 	//#region Render
 	return (
 		<Box>
-			<Typography fontSize='1.5rem' fontWeight={600}>
-				Danh sách năm học
-			</Typography>
-
-			<AddSection refetch={updateData} />
+			<Stack
+				direction='row'
+				spacing={2}
+				justifyContent='space-between'
+				alignItems='center'
+				mb={2}
+			>
+				<Typography fontSize='1.5rem' fontWeight={600}>
+					Danh sách năm học
+				</Typography>
+				<AddSection refetch={updateData} />
+			</Stack>
 
 			<MTable data={academic_years} refetch={updateData} />
 		</Box>

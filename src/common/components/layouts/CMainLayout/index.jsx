@@ -88,13 +88,13 @@ export const CMainLayout = () => {
 					dispatch(optionsAction.setAcademicYears(academics));
 				}
 
-				const resSemester = await getSemesters();
+				// const resSemester = await getSemesters();
 
-				if (isSuccess(resSemester)) {
-					const semesters = resSemester.data.map((e) => ({ ...e, id: parseInt(e.id) }));
+				// if (isSuccess(resSemester)) {
+				// 	const semesters = resSemester.data.map((e) => ({ ...e, id: parseInt(e.id) }));
 
-					dispatch(optionsAction.setSemesters(semesters));
-				}
+				// 	dispatch(optionsAction.setSemesters(semesters));
+				// }
 
 				const resDepartment = await getAllDepartments();
 

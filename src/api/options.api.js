@@ -14,8 +14,8 @@ export const removeAcademicYear = (id) => {
 	return remove(`${OPTIONS.DELETE_ACADEMIC_YEARS}/${id}`);
 };
 
-export const getSemesters = () => {
-	return get(OPTIONS.GET_SEMESTERS);
+export const getSemesters = (body) => {
+	return post(OPTIONS.GET_ALL_SEMESTERS, body);
 };
 
 export const createSemester = (body) => {

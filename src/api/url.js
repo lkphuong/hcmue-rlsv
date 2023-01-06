@@ -57,7 +57,8 @@ export const OPTIONS = {
 	CREATE_ACADEMIC_YEARS: '/academic-years',
 	DELETE_ACADEMIC_YEARS: '/academic-years',
 
-	GET_SEMESTERS: '/semesters',
+	GET_ALL_SEMESTERS: '/semesters/all',
+	GET_SEMESTERS_BY_YEAR: '/semesters', // :academic_id
 	CREATE_SEMESTERS: '/semesters',
 	DELETE_SEMESTERS: '/semesters',
 };

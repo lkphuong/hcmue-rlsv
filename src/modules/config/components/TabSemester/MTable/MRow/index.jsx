@@ -10,6 +10,7 @@ import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
 import { ERRORS } from '_constants/messages';
+import dayjs from 'dayjs';
 
 export const MRow = ({ data, index, refetch }) => {
 	//#region Data
@@ -39,6 +40,13 @@ export const MRow = ({ data, index, refetch }) => {
 		<TableRow>
 			<TableCell align='center'>{index}</TableCell>
 			<TableCell align='center'>{data.name}</TableCell>
+			<TableCell align='center'>
+				{data?.start ? dayjs(data.start).format('MM/YYYY') : null}
+			</TableCell>
+			<TableCell align='center'>
+				{data?.end ? dayjs(data.end).format('MM/YYYY') : null}
+			</TableCell>
+			<TableCell align='center'>{data?.academic?.name}</TableCell>
 			<TableCell align='center'>
 				<Button color='error' endIcon={<DeleteForever />} onClick={onDelete}>
 					Xóa

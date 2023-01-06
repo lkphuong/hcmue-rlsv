@@ -20,7 +20,10 @@ export const MTable = ({ data, refetch }) => {
 					<TableRow>
 						<TableCell align='center'>STT</TableCell>
 						<TableCell align='center'>Học kỳ</TableCell>
-						<TableCell align='center' />
+						<TableCell align='center'>Thời gian bắt đầu</TableCell>
+						<TableCell align='center'>Thời gian kết thúc</TableCell>
+						<TableCell align='center'>Năm học</TableCell>
+						<TableCell align='center'>Thao tác</TableCell>
 					</TableRow>
 				</TableHead>
 

@@ -112,7 +112,11 @@ export const AddSection = ({ refetch }) => {
 													value={value}
 													options={SEMESTERS_OPTIONS}
 													renderOption={(props, option) => (
-														<Box {...props} key={option.id}>
+														<Box
+															component='li'
+															{...props}
+															key={option.id}
+														>
 															{option.name}
 														</Box>
 													)}
@@ -139,7 +143,11 @@ export const AddSection = ({ refetch }) => {
 													value={value}
 													options={academic_years}
 													renderOption={(props, option) => (
-														<Box {...props} key={option.id}>
+														<Box
+															component='li'
+															{...props}
+															key={option.id}
+														>
 															{option.name}
 														</Box>
 													)}

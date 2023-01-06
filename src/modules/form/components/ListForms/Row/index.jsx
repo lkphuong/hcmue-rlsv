@@ -1,11 +1,11 @@
-import React, { memo, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
 import dayjs from 'dayjs';
 
 import { Chip, IconButton, Stack, TableCell, TableRow, Tooltip } from '@mui/material';
-import { DeleteForever, Edit, FileCopy } from '@mui/icons-material';
+import { BorderColor, DeleteForever, FileCopy } from '@mui/icons-material';
 
 import { FORM_STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
@@ -134,7 +134,7 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 						</IconButton>
 					</Tooltip>
 					<IconButton onClick={onEdit} disabled={data.status === 2 || data.status === 3}>
-						<Edit />
+						<BorderColor />
 					</IconButton>
 					<Tooltip
 						title={

@@ -8,9 +8,9 @@ import {
 	TableRow,
 } from '@mui/material';
 
-import Row from './Row';
+import { Row } from './Row';
 
-const ListSemester = ({ data, refetch, saveFilter }) => {
+export const ListDepartmentAccounts = ({ data, refetch }) => {
 	//#region Data
 
 	//#endregion
@@ -26,23 +26,16 @@ const ListSemester = ({ data, refetch, saveFilter }) => {
 					<TableHead>
 						<TableRow>
 							<TableCell align='center'>STT</TableCell>
-							<TableCell align='center'>Học kỳ</TableCell>
-							<TableCell align='center'>Năm học</TableCell>
-							<TableCell align='center'>Ngày tạo</TableCell>
-							<TableCell align='center'>Trạng thái phiếu</TableCell>
-							<TableCell />
+							<TableCell align='left'>Tên khoa</TableCell>
+							<TableCell align='center'>Tên đăng nhập</TableCell>
+							<TableCell align='center'>Mật khẩu</TableCell>
+							<TableCell align='center'>Thao tác</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{data?.length > 0 &&
 							data.map((row, index) => (
-								<Row
-									key={row.id}
-									index={index}
-									data={row}
-									refetch={refetch}
-									saveFilter={saveFilter}
-								/>
+								<Row key={row.id} index={index} data={row} refetch={refetch} />
 							))}
 					</TableBody>
 				</Table>
@@ -51,5 +44,3 @@ const ListSemester = ({ data, refetch, saveFilter }) => {
 	);
 	//#endregion
 };
-
-export default ListSemester;

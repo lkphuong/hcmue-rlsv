@@ -15,6 +15,10 @@ const ListHistory = lazy(() => import('_modules/history/pages/ListHistory'));
 
 const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
 
+const ListDepartmentAccountPage = lazy(() =>
+	import('_modules/department/pages/ListDepartmentAccountPage')
+);
+
 export const ADMIN_ROUTES = [
 	{
 		path: ROUTES.ADMIN.REPORT,
@@ -75,7 +79,7 @@ export const ADMIN_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
-				<div>Danh sách khoa</div>
+				<ListDepartmentAccountPage />
 			</CPermission>
 		),
 	},

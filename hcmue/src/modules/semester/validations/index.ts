@@ -47,25 +47,35 @@ export const validateDateAcademic = async (
   req: Request,
 ): Promise<HttpException | null> => {
   const academic = await academic_year_service.getAcademicYearById(academic_id);
-  const year_start = new Date(start).getFullYear();
-  const year_end = new Date(end).getFullYear();
-  if (
-    (year_start !== academic.start && year_start !== academic.end) ||
-    (year_end !== academic.start && year_end !== academic.end)
-  ) {
-    return new HandlerException(
-      VALIDATION_EXIT_CODE.NO_MATCHING,
+  if (academic) {
+    const year_start = new Date(start).getFullYear();
+    const year_end = new Date(end).getFullYear();
+    if (
+      (year_start !== academic.start && year_start !== academic.end) ||
+      (year_end !== academic.start && year_end !== academic.end)
+    ) {
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.NO_MATCHING,
+        req.method,
+        req.url,
+        sprintf(
+          ErrorMessage.TIME_SEMESTER_NO_MATCHING_ERROR,
+          academic.start + ' - ' + academic.end,
+        ),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return null;
+  } else {
+    return new UnknownException(
+      academic_id,
+      DATABASE_EXIT_CODE.UNKNOW_VALUE,
       req.method,
       req.url,
-      sprintf(
-        ErrorMessage.TIME_SEMESTER_NO_MATCHING_ERROR,
-        academic.start + ' - ' + academic.end,
-      ),
-      HttpStatus.BAD_REQUEST,
+      sprintf(ErrorMessage.ACADEMIC_YEAR_NOT_FOUND_ERROR, academic_id),
     );
   }
-
-  return null;
 };
 
 export const isUsed = async (

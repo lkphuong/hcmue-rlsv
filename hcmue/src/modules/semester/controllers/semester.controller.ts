@@ -243,7 +243,6 @@ export class SemesterController {
       let valid = await validateId(academic_id, req);
       if (valid instanceof HttpException) throw valid;
       //#endregion
-
       //#region Validate time
       valid = validateTime(start, end, req);
       if (valid instanceof HttpException) throw valid;

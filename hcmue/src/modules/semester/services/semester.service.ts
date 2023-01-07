@@ -86,6 +86,13 @@ export class SemesterService {
     try {
       const conditions = this._semesterRepository
         .createQueryBuilder('semester')
+        .innerJoinAndMapOne(
+          'semester.academic',
+          AcademicYearEntity,
+          'academic',
+          `academic.id = semester.academic_id AND
+           academic.deleted = 0`,
+        )
         .where('semester.academic_id = :academic_id', { academic_id })
         .andWhere('semester.deleted = :deleted', { deleted: 0 });
 

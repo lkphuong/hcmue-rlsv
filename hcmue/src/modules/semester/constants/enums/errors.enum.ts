@@ -3,6 +3,7 @@ export enum ErrorMessage {
 
   TIME_SEMESTER_NO_MATCHING_ERROR = 'Thời gian [học kì] không thuộc năm học (năm học: %s).',
   SEMESTER_NOT_FOUND_ERROR = 'Học kì không tồn tại (id: %s).',
+  ACADEMIC_YEAR_NOT_FOUND_ERROR = 'Năm học không tồn tại (id: %s).',
 
   SEMESTER_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [học kì].',
   SEMESTER_ID_NAN_ERROR = 'Giá trị [id] không hợp lệ.',

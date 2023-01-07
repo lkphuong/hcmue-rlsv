@@ -24,6 +24,7 @@ import {
   validatePassword,
 } from '../utils';
 
+import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { LoginParamsDto } from '../dtos/login-params.dto';
 import { RenewalParamsDto } from '../dtos/renewal-params.dto';
 
@@ -59,6 +60,7 @@ import {
   SERVER_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { RoleCode } from '../../../constants/enums/role_enum';
 
 @Controller('auth')
 export class AuthController {
@@ -206,6 +208,55 @@ export class AuthController {
   }
 
   /**
+   * @method POST
+   * @url api/auth/change-password
+   * @param old_password
+   * @param new_password
+   * @param confirm_password
+   * @returns HttpResponse<> | HttpException
+   * @description Change password
+   * @page profile page
+   */
+  @Post('change-password')
+  @UseGuards(JwtAuthGuard)
+  async changePassword(@Body() params: ChangePasswordDto, @Req() req: Request) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify(params),
+      );
+
+      //#region Get Request
+      const { username: request_code, role } = req.user as JwtPayload;
+      //#endregion
+
+      switch (role) {
+        case RoleCode.STUDENT:
+        case RoleCode.MONITOR:
+        case RoleCode.SECRETARY:
+        case RoleCode.CHAIRMAN:
+        //#region Get user by table user
+
+        //#endregion
+        case RoleCode.ADVISER:
+        //#region get table teachers
+        //#endregion
+
+        case RoleCode.DEPARTMENT:
+        //#region  Get table orther
+
+        //#endregion
+        case RoleCode.ADMIN:
+      }
+    } catch (err) {}
+  }
+
+  /**
    * @method GET
    * @url /api/auth/get-profile
    * @access private
@@ -227,7 +278,6 @@ export class AuthController {
 
       //#region Session
       const payload = req.user as JwtPayload;
-      console.log('payload: ', payload);
       const session = await this._authService.getProfile(payload.user_id);
       if (session) {
         //#region Generate response

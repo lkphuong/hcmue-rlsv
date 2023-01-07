@@ -17,6 +17,7 @@ import { FileModule } from './modules/file/file.module';
 import { FormModule } from './modules/form/form.module';
 import { HeaderModule } from './modules/header/header.module';
 import { LevelModule } from './modules/level/level.module';
+import { OtherModule } from './modules/other/other.module';
 import { ReportModule } from './modules/report/report.module';
 import { RoleModule } from './modules/role/role.module';
 import { SemesterModule } from './modules/semester/semester.module';
@@ -52,6 +53,7 @@ export const modules = [
   HeaderModule,
   LevelModule,
   LogModule,
+  OtherModule,
   ReportModule,
   RoleModule,
   SemesterModule,

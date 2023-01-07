@@ -9,6 +9,7 @@ export const staticFactory = (configurationService: ConfigurationService) => {
   return [
     {
       rootPath: join(__dirname, static_path),
+      renderPath: '/',
       exclude: ['/api*'],
       serveStaticOptions: {
         cacheControl: true,

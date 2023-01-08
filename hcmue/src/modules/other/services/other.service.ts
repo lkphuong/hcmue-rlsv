@@ -8,6 +8,7 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { DepartmentEntity } from '../../../entities/department.entity';
 
 @Injectable()
 export class OtherService {
@@ -40,6 +41,33 @@ export class OtherService {
         Levels.ERROR,
         Methods.SELECT,
         'OtherService.contains()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getOtherByUsername(username: string): Promise<OtherEntity | null> {
+    try {
+      const conditions = this._otherRepository
+        .createQueryBuilder('other')
+        .innerJoinAndMapOne(
+          'other.department',
+          DepartmentEntity,
+          'department',
+          `department.id = other.department_id AND department.deleted = 0`,
+        )
+        .where('other.username = :username', { username })
+        .andWhere('other.deleted = :deleted', { deleted: false });
+
+      const other = await conditions.getOne();
+
+      return other || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'OtherService.getOtherByusername()',
         e,
       );
       return null;

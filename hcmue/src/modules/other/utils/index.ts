@@ -1,6 +1,6 @@
 import { HttpStatus } from '@nestjs/common';
-
 import { Request } from 'express';
+import { QueryRunner } from 'typeorm';
 
 import { returnObjects } from '../../../utils';
 
@@ -15,6 +15,7 @@ import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const generateSuccessResponse = async (
   other: OtherEntity,
+  query_runner: QueryRunner,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
@@ -22,6 +23,9 @@ export const generateSuccessResponse = async (
   console.log('data: ', other);
 
   const payload: OtherResponse = { username: other.username };
+
+  // Commit transaction
+  if (query_runner) await query_runner.commitTransaction();
 
   return returnObjects<OtherResponse>(payload);
 };

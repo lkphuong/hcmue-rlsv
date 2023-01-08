@@ -193,11 +193,37 @@ export class RoleUsersService {
     }
   }
 
+  async unlink(
+    std_code: string,
+    manager?: EntityManager,
+  ): Promise<boolean | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const result = await manager.update(
+        RoleUsersEntity,
+        { std_code: std_code },
+        { deleted: true, deleted_at: new Date(), deleted_by: 'admin' },
+      );
+
+      return result.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'RoleUsersService.unlink()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async buklUnlink(
     role_code: number,
     role_id: number,
     department_id: number,
-    class_id: number,
     manager?: EntityManager,
   ): Promise<boolean | null> {
     try {
@@ -221,23 +247,6 @@ export class RoleUsersService {
         } else return true;
         //#endregion
       }
-      // else if (role_code === RoleCode.CLASS) {
-      //   //#region RoleCode.CLASS
-      //   const role_user = await this.getRoleUserByRoleId(
-      //     department_id,
-      //     role_id,
-      //     class_id,
-      //   );
-
-      //   if (role_user) {
-      //     result = await manager.delete(RoleUsersEntity, {
-      //       department_id: department_id,
-      //       class_id: class_id,
-      //       role: role_id,
-      //     });
-      //   } else return true;
-      //   //#endregion
-      // }
 
       return result.affected > 0;
     } catch (e) {

@@ -5,7 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
-
+import { OtherModule } from '../other/other.module';
+import { RoleModule } from '../role/role.module';
 import { UserModule } from '../user/user.module';
 
 import { AuthController } from './controllers/auth.controller';
@@ -40,7 +41,9 @@ export const modules = [
   }),
   PassportModule,
   LogModule,
+  forwardRef(() => RoleModule),
   forwardRef(() => UserModule),
+  forwardRef(() => OtherModule),
 ];
 
 export const controllers = [AuthController];

@@ -48,7 +48,6 @@ import {
 import { EvaluationService } from '../../evaluation/services/evaluation.service';
 import { ItemService } from '../../item/services/item.service';
 import { FilesService } from '../../file/services/files.service';
-import { FormService } from '../../form/services/form.service';
 import { HeaderService } from '../../header/services/header.service';
 import { LevelService } from '../../level/services/level.service';
 import { OptionService } from '../../option/services/option.service';
@@ -58,10 +57,7 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
-import {
-  ClassStatusResponse,
-  SheetDetailsResponse,
-} from '../interfaces/sheet_response.interface';
+import { SheetDetailsResponse } from '../interfaces/sheet_response.interface';
 
 import { SheetCategory } from '../constants/enums/categories.enum';
 import { SheetStatus } from '../constants/enums/status.enum';

@@ -30,7 +30,7 @@ export const modules = [
   KModule,
   LogModule,
   MajorModule,
-  RoleModule,
+  forwardRef(() => RoleModule),
   SemesterModule,
   SharedModule,
   StatusModule,

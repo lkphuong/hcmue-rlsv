@@ -24,21 +24,21 @@ export class SessionEntity extends RootEntity {
 
   @Column('varchar', {
     name: 'fullname',
-    nullable: false,
+    nullable: true,
     length: 255,
   })
   fullname: string;
 
   @Column('bigint', {
     name: 'class_id',
-    nullable: false,
+    nullable: true,
     default: 0,
   })
   class: number;
 
   @Column('bigint', {
     name: 'department_id',
-    nullable: false,
+    nullable: true,
     default: 0,
   })
   department: number;

@@ -1,9 +1,11 @@
+import { forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { OtherEntity } from '../../entities/other.entity';
 
 import { DepartmentModule } from '../department/department.module';
 import { LogModule } from '../log/log.module';
+import { RoleModule } from '../role/role.module';
 
 import { OtherController } from './controllers/other.controller';
 
@@ -13,6 +15,7 @@ export const modules = [
   LogModule,
   DepartmentModule,
   TypeOrmModule.forFeature([OtherEntity]),
+  forwardRef(() => RoleModule),
 ];
 
 export const controllers = [OtherController];

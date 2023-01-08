@@ -40,7 +40,6 @@ export const createRoleUser = async (
         role.code,
         role.id,
         department_id,
-        class_id,
         query_runner.manager,
       );
 

@@ -10,18 +10,23 @@ import {
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 import { Request } from 'express';
 
-import { generateFailedResponse, generateSuccessResponse } from '../utils';
-
-import { createAccountDepartment, updateAccountDepartment } from '../funcs';
+import {
+  createAccountDepartment,
+  unlinkAccountDepartment,
+  updateAccountDepartment,
+} from '../funcs';
 
 import { validateAccountById } from '../validations';
 
 import { DepartmentService } from '../../department/services/department.service';
 import { LogService } from '../../log/services/log.service';
 import { OtherService } from '../services/other.service';
+import { RoleService } from '../../role/services/role/role.service';
+import { RoleUsersService } from '../../role/services/role_users/role_users.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 
@@ -33,13 +38,15 @@ import { OtherResponse } from '../interfaces/other_response.interface';
 import { Levels } from '../../../constants/enums/level.enum';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 import { UpdateAccountDto } from '../dtos/update_account.dto';
-import { ErrorMessage } from '../constants/enums/error.enum';
 
 @Controller('others')
 export class OtherController {
   constructor(
     private readonly _departmentService: DepartmentService,
     private readonly _otherService: OtherService,
+    private readonly _roleUserService: RoleUsersService,
+    private readonly _roleService: RoleService,
+    private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
 
@@ -72,6 +79,9 @@ export class OtherController {
         params,
         this._departmentService,
         this._otherService,
+        this._roleUserService,
+        this._roleService,
+        this._dataSource,
         req,
       );
 
@@ -168,16 +178,15 @@ export class OtherController {
       //#endregion
 
       //#region Unlink account department
-      const result = await this._otherService.unlink(id);
-      if (result) {
-        //#region Generate response
-        return await generateSuccessResponse(other, req);
-        //#endregion
-      } else {
-        //#region throw HandlerException
-        return generateFailedResponse(req, ErrorMessage.OPERATOR_OTHER_ERROR);
-        //#endregion
-      }
+      const result = await unlinkAccountDepartment(
+        id,
+        this._otherService,
+        this._roleUserService,
+        this._dataSource,
+        req,
+      );
+      if (result instanceof HttpException) throw result;
+      else return result;
       //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');

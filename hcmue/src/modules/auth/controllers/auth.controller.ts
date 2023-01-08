@@ -37,7 +37,7 @@ import { LoginResponse } from '../interfaces/login-response.interface';
 import { ProfileResponse } from '../interfaces/auth-response.interface';
 
 import { AuthService } from '../services/auth.service';
-
+import { OtherService } from '../../other/services/other.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 
@@ -61,11 +61,13 @@ import {
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
+import { LoginType } from '../constants/enums/login_type.enum';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly _authService: AuthService,
+    private readonly _otherService: OtherService,
     private readonly _configurationService: ConfigurationService,
     private readonly _jwtService: JwtService,
     private _logger: LogService,
@@ -103,93 +105,181 @@ export class AuthController {
       );
 
       //#region get params
-      const { password, username } = params;
+      const { password, username, type } = params;
       //#endregion
+      switch (type) {
+        case LoginType.ADVISER:
+          return null;
+        case LoginType.DEPARTMENT:
+        case LoginType.ADMIN:
+          const other = await this._otherService.getOtherByUsername(username);
+          if (other) {
+            const isMatch = validatePassword(password, other.password);
 
-      const result = await this._authService.getUserByUsername(username);
+            if (isMatch) {
+              //#region get role
+              const role_user = await this._authService.getRoleByUserCode(
+                other.id.toString(),
+              );
+              //#endregion
 
-      if (result) {
-        const isMatch = validatePassword(password, result.password);
+              //#region Generate access_token
+              const access_token = generateAccessToken(
+                this._jwtService,
+                this._configurationService,
+                other.id,
+                other.username,
+                role_user?.role?.code ?? 0,
+              );
+              //#endregion
 
-        if (isMatch) {
-          //#region get role
-          const role_user = await this._authService.getRoleByUserCode(
-            result.std_code,
-          );
+              //#region Generate refresh_token
+              const refresh_token = generateRefreshToken(
+                this._jwtService,
+                this._configurationService,
+                other.username,
+              );
+              //#endregion
 
-          //#endregion
+              //#region Generate session
+              let session = await this._authService.contains(username);
 
-          //#region Generate access_token
-          const access_token = generateAccessToken(
-            this._jwtService,
-            this._configurationService,
-            result.id,
-            result.std_code,
-            role_user?.role?.code ?? 0,
-          );
-          //#endregion
+              if (!session) {
+                session = await this._authService.add(
+                  other.id,
+                  other.username,
+                  other.department.name,
+                  null,
+                  other.department_id,
+                  access_token,
+                  refresh_token,
+                  new Date(),
+                  true,
+                );
+              } else {
+                session = await this._authService.renew(
+                  access_token,
+                  refresh_token,
+                  session,
+                );
+              }
 
-          //#region Generate refresh_token
-          const refresh_token = generateRefreshToken(
-            this._jwtService,
-            this._configurationService,
-            result.std_code,
-          );
-          //#endregion
-
-          //#region Generate session
-          let session = await this._authService.contains(username);
-
-          if (!session) {
-            session = await this._authService.add(
-              result.id,
-              result.std_code,
-              result.fullname,
-              result.class_id,
-              result.department_id,
-              access_token,
-              refresh_token,
-              new Date(),
-              true,
-            );
+              console.log('session: ', session);
+              //#region Generate response
+              return await generateResponse(
+                session,
+                access_token,
+                refresh_token,
+                req,
+              );
+              //#endregion
+            } else {
+              //#region throw HandlerException
+              throw new HandlerException(
+                DATABASE_EXIT_CODE.UNKNOW_VALUE,
+                req.method,
+                req.url,
+                ErrorMessage.LOGIN_FAILD,
+                HttpStatus.NOT_FOUND,
+              );
+              //#endregion
+            }
           } else {
-            session = await this._authService.renew(
-              access_token,
-              refresh_token,
-              session,
+            //#region throw HandlerException
+            throw new HandlerException(
+              DATABASE_EXIT_CODE.UNKNOW_VALUE,
+              req.method,
+              req.url,
+              ErrorMessage.LOGIN_FAILD,
+              HttpStatus.NOT_FOUND,
             );
+            //#endregion
           }
+        default:
+          const student = await this._authService.getUserByUsername(username);
+          if (student) {
+            const isMatch = validatePassword(password, student.password);
 
-          console.log('session: ', session);
-          //#region Generate response
-          return await generateResponse(
-            session,
-            access_token,
-            refresh_token,
-            req,
-          );
-          //#endregion
-        } else {
-          //#region throw HandlerException
-          throw new HandlerException(
-            DATABASE_EXIT_CODE.UNKNOW_VALUE,
-            req.method,
-            req.url,
-            ErrorMessage.LOGIN_FAILD,
-            HttpStatus.NOT_FOUND,
-          );
-          //#endregion
-        }
-      } else {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.UNKNOW_VALUE,
-          req.method,
-          req.url,
-          ErrorMessage.LOGIN_FAILD,
-          HttpStatus.NOT_FOUND,
-        );
-        //#endregion
+            if (isMatch) {
+              //#region get role
+              const role_user = await this._authService.getRoleByUserCode(
+                student.std_code,
+              );
+
+              //#endregion
+
+              //#region Generate access_token
+              const access_token = generateAccessToken(
+                this._jwtService,
+                this._configurationService,
+                student.id,
+                student.std_code,
+                role_user?.role?.code ?? 0,
+              );
+              //#endregion
+
+              //#region Generate refresh_token
+              const refresh_token = generateRefreshToken(
+                this._jwtService,
+                this._configurationService,
+                student.std_code,
+              );
+              //#endregion
+
+              //#region Generate session
+              let session = await this._authService.contains(username);
+
+              if (!session) {
+                session = await this._authService.add(
+                  student.id,
+                  student.std_code,
+                  student.fullname,
+                  student.class_id,
+                  student.department_id,
+                  access_token,
+                  refresh_token,
+                  new Date(),
+                  true,
+                );
+              } else {
+                session = await this._authService.renew(
+                  access_token,
+                  refresh_token,
+                  session,
+                );
+              }
+
+              console.log('session: ', session);
+              //#region Generate response
+              return await generateResponse(
+                session,
+                access_token,
+                refresh_token,
+                req,
+              );
+              //#endregion
+            } else {
+              //#region throw HandlerException
+              throw new HandlerException(
+                DATABASE_EXIT_CODE.UNKNOW_VALUE,
+                req.method,
+                req.url,
+                ErrorMessage.LOGIN_FAILD,
+                HttpStatus.NOT_FOUND,
+              );
+              //#endregion
+            }
+          } else {
+            //#region throw HandlerException
+            throw new HandlerException(
+              DATABASE_EXIT_CODE.UNKNOW_VALUE,
+              req.method,
+              req.url,
+              ErrorMessage.LOGIN_FAILD,
+              HttpStatus.NOT_FOUND,
+            );
+            //#endregion
+          }
       }
     } catch (err) {
       console.log(err);

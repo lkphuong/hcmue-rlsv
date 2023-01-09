@@ -57,4 +57,7 @@ export const ROLES = [
 	{ id: 1, name: 'LỚP TRƯỞNG' },
 	{ id: 2, name: 'BÍ THƯ CHI ĐOÀN' },
 	{ id: 3, name: 'CHI HỘI TRƯỞNG' },
+	{ id: 4, name: 'CỐ VẤN HỌC TẬP' },
+	{ id: 5, name: 'KHOA' },
+	{ id: 6, name: 'ADMIN' },
 ];

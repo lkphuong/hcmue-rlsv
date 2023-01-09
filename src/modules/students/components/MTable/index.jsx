@@ -1,5 +1,9 @@
+import { useRef } from 'react';
+
+import { FilterAlt } from '@mui/icons-material';
 import {
 	Box,
+	Button,
 	Table,
 	TableBody,
 	TableCell,
@@ -11,8 +15,13 @@ import {
 import { CLoadingSpinner } from '_others/';
 
 import { MRow } from './MRow';
+import { MStatus } from './MStatus';
 
 export const MTable = ({ data, isLoading }) => {
+	const statusRef = useRef();
+
+	const toggle = (event) => statusRef.current.onMenu(event);
+
 	return (
 		<TableContainer className='c-table'>
 			<Table stickyHeader>
@@ -20,7 +29,15 @@ export const MTable = ({ data, isLoading }) => {
 					<TableRow>
 						<TableCell align='center'>STT</TableCell>
 						<TableCell align='center'>MSSV</TableCell>
-						<TableCell align='center'>Tình trạng học</TableCell>
+						<TableCell align='center'>
+							<Button
+								sx={{ color: 'rgba(34, 51, 84, 0.7)' }}
+								endIcon={<FilterAlt />}
+								onClick={toggle}
+							>
+								TÌNH TRẠNG HỌC
+							</Button>
+						</TableCell>
 						<TableCell align='left'>Họ và tên</TableCell>
 						<TableCell align='center'>Ngày sinh</TableCell>
 						<TableCell align='center'>Khóa học</TableCell>
@@ -51,6 +68,8 @@ export const MTable = ({ data, isLoading }) => {
 					)}
 				</TableBody>
 			</Table>
+
+			<MStatus ref={statusRef} />
 		</TableContainer>
 	);
 };

@@ -1,7 +1,16 @@
 import { Controller, useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
-import { Box, Button, Container, Paper, Stack } from '@mui/material';
+import {
+	Box,
+	Button,
+	Container,
+	FormControlLabel,
+	Paper,
+	Radio,
+	RadioGroup,
+	Stack,
+} from '@mui/material';
 
 import { useResolver } from '_hooks/';
 
@@ -21,6 +30,13 @@ import { actions } from '_slices/auth.slice';
 import { getProfile } from '_axios/';
 
 import './index.scss';
+
+const ROLES = [
+	{ id: 1, value: 1, label: 'Sinh viên/Cán bộ lớp' },
+	{ id: 2, value: 2, label: 'Cố vấn học tập' },
+	{ id: 3, value: 3, label: 'Khoa' },
+	{ id: 4, value: 4, label: 'Admin' },
+];
 
 export const LoginPage = () => {
 	//#region Data
@@ -56,6 +72,10 @@ export const LoginPage = () => {
 			alert.fail({ text: res?.message || 'Đăng nhập không thành công!' });
 		}
 	};
+
+	const onTypeChange = (CallbackFunc) => (event, newValue) => {
+		CallbackFunc(Number(newValue));
+	};
 	//#endregion
 
 	//#region Render
@@ -75,6 +95,33 @@ export const LoginPage = () => {
 							</Box>
 							<form onSubmit={handleSubmit(onSubmit)}>
 								<Stack direction='column'>
+									<Box my={1}>
+										<Controller
+											control={control}
+											name='type'
+											render={({ field: { name, ref, value, onChange } }) => (
+												<RadioGroup
+													name={name}
+													ref={ref}
+													value={value}
+													onChange={onTypeChange(onChange)}
+												>
+													{ROLES.map((e) => (
+														<FormControlLabel
+															key={e.id}
+															value={e.value}
+															label={e.label}
+															control={
+																<Radio
+																	checked={value === e.value}
+																/>
+															}
+														/>
+													))}
+												</RadioGroup>
+											)}
+										/>
+									</Box>
 									<Box my={1}>
 										<Controller
 											control={control}

@@ -14,7 +14,7 @@ import { ConfigRoleContext } from '_modules/students/pages/ListStudentsPage';
 
 import './index.scss';
 
-export const MMenuRole = forwardRef(({ id, department_id, class_id }, ref) => {
+export const MStatus = forwardRef(({ id, department_id, class_id }, ref) => {
 	//#region Data
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);

@@ -5,16 +5,20 @@ export const initialValues = {
 	username: '',
 	password: '',
 	confirm_password: '',
+	isEdit: false,
 };
 
 export const validationSchema = yup.object().shape({
 	isEdit: yup.boolean(),
 	department_id: yup.number('Vui lòng chọn khoa.').required('Vui lòng chọn khoa.'),
-	username: yup.string('Vui lòng nhập username.').required('Vui lòng nhập username.'),
-	old_password: yup.string('Vui lòng nhập mật khẩu cũ.').when('isEdit', {
-		is: (value) => value === true,
-		then: yup.string('Vui lòng nhập mật khẩu cũ.').required('Vui lòng nhập mật khẩu cũ.'),
-	}),
+	username: yup
+		.string('Vui lòng nhập username.')
+		.email('Tên đăng nhập phải định dạng email.')
+		.required('Vui lòng nhập username.'),
+	// old_password: yup.string('Vui lòng nhập mật khẩu cũ.').when('isEdit', {
+	// 	is: (value) => value === true,
+	// 	then: yup.string('Vui lòng nhập mật khẩu cũ.').required('Vui lòng nhập mật khẩu cũ.'),
+	// }),
 	password: yup.string('Vui lòng nhập mật khẩu.').required('Vui lòng nhập mật khẩu.'),
 	confirm_password: yup
 		.string('Vui lòng nhập lại mật khẩu trên.')

@@ -1,7 +1,9 @@
 import { useRef } from 'react';
 
-import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
-import { DeleteForever } from '@mui/icons-material';
+import { IconButton, Stack, TableCell, TableRow, Tooltip } from '@mui/material';
+import { BorderColor, DeleteForever } from '@mui/icons-material';
+
+import { deleteDepartmentAccount } from '_api/other.api';
 
 import { ERRORS } from '_constants/messages';
 
@@ -16,13 +18,12 @@ export const Row = ({ data, index, refetch }) => {
 	//#endregion
 
 	//#region Event
-	// const onEdit = () => modalRef.current.open();
+	const onEdit = () => modalRef.current.open();
 
 	const onDelete = () => {
 		alert.warningDelete({
 			onConfirm: async () => {
-				// const res = await deleteForm(data.id);
-				const res = { status: 200 };
+				const res = await deleteDepartmentAccount(data.id);
 
 				if (isSuccess(res)) {
 					refetch();
@@ -45,18 +46,18 @@ export const Row = ({ data, index, refetch }) => {
 				<TableCell align='center'>{data.username}</TableCell>
 				<TableCell align='center'>{data?.password}</TableCell>
 				<TableCell align='center' width={100}>
-					{/* <Stack direction='row' alignItems='center' justifyContent='space-between'> */}
-					{/* <Tooltip title='Sửa'>
+					<Stack direction='row' alignItems='center' justifyContent='space-between'>
+						<Tooltip title='Sửa'>
 							<IconButton onClick={onEdit}>
 								<BorderColor />
 							</IconButton>
-						</Tooltip> */}
-					<Tooltip title='Xóa'>
-						<IconButton onClick={onDelete}>
-							<DeleteForever />
-						</IconButton>
-					</Tooltip>
-					{/* </Stack> */}
+						</Tooltip>
+						<Tooltip title='Xóa'>
+							<IconButton onClick={onDelete}>
+								<DeleteForever />
+							</IconButton>
+						</Tooltip>
+					</Stack>
 				</TableCell>
 			</TableRow>
 

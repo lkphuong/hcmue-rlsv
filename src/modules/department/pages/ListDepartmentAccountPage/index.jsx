@@ -142,7 +142,7 @@ const ListDepartmentAccountPage = () => {
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 
-			<MModal ref={modalRef} />
+			<MModal ref={modalRef} refetch={getData} />
 		</Box>
 	);
 	//#endregion

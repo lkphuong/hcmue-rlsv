@@ -10,6 +10,9 @@ import { useResolver } from '_hooks/';
 import { CAutocomplete, CInput } from '_controls/';
 
 import { initialValues, validationSchema } from '_modules/department/form';
+import { createDepartmentAccount, updateDepartmentAccount } from '_api/other.api';
+import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 export const MModal = forwardRef(({ refetch, editData }, ref) => {
 	//#region Data
@@ -23,11 +26,11 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 		defaultValues: editData
 			? {
 					...editData,
+					isEdit: true,
 					department_id: editData.department.id,
-					old_password: editData.password,
-					password: '',
+					confirm_password: editData.password,
 			  }
-			: initialValues,
+			: { ...initialValues, department_id: departments[0].id },
 		mode: 'all',
 		shouldFocusError: true,
 		resolver,
@@ -41,7 +44,23 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 	};
 
 	const onSubmit = async (values) => {
-		console.log(values);
+		const res = editData
+			? await updateDepartmentAccount(editData.id, values)
+			: await createDepartmentAccount(values);
+
+		if (isSuccess(res)) {
+			refetch();
+
+			alert.success({
+				text: editData
+					? 'Cập nhật tài khoản khoa thành công.'
+					: 'Thêm tài khoản khoa thành công.',
+			});
+
+			close();
+		} else {
+			alert.fail({ text: res?.message || 'Có lỗi xảy ra, vui lòng thử lại.' });
+		}
 	};
 
 	const onSelectChange = (CallbackFunc) => (option) => CallbackFunc(option?.id);
@@ -73,7 +92,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 									}) => (
 										<CAutocomplete
 											disableClearable
-											// disabled={!!editData}
+											disabled={!!editData}
 											display='name'
 											name={name}
 											value={value}
@@ -113,73 +132,53 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 								/>
 							</Stack>
 
-							{editData && (
-								<Stack direction='column' spacing={1} mb={3}>
-									<Typography>Mật khẩu hiện tại</Typography>
-									<Controller
-										control={control}
-										name='old_password'
-										render={({
-											field: { value, ref, name, onChange },
-											fieldState: { error },
-										}) => (
-											<CInput
-												isPassword
-												name={name}
-												value={value}
-												onChange={onChange}
-												ref={ref}
-												error={!!error}
-												helperText={error?.message}
-											/>
-										)}
-									/>
-								</Stack>
+							{!editData && (
+								<>
+									<Stack direction='column' spacing={1} mb={3}>
+										<Typography>Mật khẩu mới</Typography>
+										<Controller
+											control={control}
+											name='password'
+											render={({
+												field: { value, ref, name, onChange },
+												fieldState: { error },
+											}) => (
+												<CInput
+													isPassword
+													name={name}
+													value={value}
+													onChange={onChange}
+													ref={ref}
+													error={!!error}
+													helperText={error?.message}
+												/>
+											)}
+										/>
+									</Stack>
+
+									<Stack direction='column' spacing={1} mb={3}>
+										<Typography>Xác nhận mật khẩu</Typography>
+										<Controller
+											control={control}
+											name='confirm_password'
+											render={({
+												field: { value, ref, name, onChange },
+												fieldState: { error },
+											}) => (
+												<CInput
+													isPassword
+													name={name}
+													value={value}
+													onChange={onChange}
+													ref={ref}
+													error={!!error}
+													helperText={error?.message}
+												/>
+											)}
+										/>
+									</Stack>
+								</>
 							)}
-
-							<Stack direction='column' spacing={1} mb={3}>
-								<Typography>Mật khẩu mới</Typography>
-								<Controller
-									control={control}
-									name='password'
-									render={({
-										field: { value, ref, name, onChange },
-										fieldState: { error },
-									}) => (
-										<CInput
-											isPassword
-											name={name}
-											value={value}
-											onChange={onChange}
-											ref={ref}
-											error={!!error}
-											helperText={error?.message}
-										/>
-									)}
-								/>
-							</Stack>
-
-							<Stack direction='column' spacing={1} mb={3}>
-								<Typography>Xác nhận mật khẩu</Typography>
-								<Controller
-									control={control}
-									name='confirm_password'
-									render={({
-										field: { value, ref, name, onChange },
-										fieldState: { error },
-									}) => (
-										<CInput
-											isPassword
-											name={name}
-											value={value}
-											onChange={onChange}
-											ref={ref}
-											error={!!error}
-											helperText={error?.message}
-										/>
-									)}
-								/>
-							</Stack>
 
 							<Box textAlign='center'>
 								<Button variant='contained' type='submit'>

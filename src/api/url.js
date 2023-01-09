@@ -88,3 +88,9 @@ export const LEVELS = {
 export const FILES = {
 	UPLOAD: '/files/upload',
 };
+
+export const OTHER = {
+	CREATE_DEPARTMENT_ACCOUNT: '/others',
+	UPDATE_DEPARTMENT_ACCOUNT: '/others', // :id
+	DELETE_DEPARTMENT_ACCOUNT: '/others', // :id
+};

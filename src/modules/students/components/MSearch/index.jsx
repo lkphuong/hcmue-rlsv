@@ -23,7 +23,7 @@ export const MSearch = ({ onFilterChange }) => {
 				isSearch
 				value={currentInput}
 				onChange={onChange}
-				placeholder='Tìm theo tên khoa'
+				placeholder='Nhập MSSV hoặc tên'
 			/>
 
 			<Button variant='contained' onClick={updateFilter}>

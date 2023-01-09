@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Button, TableCell, TableRow } from '@mui/material';
 import { DeleteForever } from '@mui/icons-material';
 

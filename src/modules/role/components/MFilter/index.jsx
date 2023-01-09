@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { Box, debounce, Grid, Paper, Stack, Typography } from '@mui/material';
 

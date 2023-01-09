@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Container, Grid, IconButton, Typography } from '@mui/material';

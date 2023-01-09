@@ -1,4 +1,4 @@
-import React, { memo, useContext, useMemo } from 'react';
+import { memo, useContext, useMemo } from 'react';
 
 import { DepartmentMarksContext } from '_modules/manager/pages/SheetDetailPage';
 

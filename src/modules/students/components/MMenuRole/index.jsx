@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, useImperativeHandle, useState } from 'react';
+import { forwardRef, useContext, useImperativeHandle, useState } from 'react';
 
 import { Box, Button, FormControlLabel, Menu, Radio, RadioGroup } from '@mui/material';
 
@@ -10,7 +10,7 @@ import { updateRole } from '_api/roles.api';
 import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
-import { ConfigRoleContext } from '_modules/role/pages/RolePage';
+import { ConfigRoleContext } from '_modules/students/pages/ListStudentsPage';
 
 import './index.scss';
 
@@ -70,16 +70,14 @@ export const MMenuRole = forwardRef(({ id, role, department_id, class_id }, ref)
 			transformOrigin={{ vertical: 'top', horizontal: 'right' }}
 		>
 			<RadioGroup value={value} onChange={onChangeRole}>
-				{ROLES.slice(0)
-					.reverse()
-					.map((role) => (
-						<FormControlLabel
-							key={role.id}
-							value={role.id}
-							control={<Radio />}
-							label={role.name}
-						/>
-					))}
+				{ROLES.map((role) => (
+					<FormControlLabel
+						key={role.id}
+						value={role.id}
+						control={<Radio />}
+						label={role.name}
+					/>
+				))}
 			</RadioGroup>
 
 			<Box textAlign='center' onClick={onClick}>

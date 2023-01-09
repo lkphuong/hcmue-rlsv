@@ -1,19 +1,22 @@
-import React, { useCallback, useState } from 'react';
+import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
-import { Box, debounce, Grid, Paper, Stack, Typography } from '@mui/material';
+import { CAutocomplete } from '_controls/';
 
-import { CAutocomplete, CInput } from '_controls/';
-
-export const MFilter = ({ filter, onChangeFilter, classes, departments, academic_years }) => {
+export const MFilter = ({
+	filter,
+	onChangeFilter,
+	classes,
+	departments,
+	academic_years,
+	semesters,
+}) => {
 	//#region Data
-	const [inputValue, setInputValue] = useState(filter?.input);
 	//#endregion
 
 	//#region Event
 	const handleChangeStringId = (key) => (value) =>
 		onChangeFilter((prev) => {
 			if (key === 'class_id') {
-				setInputValue('');
 				return { ...prev, [key]: value?.id, page: 1, pages: 0, input: '' };
 			}
 			return { ...prev, [key]: value?.id, page: 1, pages: 0 };
@@ -21,16 +24,6 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 
 	const handleChangeFilter = (key) => (value) =>
 		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
-
-	const debounceSearch = useCallback(
-		debounce((input) => onChangeFilter((prev) => ({ ...prev, input, page: 1, pages: 0 })), 400),
-		[]
-	);
-
-	const onChangeInput = (event) => {
-		setInputValue(event.target.value);
-		debounceSearch(event.target.value);
-	};
 	//#endregion
 
 	//#region Render
@@ -51,28 +44,6 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 										options={departments}
 										display='name'
 										placeholder='Tất cả'
-										renderOption={(props, option) => (
-											<Box component='li' {...props} key={option.id}>
-												{option.name}
-											</Box>
-										)}
-									/>
-								</Stack>
-							</Box>
-						</Grid>
-						<Grid item xs={12} md={6} lg={3}>
-							<Box p={2}>
-								<Stack>
-									<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-										Năm học
-									</Typography>
-									<CAutocomplete
-										disableClearable
-										value={filter.academic_id}
-										onChange={handleChangeFilter('academic_id')}
-										options={academic_years}
-										display='name'
-										placeholder='ALL'
 										renderOption={(props, option) => (
 											<Box component='li' {...props} key={option.id}>
 												{option.name}
@@ -107,13 +78,42 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 							<Box p={2}>
 								<Stack>
 									<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-										Tìm kiếm
+										Năm học
 									</Typography>
-									<CInput
-										isSearch
-										value={inputValue}
-										onChange={onChangeInput}
-										placeholder='Tìm kiếm tên hoặc mã'
+									<CAutocomplete
+										disableClearable
+										value={filter.academic_id}
+										onChange={handleChangeFilter('academic_id')}
+										options={academic_years}
+										display='name'
+										placeholder='Tất cả'
+										renderOption={(props, option) => (
+											<Box component='li' {...props} key={option.id}>
+												{option.name}
+											</Box>
+										)}
+									/>
+								</Stack>
+							</Box>
+						</Grid>
+						<Grid item xs={12} md={6} lg={3}>
+							<Box p={2}>
+								<Stack>
+									<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
+										Học kỳ
+									</Typography>
+									<CAutocomplete
+										disableClearable
+										value={filter.semester_id}
+										onChange={handleChangeFilter('semester_id')}
+										options={semesters}
+										display='name'
+										placeholder='Tất cả'
+										renderOption={(props, option) => (
+											<Box component='li' {...props} key={option.id}>
+												{option.name}
+											</Box>
+										)}
 									/>
 								</Stack>
 							</Box>

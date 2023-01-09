@@ -1,4 +1,3 @@
-import React from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material';

@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { TableCell, TableFooter, TableRow } from '@mui/material';
 
 const MFooter = ({ data }) => {

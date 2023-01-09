@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 import { Settings } from '@mui/icons-material';

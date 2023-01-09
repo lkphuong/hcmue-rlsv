@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Link, TableCell, TableRow } from '@mui/material';
 
 import './index.scss';

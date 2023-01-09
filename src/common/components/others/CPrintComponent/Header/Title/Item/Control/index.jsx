@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useContext } from 'react';
+import { memo, useMemo, useContext } from 'react';
 
 import { MarkContext } from '_others/';
 

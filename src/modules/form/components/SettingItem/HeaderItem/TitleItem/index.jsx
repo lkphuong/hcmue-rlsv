@@ -9,7 +9,7 @@ import {
 	IconButton,
 	Typography,
 } from '@mui/material';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 import { getItemsByTitleId } from '_api/form.api';
 import { isEmpty, isSuccess } from '_func/';

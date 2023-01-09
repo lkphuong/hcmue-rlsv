@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, lazy } from 'react';
+import { useState, useEffect, useMemo, lazy } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 

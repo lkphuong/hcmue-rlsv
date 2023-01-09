@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { shallowEqual, useSelector } from 'react-redux';

@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';

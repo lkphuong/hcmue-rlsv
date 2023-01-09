@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { memo, useState, useEffect, useMemo } from 'react';
+import { memo, useState, useEffect, useMemo } from 'react';
 
 import {
 	Box,

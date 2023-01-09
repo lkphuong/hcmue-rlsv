@@ -1,5 +1,3 @@
-import React from 'react';
-
 import {
 	Box,
 	Table,
@@ -20,12 +18,17 @@ export const MTable = ({ data, isLoading }) => {
 			<Table stickyHeader>
 				<TableHead>
 					<TableRow>
+						<TableCell align='center'>STT</TableCell>
+						<TableCell align='center'>MSSV</TableCell>
+						<TableCell align='center'>Tình trạng học</TableCell>
 						<TableCell align='left'>Họ và tên</TableCell>
-						<TableCell align='center'>Username</TableCell>
+						<TableCell align='center'>Ngày sinh</TableCell>
+						<TableCell align='center'>Khóa học</TableCell>
 						<TableCell align='center'>Khoa</TableCell>
+						<TableCell align='center'>Ngành học</TableCell>
+						<TableCell align='center'>Mã lớp</TableCell>
 						<TableCell align='center'>Lớp</TableCell>
 						<TableCell align='center'>Phân quyền</TableCell>
-						<TableCell width={50} className='sticky sticky-right' />
 					</TableRow>
 				</TableHead>
 				<TableBody>
@@ -38,9 +41,7 @@ export const MTable = ({ data, isLoading }) => {
 							</TableCell>
 						</TableRow>
 					) : data?.length > 0 ? (
-						data.map((row, index) => (
-							<MRow key={row?.user_id} index={index} data={row} />
-						))
+						data.map((row, index) => <MRow key={row?.id} index={index} data={row} />)
 					) : (
 						<TableRow>
 							<TableCell height={300} colSpan='100%' align='center'>

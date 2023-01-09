@@ -29,3 +29,7 @@ export const removeSemester = (id) => {
 export const getAllDepartments = () => {
 	return get(DEPARTMENTS.GET_ALL);
 };
+
+export const getSemestersByYear = (academic_id) => {
+	return get(`${OPTIONS.GET_SEMESTERS_BY_YEAR}/${academic_id}`);
+};

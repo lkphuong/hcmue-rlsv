@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useCallback } from 'react';
+import { memo, useEffect, useCallback } from 'react';
 
 import classNames from 'classnames';
 

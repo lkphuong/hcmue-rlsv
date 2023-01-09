@@ -1,13 +1,13 @@
-import React, { useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
-import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
+import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
 import { Settings } from '@mui/icons-material';
 
 import { ROLES } from '_constants/variables';
 
 import { MMenuRole } from '../../MMenuRole';
 
-export const MRow = ({ data }) => {
+export const MRow = ({ data, index }) => {
 	//#region Data
 	const menuRef = useRef();
 
@@ -24,17 +24,25 @@ export const MRow = ({ data }) => {
 	return (
 		<>
 			<TableRow>
-				<TableCell align='left'>{data?.name}</TableCell>
+				<TableCell align='center'>{index + 1}</TableCell>
 				<TableCell align='center'>{data?.std_code}</TableCell>
-				<TableCell align='center'>{data?.department.name}</TableCell>
+				<TableCell align='center'>{data?.status?.name}</TableCell>
+				<TableCell align='left'>{data?.name}</TableCell>
+				<TableCell align='center'>{data?.birthday}</TableCell>
+				<TableCell align='center'>{data?.k?.name}</TableCell>
+				<TableCell align='center'>{data?.department?.name}</TableCell>
+				<TableCell align='center'>{data?.major?.name}</TableCell>
+				<TableCell align='center'>{data?.classes?.code}</TableCell>
 				<TableCell align='center'>{data?.classes?.name}</TableCell>
-				<TableCell align='center'>{role}</TableCell>
-				<TableCell className='sticky sticky-right'>
-					<Tooltip title='Phân quyền'>
-						<IconButton onClick={onClick}>
-							<Settings />
-						</IconButton>
-					</Tooltip>
+				<TableCell align='center'>
+					<Stack direction='row' spacing={1} alignItems='center' justifyContent='end'>
+						<Typography>{role}</Typography>
+						<Tooltip title='Phân quyền'>
+							<IconButton onClick={onClick}>
+								<Settings />
+							</IconButton>
+						</Tooltip>
+					</Stack>
 				</TableCell>
 			</TableRow>
 

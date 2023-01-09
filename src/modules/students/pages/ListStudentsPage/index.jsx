@@ -1,4 +1,4 @@
-import { createContext, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Stack } from '@mui/material';
@@ -9,14 +9,21 @@ import { CPagination } from '_controls/';
 import { MFilter, MTable, MSearch } from '_modules/students/components';
 
 import { getClasses } from '_api/classes.api';
-import { getStudentsRole } from '_api/user.api';
+import { getStudentsRole, importUsers } from '_api/user.api';
+import { getSemestersByYear } from '_api/options.api';
+import { uploadFile } from '_api/files.api';
 
 import { isSuccess, isEmpty } from '_func/';
+import { alert } from '_func/alert';
 
 export const ConfigRoleContext = createContext();
 
+const FILE_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 const ListStudentsPage = memo(() => {
 	//#region Data
+	const fileRef = useRef();
+
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const [isLoading, setIsLoading] = useState(false);
@@ -25,9 +32,14 @@ const ListStudentsPage = memo(() => {
 
 	const [classes, setClasses] = useState([]);
 
+	const [semesters, setSemesters] = useState([]);
+
 	const [filter, setFilter] = useState({
-		department_id: null,
 		academic_id: academic_years[0].id,
+		semester_id: null,
+		department_id: null,
+		major_id: null,
+		status_id: null,
 		class_id: null,
 		input: '',
 		page: 1,
@@ -41,12 +53,18 @@ const ListStudentsPage = memo(() => {
 
 	//#region Event
 	const getData = useCallback(async () => {
+		if (!filter?.academic_id || !filter?.semester_id) return;
+
 		setIsLoading(true);
 
 		try {
 			let _filter = { ...filter };
 
-			if (_filter.input === '') delete _filter.input;
+			Object.keys(_filter).forEach(
+				(k) =>
+					(_filter[k] === null || _filter[k] === undefined || _filter[k] === '') &&
+					delete _filter[k]
+			);
 
 			const res = await getStudentsRole(_filter);
 
@@ -71,13 +89,67 @@ const ListStudentsPage = memo(() => {
 		setFilter((prev) => ({ ...prev, page: value }));
 	};
 
+	const getSemesters = async () => {
+		const res = await getSemestersByYear(filter.academic_id);
+
+		if (isSuccess(res)) setSemesters(res.data);
+		else if (isEmpty(res)) setSemesters([]);
+	};
+
+	const onUpload = () => {
+		alert.warning({
+			text: 'Import file mới sẽ thay thế danh sách cũ (nếu có). Bạn có chắc muốn thực hiện nhập dữ liệu.',
+			onConfirm: () => fileRef.current.click(),
+		});
+	};
+
+	const onUploadFile = async (e) => {
+		try {
+			alert.loading();
+
+			const file = e.target.files[0];
+
+			if (file) {
+				if (file.type !== FILE_TYPE) alert.fail({ text: 'Định dạng file phải là Excel.' });
+				else {
+					const res = await uploadFile(file);
+
+					if (isSuccess(res)) {
+						const body = {
+							academic_id: filter?.academic_id,
+							semester_id: filter?.semester_id,
+							file_id: Number(res?.data?.id),
+						};
+
+						const _res = await importUsers(body);
+
+						if (isSuccess(_res)) {
+							await getData();
+
+							alert.success({ text: 'Nhập dữ liệu thành công.' });
+						} else {
+							alert.fail({ text: 'Import file không thành công. Thử lại sau.' });
+						}
+					}
+				}
+			}
+		} catch (error) {
+			alert.fail({ text: 'Import file không thành công. Thử lại sau.' });
+		} finally {
+			fileRef.current.value = null;
+		}
+	};
 	//#endregion
 
+	//#region Cycle
 	useEffect(() => {
-		if (filter.department_id && filter.academic_id) {
+		if (filter.department_id && filter.academic_id)
 			getClassData(filter.department_id, filter.academic_id);
-		}
 	}, [filter.department_id, filter.academic_id]);
+
+	useEffect(() => {
+		if (filter.academic_id) getSemesters();
+	}, [filter.academic_id]);
 
 	useEffect(() => {
 		getData();
@@ -89,6 +161,7 @@ const ListStudentsPage = memo(() => {
 			pages: data?.pages || 0,
 		});
 	}, [data]);
+	//#endregion
 
 	//#region Render
 	return (
@@ -99,6 +172,7 @@ const ListStudentsPage = memo(() => {
 					onChangeFilter={setFilter}
 					departments={departments}
 					academic_years={academic_years}
+					semesters={semesters || []}
 					classes={classes}
 				/>
 
@@ -119,9 +193,18 @@ const ListStudentsPage = memo(() => {
 							color: 'white',
 							'&:hover': { backgroundColor: '#0CDB13D2' },
 						}}
+						disabled={!filter?.academic_id || !filter?.semester_id}
+						onClick={onUpload}
 					>
 						Import Excel
 					</Button>
+					<input
+						type='file'
+						hidden
+						ref={fileRef}
+						onChange={onUploadFile}
+						accept={FILE_TYPE}
+					/>
 				</Stack>
 
 				<Stack direction='column' justifyContent='space-between'>

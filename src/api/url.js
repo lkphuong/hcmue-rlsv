@@ -64,7 +64,9 @@ export const OPTIONS = {
 };
 
 export const USERS = {
-	GET_STUDENT: '/users',
+	GET_STUDENTS: '/users',
+
+	IMPORT_STUDENTS: '/users/import',
 };
 
 export const ROLES = {

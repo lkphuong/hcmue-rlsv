@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Grid, Stack, Typography } from '@mui/material';
 
 import { MDateStart } from './Start';

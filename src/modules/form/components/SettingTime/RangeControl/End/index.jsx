@@ -1,4 +1,3 @@
-import React from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 
 import { Box, Typography } from '@mui/material';

@@ -366,31 +366,64 @@ export class AuthController {
 
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
-      //#region Session
-      const payload = req.user as JwtPayload;
-      const session = await this._authService.getProfile(payload.user_id);
-      if (session) {
-        //#region Generate response
-        return returnObjects<ProfileResponse>({
-          user_id: session.user_id,
-          username: session.username,
-          fullname: session.fullname,
-          class_id: session.class,
-          department_id: session.department,
-          role: payload.role,
-        });
+      //#region Get Request
+      const { username: request_code, role, user_id } = req.user as JwtPayload;
+      //#endregion
+
+      switch (role) {
+        case RoleCode.ADVISER:
+          return null;
+        case RoleCode.DEPARTMENT:
+        case RoleCode.ADMIN:
+          const other_session = await this._otherService.getOtherByUsername(
+            request_code,
+          );
+          if (other_session) {
+            //#region Generate response
+            return returnObjects<ProfileResponse>({
+              user_id: other_session.id,
+              username: other_session.username,
+              fullname: other_session.department.name,
+              class_id: null,
+              department_id: other_session.department_id,
+              role: role,
+            });
+            //#endregion
+          }
+          //#region throw HandlerException
+          throw new UnknownException(
+            (req.user as any).user_id,
+            VALIDATION_EXIT_CODE.NOT_FOUND,
+            req.method,
+            req.url,
+            sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, request_code),
+          );
+        //#endregion
+        default:
+          const session = await this._authService.getProfile(user_id);
+          if (session) {
+            //#region Generate response
+            return returnObjects<ProfileResponse>({
+              user_id: session.user_id,
+              username: session.username,
+              fullname: session.fullname,
+              class_id: session.class,
+              department_id: session.department,
+              role: role,
+            });
+            //#endregion
+          }
+
+          //#region throw HandlerException
+          throw new UnknownException(
+            (req.user as any).user_id,
+            VALIDATION_EXIT_CODE.NOT_FOUND,
+            req.method,
+            req.url,
+            sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, request_code),
+          );
         //#endregion
       }
-
-      //#region throw HandlerException
-      throw new UnknownException(
-        (req.user as any).user_id,
-        VALIDATION_EXIT_CODE.NOT_FOUND,
-        req.method,
-        req.url,
-        sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, payload.username),
-      );
-      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

@@ -7,6 +7,7 @@ export interface SemesterResponse {
   };
   start: Date;
   end: Date;
+  display?: string;
 }
 
 export interface CreateSemesterResponse {

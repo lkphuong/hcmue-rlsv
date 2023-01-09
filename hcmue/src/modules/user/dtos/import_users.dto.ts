@@ -13,7 +13,7 @@ export class ImportUsersDto {
   })
   @MinValidator(0, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [năm học] không học lệ.'),
+      generateValidationMessage(arg, 'Giá trị [năm học] không hợp lệ.'),
   })
   academic_id: number;
 
@@ -24,7 +24,7 @@ export class ImportUsersDto {
   })
   @MinValidator(0, {
     message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [học kì] không học lệ.'),
+      generateValidationMessage(arg, 'Giá trị [học kì] không hợp lệ.'),
   })
   semester_id: number;
 

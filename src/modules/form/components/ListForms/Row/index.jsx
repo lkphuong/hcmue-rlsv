@@ -82,7 +82,7 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 	//#region Event
 	const onEdit = () => {
 		saveFilter();
-		navigate(`${ROUTES.FORM}/update/${data.id}`);
+		navigate(`${ROUTES.ADMIN.FORMS}/${data.id}`);
 	};
 
 	const onDelete = () => {

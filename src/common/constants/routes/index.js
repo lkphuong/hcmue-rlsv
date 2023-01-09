@@ -53,6 +53,9 @@ export const ROUTES = {
 		REPORT: '/admin/report',
 
 		FORMS: '/admin/forms',
+		FORMS_CREATE: '/admin/forms/create',
+		FORMS_UPDATE: '/admin/forms/:form_id',
+
 		SHEETS: '/admin/sheets',
 		HISTORY: '/admin/history',
 

@@ -41,6 +41,24 @@ export const ADMIN_ROUTES = [
 		),
 	},
 	{
+		path: ROUTES.ADMIN.FORMS_CREATE,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<FormCreatePage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADMIN.FORMS_UPDATE,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<FormUpdatePage />
+			</CPermission>
+		),
+	},
+	{
 		path: ROUTES.ADMIN.SHEETS,
 		errorElement: <CErrorPage />,
 		element: (

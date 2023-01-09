@@ -27,13 +27,13 @@ const Filter = ({ filter, onChangeFilter }) => {
 						<Box p={1}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-									Học kỳ
+									Năm học
 								</Typography>
 								<CAutocomplete
 									placeholder='Tất cả'
-									value={filter?.semester_id}
-									onChange={handleChangeFilter('semester_id')}
-									options={semesters}
+									value={filter?.academic_id}
+									onChange={handleChangeFilter('academic_id')}
+									options={academic_years}
 									display='name'
 									renderOption={(props, option) => (
 										<Box component='li' {...props} key={option.id}>
@@ -48,13 +48,13 @@ const Filter = ({ filter, onChangeFilter }) => {
 						<Box p={1}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-									Năm học
+									Học kỳ
 								</Typography>
 								<CAutocomplete
 									placeholder='Tất cả'
-									value={filter?.academic_id}
-									onChange={handleChangeFilter('academic_id')}
-									options={academic_years}
+									value={filter?.semester_id}
+									onChange={handleChangeFilter('semester_id')}
+									options={semesters}
 									display='name'
 									renderOption={(props, option) => (
 										<Box component='li' {...props} key={option.id}>

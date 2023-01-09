@@ -39,7 +39,7 @@ import { FormService } from '../../form/services/form.service';
 import { KService } from '../../k/services/k.service';
 import { MajorService } from '../../major/services/major.service';
 import { SemesterService } from '../../semester/services/semester.service';
-import { StatusService } from '../../status/status/status.service';
+import { StatusService } from '../../status/services/status.service';
 import { UserService } from '../services/user.service';
 //#endregion
 

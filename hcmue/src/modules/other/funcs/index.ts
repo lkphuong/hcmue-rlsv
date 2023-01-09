@@ -12,6 +12,7 @@ import {
   validateAccount,
   validateAccountById,
   validateAccountByUsername,
+  validateOtherId,
 } from '../validations';
 
 import { OtherEntity } from '../../../entities/other.entity';
@@ -154,6 +155,11 @@ export const updateAccountDepartment = async (
   //#endregion
 
   //#region Validate Account
+  //#region Validate id
+  const valid_id = validateOtherId(id, req);
+  if (valid_id instanceof HttpException) throw valid_id;
+  //#endregion
+
   //#region Validate Account By Id
   let other = await validateAccountById(id, other_service, req);
   if (other instanceof HttpException) throw other;

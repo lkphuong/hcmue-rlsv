@@ -2,13 +2,21 @@ import { HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 import { QueryRunner } from 'typeorm';
 
-import { returnObjects } from '../../../utils';
+import { returnObjects, returnObjectsWithPaging } from '../../../utils';
 
 import { OtherEntity } from '../../../entities/other.entity';
 
+import { DepartmentEntity } from '../../../entities/department.entity';
+import { OtherService } from '../services/other.service';
+
 import { HandlerException } from '../../../exceptions/HandlerException';
 
-import { OtherResponse } from '../interfaces/other_response.interface';
+import { generateData2Array, generateData2Object } from '../transform';
+
+import {
+  AccountDepartmentResponse,
+  OtherResponse,
+} from '../interfaces/other_response.interface';
 
 import { ErrorMessage } from '../constants/enums/error.enum';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
@@ -37,5 +45,40 @@ export const generateFailedResponse = (req: Request, message?: string) => {
     req.url,
     message ?? ErrorMessage.OPERATOR_OTHER_ERROR,
     HttpStatus.EXPECTATION_FAILED,
+  );
+};
+
+export const generateDepartmentResponse = async (
+  department: DepartmentEntity,
+  other_service: OtherService,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', department);
+
+  const payload = await generateData2Object(department, other_service);
+
+  return returnObjects<AccountDepartmentResponse>(payload);
+};
+
+export const generateDepartmentsResponse = async (
+  pages: number,
+  page: number,
+  departments: DepartmentEntity[],
+  other_service: OtherService,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', departments);
+
+  const payload = await generateData2Array(departments, other_service);
+
+  // Returns object
+  return returnObjectsWithPaging<AccountDepartmentResponse>(
+    pages,
+    page,
+    payload,
   );
 };

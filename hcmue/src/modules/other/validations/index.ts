@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { isEmpty } from 'class-validator';
 import { Request } from 'express';
 import {
   DATABASE_EXIT_CODE,
@@ -11,6 +12,28 @@ import { sprintf } from '../../../utils';
 import { DepartmentService } from '../../department/services/department.service';
 import { ErrorMessage } from '../constants/enums/error.enum';
 import { OtherService } from '../services/other.service';
+
+export const validateOtherId = (id: number, req: Request) => {
+  if (isEmpty(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.OTHER_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (isNaN(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_FORMAT,
+      req.method,
+      req.url,
+      ErrorMessage.ID_NAN_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};
 
 export const validateDepartment = async (
   department_id: number,

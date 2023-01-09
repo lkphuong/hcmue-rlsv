@@ -1,4 +1,5 @@
 import { AcademicYearEntity } from './academic_year.entity';
+import { AdviserEntity } from './adviser.entity';
 import { ApprovalEntity } from './approval.entity';
 import { CacheClassEntity } from './cache_class.entity';
 import { ClassEntity } from './class.entity';
@@ -25,6 +26,7 @@ import { UserEntity } from './user.entity';
 const entities = [
   AcademicYearEntity,
   ApprovalEntity,
+  AdviserEntity,
   CacheClassEntity,
   ClassEntity,
   DepartmentEntity,

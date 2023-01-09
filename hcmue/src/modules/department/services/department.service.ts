@@ -68,6 +68,7 @@ export class DepartmentService {
     offset: number,
     length: number,
     department_id?: number,
+    input?: string,
   ): Promise<DepartmentEntity[] | null> {
     try {
       let conditions = this._departmentRepository
@@ -78,6 +79,10 @@ export class DepartmentService {
         conditions = conditions.andWhere('department.id = :department_id', {
           department_id,
         });
+      }
+
+      if (input) {
+        conditions = conditions.andWhere(`department.name LIKE '%${input}%'`);
       }
 
       const departments = await conditions
@@ -98,7 +103,7 @@ export class DepartmentService {
     }
   }
 
-  async count(department_id?: number): Promise<number> {
+  async count(department_id?: number, input?: string): Promise<number> {
     try {
       let conditions = this._departmentRepository
         .createQueryBuilder('department')
@@ -109,6 +114,9 @@ export class DepartmentService {
         conditions = conditions.andWhere('department.id = :department_id', {
           department_id,
         });
+      }
+      if (input) {
+        conditions = conditions.andWhere(`department.name LIKE '%${input}%'`);
       }
 
       const { count } = await conditions.getRawOne();

@@ -51,7 +51,7 @@ export class OtherService {
     try {
       const conditions = this._otherRepository
         .createQueryBuilder('other')
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'other.department',
           DepartmentEntity,
           'department',

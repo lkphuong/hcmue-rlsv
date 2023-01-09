@@ -140,6 +140,7 @@ export class AuthService {
     user_id: number,
     username: string,
     fullname: string,
+    role_id: number,
     class_id: number,
     department_id: number,
     access_token: string,
@@ -157,6 +158,7 @@ export class AuthService {
       session.user_id = user_id;
       session.username = username;
       session.fullname = fullname;
+      session.role_id = role_id;
       session.class = class_id;
       session.department = department_id;
       session.access_token = access_token;

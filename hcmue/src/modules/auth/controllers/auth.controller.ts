@@ -148,7 +148,8 @@ export class AuthController {
                 session = await this._authService.add(
                   other.id,
                   other.username,
-                  other.department.name,
+                  other?.department?.name ?? null,
+                  role_user?.role?.code ?? 0,
                   null,
                   other.department_id,
                   access_token,
@@ -234,6 +235,7 @@ export class AuthController {
                   student.id,
                   student.std_code,
                   student.fullname,
+                  role_user?.role?.code ?? 0,
                   student.class_id,
                   student.department_id,
                   access_token,
@@ -249,7 +251,6 @@ export class AuthController {
                 );
               }
 
-              console.log('session: ', session);
               //#region Generate response
               return await generateResponse(
                 session,
@@ -382,10 +383,10 @@ export class AuthController {
             //#region Generate response
             return returnObjects<ProfileResponse>({
               user_id: other_session.id,
-              username: other_session.username,
-              fullname: other_session.department.name,
+              username: other_session?.username,
+              fullname: other_session?.department?.name ?? null,
               class_id: null,
-              department_id: other_session.department_id,
+              department_id: other_session.department_id ?? null,
               role: role,
             });
             //#endregion
@@ -498,59 +499,119 @@ export class AuthController {
           //#endregion
           //#endregion
         } else {
-          //#region Get info user by code
-          const user = await this._authService.getUserByUsername(
-            session.username,
-          );
-          if (user) {
-            //#region get role
-            const role_user = await this._authService.getRoleByUserCode(
-              user.std_code,
-            );
-            //#endregion
-            //#region Generate access_token
-            const renew_access_token = generateAccessToken(
-              this._jwtService,
-              this._configurationService,
-              user.id,
-              user.std_code,
-              role_user?.role?.id ?? 0,
-            );
-            //#endregion
+          switch (session.role_id) {
+            case RoleCode.ADVISER:
+              return null;
+            case RoleCode.DEPARTMENT:
+            case RoleCode.ADMIN:
+              //#region Get info department or admin by code
+              const other = await this._otherService.getOtherByUsername(
+                session.username,
+              );
+              if (other) {
+                //#region get role
+                const role_other = await this._authService.getRoleByUserCode(
+                  other.id.toString(),
+                );
+                //#endregion
+                //#region Generate access_token
+                const renew_access_token = generateAccessToken(
+                  this._jwtService,
+                  this._configurationService,
+                  other.id,
+                  other.username,
+                  role_other?.role?.id ?? 0,
+                );
+                //#endregion
 
-            //#region Generate refresh_token
-            const renew_refresh_token = generateRefreshToken(
-              this._jwtService,
-              this._configurationService,
-              user.std_code,
-            );
-            //#endregion
+                //#region Generate refresh_token
+                const renew_refresh_token = generateRefreshToken(
+                  this._jwtService,
+                  this._configurationService,
+                  other.username,
+                );
+                //#endregion
 
-            //#region Update session with new tokens
-            session = await this._authService.renew(
-              renew_access_token,
-              renew_refresh_token,
-              session,
-            );
-            //#endregion
+                //#region Update session with new tokens
+                session = await this._authService.renew(
+                  renew_access_token,
+                  renew_refresh_token,
+                  session,
+                );
+                //#endregion
 
-            return await generateResponse(
-              session,
-              renew_access_token,
-              renew_refresh_token,
-              req,
-            );
-          } else {
-            //#region Token not found
-            throw new InvalidTokenException(
-              refresh_token,
-              AUTHENTICATION_EXIT_CODE.INVALID_TOKEN,
-              req.method,
-              req.url,
-            );
+                return await generateResponse(
+                  session,
+                  renew_access_token,
+                  renew_refresh_token,
+                  req,
+                );
+              } else {
+                //#region Token not found
+                throw new InvalidTokenException(
+                  refresh_token,
+                  AUTHENTICATION_EXIT_CODE.INVALID_TOKEN,
+                  req.method,
+                  req.url,
+                );
+                //#endregion
+              }
+            //#endregion
+            default:
+              //#region Get info user by code
+              const user = await this._authService.getUserByUsername(
+                session.username,
+              );
+              if (user) {
+                //#region get role
+                const role_user = await this._authService.getRoleByUserCode(
+                  user.std_code,
+                );
+                //#endregion
+                //#region Generate access_token
+                const renew_access_token = generateAccessToken(
+                  this._jwtService,
+                  this._configurationService,
+                  user.id,
+                  user.std_code,
+                  role_user?.role?.id ?? 0,
+                );
+                //#endregion
+
+                //#region Generate refresh_token
+                const renew_refresh_token = generateRefreshToken(
+                  this._jwtService,
+                  this._configurationService,
+                  user.std_code,
+                );
+                //#endregion
+
+                //#region Update session with new tokens
+                session = await this._authService.renew(
+                  renew_access_token,
+                  renew_refresh_token,
+                  session,
+                );
+                //#endregion
+
+                return await generateResponse(
+                  session,
+                  renew_access_token,
+                  renew_refresh_token,
+                  req,
+                );
+              } else {
+                //#region Token not found
+                throw new InvalidTokenException(
+                  refresh_token,
+                  AUTHENTICATION_EXIT_CODE.INVALID_TOKEN,
+                  req.method,
+                  req.url,
+                );
+                //#endregion
+              }
             //#endregion
           }
-          //#endregion
         }
       } else {
         //#region Token not found

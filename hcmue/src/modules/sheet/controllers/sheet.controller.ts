@@ -1036,7 +1036,7 @@ export class SheetController {
           //#endregion
         }
 
-        const classes = await this._classService.getClassesByDepartmentId(
+        const classes = await this._classService.getClassesByDepartmentIdPaging(
           (page - 1) * itemsPerPage,
           itemsPerPage,
           department_id,
@@ -1144,7 +1144,7 @@ export class SheetController {
           //#endregion
         }
 
-        const classes = await this._classService.getClassesByDepartmentId(
+        const classes = await this._classService.getClassesByDepartmentIdPaging(
           (page - 1) * itemsPerPage,
           itemsPerPage,
           department_id,
@@ -1461,7 +1461,7 @@ export class SheetController {
       }
 
       //#region Get classess
-      const classes = await this._classService.getClassesByDepartmentId(
+      const classes = await this._classService.getClassesByDepartmentIdPaging(
         (page - 1) * itemsPerPage,
         itemsPerPage,
         department_id,

@@ -8,10 +8,12 @@ import {
   HttpCode,
   Post,
   Body,
+  Get,
+  Param,
 } from '@nestjs/common';
 import { Request } from 'express';
 
-import { generateClassesResponse } from '../utils';
+import { generateClassesResponse, generateSuccessResponse } from '../utils';
 
 import { GetClassDto } from '../dtos/get_class.dto';
 
@@ -32,6 +34,7 @@ import {
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
+import { HttpResponse } from '../../../interfaces/http-response.interface';
 @Controller('classes')
 export class ClassController {
   constructor(
@@ -42,6 +45,65 @@ export class ClassController {
     // Due to transient scope, ClassController has its own unique instance of LogService,
     // so setting context here will not affect other instances in other services
     this._logger.setContext(ClassController.name);
+  }
+
+  /**
+   * @method GET
+   * @url /api/classes/:department_id
+   * @access private
+   * @param department_id
+   * @description Hiển thị danh sách lớp theo khoa
+   * @return HttpResponse<ClassResponse> | HttpException | null
+   * @page Any page
+   */
+  @Get(':department_id')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getClassesByDepartment(
+    @Param('department_id') department_id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<ClassResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url),
+        this._logger.writeLog(Levels.LOG, req.method, req.url, null);
+
+      //#region Get classes
+      const classes = await this._classService.getClassesByDepartmentId(
+        department_id,
+      );
+
+      console.log('class: ', classes);
+      //#endregion
+      if (classes && classes.length > 0) {
+        //#region Generate response
+        return generateSuccessResponse(classes, req);
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.CLASSES_NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log(err);
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
   }
 
   /**
@@ -56,7 +118,7 @@ export class ClassController {
   @Post('all')
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
-  async getClassesByDepartment(
+  async getClasses(
     @Body() params: GetClassDto,
     @Req() req: Request,
   ): Promise<HttpPagingResponse<ClassResponse> | null | HttpException> {
@@ -88,7 +150,7 @@ export class ClassController {
       }
 
       //#region Get classes
-      const classes = await this._classService.getClassesByDepartmentId(
+      const classes = await this._classService.getClassesByDepartmentIdPaging(
         (page - 1) * itemsPerPage,
         itemsPerPage,
         department_id,

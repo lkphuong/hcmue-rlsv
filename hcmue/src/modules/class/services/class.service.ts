@@ -63,6 +63,36 @@ export class ClassService {
   }
 
   async getClassesByDepartmentId(
+    department_id: number,
+    class_id?: number,
+  ): Promise<ClassEntity[] | null> {
+    try {
+      let conditions = await this._classRepository
+        .createQueryBuilder('class')
+        .where('class.department_id = :department_id', { department_id })
+        .andWhere('class.deleted = :deleted', { deleted: false });
+
+      if (class_id && class_id == 0) {
+        conditions = conditions.andWhere('class.id = :class_id', { class_id });
+      }
+
+      const classes = await conditions
+        .orderBy('class.created_at', 'DESC')
+        .getMany();
+
+      return classes || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ClassService.getClassesByDepartmentId()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getClassesByDepartmentIdPaging(
     offset: number,
     length: number,
     department_id: number,
@@ -91,7 +121,7 @@ export class ClassService {
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
-        'ClassService.getClassesByDepartmentId()',
+        'ClassService.getClassesByDepartmentIdPaging()',
         e,
       );
       return null;

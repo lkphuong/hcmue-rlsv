@@ -29,6 +29,13 @@ export class SessionEntity extends RootEntity {
   })
   fullname: string;
 
+  @Column('tinyint', {
+    name: 'role_id',
+    nullable: false,
+    default: 0,
+  })
+  role_id: number;
+
   @Column('bigint', {
     name: 'class_id',
     nullable: true,

@@ -28,13 +28,20 @@ const Filter = ({ filter, onChangeFilter }) => {
 	};
 
 	const handleChangeFilter = (key) => (value) =>
-		onChangeFilter((prev) => ({
-			...prev,
-			[key]: parseInt(value?.id),
-			page: 1,
-			pages: 0,
-			semester_id: key === 'department_id' ? null : prev?.semester_id,
-		}));
+		key === 'department_id'
+			? onChangeFilter((prev) => ({
+					...prev,
+					[key]: parseInt(value?.id),
+					page: 1,
+					pages: 0,
+					semester_id: null,
+			  }))
+			: onChangeFilter((prev) => ({
+					...prev,
+					[key]: parseInt(value?.id),
+					page: 1,
+					pages: 0,
+			  }));
 	//#endregion
 
 	useEffect(() => {
@@ -78,10 +85,10 @@ const Filter = ({ filter, onChangeFilter }) => {
 									value={filter?.semester_id}
 									onChange={handleChangeFilter('semester_id')}
 									options={semesters}
-									display='name'
+									display='display'
 									renderOption={(props, option) => (
 										<Box component='li' {...props} key={option.id}>
-											{option.name}
+											{option.display}
 										</Box>
 									)}
 								/>

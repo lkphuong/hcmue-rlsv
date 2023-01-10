@@ -16,8 +16,8 @@ export const MFilter = ({
 	//#region Event
 	const handleChangeStringId = (key) => (value) =>
 		onChangeFilter((prev) => {
-			if (key === 'class_id') {
-				return { ...prev, [key]: value?.id, page: 1, pages: 0, input: '' };
+			if (key === 'department_id') {
+				return { ...prev, [key]: value?.id, page: 1, pages: 0, class_id: null };
 			}
 			return { ...prev, [key]: value?.id, page: 1, pages: 0 };
 		});
@@ -64,10 +64,10 @@ export const MFilter = ({
 										value={filter.class_id}
 										onChange={handleChangeStringId('class_id')}
 										options={classes}
-										display='name'
+										display='code'
 										renderOption={(props, option) => (
 											<Box component='li' {...props} key={option.id}>
-												{option.name}
+												{option.code}
 											</Box>
 										)}
 									/>
@@ -107,11 +107,11 @@ export const MFilter = ({
 										value={filter.semester_id}
 										onChange={handleChangeFilter('semester_id')}
 										options={semesters}
-										display='name'
+										display='display'
 										placeholder='Tất cả'
 										renderOption={(props, option) => (
 											<Box component='li' {...props} key={option.id}>
-												{option.name}
+												{option.display}
 											</Box>
 										)}
 									/>

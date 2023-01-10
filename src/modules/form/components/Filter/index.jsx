@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
@@ -6,17 +8,38 @@ import { CAutocomplete } from '_controls/';
 
 import { FORM_STATUS } from '_constants/variables';
 
+import { getSemestersByYear } from '_api/options.api';
+
+import { isSuccess, isEmpty } from '_func/';
+
 const Filter = ({ filter, onChangeFilter }) => {
 	//#region Data
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
-	const semesters = useSelector((state) => state.options.semesters, shallowEqual);
+
+	const [semesters, setSemesters] = useState([]);
 	//#endregion
 
 	//#region Event
+	const getSemesters = async () => {
+		const res = await getSemestersByYear(filter.academic_id);
+
+		if (isSuccess(res)) setSemesters(res.data);
+		else if (isEmpty(res)) setSemesters([]);
+	};
 
 	const handleChangeFilter = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
+		onChangeFilter((prev) => ({
+			...prev,
+			[key]: parseInt(value?.id),
+			page: 1,
+			pages: 0,
+			semester_id: key === 'department_id' ? null : prev?.semester_id,
+		}));
 	//#endregion
+
+	useEffect(() => {
+		if (filter.academic_id) getSemesters();
+	}, [filter.academic_id]);
 
 	//#region Render
 	return (

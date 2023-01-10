@@ -9,8 +9,8 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 	//#region Event
 	const handleChangeStringId = (key) => (value) =>
 		onChangeFilter((prev) => {
-			if (key === 'class_id') {
-				return { ...prev, [key]: value?.id, page: 1, pages: 0, input: '' };
+			if (key === 'department_id') {
+				return { ...prev, [key]: value?.id, page: 1, pages: 0, class_id: null };
 			}
 			return { ...prev, [key]: value?.id, page: 1, pages: 0 };
 		});
@@ -57,10 +57,10 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 										value={filter.class_id}
 										onChange={handleChangeStringId('class_id')}
 										options={classes}
-										display='name'
+										display='code'
 										renderOption={(props, option) => (
 											<Box component='li' {...props} key={option.id}>
-												{option.name}
+												{option.code}
 											</Box>
 										)}
 									/>

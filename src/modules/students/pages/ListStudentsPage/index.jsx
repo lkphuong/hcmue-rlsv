@@ -13,7 +13,7 @@ import { getStudentsRole, importUsers } from '_api/user.api';
 import { getSemestersByYear } from '_api/options.api';
 import { uploadFile } from '_api/files.api';
 
-import { isSuccess, isEmpty } from '_func/';
+import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 import { alert } from '_func/alert';
 
 export const ConfigRoleContext = createContext();
@@ -38,9 +38,8 @@ const ListStudentsPage = memo(() => {
 		academic_id: academic_years[0].id,
 		semester_id: null,
 		department_id: null,
-		major_id: null,
-		status_id: null,
 		class_id: null,
+		status_id: null,
 		input: '',
 		page: 1,
 		pages: 0,
@@ -58,13 +57,7 @@ const ListStudentsPage = memo(() => {
 		setIsLoading(true);
 
 		try {
-			let _filter = { ...filter };
-
-			Object.keys(_filter).forEach(
-				(k) =>
-					(_filter[k] === null || _filter[k] === undefined || _filter[k] === '') &&
-					delete _filter[k]
-			);
+			const _filter = cleanObjValue(filter);
 
 			const res = await getStudentsRole(_filter);
 

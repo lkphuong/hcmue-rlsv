@@ -126,3 +126,17 @@ export function formatFileName(fileName) {
 	fileName = fileName.replace(/ /g, '-');
 	return fileName;
 }
+
+//Return new Obj (No falsy value)
+export const cleanObjValue = (obj) => {
+	if (!obj) return {};
+
+	let newObj = { ...obj };
+
+	Object.keys(newObj).forEach(
+		(k) =>
+			(newObj[k] === null || newObj[k] === undefined || newObj[k] === '') && delete newObj[k]
+	);
+
+	return newObj;
+};

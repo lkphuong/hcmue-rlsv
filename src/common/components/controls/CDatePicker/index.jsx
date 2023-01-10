@@ -7,7 +7,18 @@ import { any, string, func, bool } from 'prop-types';
 
 export const CDatePicker = forwardRef(
 	(
-		{ name, value, onChange, placeholder, inputFormat, error, helperText, onBlur, ...props },
+		{
+			name,
+			value,
+			onChange,
+			placeholder,
+			inputFormat,
+			error,
+			helperText,
+			onBlur,
+			fullWidth,
+			...props
+		},
 		ref
 	) => {
 		return (
@@ -21,6 +32,7 @@ export const CDatePicker = forwardRef(
 				renderInput={(params) => (
 					<TextField
 						{...params}
+						fullWidth={fullWidth}
 						name={name}
 						placeholder={placeholder}
 						onBlur={onBlur}

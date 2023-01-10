@@ -1,35 +1,35 @@
-import { memo, useEffect } from 'react';
+import { memo, useEffect, useState } from 'react';
 
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Controller, useForm, FormProvider } from 'react-hook-form';
+import { Controller, useForm, FormProvider, useWatch } from 'react-hook-form';
 
-import { Box, Button, Container, Grid, Stack, Typography } from '@mui/material';
+import { Box, Button, Container, Grid, Typography } from '@mui/material';
 
 import dayjs from 'dayjs';
 
-import { CAutocomplete } from '_controls/';
-
-import { isSuccess } from '_func/';
+import { CAutocomplete, CDatePicker } from '_controls/';
 
 import { createForm, getFormById, updateForm } from '_api/form.api';
+import { getSemestersByYear } from '_api/options.api';
 
 import { useResolver } from '_hooks/';
 
 import { initialValues, validationSchema } from '_modules/form/form';
 
 import { alert } from '_func/alert';
+import { isSuccess } from '_func/';
 
 import { actions } from '_slices/form.slice';
 
 import { ERRORS } from '_constants/messages';
 
-import { RangeControl } from './RangeControl';
-
 const SettingTime = memo(() => {
 	//#region Data
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
 	const status = useSelector((state) => state.form.status, shallowEqual);
-	const { semesters, academic_years } = useSelector((state) => state.options, shallowEqual);
+	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+
+	const [semesters, setSemesters] = useState([]);
 
 	const dispatch = useDispatch();
 
@@ -40,24 +40,17 @@ const SettingTime = memo(() => {
 		mode: 'all',
 		resolver,
 	});
+
+	const academicValue = useWatch({ control, name: 'academic_id' });
+	const startValue = useWatch({ control, name: 'start' });
 	//#endregion
 
 	//#region Event
 	const onSubmit = async (values) => {
 		const body = {
 			...values,
-			student: {
-				start: dayjs(values.student.start).format('YYYY-MM-DD'),
-				end: dayjs(values.student.end).format('YYYY-MM-DD'),
-			},
-			classes: {
-				start: dayjs(values.classes.start).format('YYYY-MM-DD'),
-				end: dayjs(values.classes.end).format('YYYY-MM-DD'),
-			},
-			department: {
-				start: dayjs(values.department.start).format('YYYY-MM-DD'),
-				end: dayjs(values.department.end).format('YYYY-MM-DD'),
-			},
+			start: dayjs(values.start).format('YYYY-MM-DD'),
+			end: dayjs(values.end).format('YYYY-MM-DD'),
 		};
 
 		const res = form_id ? await updateForm(form_id, body) : await createForm(body);
@@ -75,6 +68,34 @@ const SettingTime = memo(() => {
 
 	const handleChangeSelect = (CallbackUpdateForm) => (value) => {
 		CallbackUpdateForm(value?.id);
+	};
+
+	const handleDateChange = (CallbackFunc, keyName) => (event) => {
+		if (keyName === 'start') resetField('end', { defaultValue: null });
+
+		CallbackFunc(event);
+
+		trigger('start');
+		trigger('end');
+	};
+
+	const getSemesters = async () => {
+		const res = await getSemestersByYear(academicValue);
+
+		if (isSuccess(res)) setSemesters(res.data);
+		else setSemesters([]);
+	};
+
+	const shouldDisableDateStart = (date) => {
+		return dayjs(date).isSame(dayjs(), 'date');
+	};
+
+	const shouldDisableDate = (date) => {
+		return (
+			dayjs(date).isSame(dayjs(), 'date') ||
+			dayjs(date).isBefore(dayjs(startValue)) ||
+			dayjs(date).isSame(dayjs(startValue), 'date')
+		);
 	};
 	//#endregion
 
@@ -101,102 +122,139 @@ const SettingTime = memo(() => {
 		getFormData();
 	}, [form_id]);
 
+	useEffect(() => {
+		if (academicValue) getSemesters();
+	}, [academicValue]);
+
 	//#region Render
 	return (
 		<FormProvider reset={reset} resetField={resetField} trigger={trigger}>
 			<form onSubmit={handleSubmit(onSubmit)}>
 				<Container maxWidth='lg'>
 					<Grid container mb={2} spacing={2}>
-						<Grid item xs={12} md={8} lg={6} xl={5}>
+						<Grid item xs={12} md={6} lg={3}>
 							<Typography mb={0.8} fontWeight={500}>
-								Học kỳ - Năm học
+								Năm học
 							</Typography>
-							<Stack direction='row'>
-								<Box flex={1} mr={1}>
-									<Controller
-										control={control}
-										name='semester_id'
-										render={({
-											field: { onChange, onBlur, value, name, ref },
-											fieldState: { error },
-										}) => (
-											<CAutocomplete
-												disabled={status === 2 || status === 3}
-												disableClearable
-												onChange={handleChangeSelect(onChange)}
-												onBlur={onBlur}
-												value={value}
-												name={name}
-												inputRef={ref}
-												fullWidth
-												options={semesters}
-												display='name'
-												renderOption={(props, option) => (
-													<Box {...props} key={option.id} component='li'>
-														{option.name}
-													</Box>
-												)}
-												error={!!error}
-												helperText={error?.message}
-											/>
+							<Controller
+								control={control}
+								name='academic_id'
+								render={({
+									field: { onChange, onBlur, value, name, ref },
+									fieldState: { error },
+								}) => (
+									<CAutocomplete
+										disabled={status === 2 || status === 3}
+										disableClearable
+										onChange={handleChangeSelect(onChange)}
+										onBlur={onBlur}
+										value={value}
+										name={name}
+										ref={ref}
+										fullWidth
+										options={academic_years}
+										display='name'
+										renderOption={(props, option) => (
+											<Box {...props} key={option.id} component='li'>
+												{option.name}
+											</Box>
 										)}
+										error={!!error}
+										helperText={error?.message}
 									/>
-								</Box>
-								<Box flex={1}>
-									<Controller
-										control={control}
-										name='academic_id'
-										render={({
-											field: { onChange, onBlur, value, name, ref },
-											fieldState: { error },
-										}) => (
-											<CAutocomplete
-												disabled={status === 2 || status === 3}
-												disableClearable
-												onChange={handleChangeSelect(onChange)}
-												onBlur={onBlur}
-												value={value}
-												name={name}
-												inputRef={ref}
-												fullWidth
-												options={academic_years}
-												display='name'
-												renderOption={(props, option) => (
-													<Box {...props} key={option.id} component='li'>
-														{option.name}
-													</Box>
-												)}
-												error={!!error}
-												helperText={error?.message}
-											/>
-										)}
-									/>
-								</Box>
-							</Stack>
+								)}
+							/>
 						</Grid>
-						<Grid item xs={0} md={2} lg={3} xl={3.5} />
-						<Grid item xs={0} md={2} lg={3} xl={3.5} />
+						<Grid item xs={12} md={6} lg={3}>
+							<Typography mb={0.8} fontWeight={500}>
+								Học kỳ
+							</Typography>
+							<Controller
+								control={control}
+								name='semester_id'
+								render={({
+									field: { onChange, onBlur, value, name, ref },
+									fieldState: { error },
+								}) => (
+									<CAutocomplete
+										disabled={status === 2 || status === 3}
+										disableClearable
+										onChange={handleChangeSelect(onChange)}
+										onBlur={onBlur}
+										value={value}
+										name={name}
+										ref={ref}
+										fullWidth
+										options={semesters}
+										display='name'
+										renderOption={(props, option) => (
+											<Box {...props} key={option.id} component='li'>
+												{option.name}
+											</Box>
+										)}
+										error={!!error}
+										helperText={error?.message}
+									/>
+								)}
+							/>
+						</Grid>
+						<Grid item xs={12} md={6} lg={3}>
+							<Typography mb={0.8} fontWeight={500}>
+								Thời gian bắt đầu
+							</Typography>
+							<Controller
+								control={control}
+								name='start'
+								render={({
+									field: { onChange, onBlur, name, ref, value },
+									fieldState: { error },
+								}) => (
+									<CDatePicker
+										disabled={status === 2 || status === 3}
+										disablePast
+										fullWidth
+										minDate={dayjs()}
+										name={name}
+										ref={ref}
+										value={value}
+										onChange={handleDateChange(onChange, 'start')}
+										onBlur={onBlur}
+										error={!!error}
+										helperText={error?.message}
+										shouldDisableDate={shouldDisableDateStart}
+									/>
+								)}
+							/>
+						</Grid>
 
-						<RangeControl
-							control={control}
-							label='Thời gian sinh viên chấm'
-							name='student'
-							disabled={status === 2 || status === 3}
-						/>
-
-						<RangeControl
-							control={control}
-							label='Thời gian lớp chấm'
-							name='classes'
-							disabled={status === 2 || status === 3}
-						/>
-
-						<RangeControl
-							control={control}
-							label='Thời gian khoa chấm'
-							name='department'
-							disabled={status === 2 || status === 3}
-						/>
+						<Grid item xs={12} md={6} lg={3}>
+							<Typography mb={0.8} fontWeight={500}>
+								Thời gian kết thúc
+							</Typography>
+							<Controller
+								control={control}
+								name='end'
+								render={({
+									field: { onChange, onBlur, name, ref, value },
+									fieldState: { error },
+								}) => (
+									<CDatePicker
+										disabled={status === 2 || status === 3}
+										disablePast
+										fullWidth
+										minDate={dayjs()}
+										name={name}
+										ref={ref}
+										value={value}
+										onChange={handleDateChange(onChange, 'end')}
+										onBlur={onBlur}
+										error={!!error}
+										helperText={error?.message}
+										shouldDisableDate={shouldDisableDate}
+									/>
+								)}
+							/>
+						</Grid>
 
 						<Grid item xs={12} textAlign='center'>
 							<Grid

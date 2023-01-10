@@ -1,22 +1,13 @@
 import dayjs from 'dayjs';
+
 import * as yup from 'yup';
 
 //#region Initial Values
 export const initialValues = {
 	academic_id: null,
 	semester_id: null,
-	student: {
-		start: null,
-		end: null,
-	},
-	classes: {
-		start: null,
-		end: null,
-	},
-	department: {
-		start: null,
-		end: null,
-	},
+	start: null,
+	end: null,
 };
 
 export const initialHeader = {
@@ -55,114 +46,34 @@ export const validationSchema = yup.object({
 		.number('Vui lòng chọn học kỳ.')
 		.nullable('Vui lòng chọn học kỳ.')
 		.required('Vui lòng chọn học kỳ.'),
-	student: yup
-		.object()
-		.shape({
-			start: yup
-				.date('Định dạng ngày không hợp lệ.')
-				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
-				.typeError('Định dạng ngày không hợp lệ.')
-				.nullable()
-				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
-					const { parent } = context;
+	start: yup
+		.date('Định dạng thời gian không hợp lệ.')
+		.min(MIN_DATE, 'Không thể chọn thời gian quá khứ và hôm nay.')
+		.typeError('Định dạng thời gian không hợp lệ.')
+		.nullable()
+		.test('wrong', 'Thời gian bắt đầu phải trước kết thúc.', (value, context) => {
+			const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end, 'date'))
-						return false;
+			if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end, 'date'))
+				return false;
 
-					return true;
-				})
-				.required('Chọn ngày sinh viên bắt đầu chấm điểm.'),
-			end: yup
-				.date('Định dạng ngày không hợp lệ.')
-				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
-				.typeError('Định dạng ngày không hợp lệ.')
-				.nullable()
-				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
-					const { parent } = context;
-
-					if (
-						dayjs(value).isBefore(parent.start) ||
-						dayjs(value).isSame(parent.start, 'date')
-					)
-						return false;
-
-					return true;
-				})
-				.required('Chọn ngày sinh viên kết thúc chấm điểm.'),
+			return true;
 		})
-		.required('Vui lòng chọn thời gian sinh viên chấm điểm.'),
-	classes: yup
-		.object()
-		.shape({
-			start: yup
-				.date('Định dạng ngày không hợp lệ.')
-				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
-				.typeError('Định dạng ngày không hợp lệ.')
-				.nullable()
-				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
-					const { parent } = context;
+		.required('Chọn thời gian bắt đầu chấm điểm.'),
+	end: yup
+		.date('Định dạng thời gian không hợp lệ.')
+		.min(MIN_DATE, 'Không thể chọn thời gian quá khứ và hôm nay.')
+		.typeError('Định dạng thời gian không hợp lệ.')
+		.nullable()
+		.test('wrong', 'Thời gian kết thúc phải sau bắt đầu.', (value, context) => {
+			const { parent } = context;
 
-					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end, 'date'))
-						return false;
+			if (dayjs(value).isBefore(parent.start) || dayjs(value).isSame(parent.start, 'date'))
+				return false;
 
-					return true;
-				})
-				.required('Chọn ngày lớp bắt đầu chấm điểm.'),
-			end: yup
-				.date('Định dạng ngày không hợp lệ.')
-				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
-				.typeError('Định dạng ngày không hợp lệ.')
-				.nullable()
-				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
-					const { parent } = context;
-
-					if (
-						dayjs(value).isBefore(parent.start) ||
-						dayjs(value).isSame(parent.start, 'date')
-					)
-						return false;
-
-					return true;
-				})
-				.required('Chọn ngày lớp kết thúc chấm điểm.'),
+			return true;
 		})
-		.required('Vui lòng chọn thời gian lớp chấm điểm.'),
-	department: yup
-		.object()
-		.shape({
-			start: yup
-				.date('Định dạng ngày không hợp lệ.')
-				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
-				.typeError('Định dạng ngày không hợp lệ.')
-				.nullable()
-				.test('wrong', 'Ngày bắt đầu phải trước kết thúc.', (value, context) => {
-					const { parent } = context;
-
-					if (dayjs(value).isAfter(parent.end) || dayjs(value).isSame(parent.end, 'date'))
-						return false;
-
-					return true;
-				})
-				.required('Chọn ngày khoa bắt đầu chấm điểm.'),
-			end: yup
-				.date('Định dạng ngày không hợp lệ.')
-				.min(MIN_DATE, 'Không thể chọn ngày quá khứ và hôm nay.')
-				.typeError('Định dạng ngày không hợp lệ.')
-				.nullable()
-				.test('wrong', 'Ngày kết thúc phải sau bắt đầu.', (value, context) => {
-					const { parent } = context;
-
-					if (
-						dayjs(value).isBefore(parent.start) ||
-						dayjs(value).isSame(parent.start, 'date')
-					)
-						return false;
-
-					return true;
-				})
-				.required('Chọn ngày khoa kết thúc chấm điểm.'),
-		})
-		.required('Vui lòng chọn thời gian khoa chấm điểm.'),
+		.required('Chọn thời gian kết thúc chấm điểm.'),
 });
 
 export const validationHeader = yup.object({

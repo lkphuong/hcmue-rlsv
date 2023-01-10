@@ -27,6 +27,7 @@ import {
 } from '@mui/icons-material';
 
 import { ROUTES } from '_constants/routes';
+import { ERRORS } from '_constants/messages';
 
 import { actions } from '_slices/form.slice';
 
@@ -36,8 +37,6 @@ import { getFormById, publishForm, unpublishForm } from '_api/form.api';
 
 import { alert } from '_func/alert';
 import { isSuccess } from '_func/';
-
-import { ERRORS } from '_constants/messages';
 
 const SettingTime = lazy(() => import('_modules/form/components/SettingTime'));
 const SettingHeader = lazy(() => import('_modules/form/components/SettingHeader'));
@@ -198,17 +197,13 @@ const FormCreatePage = () => {
 				<Grid item xs={12}>
 					<Paper className='paper-wrapper'>
 						<CardContent sx={{ backgroundColor: 'rgb(247 246 255)' }}>
-							<Stepper activeStep={step} alternativeLabel>
+							<Stepper activeStep={step} alternativeLabel sx={{ mb: 3 }}>
 								{STEPS.map((label) => (
 									<Step key={label}>
 										<StepLabel>{label}</StepLabel>
 									</Step>
 								))}
 							</Stepper>
-
-							<Typography fontWeight={600} fontSize={20} align='center' mt={3} mb={5}>
-								PHIẾU ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN
-							</Typography>
 
 							{step !== 0 && (
 								<Container maxWidth='lg'>

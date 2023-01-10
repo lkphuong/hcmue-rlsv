@@ -7,7 +7,7 @@ import { Filter, MClassTable, MTable } from '_modules/statistic/components';
 
 import { isSuccess, isEmpty } from '_func/';
 
-import { getClasses } from '_api/classes.api';
+import { getClassesByDepartment } from '_api/classes.api';
 import { getRerorts } from '_api/reports.api';
 
 const ListPageStatistic = () => {
@@ -53,7 +53,7 @@ const ListPageStatistic = () => {
 	};
 
 	const getClassData = async (department_id) => {
-		const res = await getClasses(department_id);
+		const res = await getClassesByDepartment(department_id);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);

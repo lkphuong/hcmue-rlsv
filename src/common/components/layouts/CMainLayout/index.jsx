@@ -9,7 +9,7 @@ import { drawerWidth } from '_store/constant';
 import { actions } from '_slices/menu.slice';
 import { actions as optionsAction } from '_slices/options.slice';
 
-import { getAcademicYears, getSemesters, getAllDepartments } from '_api/options.api';
+import { getAcademicYears, getAllDepartments } from '_api/options.api';
 
 import { isSuccess } from '_func/';
 
@@ -87,14 +87,6 @@ export const CMainLayout = () => {
 
 					dispatch(optionsAction.setAcademicYears(academics));
 				}
-
-				// const resSemester = await getSemesters();
-
-				// if (isSuccess(resSemester)) {
-				// 	const semesters = resSemester.data.map((e) => ({ ...e, id: parseInt(e.id) }));
-
-				// 	dispatch(optionsAction.setSemesters(semesters));
-				// }
 
 				const resDepartment = await getAllDepartments();
 

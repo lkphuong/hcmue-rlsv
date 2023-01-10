@@ -8,7 +8,7 @@ import { CPagination } from '_controls/';
 
 import { MFilter, MTable, MSearch } from '_modules/students/components';
 
-import { getClasses } from '_api/classes.api';
+import { getClassesByDepartment } from '_api/classes.api';
 import { getStudentsRole, importUsers } from '_api/user.api';
 import { getSemestersByYear } from '_api/options.api';
 import { uploadFile } from '_api/files.api';
@@ -72,7 +72,7 @@ const ListStudentsPage = memo(() => {
 	}, [filter]);
 
 	const getClassData = async (department_id) => {
-		const res = await getClasses(department_id);
+		const res = await getClassesByDepartment(department_id);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);

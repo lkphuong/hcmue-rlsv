@@ -10,7 +10,7 @@ import { isSuccess, isEmpty } from '_func/';
 
 import { CPagination } from '_controls/';
 
-import { getClasses } from '_api/classes.api';
+import { getClassesByDepartment } from '_api/classes.api';
 import { getAdminSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/filter.slice';
@@ -53,7 +53,7 @@ const ListPageAdmin = () => {
 
 	//#region Event
 	const getClassesOptions = useCallback(async () => {
-		const res = await getClasses(filter.department_id);
+		const res = await getClassesByDepartment(filter.department_id);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);

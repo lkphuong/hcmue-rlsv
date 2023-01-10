@@ -43,7 +43,7 @@ export const updateDepartmentSheets = (id, body = { role_id: 0, data: [] }) => {
 };
 
 export const getAdminSheets = (body) => {
-	return post(SHEETS.ADMIN_GET_SHEET, body);
+	return post(SHEETS.ADMIN_GET_SHEETS, body);
 };
 
 export const approveAll = (body) => {

@@ -61,3 +61,11 @@ export const ROLES = [
 	{ id: 5, name: 'KHOA' },
 	{ id: 6, name: 'ADMIN' },
 ];
+
+export const SHEET_STATUS = [
+	{ id: 0, name: 'Chưa đánh giá' },
+	{ id: 1, name: 'Chờ lớp xét duyệt' },
+	{ id: 2, name: 'Chờ CVHT xét duyệt' },
+	{ id: 3, name: 'Chờ khoa xét duyệt' },
+	{ id: 4, name: 'Hoàn thành' },
+];

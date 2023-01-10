@@ -7,7 +7,7 @@ import { CPagination } from '_controls/';
 
 import { MFilter, MTable } from '_modules/role/components';
 
-import { getClasses } from '_api/classes.api';
+import { getClassesByDepartment } from '_api/classes.api';
 import { getStudentsRole } from '_api/user.api';
 
 import { isSuccess, isEmpty } from '_func/';
@@ -60,7 +60,7 @@ const RolePage = memo(() => {
 	}, [filter]);
 
 	const getClassData = async (department_id) => {
-		const res = await getClasses(department_id);
+		const res = await getClassesByDepartment(department_id);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);

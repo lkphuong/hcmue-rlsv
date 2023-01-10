@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { getClasses } from '_api/classes.api';
+import { getClassesByDepartment } from '_api/classes.api';
 
 import { isEmpty, isSuccess } from '_func/';
 
@@ -42,7 +42,7 @@ const ListStudentsPage = () => {
 
 	//#region Event
 	const getClassesOptions = useCallback(async () => {
-		const res = await getClasses(filter.department_id);
+		const res = await getClassesByDepartment(filter.department_id);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);

@@ -13,13 +13,17 @@ const ListFormsPage = lazy(() => import('_modules/form/pages/ListFormsPage'));
 
 const ListHistory = lazy(() => import('_modules/history/pages/ListHistory'));
 
-const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
-
 const ListStudentsPage = lazy(() => import('_modules/students/pages/ListStudentsPage'));
+
+const ListAdvisersPage = lazy(() => import('_modules/advisers/pages/ListAdvisersPage'));
+
+const ListPageStatistic = lazy(() => import('_modules/statistic/pages/ListPageStatistic'));
 
 const ListDepartmentAccountPage = lazy(() =>
 	import('_modules/department/pages/ListDepartmentAccountPage')
 );
+
+const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
 
 export const ADMIN_ROUTES = [
 	{
@@ -27,7 +31,7 @@ export const ADMIN_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
-				<div>Thống kê phiếu</div>
+				<ListPageStatistic />
 			</CPermission>
 		),
 	},
@@ -90,7 +94,7 @@ export const ADMIN_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
-				<div>Danh sách cố vấn học tập</div>
+				<ListAdvisersPage />
 			</CPermission>
 		),
 	},

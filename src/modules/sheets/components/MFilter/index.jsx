@@ -19,25 +19,27 @@ export const MFilter = ({ filter, onFilterChange }) => {
 		<Box mb={3}>
 			<Paper className='paper-filter'>
 				<Box p={1.5}>
-					<Grid container spacing={1}>
+					<Grid container>
 						<Grid xs={12} md={3}>
-							<Stack>
-								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-									Khoa
-								</Typography>
-								<CAutocomplete
-									value={filter.department_id}
-									onChange={handleDepartmentChange('department_id')}
-									options={departments}
-									display='name'
-									placeholder='Tất cả'
-									renderOption={(props, option) => (
-										<Box component='li' {...props} key={option.id}>
-											{option.name}
-										</Box>
-									)}
-								/>
-							</Stack>
+							<Box p={2}>
+								<Stack>
+									<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
+										Khoa
+									</Typography>
+									<CAutocomplete
+										value={filter.department_id}
+										onChange={handleDepartmentChange('department_id')}
+										options={departments}
+										display='name'
+										placeholder='Tất cả'
+										renderOption={(props, option) => (
+											<Box component='li' {...props} key={option.id}>
+												{option.name}
+											</Box>
+										)}
+									/>
+								</Stack>
+							</Box>
 						</Grid>
 					</Grid>
 				</Box>

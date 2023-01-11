@@ -53,8 +53,8 @@ const Filter = ({ filter, onChangeFilter }) => {
 		<Paper className='paper-filter'>
 			<Box p={1.5}>
 				<Grid container>
-					<Grid item xs={12} xl={4}>
-						<Box p={1}>
+					<Grid item xs={12} md={3}>
+						<Box p={2}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
 									Năm học
@@ -74,8 +74,8 @@ const Filter = ({ filter, onChangeFilter }) => {
 							</Stack>
 						</Box>
 					</Grid>
-					<Grid item xs={12} xl={4}>
-						<Box p={1}>
+					<Grid item xs={12} md={3}>
+						<Box p={2}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
 									Học kỳ
@@ -95,8 +95,8 @@ const Filter = ({ filter, onChangeFilter }) => {
 							</Stack>
 						</Box>
 					</Grid>
-					<Grid item xs={12} xl={4}>
-						<Box p={1}>
+					<Grid item xs={12} md={3}>
+						<Box p={2}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
 									Trạng thái biểu mẫu

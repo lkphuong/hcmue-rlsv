@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { AdviserModule } from '../adviser/adviser.module';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 import { OtherModule } from '../other/other.module';
@@ -27,6 +28,7 @@ import { RolesGuard } from './guards/role.guard';
 import { JwtStrategy } from './strategy/jwt';
 
 export const modules = [
+  AdviserModule,
   SharedModule,
   TypeOrmModule.forFeature([
     RoleEntity,

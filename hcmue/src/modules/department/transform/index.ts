@@ -1,4 +1,4 @@
-import { DepartmentResponse } from '../interfaces/department_response';
+import { DepartmentResponse } from '../interfaces/department_response.interface';
 
 export const generateData2Array = (departments: DepartmentResponse[]) => {
   if (departments) {

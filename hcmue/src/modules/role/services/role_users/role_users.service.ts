@@ -171,6 +171,26 @@ export class RoleUsersService {
     }
   }
 
+  async bulkAdd(role_users: RoleUsersEntity[], manager?: EntityManager) {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.insert(RoleUsersEntity, role_users);
+
+      return results;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'RoleUsersService.bulkAdd()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async update(
     role_user: RoleUsersEntity,
     manager?: EntityManager,
@@ -187,6 +207,30 @@ export class RoleUsersService {
         Levels.ERROR,
         Methods.UPDATE,
         'RoleUsersService.update()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async bulkUpdateByRole(role: number, manager?: EntityManager) {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.update(
+        RoleUsersEntity,
+        { role: role },
+        { deleted: true, deleted_by: 'system', deleted_at: new Date() },
+      );
+
+      return results.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'RoleUsersService.bulkUpdateByRole()',
         e,
       );
       return null;

@@ -10,6 +10,7 @@ import { LogModule } from './modules/log/log.module';
 import { SharedModule } from './modules/shared/shared.module';
 
 import { AcademicYearModule } from './modules/academic-year/academic_year.module';
+import { AdviserModule } from './modules/adviser/adviser.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ClassModule } from './modules/class/class.module';
 import { EvaluationModule } from './modules/evaluation/evaluation.module';
@@ -45,6 +46,7 @@ export const modules = [
     useFactory: mysqlFactory,
   }),
   AcademicYearModule,
+  AdviserModule,
   AuthModule,
   ClassModule,
   EvaluationModule,

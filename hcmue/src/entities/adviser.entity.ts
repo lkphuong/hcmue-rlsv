@@ -30,25 +30,11 @@ export class AdviserEntity extends RootEntity {
   fullname: string;
 
   @Column('varchar', {
-    name: 'birthday',
-    nullable: false,
-    length: 20,
-  })
-  birthday: string;
-
-  @Column('varchar', {
     name: 'phone_number',
     nullable: true,
     length: 20,
   })
   phone_number: string;
-
-  @Column('bigint', {
-    name: 'class_id',
-    nullable: true,
-    default: 0,
-  })
-  class: number;
 
   @Column('bigint', {
     name: 'department_id',

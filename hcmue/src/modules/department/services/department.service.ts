@@ -6,7 +6,7 @@ import { DepartmentEntity } from '../../../entities/department.entity';
 
 import { LogService } from '../../log/services/log.service';
 
-import { DepartmentResponse } from '../interfaces/department_response';
+import { DepartmentResponse } from '../interfaces/department_response.interface';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
@@ -148,7 +148,7 @@ export class DepartmentService {
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
-        Methods.SELECT,
+        Methods.INSERT,
         'DepartmentService.bulkAdd()',
         e,
       );

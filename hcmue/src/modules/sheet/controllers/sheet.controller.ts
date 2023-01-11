@@ -104,13 +104,13 @@ import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 import { Role } from '../../auth/constants/enums/role.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { ErrorMessage } from '../constants/enums/errors.enum';
 
 import {
   DATABASE_EXIT_CODE,

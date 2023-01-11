@@ -4,7 +4,6 @@ import { DataSource, QueryRunner } from 'typeorm';
 import * as xlsx from 'xlsx';
 import * as path from 'path';
 import * as md5 from 'md5';
-import { Cache } from 'cache-manager';
 
 import { removeDuplicates, removeDuplicatesObject } from '../../../utils';
 import {
@@ -47,7 +46,7 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 
 //#region import interface
 import { ClassResponse } from '../../class/interfaces/class_response.interface';
-import { DepartmentResponse } from '../../department/interfaces/department_response';
+import { DepartmentResponse } from '../../department/interfaces/department_response.interface';
 import {
   ExcelClassResponse,
   ExcelDataResponse,
@@ -319,7 +318,7 @@ export const generateImportUsers = async (
     //#endregion
 
     //#region Update old users
-    await user_service.bulkUnlink();
+    await user_service.bulkUnlink(query_runner.manager);
     //#endregion
 
     //#region Create user
@@ -602,7 +601,6 @@ export const generateCreateUser = async (
   //#region loop file excel
   let add_users: UserEntity[] = [];
   let counter = 0;
-  console.log('start: ', new Date());
   for await (const i of data) {
     const item = new UserEntity();
     item.academic_id = academic_id;
@@ -624,7 +622,6 @@ export const generateCreateUser = async (
     add_users.push(item);
     counter++;
     if (counter % 1000 == 0) {
-      console.log('insert: ', new Date());
       const result = await user_service.bulkAdd(
         add_users,
         query_runner.manager,
@@ -633,7 +630,6 @@ export const generateCreateUser = async (
       add_users = [];
     }
   }
-  console.log('end: ', new Date());
   //#endregion
 
   //#region Add user

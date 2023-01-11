@@ -124,7 +124,7 @@ export class UserController {
           class_id,
           department_id,
           status_id,
-          class_id,
+          major_id,
           input,
         );
 

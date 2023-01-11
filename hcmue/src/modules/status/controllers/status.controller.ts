@@ -5,24 +5,30 @@ import {
   ValidationPipe,
   Req,
   HttpStatus,
+  HttpException,
 } from '@nestjs/common';
 
 import { Request } from 'express';
+
+import { generateStatusResponse } from '../utils';
 
 import { LogService } from '../../log/services/log.service';
 import { StatusService } from '../services/status.service';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
-
 import { StatusResponse } from '../interfaces/status_response.interface';
+
+import { HandlerException } from '../../../exceptions/HandlerException';
+
+import { Roles } from '../../auth/decorators/roles.decorator';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Role } from '../../auth/constants/enums/role.enum';
-import { Roles } from '../../auth/decorators/roles.decorator';
-import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
-import { HandlerException } from '../../../exceptions/HandlerException';
+import {
+  DATABASE_EXIT_CODE,
+  SERVER_EXIT_CODE,
+} from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/enums/error.enum';
-import { generateStatusResponse } from '../utils';
 
 @Controller('statuses')
 export class StatusController {
@@ -36,7 +42,7 @@ export class StatusController {
    * @url api/statuses
    * @access private
    * @description Hiển thị danh sách trạng thái sinh viên
-   * @return
+   * @return HttpResponse<StatusResponse> | nul
    * @page roles page
    */
   @Get()
@@ -65,6 +71,17 @@ export class StatusController {
         );
         //#endregion
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
   }
 }

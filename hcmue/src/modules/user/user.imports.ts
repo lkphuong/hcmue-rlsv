@@ -1,4 +1,4 @@
-import { CacheModule, forwardRef } from '@nestjs/common';
+import { forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from '../../entities/user.entity';
 
@@ -20,7 +20,6 @@ import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
 
 export const modules = [
-  CacheModule.register(),
   TypeOrmModule.forFeature([UserEntity]),
   AcademicYearModule,
   ClassModule,

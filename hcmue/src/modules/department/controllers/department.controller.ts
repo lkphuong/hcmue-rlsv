@@ -16,7 +16,7 @@ import { DepartmentService } from '../services/department.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 
-import { DepartmentResponse } from '../interfaces/department_response';
+import { DepartmentResponse } from '../interfaces/department_response.interface';
 
 import { generateData2Array } from '../transform';
 

@@ -96,3 +96,21 @@ export const validatePassword = async (
 ) => {
   return md5(password) === user_password;
 };
+
+export const generateUpdatePasswordSuccess = (
+  username: string,
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+
+  const payload = { username: username };
+
+  // Return object
+  return {
+    data: payload,
+    errorCode: 0,
+    message: null,
+    errors: null,
+  };
+};

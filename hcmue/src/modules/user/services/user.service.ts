@@ -552,6 +552,28 @@ export class UserService {
     }
   }
 
+  async update(
+    user: UserEntity,
+    manager?: EntityManager,
+  ): Promise<UserEntity | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+      user = await manager.save(user);
+
+      return user || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'UserService.update()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async bulkUnlink(manager?: EntityManager) {
     try {
       if (!manager) {

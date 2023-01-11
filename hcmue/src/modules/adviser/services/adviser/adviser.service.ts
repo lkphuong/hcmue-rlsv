@@ -18,11 +18,11 @@ export class AdviserService {
     private _logger: LogService,
   ) {}
 
-  async getAdviserByUsername(username: string): Promise<AdviserEntity | null> {
+  async getAdviserByEmail(email: string): Promise<AdviserEntity | null> {
     try {
       const conditions = this._adviserRepository
         .createQueryBuilder('adviser')
-        .where('adviser.username = :username', { username })
+        .where('adviser.email = :email', { email })
         .andWhere('adviser.deleted = :deleted', { deleted: false })
         .andWhere('adviser.active = :active', { active: false });
 
@@ -57,6 +57,26 @@ export class AdviserService {
         Levels.ERROR,
         Methods.INSERT,
         'AdviserService.bulkAdd()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async update(adviser: AdviserEntity, manager?: EntityManager) {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      adviser = await manager.save(adviser);
+
+      return adviser || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'AdviserService.update()',
         e,
       );
       return null;

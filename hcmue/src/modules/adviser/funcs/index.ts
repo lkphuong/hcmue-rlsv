@@ -188,7 +188,7 @@ export const generateData = async (
 };
 
 export const readDataFromFile = async (path: string) => {
-  const workbook = xlsx.readFile(path, {});
+  const workbook = xlsx.readFile(path);
   const worksheet = workbook.Sheets[workbook.SheetNames[0]];
   const data = xlsx.utils.sheet_to_json(worksheet, { header: 1, range: 8 });
   const range = data.length;

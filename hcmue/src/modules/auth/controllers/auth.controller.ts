@@ -15,12 +15,15 @@ import { JwtService } from '@nestjs/jwt';
 
 import { Request } from 'express';
 
+import * as md5 from 'md5';
+
 import { returnObjects, sprintf } from '../../../utils';
 
 import {
   generateAccessToken,
   generateRefreshToken,
   generateResponse,
+  generateUpdatePasswordSuccess,
   validatePassword,
 } from '../utils';
 
@@ -41,6 +44,7 @@ import { OtherService } from '../../other/services/other.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 import { AdviserService } from '../../adviser/services/adviser/adviser.service';
+import { UserService } from '../../user/services/user.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { InvalidTokenException } from '../exceptions/InvalidTokenException';
@@ -49,6 +53,8 @@ import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { LogoutGuard } from '../guards/logout.guard';
+
+import { validateConfirmPassword } from '../validations';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { Levels } from '../../../constants/enums/level.enum';
@@ -69,6 +75,7 @@ export class AuthController {
     private readonly _authService: AuthService,
     private readonly _adviserService: AdviserService,
     private readonly _otherService: OtherService,
+    private readonly _userService: UserService,
     private readonly _configurationService: ConfigurationService,
     private readonly _jwtService: JwtService,
     private _logger: LogService,
@@ -110,16 +117,17 @@ export class AuthController {
       //#endregion
       switch (type) {
         case LoginType.ADVISER:
-          const adviser = await this._adviserService.getAdviserByUsername(
+          const adviser = await this._adviserService.getAdviserByEmail(
             username,
           );
+
           if (adviser) {
-            const isMatch = validatePassword(password, adviser.password);
+            const isMatch = await validatePassword(password, adviser.password);
 
             if (isMatch) {
               //#region get role
               const role_user = await this._authService.getRoleByUserCode(
-                adviser.id.toString(),
+                adviser.email,
               );
               //#endregion
 
@@ -200,7 +208,7 @@ export class AuthController {
         case LoginType.ADMIN:
           const other = await this._otherService.getOtherByUsername(username);
           if (other) {
-            const isMatch = validatePassword(password, other.password);
+            const isMatch = await validatePassword(password, other.password);
 
             if (isMatch) {
               //#region get role
@@ -285,7 +293,7 @@ export class AuthController {
         default:
           const student = await this._authService.getUserByUsername(username);
           if (student) {
-            const isMatch = validatePassword(password, student.password);
+            const isMatch = await validatePassword(password, student.password);
 
             if (isMatch) {
               //#region get role
@@ -395,6 +403,7 @@ export class AuthController {
    * @page profile page
    */
   @Post('change-password')
+  @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   async changePassword(@Body() params: ChangePasswordDto, @Req() req: Request) {
     try {
@@ -412,25 +421,199 @@ export class AuthController {
       const { username: request_code, role } = req.user as JwtPayload;
       //#endregion
 
-      switch (role) {
-        case RoleCode.STUDENT:
-        case RoleCode.MONITOR:
-        case RoleCode.SECRETARY:
-        case RoleCode.CHAIRMAN:
-        //#region Get user by table user
+      //#region Get params
+      const { confirm_password, new_password, old_password } = params;
+      //#endregion
 
-        //#endregion
+      //#region Validate password
+      const valid = validateConfirmPassword(
+        new_password,
+        confirm_password,
+        req,
+      );
+      if (valid instanceof HttpException) throw valid;
+
+      //#endregion
+
+      switch (role) {
         case RoleCode.ADVISER:
-        //#region get table teachers
+          //#region get table teachers
+          let adviser = await this._adviserService.getAdviserByEmail(
+            request_code,
+          );
+
+          if (adviser) {
+            const isMatch = await validatePassword(
+              old_password,
+              adviser.password,
+            );
+            if (isMatch) {
+              //#region Update new password
+              adviser.password = md5(new_password);
+
+              adviser = await this._adviserService.update(adviser);
+
+              if (adviser) {
+                return generateUpdatePasswordSuccess(adviser.email, req);
+              } else {
+                //#region throw HandlerException
+                throw new HandlerException(
+                  DATABASE_EXIT_CODE.OPERATOR_ERROR,
+                  req.method,
+                  req.url,
+                  ErrorMessage.OPERATOR_PASSWORD_ERROR,
+                  HttpStatus.EXPECTATION_FAILED,
+                );
+                //#endregion
+              }
+              //#endregion
+            } else {
+              //#region throw HandlerException
+              throw new HandlerException(
+                DATABASE_EXIT_CODE.OPERATOR_ERROR,
+                req.method,
+                req.url,
+                ErrorMessage.OLD_PASSWORD_NO_MATCHING_ERROR,
+                HttpStatus.BAD_REQUEST,
+              );
+              //#endregion
+            }
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              (req.user as any).user_id,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, request_code),
+            );
+          }
+
         //#endregion
 
         case RoleCode.DEPARTMENT:
-        //#region  Get table orther
+        case RoleCode.ADMIN:
+          //#region  Get table orther
+          let other = await this._otherService.getOtherByUsername(request_code);
+
+          if (other) {
+            const isMatch = await validatePassword(
+              old_password,
+              other.password,
+            );
+            if (isMatch) {
+              //#region Update new password
+              other.password = md5(new_password);
+
+              other = await this._otherService.update(other);
+
+              if (other) {
+                return generateUpdatePasswordSuccess(other.username, req);
+              } else {
+                //#region throw HandlerException
+                throw new HandlerException(
+                  DATABASE_EXIT_CODE.OPERATOR_ERROR,
+                  req.method,
+                  req.url,
+                  ErrorMessage.OPERATOR_PASSWORD_ERROR,
+                  HttpStatus.EXPECTATION_FAILED,
+                );
+                //#endregion
+              }
+              //#endregion
+            } else {
+              //#region throw HandlerException
+              throw new HandlerException(
+                DATABASE_EXIT_CODE.OPERATOR_ERROR,
+                req.method,
+                req.url,
+                ErrorMessage.OLD_PASSWORD_NO_MATCHING_ERROR,
+                HttpStatus.BAD_REQUEST,
+              );
+              //#endregion
+            }
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              (req.user as any).user_id,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, request_code),
+            );
+          }
 
         //#endregion
-        case RoleCode.ADMIN:
+
+        default:
+          //#region  Get table orther
+          let user = await this._userService.getUserByCode(request_code);
+          console.log('old_password: ', old_password);
+          console.log('new_password: ', new_password);
+          console.log('confirm_password: ', confirm_password);
+          if (user) {
+            const isMatch = await validatePassword(old_password, user.password);
+            console.log(
+              md5(old_password),
+              user.password,
+              md5(old_password) === user.password,
+              isMatch,
+            );
+            if (isMatch) {
+              //#region Update new password
+              user.password = md5(new_password);
+
+              user = await this._userService.update(user);
+
+              if (user) {
+                return generateUpdatePasswordSuccess(user.std_code, req);
+              } else {
+                //#region throw HandlerException
+                throw new HandlerException(
+                  DATABASE_EXIT_CODE.OPERATOR_ERROR,
+                  req.method,
+                  req.url,
+                  ErrorMessage.OPERATOR_PASSWORD_ERROR,
+                  HttpStatus.EXPECTATION_FAILED,
+                );
+                //#endregion
+              }
+              //#endregion
+            } else {
+              //#region throw HandlerException
+              throw new HandlerException(
+                DATABASE_EXIT_CODE.OPERATOR_ERROR,
+                req.method,
+                req.url,
+                ErrorMessage.OLD_PASSWORD_NO_MATCHING_ERROR,
+                HttpStatus.BAD_REQUEST,
+              );
+              //#endregion
+            }
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              (req.user as any).user_id,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, request_code),
+            );
+          }
       }
-    } catch (err) {}
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
   }
 
   /**
@@ -587,7 +770,59 @@ export class AuthController {
         } else {
           switch (session.role_id) {
             case RoleCode.ADVISER:
-              return null;
+              //#region Get info adviser
+              const adviser = await this._adviserService.getAdviserByEmail(
+                session.username,
+              );
+              if (adviser) {
+                //#region get role
+                const role_adviser = await this._authService.getRoleByUserCode(
+                  adviser.email,
+                );
+                //#endregion
+                //#region Generate access_token
+                const renew_access_token = generateAccessToken(
+                  this._jwtService,
+                  this._configurationService,
+                  adviser.id,
+                  adviser.email,
+                  role_adviser?.role?.id ?? 0,
+                );
+                //#endregion
+
+                //#region Generate refresh_token
+                const renew_refresh_token = generateRefreshToken(
+                  this._jwtService,
+                  this._configurationService,
+                  adviser.email,
+                );
+                //#endregion
+
+                //#region Update session with new tokens
+                session = await this._authService.renew(
+                  renew_access_token,
+                  renew_refresh_token,
+                  session,
+                );
+                //#endregion
+
+                return await generateResponse(
+                  session,
+                  renew_access_token,
+                  renew_refresh_token,
+                  req,
+                );
+              } else {
+                //#region Token not found
+                throw new InvalidTokenException(
+                  refresh_token,
+                  AUTHENTICATION_EXIT_CODE.INVALID_TOKEN,
+                  req.method,
+                  req.url,
+                );
+                //#endregion
+              }
+            //#endregion
             case RoleCode.DEPARTMENT:
             case RoleCode.ADMIN:
               //#region Get info department or admin by code

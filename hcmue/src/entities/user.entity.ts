@@ -26,7 +26,6 @@ export class UserEntity extends RootEntity {
     name: 'password',
     nullable: false,
     length: 255,
-    select: false,
   })
   password: string;
 

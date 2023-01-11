@@ -4,7 +4,7 @@ import { Button, Stack } from '@mui/material';
 
 import { CInput } from '_controls/';
 
-export const MSearch = ({ onFilterChange }) => {
+export const MSearch = ({ onFilterChange, placeholder }) => {
 	//#region Data
 	const [currentInput, setCurrentInput] = useState('');
 	//#endregion
@@ -19,12 +19,7 @@ export const MSearch = ({ onFilterChange }) => {
 	//#region Render
 	return (
 		<Stack spacing={1.5} alignItems='center' direction='row'>
-			<CInput
-				isSearch
-				value={currentInput}
-				onChange={onChange}
-				placeholder='Tìm theo tên khoa'
-			/>
+			<CInput isSearch value={currentInput} onChange={onChange} placeholder={placeholder} />
 
 			<Button variant='contained' onClick={updateFilter}>
 				Tìm kiếm

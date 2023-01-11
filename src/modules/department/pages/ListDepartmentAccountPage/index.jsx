@@ -127,7 +127,7 @@ const ListDepartmentAccountPage = () => {
 				alignItems='center'
 				mb={2}
 			>
-				<MSearch onFilterChange={setFilter} />
+				<MSearch onFilterChange={setFilter} placeholder='Tìm kiếm theo tên khoa' />
 
 				<Button
 					variant='contained'

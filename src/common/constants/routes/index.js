@@ -50,8 +50,10 @@ export const ROUTES = {
 	},
 
 	DEPARTMENT: {
-		DEPARTMENT: '/department/department-sheets',
-		HISTORY: '/department/department-history',
+		SHEETS: '/department/sheets',
+		SHEETS_DEPARTMENT: '/department/sheets/:class_id',
+		SHEET_DETAIL: '/department/sheets/detail/:sheet_id',
+		HISTORY: '/department/history',
 
 		REPORT: '/department/report',
 

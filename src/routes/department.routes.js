@@ -7,13 +7,18 @@ import { CPermission } from '_controls/';
 
 import { CErrorPage } from '_others/';
 
+const SheetsManagementPage = lazy(() => import('_modules/department/pages/SheetsManagementPage'));
+const SheetsDepartmentPage = lazy(() => import('_modules/department/pages/SheetsDepartmentPage'));
+
+const HistorySheetsPage = lazy(() => import('_modules/department/pages/HistorySheetsPage'));
+
 export const DEPARTMENT_ROUTES = [
 	{
-		path: ROUTES.DEPARTMENT.DEPARTMENT,
+		path: ROUTES.DEPARTMENT.SHEETS,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
-				<div>Điểm rèn luyện của khoa</div>
+				<SheetsManagementPage />
 			</CPermission>
 		),
 	},
@@ -22,7 +27,16 @@ export const DEPARTMENT_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
-				<div>Lịch sử điểm rèn luyện của khoa</div>
+				<HistorySheetsPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.DEPARTMENT.SHEETS_DEPARTMENT,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
+				<SheetsDepartmentPage />
 			</CPermission>
 		),
 	},

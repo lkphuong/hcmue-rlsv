@@ -17,6 +17,9 @@ export const SHEETS = {
 	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/department',
 	UPDATE_DEPARTMENT_SHEET: '/sheets/department',
 
+	DEPARTMENT_GET_SHEETS: '/sheets/department',
+	DEPARTMENT_GET_HISTORY: '/sheets/department/history',
+
 	ADMIN_GET_SHEETS: '/sheets/admin',
 	ADMIN_GET_HISTORY: '/sheets/admin/history',
 

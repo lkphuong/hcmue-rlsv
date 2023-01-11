@@ -13,3 +13,7 @@ export const updateDepartmentAccount = (id, body) => {
 export const deleteDepartmentAccount = (id) => {
 	return remove(`${OTHER.DELETE_DEPARTMENT_ACCOUNT}/${id}`);
 };
+
+export const getDepartmentAccounts = (body) => {
+	return post(OTHER.GET_DEPARTMENT_ACCOUNTS, body);
+};

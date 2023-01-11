@@ -43,12 +43,8 @@ export const STUDENT_ROUTES = [
 		),
 	},
 	{
-		path: ROUTES.STUDENT.CHANGE_PASSWORD,
+		path: ROUTES.CHANGE_PASSWORD,
 		errorElement: <CErrorPage />,
-		element: (
-			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STUDENT.key}>
-				<ChangePasswordPage />
-			</CPermission>
-		),
+		element: <ChangePasswordPage />,
 	},
 ];

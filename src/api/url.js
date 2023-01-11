@@ -97,6 +97,7 @@ export const FILES = {
 };
 
 export const OTHER = {
+	GET_DEPARTMENT_ACCOUNTS: '/other/all',
 	CREATE_DEPARTMENT_ACCOUNT: '/others',
 	UPDATE_DEPARTMENT_ACCOUNT: '/others', // :id
 	DELETE_DEPARTMENT_ACCOUNT: '/others', // :id

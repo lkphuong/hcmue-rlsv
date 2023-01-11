@@ -131,12 +131,8 @@ export const ADMIN_ROUTES = [
 		),
 	},
 	{
-		path: ROUTES.ADMIN.CHANGE_PASSWORD,
+		path: ROUTES.CHANGE_PASSWORD,
 		errorElement: <CErrorPage />,
-		element: (
-			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
-				<ChangePasswordPage />
-			</CPermission>
-		),
+		element: <ChangePasswordPage />,
 	},
 ];

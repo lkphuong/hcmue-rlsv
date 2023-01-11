@@ -9,68 +9,7 @@ import { isSuccess } from '_func/';
 
 import { MFilter, MListDepartmentAccounts, MModal, MSearch } from '_modules/department/components';
 
-const FAKE_DATA = [
-	{
-		id: 1,
-		department: { id: 136, name: 'Khoa Công nghệ Thông tin' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 2,
-		department: { id: '137', name: 'Khoa Hóa học' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 3,
-		department: { id: '151', name: 'Khoa Giáo dục Mầm non' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 4,
-		department: { id: 135, name: 'Khoa Vật lý' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 5,
-		department: { id: 135, name: 'Khoa Vật lý' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 6,
-		department: { id: 136, name: 'Khoa Công nghệ Thông tin' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 7,
-		department: { id: 136, name: 'Khoa Công nghệ Thông tin' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 8,
-		department: { id: 135, name: 'Khoa Vật lý' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 9,
-		department: { id: 136, name: 'Khoa Công nghệ Thông tin' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-	{
-		id: 10,
-		department: { id: 135, name: 'Khoa Vật lý' },
-		username: 'Nmb@sps.hcm.edu.vn',
-		password: 'Nmb@sps.hcm.edu.vn',
-	},
-];
+import { getDepartmentAccounts } from '_api/other.api';
 
 const ListDepartmentAccountPage = () => {
 	//#region Data
@@ -93,8 +32,7 @@ const ListDepartmentAccountPage = () => {
 	//#region Event
 	const getData = async () => {
 		//call api
-
-		const res = { status: 200, data: { data: FAKE_DATA, page: 1, pages: 1 } };
+		const res = await getDepartmentAccounts(filter);
 
 		if (isSuccess(res)) {
 			setData(res?.data);

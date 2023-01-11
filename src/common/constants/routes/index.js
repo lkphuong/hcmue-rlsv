@@ -24,8 +24,6 @@ export const ROUTES = {
 		SELF: '/student-sheets',
 		HISTORY: '/student-history',
 		DETAIL: '/student-sheets/:sheet_id',
-
-		CHANGE_PASSWORD: '/change-password',
 	},
 
 	CLASS_OFFICER: {
@@ -34,8 +32,6 @@ export const ROUTES = {
 
 		CLASS: '/class/class-sheets',
 		CLASS_HISTORY: '/class/class-history',
-
-		CHANGE_PASSWORD: '/change-password',
 	},
 
 	ADVISER: {
@@ -45,8 +41,6 @@ export const ROUTES = {
 		REPORT: '/adviser/report',
 
 		ROLE: '/adviser/role',
-
-		CHANGE_PASSWORD: '/change-password',
 	},
 
 	DEPARTMENT: {
@@ -56,8 +50,6 @@ export const ROUTES = {
 		HISTORY: '/department/history',
 
 		REPORT: '/department/report',
-
-		CHANGE_PASSWORD: '/change-password',
 	},
 
 	ADMIN: {
@@ -76,7 +68,6 @@ export const ROUTES = {
 		ADVISERS: '/admin/advisers',
 		DEPARTMENTS: '/admin/departments',
 		SETTING: '/admin/setting',
-
-		CHANGE_PASSWORD: '/change-password',
 	},
+	CHANGE_PASSWORD: '/change-password',
 };

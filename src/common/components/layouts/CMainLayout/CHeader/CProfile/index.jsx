@@ -138,8 +138,11 @@ const CProfile = () => {
 											>
 												Xin chào
 											</Typography>
-											<Typography component='span' variant='h4' mb={2}>
+											<Typography component='span' variant='h4' mb={1}>
 												{profile?.fullname}
+											</Typography>
+											<Typography component='span' variant='h4' mb={2}>
+												{profile?.username}
 											</Typography>
 											<Divider />
 										</Stack>

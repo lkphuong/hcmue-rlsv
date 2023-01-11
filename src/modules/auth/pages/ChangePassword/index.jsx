@@ -129,7 +129,7 @@ const ChangePasswordPage = () => {
 								/>
 							</Stack>
 
-							<Stack direction='row' mt={2.5} spacing={3}>
+							<Stack direction='row' mt={2.5} spacing={3} justifyContent='center'>
 								<Button variant='contained' type='submit'>
 									Xác nhận
 								</Button>

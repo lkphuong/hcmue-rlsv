@@ -388,26 +388,26 @@ export const readDataFromFile = async (path: string) => {
     if (data[i][1]) {
       statuses.push(data[i][1]);
     }
-    if (data[i][4]) {
-      k.push(data[i][4]);
-    }
     if (data[i][5]) {
-      departments.push(data[i][5]);
+      k.push(data[i][5]);
+    }
+    if (data[i][6]) {
+      departments.push(data[i][6]);
     }
 
-    if (data[i][6]) {
+    if (data[i][7]) {
       majors.push({
-        name: data[i][6],
-        department: data[i][5],
+        name: data[i][7],
+        department: data[i][6],
       });
     }
 
-    if (data[i][7] && data[i][8]) {
+    if (data[i][8] && data[i][9]) {
       classes.push({
-        code: data[i][7],
-        name: data[i][8],
-        department: data[i][5],
-        k: data[i][4],
+        code: data[i][8],
+        name: data[i][9],
+        department: data[i][6],
+        k: data[i][5],
       });
     }
   }
@@ -606,19 +606,20 @@ export const generateCreateUser = async (
     item.academic_id = academic_id;
     item.semester_id = semester_id;
     item.std_code = i[0];
+    item.email = i[4];
     item.status_id = i[1]
       ? statuses.find((status) => status.name == i[1]).id
       : null;
     item.fullname = i[2];
     item.password = md5(i[3]);
     item.birthday = i[3];
-    item.class_id = i[7]
-      ? classes.find(($class) => $class.code == i[7]).id
+    item.class_id = i[8]
+      ? classes.find(($class) => $class.code == i[8]).id
       : null;
-    item.department_id = i[5]
-      ? departments.find((department) => department.name == i[5]).id
+    item.department_id = i[6]
+      ? departments.find((department) => department.name == i[6]).id
       : null;
-    item.major_id = majors.find((major) => major.name == i[6]).id;
+    item.major_id = i[7] ? majors.find((major) => major.name == i[7]).id : null;
     add_users.push(item);
     counter++;
     if (counter % 1000 == 0) {

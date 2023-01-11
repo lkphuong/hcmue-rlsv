@@ -250,8 +250,6 @@ export class UserService {
         );
       }
 
-      console.log('sql: ', conditions.getSql());
-
       const users = await conditions
         .orderBy('user.created_at', 'DESC')
         .skip(offset)

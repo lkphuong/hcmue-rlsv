@@ -40,11 +40,13 @@ import {
 } from '../utils';
 
 import {
+  validateAcademic,
   validateClass,
   validateDepartment,
   validateDepartmentId,
   validateOthersDepartment,
   validateOthersRole,
+  validateSemester,
   validateSheet,
   validateSheetId,
   validateStudentRole,
@@ -69,6 +71,7 @@ import { UpdateClassMarkDto } from '../dtos/update_class_mark.dto';
 import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
 import { UpdateStudentMarkDto } from '../dtos/update_student_mark.dto';
 
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { ClassService } from '../../class/services/class.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { DepartmentService } from '../../department/services/department.service';
@@ -78,9 +81,10 @@ import { FormService } from '../../form/services/form.service';
 import { HeaderService } from '../../header/services/header.service';
 import { ItemService } from '../../item/services/item.service';
 import { KService } from '../../k/services/k.service';
-import { LogService } from '../../log/services/log.service';
 import { LevelService } from '../../level/services/level.service';
+import { LogService } from '../../log/services/log.service';
 import { OptionService } from '../../option/services/option.service';
+import { SemesterService } from '../../semester/services/semester.service';
 import { SheetService } from '../services/sheet.service';
 import { UserService } from '../../user/services/user.service';
 
@@ -96,15 +100,15 @@ import {
   ApproveAllResponse,
   ClassStatusResponse,
   ClassResponse,
-  DepartmentResponse,
+  ManagerDepartmentResponse,
 } from '../interfaces/sheet_response.interface';
 
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
+import { HandlerException } from '../../../exceptions/HandlerException';
+
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { Roles } from '../../auth/decorators/roles.decorator';
-
-import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { Levels } from '../../../constants/enums/level.enum';
@@ -121,6 +125,7 @@ import { FormStatus } from '../../form/constants/enums/statuses.enum';
 @Controller('sheets')
 export class SheetController {
   constructor(
+    private readonly _academicYearService: AcademicYearService,
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
     private readonly _evaluationService: EvaluationService,
@@ -132,6 +137,7 @@ export class SheetController {
     private readonly _levelService: LevelService,
     private readonly _optionService: OptionService,
     private readonly _sheetService: SheetService,
+    private readonly _semesterService: SemesterService,
     private readonly _userService: UserService,
     private readonly _dataSource: DataSource,
     private readonly _configurationService: ConfigurationService,
@@ -1212,7 +1218,7 @@ export class SheetController {
   async getDepartmentStatus(
     @Body() params: GetDepartmentStatusDto,
     @Req() req: Request,
-  ): Promise<HttpPagingResponse<DepartmentResponse> | HttpException> {
+  ): Promise<HttpPagingResponse<ManagerDepartmentResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -1256,8 +1262,8 @@ export class SheetController {
           return await generateDepartmentStatusResponse(
             pages,
             page,
-            form.academic_year.id,
-            form.semester.id,
+            form.academic_year,
+            form.semester,
             departments,
             this._sheetService,
             req,
@@ -1313,7 +1319,7 @@ export class SheetController {
   async getDepartmentStatusHistory(
     @Body() params: GetDepartmentStatusHistoryDto,
     @Req() req: Request,
-  ): Promise<HttpPagingResponse<DepartmentResponse> | HttpException> {
+  ): Promise<HttpPagingResponse<ManagerDepartmentResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -1330,6 +1336,25 @@ export class SheetController {
       //#region Get params
       const { page, academic_id, department_id, semester_id } = params;
       let { pages } = params;
+
+      //#region Validataion
+      //#region validate academic
+      const valid_academic = await validateAcademic(
+        academic_id,
+        this._academicYearService,
+        req,
+      );
+      if (valid_academic instanceof HttpException) throw valid_academic;
+      //#endregion
+      //#region Validate semester
+      const valid_semester = await validateSemester(
+        semester_id,
+        this._semesterService,
+        req,
+      );
+      if (valid_semester instanceof HttpException) throw valid_semester;
+      //#endregion
+      //#endregion
 
       const itemsPerPage = parseInt(
         this._configurationService.get(Configuration.ITEMS_PER_PAGE),
@@ -1360,8 +1385,8 @@ export class SheetController {
           return await generateDepartmentStatusResponse(
             pages,
             page,
-            semester_id,
-            academic_id,
+            valid_academic,
+            valid_semester,
             departments,
             this._sheetService,
             req,

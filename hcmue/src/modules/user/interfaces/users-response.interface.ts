@@ -14,6 +14,7 @@ export interface UserResponse {
   std_code: string;
   name: string;
   birthday: string;
+  email: string;
   status: BaseResponse;
   academic: BaseResponse;
   department: BaseResponse;

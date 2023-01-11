@@ -16,6 +16,7 @@ import {
   ClassSheetsResponse,
   DepartmentResponse,
   EvaluationsResponse,
+  ManagerDepartmentResponse,
   SheetDetailsResponse,
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
@@ -30,6 +31,8 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import { SemesterEntity } from '../../../entities/semester.entity';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -639,16 +642,28 @@ export const generateClassStatusDepartment = async (
 };
 
 export const generateDepartStatus = async (
-  academic_id: number,
-  semester_id: number,
+  academic: AcademicYearEntity,
+  semester: SemesterEntity,
   departments: DepartmentEntity[],
   sheet_service: SheetService,
 ) => {
-  const payload: DepartmentResponse[] = [];
+  const payload: ManagerDepartmentResponse = {
+    academic: {
+      id: academic.id,
+      name: academic.start + ' - ' + academic.end,
+    },
+    semester: {
+      id: semester.id,
+      name: semester.name,
+      start: semester.start,
+      end: semester.end,
+    },
+    department: [],
+  };
   for await (const i of departments) {
     const count = await sheet_service.countSheetByStatus(
-      academic_id,
-      semester_id,
+      academic.id,
+      semester.id,
       SheetStatus.WAITING_DEPARTMENT,
       i.id,
     );
@@ -659,7 +674,7 @@ export const generateDepartStatus = async (
       status: count > 0 ? false : true,
     };
 
-    payload.push(item);
+    payload.department.push(item);
   }
 
   return payload;

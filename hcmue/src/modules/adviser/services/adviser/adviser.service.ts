@@ -8,6 +8,10 @@ import { LogService } from '../../../log/services/log.service';
 
 import { Levels } from '../../../../constants/enums/level.enum';
 import { Methods } from '../../../../constants/enums/method.enum';
+import { DepartmentEntity } from '../../../../entities/department.entity';
+import { AcademicYearEntity } from '../../../../entities/academic_year.entity';
+import { AdviserClassesEntity } from '../../../../entities/adviser_classes.entity';
+import { ClassEntity } from '../../../../entities/class.entity';
 
 @Injectable()
 export class AdviserService {
@@ -17,6 +21,153 @@ export class AdviserService {
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
+
+  async getAdviserPaging(
+    offset: number,
+    length: number,
+    academic_id: number,
+    class_id: number,
+    department_id: number,
+    input?: string,
+  ): Promise<AdviserEntity[] | null> {
+    try {
+      let conditions = this._adviserRepository
+        .createQueryBuilder('adviser')
+        .innerJoinAndMapOne(
+          'adviser.department',
+          DepartmentEntity,
+          'department',
+          `department.id = adviser.department_id 
+        AND department.deleted = 0`,
+        )
+        .innerJoin(
+          AcademicYearEntity,
+          `academic`,
+          `academic.id = adviser.academic_id 
+        AND academic.deleted = 0`,
+        )
+        .leftJoinAndMapMany(
+          'adviser.adviser_classes',
+          AdviserClassesEntity,
+          'adviser_class',
+          `adviser_class.adviser_id = adviser.id AND adviser_class.deleted = 0`,
+        )
+        .leftJoinAndMapOne(
+          'adviser_class.class',
+          ClassEntity,
+          'class',
+          `adviser_class.class_id = class.id AND class.deleted = 0`,
+        )
+        .where('adviser.deleted = :deleted', { deleted: false });
+
+      if (academic_id && academic_id !== 0) {
+        conditions = conditions.andWhere('academic.id = :academic_id', {
+          academic_id,
+        });
+      }
+
+      if (class_id && class_id !== 0) {
+        conditions = conditions.andWhere('adviser_class.class_id = :class_id', {
+          class_id,
+        });
+      }
+
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere(
+          'adviser.depertment_id = :department_id',
+          { department_id },
+        );
+      }
+
+      if (input) {
+        conditions = conditions.andWhere(`adviser.fullname LIKE '%${input}%'`);
+      }
+
+      const advisers = await conditions
+        .orderBy('adviser.created_at', 'DESC')
+        .skip(offset)
+        .take(length)
+        .getMany();
+
+      return advisers || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AdviserService.getAdviserPaging()',
+        e,
+      );
+
+      return null;
+    }
+  }
+
+  async count(
+    academic_id: number,
+    class_id: number,
+    department_id: number,
+    input?: string,
+  ): Promise<number> {
+    try {
+      let conditions = this._adviserRepository
+        .createQueryBuilder('adviser')
+        .select('COUNT(distinct adviser.id)', 'count')
+        .innerJoin(
+          DepartmentEntity,
+          'department',
+          `department.id = adviser.department_id 
+          AND department.deleted = 0`,
+        )
+        .innerJoin(
+          AcademicYearEntity,
+          `academic`,
+          `academic.id = adviser.academic_id 
+          AND academic.deleted = 0`,
+        )
+        .leftJoin(
+          AdviserClassesEntity,
+          'adviser_class',
+          `adviser.id  = adviser_class.adviser_id AND adviser_class.deleted = 0`,
+        )
+        .where('adviser.deleted = :deleted', { deleted: false })
+        .andWhere('adviser.active = :active', { active: true });
+
+      if (academic_id && academic_id !== 0) {
+        conditions = conditions.andWhere('academic.id = :academic_id', {
+          academic_id,
+        });
+      }
+
+      if (class_id && class_id !== 0) {
+        conditions = conditions.andWhere('adviser_class.class_id = :class_id', {
+          class_id,
+        });
+      }
+
+      if (department_id && department_id !== 0) {
+        conditions = conditions.andWhere(
+          'adviser.depertment_id = :department_id',
+          { department_id },
+        );
+      }
+
+      if (input) {
+        conditions = conditions.andWhere(`adviser.fullname LIKE '%${input}%'`);
+      }
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AdviserService.count()',
+        e,
+      );
+      return null;
+    }
+  }
 
   async getAdviserByEmail(email: string): Promise<AdviserEntity | null> {
     try {

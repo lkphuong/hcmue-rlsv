@@ -1,4 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ClassEntity } from './class.entity';
 import { RootEntity } from './root.entity';
 
 @Entity('adviser_classes')
@@ -28,4 +29,6 @@ export class AdviserClassesEntity extends RootEntity {
     default: 0,
   })
   academic_id: number;
+
+  class: ClassEntity | null;
 }

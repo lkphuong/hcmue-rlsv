@@ -5,6 +5,7 @@ export interface ExcelAdviserResponse {
   email: string;
   department: string;
   class: string;
+  degree: string;
 }
 
 export interface ExcelAdviserClassResponse {
@@ -15,4 +16,20 @@ export interface ExcelAdviserClassResponse {
 export interface ExcelDataResponse {
   advisers: ExcelAdviserResponse[];
   classes: ExcelAdviserClassResponse[];
+}
+
+export interface ClassResponse {
+  id: number;
+  code: string;
+  name: string;
+}
+
+export interface GetAdviserResponse {
+  id: number;
+  fullname: string;
+  phone_number: string;
+  email: string;
+  degree: string;
+  department: string;
+  classes: string[];
 }

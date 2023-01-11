@@ -1,4 +1,6 @@
 export enum ErrorMessage {
+  NO_CONTENT = 'Không có dữ liệu hiển thị.',
+
   ACADEMIC_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [năm học].',
   FILE_ID_EMPTY_ERROR = 'Bạn vui lòng upload [file] sinh viên.',
 

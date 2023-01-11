@@ -4,12 +4,14 @@ import { Request } from 'express';
 
 import { returnObjects, returnObjectsWithPaging } from '../../../utils';
 
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 import { ClassEntity } from '../../../entities/class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { FilesService } from '../../file/services/files.service';
 import { FormEntity } from '../../../entities/form.entity';
 import { ItemEntity } from '../../../entities/item.entity';
+import { SemesterEntity } from '../../../entities/semester.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 import { SheetService } from '../services/sheet.service';
 import { UserEntity } from '../../../entities/user.entity';
@@ -23,6 +25,7 @@ import {
   ClassSheetsResponse,
   ClassStatusResponse,
   DepartmentResponse,
+  ManagerDepartmentResponse,
 } from '../interfaces/sheet_response.interface';
 
 import {
@@ -279,8 +282,8 @@ export const generateClassStatusDepartmentResponse = async (
 export const generateDepartmentStatusResponse = async (
   pages: number,
   page: number,
-  academic_id: number,
-  semester_id: number,
+  academic: AcademicYearEntity,
+  semester: SemesterEntity,
   departments: DepartmentEntity[],
   sheet_service: SheetService,
   req: Request,
@@ -290,14 +293,18 @@ export const generateDepartmentStatusResponse = async (
   console.log('departments: ', departments);
 
   const payload = await generateDepartStatus(
-    academic_id,
-    semester_id,
+    academic,
+    semester,
     departments,
     sheet_service,
   );
 
   // Returns objects
-  return returnObjectsWithPaging<DepartmentResponse>(pages, page, payload);
+  return returnObjectsWithPaging<ManagerDepartmentResponse>(
+    pages,
+    page,
+    payload,
+  );
 };
 
 export const groupItemsByHeader = <T>(

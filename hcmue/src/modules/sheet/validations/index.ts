@@ -11,10 +11,12 @@ import { SheetEntity } from '../../../entities/sheet.entity';
 
 import { StudentFileDtos } from '../dtos/update_student_mark.dto';
 
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { SheetService } from '../services/sheet.service';
 import { UserService } from '../../user/services/user.service';
+import { SemesterService } from '../../semester/services/semester.service';
 
 import { RoleCode } from '../../../constants/enums/role_enum';
 
@@ -109,6 +111,82 @@ export const validateUserId = (id: string, req: Request) => {
   }
 
   return null;
+};
+
+export const validateAcademic = async (
+  id: number,
+  academic_service: AcademicYearService,
+  req: Request,
+) => {
+  if (isEmpty(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.ACADEMIC_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (isNaN(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_FORMAT,
+      req.method,
+      req.url,
+      ErrorMessage.ID_NAN_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else {
+    const academic = await academic_service.getAcademicYearById(id);
+    if (!academic) {
+      //#region throw HandlerException
+      return new HandlerException(
+        DATABASE_EXIT_CODE.UNKNOW_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.ACADEMIC_NOT_FOUND_ERROR, id),
+        HttpStatus.NOT_FOUND,
+      );
+      //#endregion
+    }
+    return academic;
+  }
+};
+
+export const validateSemester = async (
+  id: number,
+  semester_service: SemesterService,
+  req: Request,
+) => {
+  if (isEmpty(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.SEMESTER_ID_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else if (isNaN(id)) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_FORMAT,
+      req.method,
+      req.url,
+      ErrorMessage.ID_NAN_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  } else {
+    const semester = await semester_service.getSemesterById(id);
+    if (!semester) {
+      //#region throw HandlerException
+      return new HandlerException(
+        DATABASE_EXIT_CODE.UNKNOW_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.SEMESTER_NOT_FOUND_ERROR, id),
+        HttpStatus.NOT_FOUND,
+      );
+      //#endregion
+    }
+    return semester;
+  }
 };
 
 export const validateMark = (item: ItemEntity, mark: number, req: Request) => {

@@ -642,7 +642,30 @@ export class AuthController {
 
       switch (role) {
         case RoleCode.ADVISER:
-          return null;
+          const adviser_session = await this._adviserService.getAdviserByEmail(
+            request_code,
+          );
+          if (adviser_session) {
+            //#region Generate response
+            return returnObjects<ProfileResponse>({
+              user_id: adviser_session.id,
+              username: adviser_session?.email,
+              fullname: adviser_session.fullname ?? null,
+              class_id: null,
+              department_id: adviser_session.department_id ?? null,
+              role: role,
+            });
+            //#endregion
+          }
+          //#region throw HandlerException
+          throw new UnknownException(
+            (req.user as any).user_id,
+            VALIDATION_EXIT_CODE.NOT_FOUND,
+            req.method,
+            req.url,
+            sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, request_code),
+          );
+        //#endregion
         case RoleCode.DEPARTMENT:
         case RoleCode.ADMIN:
           const other_session = await this._otherService.getOtherByUsername(

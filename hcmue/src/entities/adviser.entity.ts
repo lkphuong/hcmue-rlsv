@@ -1,4 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { AdviserClassesEntity } from './adviser_classes.entity';
+import { DepartmentEntity } from './department.entity';
 import { RootEntity } from './root.entity';
 
 @Entity('advisers')
@@ -56,4 +58,15 @@ export class AdviserEntity extends RootEntity {
     default: 0,
   })
   semester_id: number;
+
+  @Column('varchar', {
+    name: 'degree',
+    nullable: true,
+    length: 100,
+  })
+  degree: string;
+
+  department: DepartmentEntity | null;
+
+  adviser_classes: AdviserClassesEntity[] | null;
 }

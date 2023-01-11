@@ -17,7 +17,7 @@ export const generateUsersArray = async (users: UserEntity[] | null) => {
         std_code: user.std_code,
         name: user.fullname,
         birthday: user.birthday,
-
+        email: user.email,
         academic: user.academic
           ? {
               id: user.academic.id,

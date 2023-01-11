@@ -130,6 +130,12 @@ export interface DepartmentResponse {
   status: boolean;
 }
 
+export interface ManagerDepartmentResponse {
+  academic: AcademicYearResponse;
+  semester: SemesterResponse;
+  department: DepartmentResponse[];
+}
+
 export interface ClassStatusResponse {
   academic?: AcademicYearResponse;
   semester?: SemesterResponse;

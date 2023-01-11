@@ -5,6 +5,8 @@ export enum ErrorMessage {
   DEPARTMENT_ID_EMPTY_ERROR = 'Bạn vui lòng chọn khoa.',
   SHEET_ID_EMPTY_ERROR = 'Bạn vui lòng chọn phiếu.',
   USER_ID_EMPTY_ERROR = 'Bạn vui lòng chọn nhân viên.',
+  ACADEMIC_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [năm học].',
+  SEMESTER_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [học kì].',
 
   ID_NAN_ERROR = 'Giá trị [id] không hợp lệ.',
 
@@ -17,6 +19,9 @@ export enum ErrorMessage {
   LEVEL_BY_SORT_ORDER_NOT_FOUND_ERROR = 'Không tìm thấy xếp loại (sort_order: %s).',
   SHEET_NOT_FOUND_ERROR = 'Phiếu không tồn tại (id: %s).',
   STUDENT_NOT_FOUND_ERROR = 'Sinh viên không tồn tại (id: %s).',
+
+  ACADEMIC_NOT_FOUND_ERROR = '[Năm học] không tồn tại (id: %s).',
+  SEMESTER_NOT_FOUND_ERROR = '[Học kì] không tồn tại (id: %s)',
 
   CHECKBOX_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] không hợp lệ. Giá trị [điểm đánh giá] phải bằng [%s].',
   RANGE_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] tối thiểu [%s] & tối đa là [%s].',

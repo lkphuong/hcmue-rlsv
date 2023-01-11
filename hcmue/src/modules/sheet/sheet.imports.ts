@@ -2,30 +2,28 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SheetEntity } from '../../entities/sheet.entity';
 
-import { LogModule } from '../log/log.module';
-import { SharedModule } from '../shared/shared.module';
-import { UserModule } from '../user/user.module';
 import { AcademicYearModule } from '../academic-year/academic_year.module';
 import { ClassModule } from '../class/class.module';
+import { DepartmentModule } from '../department/department.module';
 import { EvaluationModule } from '../evaluation/evaluation.module';
 import { FileModule } from '../file/file.module';
-import { HeaderModule } from '../header/header.module';
-import { KModule } from '../k/k.module';
-import { DepartmentModule } from '../department/department.module';
-import { LevelModule } from '../level/level.module';
 import { FormModule } from '../form/form.module';
+import { HeaderModule } from '../header/header.module';
 import { ItemModule } from '../item/item.module';
-import { TitleModule } from '../title/title.module';
+import { KModule } from '../k/k.module';
+import { LevelModule } from '../level/level.module';
+import { LogModule } from '../log/log.module';
 import { OptionModule } from '../option/option.module';
+import { SemesterModule } from '../semester/semester.module';
+import { SharedModule } from '../shared/shared.module';
+import { TitleModule } from '../title/title.module';
+import { UserModule } from '../user/user.module';
 
 import { SheetController } from './controllers/sheet.controller';
 
 import { SheetService } from './services/sheet.service';
 
 export const modules = [
-  SharedModule,
-  TypeOrmModule.forFeature([SheetEntity]),
-  LogModule,
   AcademicYearModule,
   ClassModule,
   DepartmentModule,
@@ -33,11 +31,15 @@ export const modules = [
   FileModule,
   FormModule,
   HeaderModule,
-  KModule,
   ItemModule,
-  TitleModule,
-  OptionModule,
+  KModule,
   LevelModule,
+  LogModule,
+  OptionModule,
+  SemesterModule,
+  SharedModule,
+  TitleModule,
+  TypeOrmModule.forFeature([SheetEntity]),
   UserModule,
 ];
 

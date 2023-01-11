@@ -3,6 +3,7 @@ export const AUTH = {
 	PROFILE: '/auth/get-profile',
 	REFETCH_TOKEN: '/auth/renew-token',
 	LOGOUT: '/auth/logout',
+	CHANGE_PASSWORD: '/auth/change-password',
 };
 
 export const SHEETS = {

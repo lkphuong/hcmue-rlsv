@@ -133,7 +133,7 @@ export const CMainLayout = () => {
 
 			<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
-			<Main theme={theme} open={leftDrawerOpened}>
+			<Main theme={theme} open={leftDrawerOpened} style={{ position: 'relative' }}>
 				<Suspense fallback={<SuspenseLoading />}>
 					<Outlet />
 				</Suspense>

@@ -65,5 +65,7 @@ export const ROUTES = {
 		ADVISERS: '/admin/advisers',
 		DEPARTMENTS: '/admin/departments',
 		SETTING: '/admin/setting',
+
+		CHANGE_PASSWORD: '/change-password',
 	},
 };

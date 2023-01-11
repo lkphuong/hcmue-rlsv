@@ -169,8 +169,22 @@ const CProfile = () => {
 												>
 													<ListItemText
 														primary={
+															<Typography
+																variant='body2'
+																fontWeight={600}
+															>
+																Thoát
+															</Typography>
+														}
+													/>
+												</ListItemButton>
+											</Link>
+											<Link to='/change-password'>
+												<ListItemButton sx={{ borderRadius: `12px` }}>
+													<ListItemText
+														primary={
 															<Typography variant='body2'>
-																Logout
+																Đổi mật khẩu
 															</Typography>
 														}
 													/>

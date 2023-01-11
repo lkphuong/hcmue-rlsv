@@ -28,6 +28,8 @@ const ListDepartmentAccountPage = lazy(() =>
 
 const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
 
+const ChangePasswordPage = lazy(() => import('_modules/auth/pages/ChangePassword'));
+
 export const ADMIN_ROUTES = [
 	{
 		path: ROUTES.ADMIN.REPORT,
@@ -125,6 +127,15 @@ export const ADMIN_ROUTES = [
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
 				<ConfigPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADMIN.CHANGE_PASSWORD,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<ChangePasswordPage />
 			</CPermission>
 		),
 	},

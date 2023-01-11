@@ -16,7 +16,10 @@ export const SHEETS = {
 	UPDATE_CLASS_SHEET: '/sheets/class',
 	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/department',
 	UPDATE_DEPARTMENT_SHEET: '/sheets/department',
+
 	ADMIN_GET_SHEETS: '/sheets/admin',
+	ADMIN_GET_HISTORY: '/sheets/admin/history',
+
 	APPROVE_ALL: '/sheets/department/approve-all',
 	GET_DETAIL_SHEET: '/sheets/detail',
 };

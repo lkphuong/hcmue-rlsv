@@ -14,7 +14,7 @@ const ListFormsPage = lazy(() => import('_modules/form/pages/ListFormsPage'));
 const SheetsManagementPage = lazy(() => import('_modules/sheets/pages/SheetsManagementPage'));
 const SheetsDepartmentPage = lazy(() => import('_modules/sheets/pages/SheetsDepartmentPage'));
 
-const ListHistory = lazy(() => import('_modules/history/pages/ListHistory'));
+const HistorySheetsPage = lazy(() => import('_modules/sheets/pages/HistorySheetsPage'));
 
 const ListStudentsPage = lazy(() => import('_modules/students/pages/ListStudentsPage'));
 
@@ -90,7 +90,7 @@ export const ADMIN_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
-				<ListHistory />
+				<HistorySheetsPage />
 			</CPermission>
 		),
 	},

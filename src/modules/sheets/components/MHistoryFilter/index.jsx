@@ -1,15 +1,17 @@
 import { Box, Paper, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 
-import { SHEET_STATUS } from '_constants/variables';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { CAutocomplete } from '_controls/';
 
-export const MDepartmentFilter = ({ filter, onFilterChange, classes }) => {
+export const MHistoryFilter = ({ filter, academic_years, semesters, onFilterChange }) => {
 	//#region Data
+	const departments = useSelector((state) => state.options.departments, shallowEqual);
+
 	//#endregion
 
 	//#region Event
-	const onSelectChange = (key) => (value) =>
+	const handleDepartmentChange = (key) => (value) =>
 		onFilterChange((prev) => ({ ...prev, [key]: value?.id, page: 1, pages: 0 }));
 	//#endregion
 
@@ -22,18 +24,17 @@ export const MDepartmentFilter = ({ filter, onFilterChange, classes }) => {
 						<Grid xs={12} md={3}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-									Lớp
+									Khoa
 								</Typography>
 								<CAutocomplete
-									disableClearable
-									value={filter.class_id}
-									onChange={onSelectChange('class_id')}
-									options={classes}
-									display='code'
+									value={filter.department_id}
+									onChange={handleDepartmentChange('department_id')}
+									options={departments}
+									display='name'
 									placeholder='Tất cả'
 									renderOption={(props, option) => (
 										<Box component='li' {...props} key={option.id}>
-											{option.code}
+											{option.name}
 										</Box>
 									)}
 								/>
@@ -42,17 +43,38 @@ export const MDepartmentFilter = ({ filter, onFilterChange, classes }) => {
 						<Grid xs={12} md={3}>
 							<Stack>
 								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
-									Trạng thái phiếu
+									Năm học
 								</Typography>
 								<CAutocomplete
-									value={filter.status}
-									onChange={onSelectChange('status')}
-									options={SHEET_STATUS}
+									disableClearable
+									value={filter.academic_id}
+									onChange={handleDepartmentChange('academic_id')}
+									options={academic_years}
 									display='name'
 									placeholder='Tất cả'
 									renderOption={(props, option) => (
 										<Box component='li' {...props} key={option.id}>
 											{option.name}
+										</Box>
+									)}
+								/>
+							</Stack>
+						</Grid>
+						<Grid xs={12} md={3}>
+							<Stack>
+								<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
+									Học kỳ
+								</Typography>
+								<CAutocomplete
+									disableClearable
+									value={filter.semester_id}
+									onChange={handleDepartmentChange('semester_id')}
+									options={semesters}
+									display='display'
+									placeholder='Tất cả'
+									renderOption={(props, option) => (
+										<Box component='li' {...props} key={option.id}>
+											{option.display}
 										</Box>
 									)}
 								/>

@@ -1,5 +1,7 @@
 export const TYPE_NUMBER = /^[0-9-]+$/;
 
+export const EXCEL_FILE_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
 export const SORT_ORDER = [
 	{ id: 1, value: 1, name: 'Xuất sắc' },
 	{ id: 2, value: 2, name: 'Tốt' },

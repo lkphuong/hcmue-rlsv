@@ -42,8 +42,7 @@ const ClassPage = () => {
 	//#endregion
 
 	//#region Event
-	const getData = useCallback(async () => {
-		if (!class_id) return;
+	const getData = async () => {
 		try {
 			const _input = filter?.input;
 
@@ -57,7 +56,7 @@ const ClassPage = () => {
 		} catch (error) {
 			throw error;
 		}
-	}, [filter, class_id]);
+	};
 
 	const onPageChange = (event, value) => setFilter((prev) => ({ ...prev, page: value }));
 
@@ -67,8 +66,8 @@ const ClassPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		getData();
-	}, [getData]);
+		if (class_id) getData();
+	}, [filter, class_id]);
 
 	useEffect(() => {
 		setPaginate({

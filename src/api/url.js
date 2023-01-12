@@ -102,3 +102,9 @@ export const OTHER = {
 	UPDATE_DEPARTMENT_ACCOUNT: '/others', // :id
 	DELETE_DEPARTMENT_ACCOUNT: '/others', // :id
 };
+
+export const ADVISER = {
+	GET_ADVISERS: '/advisers/all',
+
+	IMPORT_ADVISERS: '/advisers/import',
+};

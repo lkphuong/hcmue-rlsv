@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { shallowEqual, useSelector } from 'react-redux';
 
@@ -21,19 +20,17 @@ const ListPage = () => {
 	//#endregion
 
 	//#region Event
-	const getData = useCallback(async () => {
-		if (!department_id) return;
-
+	const getData = async () => {
 		const res = await getDepartmentSheets(department_id, body);
 
 		if (isSuccess(res)) setClasses(res.data);
 		else if (isEmpty(res)) setClasses([]);
-	}, [body, department_id]);
+	};
 	//#endregion
 
 	useEffect(() => {
-		getData();
-	}, [getData]);
+		if (department_id) getData();
+	}, [body, department_id]);
 
 	//#region Render
 	return (

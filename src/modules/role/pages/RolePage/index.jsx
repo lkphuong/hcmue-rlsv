@@ -1,4 +1,4 @@
-import { createContext, memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { createContext, memo, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Stack } from '@mui/material';
@@ -39,7 +39,7 @@ const RolePage = memo(() => {
 	//endregion
 
 	//#region Event
-	const getData = useCallback(async () => {
+	const getData = async () => {
 		setIsLoading(true);
 
 		try {
@@ -57,7 +57,7 @@ const RolePage = memo(() => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [filter]);
+	};
 
 	const getClassData = async (department_id) => {
 		const res = await getClassesByDepartment(department_id);
@@ -80,7 +80,7 @@ const RolePage = memo(() => {
 
 	useEffect(() => {
 		getData();
-	}, [getData]);
+	}, [filter]);
 
 	useEffect(() => {
 		setPaginate({

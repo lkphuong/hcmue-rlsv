@@ -76,7 +76,7 @@ const StudentListPage = () => {
 		[isSelectedAll]
 	);
 
-	const getData = useCallback(async () => {
+	const getData = async () => {
 		if (!class_id) return;
 
 		const res = await getClassSheets(class_id, filter);
@@ -85,7 +85,7 @@ const StudentListPage = () => {
 		else if (isEmpty(res)) {
 			setData({ data: [], page: 1, pages: 0 });
 		}
-	}, [filter, class_id]);
+	};
 
 	const onPageChange = (event, value) => setFilter((prev) => ({ ...prev, page: value }));
 
@@ -95,8 +95,8 @@ const StudentListPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		getData();
-	}, [getData]);
+		if (class_id) getData();
+	}, [filter]);
 
 	useEffect(() => {
 		setPaginate({

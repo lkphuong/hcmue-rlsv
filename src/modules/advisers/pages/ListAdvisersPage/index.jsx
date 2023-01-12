@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Stack } from '@mui/material';
@@ -9,13 +9,13 @@ import { CPagination } from '_controls/';
 import { MFilter, MTable, MSearch } from '_modules/advisers/components';
 
 import { getClassesByDepartment } from '_api/classes.api';
-import { getStudentsRole, importUsers } from '_api/user.api';
+import { getAllAdvisers, importAdvisers } from '_api/adviser.api';
 import { uploadFile } from '_api/files.api';
 
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 import { alert } from '_func/alert';
 
-const FILE_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+import { EXCEL_FILE_TYPE } from '_constants/variables';
 
 const ListAdvisersPage = memo(() => {
 	//#region Data
@@ -23,6 +23,7 @@ const ListAdvisersPage = memo(() => {
 
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [data, setData] = useState();
@@ -37,14 +38,15 @@ const ListAdvisersPage = memo(() => {
 		page: 1,
 		pages: 0,
 	});
+	console.log(filter);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
-
+	console.log(paginate);
 	const dataTable = useMemo(() => data?.data || [], [data]);
 	//endregion
 
 	//#region Event
-	const getData = useCallback(async () => {
+	const getData = async () => {
 		if (!filter?.academic_id) return;
 
 		setIsLoading(true);
@@ -52,7 +54,7 @@ const ListAdvisersPage = memo(() => {
 		try {
 			const _filter = cleanObjValue(filter);
 
-			const res = await getStudentsRole(_filter);
+			const res = await getAllAdvisers(_filter);
 
 			if (isSuccess(res)) {
 				setData(res.data);
@@ -62,7 +64,7 @@ const ListAdvisersPage = memo(() => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [filter]);
+	};
 
 	const getClassData = async (department_id) => {
 		const res = await getClassesByDepartment(department_id);
@@ -89,18 +91,18 @@ const ListAdvisersPage = memo(() => {
 			const file = e.target.files[0];
 
 			if (file) {
-				if (file.type !== FILE_TYPE) alert.fail({ text: 'Định dạng file phải là Excel.' });
+				if (file.type !== EXCEL_FILE_TYPE)
+					alert.fail({ text: 'Định dạng file phải là Excel.' });
 				else {
 					const res = await uploadFile(file);
 
 					if (isSuccess(res)) {
 						const body = {
 							academic_id: filter?.academic_id,
-							semester_id: filter?.semester_id,
 							file_id: Number(res?.data?.id),
 						};
 
-						const _res = await importUsers(body);
+						const _res = await importAdvisers(body);
 
 						if (isSuccess(_res)) {
 							await getData();
@@ -128,7 +130,7 @@ const ListAdvisersPage = memo(() => {
 
 	useEffect(() => {
 		getData();
-	}, [getData]);
+	}, [filter]);
 
 	useEffect(() => {
 		setPaginate({
@@ -176,7 +178,7 @@ const ListAdvisersPage = memo(() => {
 					hidden
 					ref={fileRef}
 					onChange={onUploadFile}
-					accept={FILE_TYPE}
+					accept={EXCEL_FILE_TYPE}
 				/>
 			</Stack>
 

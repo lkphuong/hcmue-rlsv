@@ -1,4 +1,4 @@
-import { createContext, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, memo, useEffect, useMemo, useRef, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Stack } from '@mui/material';
@@ -16,9 +16,9 @@ import { uploadFile } from '_api/files.api';
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 import { alert } from '_func/alert';
 
-export const ConfigRoleContext = createContext();
+import { EXCEL_FILE_TYPE } from '_constants/variables';
 
-const FILE_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+export const ConfigRoleContext = createContext();
 
 const ListStudentsPage = memo(() => {
 	//#region Data
@@ -51,7 +51,7 @@ const ListStudentsPage = memo(() => {
 	//endregion
 
 	//#region Event
-	const getData = useCallback(async () => {
+	const getData = async () => {
 		if (!filter?.academic_id || !filter?.semester_id) return;
 
 		setIsLoading(true);
@@ -69,7 +69,7 @@ const ListStudentsPage = memo(() => {
 		} finally {
 			setIsLoading(false);
 		}
-	}, [filter]);
+	};
 
 	const getClassData = async (department_id) => {
 		const res = await getClassesByDepartment(department_id);
@@ -103,7 +103,8 @@ const ListStudentsPage = memo(() => {
 			const file = e.target.files[0];
 
 			if (file) {
-				if (file.type !== FILE_TYPE) alert.fail({ text: 'Định dạng file phải là Excel.' });
+				if (file.type !== EXCEL_FILE_TYPE)
+					alert.fail({ text: 'Định dạng file phải là Excel.' });
 				else {
 					const res = await uploadFile(file);
 
@@ -146,7 +147,7 @@ const ListStudentsPage = memo(() => {
 
 	useEffect(() => {
 		getData();
-	}, [getData]);
+	}, [filter]);
 
 	useEffect(() => {
 		setPaginate({
@@ -196,7 +197,7 @@ const ListStudentsPage = memo(() => {
 						hidden
 						ref={fileRef}
 						onChange={onUploadFile}
-						accept={FILE_TYPE}
+						accept={EXCEL_FILE_TYPE}
 					/>
 				</Stack>
 

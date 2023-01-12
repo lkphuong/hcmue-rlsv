@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
@@ -38,14 +38,14 @@ const ListPageStatistic = () => {
 	//#endregion
 
 	//#region Event
-	const getData = useCallback(async () => {
+	const getData = async () => {
 		setClassData(null);
 
 		const res = await getRerorts(filter);
 
 		if (isSuccess(res)) setData(res.data);
 		else if (isEmpty(res)) setData([]);
-	}, [filter]);
+	};
 
 	const viewClass = (id, name) => () => {
 		setClassData({ id, name });
@@ -69,7 +69,7 @@ const ListPageStatistic = () => {
 
 	useEffect(() => {
 		getData();
-	}, [getData]);
+	}, [filter]);
 
 	//#region Render
 	return (

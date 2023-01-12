@@ -20,7 +20,6 @@ export const MTable = ({ data, isLoading }) => {
 					<TableRow>
 						<TableCell align='center'>STT</TableCell>
 						<TableCell align='left'>Họ và tên</TableCell>
-						<TableCell align='center'>Ngày sinh</TableCell>
 						<TableCell align='center'>Số điện thoại</TableCell>
 						<TableCell align='left'>Email</TableCell>
 						<TableCell align='center'>Học vị</TableCell>

@@ -3,6 +3,7 @@ export interface OtherResponse {
 }
 
 export interface AccountDepartmentResponse {
+  id: number;
   department: {
     id: number;
     name: string;

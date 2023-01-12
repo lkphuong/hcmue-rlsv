@@ -10,6 +10,7 @@ export const generateData2Array = async (
   for await (const department of departments) {
     const other = await other_service.getOtherByDepartment(department.id);
     const item: AccountDepartmentResponse = {
+      id: other.id,
       department: {
         id: department.id,
         name: department.name,
@@ -28,6 +29,7 @@ export const generateData2Object = async (
 ) => {
   const other = await other_service.getOtherByDepartment(department.id);
   const payload: AccountDepartmentResponse = {
+    id: other.id,
     department: {
       id: department.id,
       name: department.name,

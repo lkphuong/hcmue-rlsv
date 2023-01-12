@@ -39,11 +39,12 @@ import { HttpNoneResponse } from '../../../interfaces/http-none-response.interfa
 import { LoginResponse } from '../interfaces/login-response.interface';
 import { ProfileResponse } from '../interfaces/auth-response.interface';
 
+import { AdviserClassesService } from '../../adviser/services/adviser-classes/adviser_classes.service';
+import { AdviserService } from '../../adviser/services/adviser/adviser.service';
 import { AuthService } from '../services/auth.service';
-import { OtherService } from '../../other/services/other.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
-import { AdviserService } from '../../adviser/services/adviser/adviser.service';
+import { OtherService } from '../../other/services/other.service';
 import { UserService } from '../../user/services/user.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
@@ -74,6 +75,7 @@ export class AuthController {
   constructor(
     private readonly _authService: AuthService,
     private readonly _adviserService: AdviserService,
+    private readonly _adviserClassService: AdviserClassesService,
     private readonly _otherService: OtherService,
     private readonly _userService: UserService,
     private readonly _configurationService: ConfigurationService,
@@ -645,13 +647,28 @@ export class AuthController {
           const adviser_session = await this._adviserService.getAdviserByEmail(
             request_code,
           );
+
+          console.log('adviser_session: ', adviser_session);
+          //#region get class of adviser
+          const adviser_classes =
+            await this._adviserClassService.getClassByAdviserId(
+              adviser_session.id,
+            );
+
+          console.log(adviser_classes);
+          //#endregion
           if (adviser_session) {
             //#region Generate response
             return returnObjects<ProfileResponse>({
               user_id: adviser_session.id,
               username: adviser_session?.email,
               fullname: adviser_session.fullname ?? null,
-              class_id: null,
+              class_id:
+                adviser_classes && adviser_classes.length > 0
+                  ? adviser_classes.map((item) => {
+                      return item.class_id;
+                    })
+                  : [],
               department_id: adviser_session.department_id ?? null,
               role: role,
             });
@@ -700,7 +717,7 @@ export class AuthController {
               user_id: session.user_id,
               username: session.username,
               fullname: session.fullname,
-              class_id: session.class,
+              class_id: [session.class],
               department_id: session.department,
               role: role,
             });

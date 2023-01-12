@@ -58,7 +58,8 @@ export class AdviserService {
           'class',
           `adviser_class.class_id = class.id AND class.deleted = 0`,
         )
-        .where('adviser.deleted = :deleted', { deleted: false });
+        .where('adviser.deleted = :deleted', { deleted: false })
+        .andWhere('adviser.active = :active', { active: true });
 
       if (academic_id && academic_id !== 0) {
         conditions = conditions.andWhere('academic.id = :academic_id', {
@@ -74,7 +75,7 @@ export class AdviserService {
 
       if (department_id && department_id !== 0) {
         conditions = conditions.andWhere(
-          'adviser.depertment_id = :department_id',
+          'adviser.department_id = :department_id',
           { department_id },
         );
       }
@@ -109,7 +110,7 @@ export class AdviserService {
     input?: string,
   ): Promise<number> {
     try {
-      let conditions = this._adviserRepository
+      const conditions = this._adviserRepository
         .createQueryBuilder('adviser')
         .select('COUNT(distinct adviser.id)', 'count')
         .innerJoin(
@@ -133,26 +134,25 @@ export class AdviserService {
         .andWhere('adviser.active = :active', { active: true });
 
       if (academic_id && academic_id !== 0) {
-        conditions = conditions.andWhere('academic.id = :academic_id', {
+        conditions.andWhere('academic.id = :academic_id', {
           academic_id,
         });
       }
 
       if (class_id && class_id !== 0) {
-        conditions = conditions.andWhere('adviser_class.class_id = :class_id', {
+        conditions.andWhere('adviser_class.class_id = :class_id', {
           class_id,
         });
       }
 
       if (department_id && department_id !== 0) {
-        conditions = conditions.andWhere(
-          'adviser.depertment_id = :department_id',
-          { department_id },
-        );
+        conditions.andWhere('adviser.department_id = :department_id', {
+          department_id,
+        });
       }
 
       if (input) {
-        conditions = conditions.andWhere(`adviser.fullname LIKE '%${input}%'`);
+        conditions.andWhere(`adviser.fullname LIKE '%${input}%'`);
       }
 
       const { count } = await conditions.getRawOne();
@@ -175,7 +175,7 @@ export class AdviserService {
         .createQueryBuilder('adviser')
         .where('adviser.email = :email', { email })
         .andWhere('adviser.deleted = :deleted', { deleted: false })
-        .andWhere('adviser.active = :active', { active: false });
+        .andWhere('adviser.active = :active', { active: true });
 
       const adviser = await conditions.getOne();
 

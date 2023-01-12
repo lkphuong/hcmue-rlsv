@@ -2,7 +2,7 @@ export interface ProfileResponse {
   user_id: number;
   username?: string;
   fullname?: string;
-  class_id?: number;
+  class_id?: number[];
   department_id?: number;
   role?: number;
 }

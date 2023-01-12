@@ -97,7 +97,7 @@ export const generateImportAdviser = async (
     //#endregion
     if (role_adviser) {
       //#region Update old data
-      const del = await Promise.all([
+      await Promise.all([
         adviser_service.bulkUnlink(query_runner.manager),
         adviser_classes_service.bulkUnlink(query_runner.manager),
         role_user_service.bulkUpdateByRole(
@@ -105,8 +105,6 @@ export const generateImportAdviser = async (
           query_runner.manager,
         ),
       ]);
-
-      console.log(del);
       //#endregion
 
       //#region Create Adviser
@@ -243,9 +241,9 @@ export const generateCreateAdviser = async (
     item.password = md5(i.phone_number);
     item.fullname = i.last_name + ' ' + i.first_name;
     item.phone_number = i.phone_number;
-    item.department_id = departments.find(
-      (department) => (department.name = i.department),
-    ).id;
+    item.department_id =
+      departments.find((department) => department.name == i.department.trim())
+        ?.id ?? null;
     item.active = true;
 
     advisers.push(item);

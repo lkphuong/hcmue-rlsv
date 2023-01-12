@@ -1,4 +1,4 @@
-import { TableCell, TableRow } from '@mui/material';
+import { TableCell, TableRow, Typography } from '@mui/material';
 
 export const MRow = ({ data, index }) => {
 	//#region Data
@@ -16,7 +16,14 @@ export const MRow = ({ data, index }) => {
 			<TableCell align='left'>{data?.email}</TableCell>
 			<TableCell align='center'>{data?.degree}</TableCell>
 			<TableCell align='left'>{data?.department}</TableCell>
-			<TableCell align='center'>{data?.class}</TableCell>
+			<TableCell align='center'>
+				{data?.classes?.length &&
+					data.classes.map((e, i) => (
+						<Typography key={i} lineHeight={2}>
+							{e}
+						</Typography>
+					))}
+			</TableCell>
 		</TableRow>
 	);
 	//#endregion

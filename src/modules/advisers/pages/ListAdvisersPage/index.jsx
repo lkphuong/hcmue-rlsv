@@ -38,10 +38,9 @@ const ListAdvisersPage = memo(() => {
 		page: 1,
 		pages: 0,
 	});
-	console.log(filter);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
-	console.log(paginate);
+
 	const dataTable = useMemo(() => data?.data || [], [data]);
 	//endregion
 

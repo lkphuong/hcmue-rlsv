@@ -4,6 +4,8 @@ import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { FormEntity } from '../../../entities/form.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
+import { SemesterEntity } from '../../../entities/semester.entity';
 
 import { FilesService } from '../../file/services/files.service';
 import { SheetService } from '../services/sheet.service';
@@ -14,6 +16,7 @@ import {
   BaseResponse,
   ClassResponse,
   ClassSheetsResponse,
+  ClassStatusResponse,
   DepartmentResponse,
   EvaluationsResponse,
   ManagerDepartmentResponse,
@@ -31,8 +34,6 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
-import { AcademicYearEntity } from '../../../entities/academic_year.entity';
-import { SemesterEntity } from '../../../entities/semester.entity';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -579,6 +580,47 @@ export const generateEvaluationsArray = async (
   }
 
   return null;
+};
+
+export const generateClassStatusAdviser = async (
+  department_id: number,
+  $class: ClassEntity[],
+  form: FormEntity,
+  sheet_service: SheetService,
+) => {
+  const payload: ClassStatusResponse = {
+    academic: {
+      id: form.academic_year.id ?? null,
+      name: form.academic_year.start + ' - ' + form.academic_year.end,
+    },
+    semester: {
+      id: form.semester.id,
+      name: form.semester.name,
+      start: form.semester.start,
+      end: form.semester.end,
+    },
+    class: [],
+  };
+
+  for (const i of $class) {
+    const count = await sheet_service.countSheetByStatus(
+      form.academic_year.id,
+      form.semester.id,
+      SheetStatus.WAITING_ADVISER,
+      department_id,
+      i.id,
+      form.id,
+    );
+    const item: ClassResponse = {
+      id: i.id,
+      code: i.code,
+      status: count > 0 ? false : true,
+    };
+
+    payload.class.push(item);
+  }
+
+  return payload;
 };
 
 export const generateClassStatusAdviserHistory = async (

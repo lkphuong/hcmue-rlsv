@@ -66,6 +66,7 @@ import { GetDepartmentStatusHistoryDto } from '../dtos/get_department_status_his
 import { GetDetailTitleDto } from '../dtos/get_detail_item.dto';
 import { GetSheetsByAdminDto } from '../dtos/get_sheets_admin.dto';
 import { GetSheetsByClassDto } from '../dtos/get_sheets_by_class.dto';
+import { GetSheetStudentHistoryDto } from '../dtos/get_sheets_history.dto';
 import { UpdateAdviserMarkDto } from '../dtos/update_adviser_mark.dto';
 import { UpdateClassMarkDto } from '../dtos/update_class_mark.dto';
 import { UpdateDepartmentMarkDto } from '../dtos/update_department_mark.dto';
@@ -626,6 +627,112 @@ export class SheetController {
 
   /**
    * @method POST
+   * @url /api/sheets/student/:std_code/history
+   * @access private
+   * @param std_code
+   * @description Hiển thị danh sách phiếu đánh giá cá nhân
+   * @return  HttpResponse<UserSheetsResponse> | HttpException
+   * @page sheets page
+   */
+  @Post('student/history')
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getSheetsHistoryByUser(
+    @Body() params: GetSheetStudentHistoryDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<UserSheetsResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params }),
+      );
+
+      //#region Get Jwt Payload
+      const { role, username: request_code } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Get params
+      const { page, std_code } = params;
+      let { pages } = params;
+      const itemsPerPage = parseInt(
+        this._configurationService.get(Configuration.ITEMS_PER_PAGE),
+      );
+      //#endregion
+
+      //#region Validation
+      //#region Validate std_code
+      let valid = validateUserId(std_code, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#region Validate role
+      valid = await validateStudentRole(
+        role,
+        request_code,
+        std_code,
+        this._userService,
+        req,
+      );
+
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      if (pages === 0) {
+        const count = await this._sheetService.countSheetsHistoryByCode(
+          std_code,
+        );
+
+        if (count > 0) pages = Math.ceil(count / itemsPerPage);
+      }
+
+      //#region Get sheets by user
+      const sheets = await this._sheetService.getSheetsHistoryPagingByCode(
+        (page - 1) * itemsPerPage,
+        itemsPerPage,
+        std_code,
+      );
+      //#endregion
+
+      console.log('sheets: ', sheets);
+
+      if (sheets && sheets.length > 0) {
+        //#region Generate response
+        return generateUserSheetsResponse(sheets, req);
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
    * @url /api/sheets/adviser/
    * @access private
    * @param class_id
@@ -658,7 +765,7 @@ export class SheetController {
         JSON.stringify({ params: params }),
       );
       //#region Get params
-      const { class_id, department_id } = params;
+      const { class_ids, department_id } = params;
       //#endregion
 
       //#region Get form in progress
@@ -666,21 +773,19 @@ export class SheetController {
       //#endregion
 
       //#region Get Class
-      const $class = await this._classService.getClassById(class_id);
+      const $class = await this._classService.getClassByIds(class_ids);
       //#endregion
 
       if (form && $class) {
         //#region Count sheet status < status waitting class
-        const count = await this._sheetService.countSheetByStatus(
-          form.academic_year.id,
-          form.semester.id,
-          SheetStatus.WAITING_ADVISER,
+        return await generateClassStatusAdviserResponse(
           department_id,
-          class_id,
+          form,
+          $class,
+          this._sheetService,
+          req,
         );
         //#endregion
-
-        return generateClassStatusAdviserResponse(form, $class, count, req);
       } else {
         //#region throw HandlerException
         throw new HandlerException(
@@ -770,9 +875,6 @@ export class SheetController {
       );
 
       const $class = await this._classService.getClassById(class_id);
-
-      console.log(forms);
-      console.log($class);
 
       if (forms && forms.length > 0 && $class) {
         return await generateClassStatusAdviserHistoryResponse(

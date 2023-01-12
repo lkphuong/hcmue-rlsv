@@ -149,6 +149,27 @@ export class ClassService {
     }
   }
 
+  async getClassByIds(ids: number[]): Promise<ClassEntity[] | null> {
+    try {
+      const conditions = this._classRepository
+        .createQueryBuilder('class')
+        .where(`class.id IN (${ids.toString()})`)
+        .andWhere('class.deleted = :deleted', { deleted: false });
+
+      const $class = await conditions.getMany();
+
+      return $class || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ClassService.getClassById()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async count(department_id?: number, class_id?: number): Promise<number> {
     try {
       let conditions = this._classRepository

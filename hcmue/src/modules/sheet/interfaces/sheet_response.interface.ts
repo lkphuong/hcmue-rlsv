@@ -139,5 +139,5 @@ export interface ManagerDepartmentResponse {
 export interface ClassStatusResponse {
   academic?: AcademicYearResponse;
   semester?: SemesterResponse;
-  class: ClassResponse;
+  class: ClassResponse[];
 }

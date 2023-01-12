@@ -11,6 +11,7 @@ import { OptionEntity } from '../../../entities/option.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 import { TitleEntity } from '../../../entities/title.entity';
 import { UserEntity } from '../../../entities/user.entity';
+import { FormEntity } from '../../../entities/form.entity';
 
 import { LogService } from '../../log/services/log.service';
 
@@ -18,6 +19,7 @@ import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { FormStatus } from '../../form/constants/enums/statuses.enum';
 
 @Injectable()
 export class SheetService {
@@ -142,12 +144,21 @@ export class SheetService {
     }
   }
 
-  async getSheetsByCode(std_code: string): Promise<SheetEntity[] | null> {
+  async getSheetsHistoryPagingByCode(
+    offset: number,
+    length: number,
+    std_code: string,
+  ): Promise<SheetEntity[] | null> {
     try {
       const conditions = await this._sheetRepository
         .createQueryBuilder('sheet')
         .innerJoinAndSelect('sheet.semester', 'semester')
         .innerJoinAndSelect('sheet.academic_year', 'academic_year')
+        .innerJoin(
+          FormEntity,
+          'form',
+          `form.id = sheet.form_id AND form.deleted = 0`,
+        )
         .leftJoinAndSelect('sheet.level', 'level')
         .where(
           new Brackets((qb) => {
@@ -156,6 +167,49 @@ export class SheetService {
           }),
         )
         .andWhere('sheet.std_code = :std_code', { std_code })
+        .andWhere('form.status = :status', { status: FormStatus.DONE })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      const sheets = await conditions
+        .orderBy('sheet.created_at', 'DESC')
+        .skip(offset)
+        .take(length)
+        .getMany();
+
+      return sheets || null;
+    } catch (err) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.getSheetsHistoryPagingByCode()',
+        err,
+      );
+      return null;
+    }
+  }
+
+  async getSheetsByCode(std_code: string): Promise<SheetEntity[] | null> {
+    try {
+      const conditions = await this._sheetRepository
+        .createQueryBuilder('sheet')
+        .innerJoinAndSelect('sheet.semester', 'semester')
+        .innerJoinAndSelect('sheet.academic_year', 'academic_year')
+        .innerJoin(
+          FormEntity,
+          'form',
+          `form.id = sheet.form_id AND form.deleted = 0`,
+        )
+        .leftJoinAndSelect('sheet.level', 'level')
+        .where(
+          new Brackets((qb) => {
+            qb.where('level.deleted = :deleted', { deleted: null });
+            qb.orWhere('level.deleted IS NULL');
+          }),
+        )
+        .andWhere('sheet.std_code = :std_code', { std_code })
+        .andWhere('form.status = :status', { status: FormStatus.IN_PROGRESS })
         .andWhere('academic_year.deleted = :deleted', { deleted: false })
         .andWhere('semester.deleted = :deleted', { deleted: false })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
@@ -425,6 +479,38 @@ export class SheetService {
         Methods.SELECT,
         'SheetService.countSheetByStatus()',
         e,
+      );
+      return null;
+    }
+  }
+
+  async countSheetsHistoryByCode(std_code: string): Promise<number | null> {
+    try {
+      const conditions = await this._sheetRepository
+        .createQueryBuilder('sheet')
+        .select('COUNT(DISTINCT sheet.id)', 'count')
+        .innerJoin('sheet.semester', 'semester')
+        .innerJoin('sheet.academic_year', 'academic_year')
+        .innerJoin(
+          FormEntity,
+          'form',
+          `form.id = sheet.form_id AND form.deleted = 0`,
+        )
+        .where('sheet.std_code = :std_code', { std_code })
+        .andWhere('form.status = :status', { status: FormStatus.DONE })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (err) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.countSheetsHistoryByCode()',
+        err,
       );
       return null;
     }

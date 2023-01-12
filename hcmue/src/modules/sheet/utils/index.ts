@@ -32,6 +32,7 @@ import {
   generateAdminSheets,
   generateClasses2Array,
   generateClassSheets,
+  generateClassStatusAdviser,
   generateClassStatusAdviserHistory,
   generateClassStatusDepartment,
   generateData2Object,
@@ -191,34 +192,23 @@ export const generateEvaluationsResponse = async (
   };
 };
 
-export const generateClassStatusAdviserResponse = (
+export const generateClassStatusAdviserResponse = async (
+  department_id: number,
   form: FormEntity,
-  $class: ClassEntity,
-  count: number,
+  $class: ClassEntity[],
+  sheet_service: SheetService,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', $class);
-  console.log('count: ', count);
 
-  const payload: ClassStatusResponse = {
-    academic: {
-      id: form.academic_year.id,
-      name: form.academic_year.start + ' - ' + form.academic_year.end,
-    },
-    semester: {
-      id: form.semester.id,
-      name: form.semester.name,
-      start: form.semester.start,
-      end: form.semester.end,
-    },
-    class: {
-      id: $class.id,
-      code: $class.code,
-      status: count > 0 ? false : true,
-    },
-  };
+  const payload = await generateClassStatusAdviser(
+    department_id,
+    $class,
+    form,
+    sheet_service,
+  );
 
   return {
     data: payload,

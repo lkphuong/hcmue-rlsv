@@ -1,4 +1,4 @@
-import { lazy } from 'react';
+// import { lazy } from 'react';
 
 import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
 import { ROUTES } from '_constants/routes';

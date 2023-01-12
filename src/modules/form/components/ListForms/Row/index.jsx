@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 
 import { Chip, IconButton, Stack, TableCell, TableRow, Tooltip } from '@mui/material';
-import { BorderColor, DeleteForever, FileCopy } from '@mui/icons-material';
 
 import { FORM_STATUS } from '_constants/variables';
 import { ROUTES } from '_constants/routes';
@@ -15,6 +14,8 @@ import { alert } from '_func/alert';
 import { isSuccess } from '_func/';
 
 import { cloneForm, deleteForm } from '_api/form.api';
+
+import { CDeleteIcon, CDuplicateIcon, CEditIcon } from '_others/';
 
 //#region Array Status Chip
 const generalStyle = {
@@ -130,11 +131,11 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 				<Stack direction='row' alignItems='center' justifyContent='space-between'>
 					<Tooltip title='Tạo biểu mẫu mới dựa theo biểu mẫu này'>
 						<IconButton onClick={onClone}>
-							<FileCopy />
+							<CDuplicateIcon />
 						</IconButton>
 					</Tooltip>
 					<IconButton onClick={onEdit} disabled={data.status === 2 || data.status === 3}>
-						<BorderColor />
+						<CEditIcon />
 					</IconButton>
 					<Tooltip
 						title={
@@ -143,7 +144,7 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 					>
 						<span>
 							<IconButton onClick={onDelete} disabled={data.status !== 0}>
-								<DeleteForever />
+								<CDeleteIcon />
 							</IconButton>
 						</span>
 					</Tooltip>

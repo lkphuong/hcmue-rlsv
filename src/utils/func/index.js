@@ -1,3 +1,6 @@
+import { FILE_NAME_REGEX } from '_constants/variables';
+import { alert } from './alert';
+
 export function isSuccess(response) {
 	return response?.status?.toString()[0] === '2';
 }
@@ -140,4 +143,25 @@ export const cleanObjValue = (obj) => {
 	});
 
 	return newObj;
+};
+
+// 10Mb = 10485760 byte
+export const checkValidFile = (file) => {
+	const { name, size } = file;
+
+	if (size > 10485760) {
+		alert.fail({ text: 'Dung lượng file tối đa là 10Mb.' });
+
+		return false;
+	}
+
+	const pureName = name.slice(0, name.lastIndexOf('.'));
+
+	if (!pureName.match(FILE_NAME_REGEX)) {
+		alert.fail({ text: 'Tên file chứa ký tự không hợp lệ.' });
+
+		return false;
+	}
+
+	return true;
 };

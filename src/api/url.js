@@ -108,3 +108,7 @@ export const ADVISER = {
 
 	IMPORT_ADVISERS: '/advisers/import',
 };
+
+export const STATUSES = {
+	GET_STUDENT_STATUSES: '/statuses',
+};

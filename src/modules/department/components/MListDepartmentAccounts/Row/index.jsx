@@ -1,7 +1,8 @@
 import { useRef } from 'react';
 
 import { IconButton, Stack, TableCell, TableRow, Tooltip } from '@mui/material';
-import { BorderColor, DeleteForever } from '@mui/icons-material';
+
+import { CDeleteIcon, CEditIcon } from '_others/';
 
 import { deleteDepartmentAccount } from '_api/others.api';
 
@@ -47,13 +48,13 @@ export const Row = ({ data, index, refetch }) => {
 				<TableCell align='center' width={100}>
 					<Stack direction='row' alignItems='center' justifyContent='space-between'>
 						<Tooltip title='Sửa'>
-							<IconButton onClick={onEdit}>
-								<BorderColor />
+							<IconButton onClick={onEdit} sx={{ color: 'white!important' }}>
+								<CEditIcon />
 							</IconButton>
 						</Tooltip>
 						<Tooltip title='Xóa'>
 							<IconButton onClick={onDelete}>
-								<DeleteForever />
+								<CDeleteIcon />
 							</IconButton>
 						</Tooltip>
 					</Stack>

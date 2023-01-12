@@ -1,5 +1,7 @@
 export const TYPE_NUMBER = /^[0-9-]+$/;
 
+export const FILE_NAME_REGEX = /^[A-Za-z0-9-_\s]+$/;
+
 export const EXCEL_FILE_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 
 export const SORT_ORDER = [

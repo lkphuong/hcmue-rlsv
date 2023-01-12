@@ -13,7 +13,7 @@ import { getStudentsRole, importUsers } from '_api/user.api';
 import { getSemestersByYear } from '_api/options.api';
 import { uploadFile } from '_api/files.api';
 
-import { isSuccess, isEmpty, cleanObjValue } from '_func/';
+import { isSuccess, isEmpty, cleanObjValue, checkValidFile } from '_func/';
 import { alert } from '_func/alert';
 
 import { EXCEL_FILE_TYPE } from '_constants/variables';
@@ -103,27 +103,37 @@ const ListStudentsPage = memo(() => {
 			const file = e.target.files[0];
 
 			if (file) {
-				if (file.type !== EXCEL_FILE_TYPE)
-					alert.fail({ text: 'Định dạng file phải là Excel.' });
-				else {
-					const res = await uploadFile(file);
+				const isValid = checkValidFile(file);
 
-					if (isSuccess(res)) {
-						const body = {
-							academic_id: filter?.academic_id,
-							semester_id: filter?.semester_id,
-							file_id: Number(res?.data?.id),
-						};
+				if (isValid) {
+					if (file.type !== EXCEL_FILE_TYPE)
+						alert.fail({ text: 'Định dạng file phải là Excel.' });
+					else {
+						const res = await uploadFile(file);
 
-						const _res = await importUsers(body);
+						if (isSuccess(res)) {
+							const body = {
+								academic_id: filter?.academic_id,
+								semester_id: filter?.semester_id,
+								file_id: Number(res?.data?.id),
+							};
 
-						if (isSuccess(_res)) {
-							await getData();
+							const _res = await importUsers(body);
 
-							alert.success({ text: 'Nhập dữ liệu thành công.' });
-						} else {
-							alert.fail({ text: 'Import file không thành công. Thử lại sau.' });
-						}
+							if (isSuccess(_res)) {
+								await getData();
+
+								alert.success({ text: 'Nhập dữ liệu thành công.' });
+							} else
+								alert.fail({
+									text:
+										_res?.message ||
+										'Import file không thành công. Thử lại sau.',
+								});
+						} else
+							alert.fail({
+								text: res?.message || 'Import file không thành công. Thử lại sau.',
+							});
 					}
 				}
 			}
@@ -148,6 +158,11 @@ const ListStudentsPage = memo(() => {
 	useEffect(() => {
 		getData();
 	}, [filter]);
+
+	useEffect(() => {
+		if (semesters?.length)
+			setFilter((prev) => ({ ...prev, semester_id: Number(semesters[0]?.id) }));
+	}, [semesters]);
 
 	useEffect(() => {
 		setPaginate({

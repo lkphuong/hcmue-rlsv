@@ -329,12 +329,15 @@ export default function componentStyleOverrides(theme) {
 					'& .MuiIconButton-root': {
 						borderRadius: '8px',
 						fontSize: '1.25rem',
-						color: 'rgb(85, 105, 255)',
+						color: 'transparent',
 						'&:hover': {
 							backgroundColor: 'rgb(208 206 244)',
 						},
 						'&.Mui-disabled': {
-							color: 'rgba(0, 0, 0, 0.26)',
+							color: 'transparent',
+							'& path': {
+								stroke: 'rgb(0 0 0 / 20%)',
+							},
 						},
 					},
 					'&.border-left': {

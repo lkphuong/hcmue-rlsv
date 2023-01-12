@@ -366,7 +366,7 @@ export const NAVIGATIONS = {
 				},
 				{
 					id: 'general-departments',
-					title: 'Danh sách tải khoản khoa',
+					title: 'Danh sách tài khoản khoa',
 					type: 'item',
 					path: '/admin/departments',
 					entity: ENTITY_KEY.ADMIN.key,

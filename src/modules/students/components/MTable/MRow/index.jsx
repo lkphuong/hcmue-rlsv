@@ -1,9 +1,10 @@
 import { useMemo, useRef } from 'react';
 
 import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
-import { Settings } from '@mui/icons-material';
 
 import { ROLES } from '_constants/variables';
+
+import { CSettingIcon } from '_others/';
 
 import { MMenuRole } from '../../MMenuRole';
 
@@ -39,7 +40,7 @@ export const MRow = ({ data, index }) => {
 						<Typography>{role}</Typography>
 						<Tooltip title='Phân quyền'>
 							<IconButton onClick={onClick}>
-								<Settings />
+								<CSettingIcon />
 							</IconButton>
 						</Tooltip>
 					</Stack>

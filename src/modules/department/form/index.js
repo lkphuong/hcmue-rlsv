@@ -15,13 +15,16 @@ export const validationSchema = yup.object().shape({
 		.string('Vui lòng nhập username.')
 		.email('Tên đăng nhập phải định dạng email.')
 		.required('Vui lòng nhập username.'),
-	// old_password: yup.string('Vui lòng nhập mật khẩu cũ.').when('isEdit', {
-	// 	is: (value) => value === true,
-	// 	then: yup.string('Vui lòng nhập mật khẩu cũ.').required('Vui lòng nhập mật khẩu cũ.'),
-	// }),
 	password: yup.string('Vui lòng nhập mật khẩu.').required('Vui lòng nhập mật khẩu.'),
 	confirm_password: yup
 		.string('Vui lòng nhập lại mật khẩu trên.')
 		.oneOf([yup.ref('password'), null], 'Mật khẩu không khớp')
 		.required('Vui lòng nhập lại mật khẩu trên.'),
+});
+
+export const validationSchemaEdit = yup.object().shape({
+	username: yup
+		.string('Vui lòng nhập username.')
+		.email('Tên đăng nhập phải định dạng email.')
+		.required('Vui lòng nhập username.'),
 });

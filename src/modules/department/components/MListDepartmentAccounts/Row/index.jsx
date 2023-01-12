@@ -3,7 +3,7 @@ import { useRef } from 'react';
 import { IconButton, Stack, TableCell, TableRow, Tooltip } from '@mui/material';
 import { BorderColor, DeleteForever } from '@mui/icons-material';
 
-import { deleteDepartmentAccount } from '_api/other.api';
+import { deleteDepartmentAccount } from '_api/others.api';
 
 import { ERRORS } from '_constants/messages';
 
@@ -44,7 +44,6 @@ export const Row = ({ data, index, refetch }) => {
 				<TableCell align='center'>{index + 1}</TableCell>
 				<TableCell align='left'>{data?.department?.name}</TableCell>
 				<TableCell align='center'>{data.username}</TableCell>
-				<TableCell align='center'>{data?.password}</TableCell>
 				<TableCell align='center' width={100}>
 					<Stack direction='row' alignItems='center' justifyContent='space-between'>
 						<Tooltip title='Sửa'>

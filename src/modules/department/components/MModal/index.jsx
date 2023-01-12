@@ -1,6 +1,5 @@
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
-
 import { Controller, useForm } from 'react-hook-form';
 
 import { Box, Button, Grow, Modal, Paper, Stack, Typography } from '@mui/material';
@@ -9,8 +8,10 @@ import { useResolver } from '_hooks/';
 
 import { CAutocomplete, CInput } from '_controls/';
 
-import { initialValues, validationSchema } from '_modules/department/form';
-import { createDepartmentAccount, updateDepartmentAccount } from '_api/other.api';
+import { initialValues, validationSchema, validationSchemaEdit } from '_modules/department/form';
+
+import { createDepartmentAccount, updateDepartmentAccount } from '_api/others.api';
+
 import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
@@ -20,7 +21,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 
 	const [open, setOpen] = useState(false);
 
-	const resolver = useResolver(validationSchema);
+	const resolver = useResolver(editData ? validationSchemaEdit : validationSchema);
 
 	const { control, handleSubmit, reset } = useForm({
 		defaultValues: editData
@@ -28,7 +29,6 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 					...editData,
 					isEdit: true,
 					department_id: editData.department.id,
-					confirm_password: editData.password,
 			  }
 			: { ...initialValues, department_id: departments[0].id },
 		mode: 'all',
@@ -45,7 +45,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 
 	const onSubmit = async (values) => {
 		const res = editData
-			? await updateDepartmentAccount(editData.id, values)
+			? await updateDepartmentAccount(editData?.id, values)
 			: await createDepartmentAccount(values);
 
 		if (isSuccess(res)) {
@@ -182,7 +182,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 
 							<Box textAlign='center'>
 								<Button variant='contained' type='submit'>
-									Thêm
+									{editData ? 'Cập nhật' : 'Thêm'}
 								</Button>
 							</Box>
 						</form>

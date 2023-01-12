@@ -96,8 +96,8 @@ export const FILES = {
 	UPLOAD: '/files/upload',
 };
 
-export const OTHER = {
-	GET_DEPARTMENT_ACCOUNTS: '/other/all',
+export const OTHERS = {
+	GET_DEPARTMENT_ACCOUNTS: '/others/all',
 	CREATE_DEPARTMENT_ACCOUNT: '/others',
 	UPDATE_DEPARTMENT_ACCOUNT: '/others', // :id
 	DELETE_DEPARTMENT_ACCOUNT: '/others', // :id

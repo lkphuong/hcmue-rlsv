@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button } from '@mui/material';
 import { AddCircleOutline } from '@mui/icons-material';
 
 import { CPagination } from '_controls/';
 
-import { isSuccess } from '_func/';
+import { isSuccess, cleanObjValue } from '_func/';
 
-import { MFilter, MListDepartmentAccounts, MModal, MSearch } from '_modules/department/components';
+import { MFilter, MListDepartmentAccounts, MModal } from '_modules/department/components';
 
-import { getDepartmentAccounts } from '_api/other.api';
+import { getDepartmentAccounts } from '_api/others.api';
 
 const ListDepartmentAccountPage = () => {
 	//#region Data
@@ -18,7 +18,6 @@ const ListDepartmentAccountPage = () => {
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
-		input: '',
 		department_id: 0,
 	});
 
@@ -31,8 +30,9 @@ const ListDepartmentAccountPage = () => {
 
 	//#region Event
 	const getData = async () => {
-		//call api
-		const res = await getDepartmentAccounts(filter);
+		const _filter = cleanObjValue(filter);
+
+		const res = await getDepartmentAccounts(_filter);
 
 		if (isSuccess(res)) {
 			setData(res?.data);
@@ -58,15 +58,7 @@ const ListDepartmentAccountPage = () => {
 		<Box>
 			<MFilter filter={filter} onFilterChange={setFilter} />
 
-			<Stack
-				direction={{ xs: 'column', md: 'row' }}
-				spacing={1.5}
-				justifyContent='space-between'
-				alignItems='center'
-				mb={2}
-			>
-				<MSearch onFilterChange={setFilter} placeholder='Tìm kiếm theo tên khoa' />
-
+			<Box textAlign='right' mb={1.5}>
 				<Button
 					variant='contained'
 					endIcon={<AddCircleOutline />}
@@ -74,7 +66,7 @@ const ListDepartmentAccountPage = () => {
 				>
 					Thêm mới
 				</Button>
-			</Stack>
+			</Box>
 
 			<MListDepartmentAccounts data={listData} refetch={getData} />
 

@@ -133,10 +133,11 @@ export const cleanObjValue = (obj) => {
 
 	let newObj = { ...obj };
 
-	Object.keys(newObj).forEach(
-		(k) =>
-			(newObj[k] === null || newObj[k] === undefined || newObj[k] === '') && delete newObj[k]
-	);
+	Object.keys(newObj).forEach((k) => {
+		if (newObj[k]?.toString() === 'NaN') delete newObj[k];
+		else
+			(newObj[k] === null || newObj[k] === undefined || newObj[k] === '') && delete newObj[k];
+	});
 
 	return newObj;
 };

@@ -18,7 +18,7 @@ import { post } from './request';
 const apiInstance = axios.create({
 	baseURL: process.env.REACT_APP_API_URL,
 	// baseURL: 'http://103.154.176.80:3020/api',
-	timeout: process.env.REACT_APP_API_TIMEOUT,
+	// timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 
 let isRefetching = false;

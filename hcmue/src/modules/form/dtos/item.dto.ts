@@ -38,12 +38,16 @@ export class OptionDto {
     message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng nhập [điểm].'),
   })
-  @NotEqualsValidator(0, {
+  // @NotEqualsValidator(0, {
+  //   message: (arg) =>
+  //     generateValidationMessage(
+  //       arg,
+  //       'Giá trị [điểm] không hợp lệ (phải khác 0).',
+  //     ),
+  // })
+  @IsNumberValidator({
     message: (arg) =>
-      generateValidationMessage(
-        arg,
-        'Giá trị [điểm] không hợp lệ (phải khác 0).',
-      ),
+      generateValidationMessage(arg, 'Giá trị [điểm] không hợp lệ.'),
   })
   mark: number;
 }

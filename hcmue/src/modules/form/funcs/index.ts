@@ -23,6 +23,7 @@ import {
   validateMaxMarkHeaderByForm,
   validateRequiredOption,
   validateSemester,
+  validateSemesterNotBelongAcademic,
   validateTime,
 } from '../validations';
 
@@ -76,7 +77,7 @@ export const createForm = async (
 
   //#region Validation
   //#region Validate times
-  const valid = validateTime(start, end, req);
+  let valid = validateTime(start, end, req);
   if (valid instanceof HttpException) return valid;
   //#endregion
   //#endregion
@@ -95,6 +96,12 @@ export const createForm = async (
   const semester = await validateSemester(semester_id, semester_service, req);
   if (semester instanceof HttpException) return semester;
   //#endregion
+
+  //#region Validate not belong academic year
+  valid = validateSemesterNotBelongAcademic(semester, academic, req);
+  if (valid instanceof HttpException) throw valid;
+  //#endregion
+
   //#endregion
 
   try {
@@ -407,6 +414,12 @@ export const updateForm = async (
   const semester = await validateSemester(semester_id, semester_service, req);
   if (semester instanceof HttpException) return semester;
   //#endregion
+
+  //#region validate semester not belong academic year
+  valid = validateSemesterNotBelongAcademic(semester, academic, req);
+  if (valid instanceof HttpException) throw valid;
+  //#endregion
+
   //#endregion
 
   try {

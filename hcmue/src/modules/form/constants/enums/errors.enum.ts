@@ -46,6 +46,8 @@ export enum ErrorMessage {
   FROM_OR_TO_MARK_EMPTY_ERROR = 'Bạn vui lòng nhập giá trị [điểm tối thiểu] và [điểm tối đa] cho nội dung chấm điểm.',
   FROM_IN_PROGRESS_OR_DONE_ERROR = 'Bạn không thể thêm/chỉnh sửa khi [biểu mẫu] đã/đang phát hành (id: %s).',
 
+  SEMESTER_NOT_BELONG_ACADEMIC_ERROR = 'Học kì không thuộc năm học (id: %s).',
+
   OPERATOR_FORM_ERROR = 'Lưu thông tin biểu mẫu thất bại.',
   OPERATOR_HEADERS_ERROR = 'Lưu nội dung tiêu đề thất bại.',
   OPERATOR_TITLE_ERROR = 'Lưu nội dung hạng mục đánh giá thất bại.',

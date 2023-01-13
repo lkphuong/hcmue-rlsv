@@ -6,6 +6,8 @@ import { sprintf } from '../../../utils';
 
 import { FormEntity } from '../../../entities/form.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
+import { SemesterEntity } from '../../../entities/semester.entity';
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 
 import { ItemDto, OptionDto } from '../dtos/item.dto';
 
@@ -155,6 +157,24 @@ export const validateForm = async (
     );
   }
   return form;
+};
+
+export const validateSemesterNotBelongAcademic = (
+  semester: SemesterEntity,
+  academic_year: AcademicYearEntity,
+  req: Request,
+) => {
+  if (semester.academic_id !== academic_year.id) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.NO_MATCHING,
+      req.method,
+      req.url,
+      sprintf(ErrorMessage.SEMESTER_NOT_BELONG_ACADEMIC_ERROR, semester.id),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
 };
 
 export const validateEditFormInProgressOrDone = (

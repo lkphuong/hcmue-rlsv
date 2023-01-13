@@ -90,3 +90,17 @@ export const validateFileSize = async (
 
   return null;
 };
+
+export const validateFile = async (file: any, req: Request) => {
+  if (!file) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.FILE_EMPTY_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};

@@ -8,4 +8,6 @@ export enum ErrorMessage {
   STUDENT_ROLE_INVALID_ERROR = 'Bạn không thể xóa [file minh chứng] của sinh viên khác (name: %s).',
 
   FILE_SIZE_TOO_LARGE_ERROR = 'File [%s] kích thước không hợp lệ (<= %s)',
+
+  FILE_EMPTY_ERROR = 'File không được để trống.',
 }

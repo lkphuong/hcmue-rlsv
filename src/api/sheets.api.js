@@ -50,6 +50,10 @@ export const getAdminSheets = (body) => {
 	return post(SHEETS.ADMIN_GET_SHEETS, body);
 };
 
+export const getAdminClassSheetsByDepartment = (body) => {
+	return post(SHEETS.ADMIN_GET_CLASS_SHEETS, body);
+};
+
 export const getAdminHistorySheets = (body) => {
 	return post(SHEETS.ADMIN_GET_HISTORY, body);
 };

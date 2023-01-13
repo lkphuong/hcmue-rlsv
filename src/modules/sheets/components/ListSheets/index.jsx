@@ -28,10 +28,15 @@ export const ListSheets = ({ data }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.length > 0 &&
-						data.map((row, index) => (
-							<Row key={row?.id} data={row} index={index + 1} />
-						))}
+					{data?.length > 0 ? (
+						data.map((row, index) => <Row key={row?.id} data={row} index={index + 1} />)
+					) : (
+						<TableRow>
+							<TableCell height={300} colSpan='100%' align='center'>
+								Không có dữ liệu hiển thị
+							</TableCell>
+						</TableRow>
+					)}
 				</TableBody>
 			</Table>
 		</TableContainer>

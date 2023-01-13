@@ -73,7 +73,11 @@ const SheetsManagementPage = () => {
 						}`}
 					</Typography>
 
-					<ListDepartments data={listData} />
+					<ListDepartments
+						data={listData}
+						academic={data?.data?.academic}
+						semester={data?.data?.semester}
+					/>
 
 					<CPagination
 						page={paginate.page}

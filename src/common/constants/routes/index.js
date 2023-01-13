@@ -60,7 +60,7 @@ export const ROUTES = {
 		FORMS_UPDATE: '/admin/forms/:form_id',
 
 		SHEETS: '/admin/sheets',
-		SHEETS_DEPARTMENT: '/admin/sheets/:department_id',
+		SHEETS_DEPARTMENT: '/admin/sheets/:department_id/:department_info',
 		SHEET_DETAIL: '/admin/sheets/detail/:sheet_id',
 		HISTORY: '/admin/history',
 

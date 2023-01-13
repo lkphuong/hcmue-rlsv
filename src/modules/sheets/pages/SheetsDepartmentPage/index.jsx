@@ -4,112 +4,27 @@ import { useParams } from 'react-router-dom';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
+import dayjs from 'dayjs';
+
 import { CPagination } from '_controls/';
 
 import { ListSheets, MDepartmentFilter, MSearch } from '_modules/sheets/components';
 
-import { isSuccess } from '_func/';
+import { isSuccess, cleanObjValue } from '_func/';
 
 import { getClassesByDepartment } from '_api/classes.api';
+import { getAdminClassSheetsByDepartment } from '_api/sheets.api';
 
-const FAKE_DATA = [
-	{
-		id: 1,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 2,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 3,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 4,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 5,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 6,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 7,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 8,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-];
+const formatDate = (date) => dayjs(date).format('DD/MM/YYYY');
 
 const SheetsDepartmentPage = () => {
 	//#region Data
-	const { department_id } = useParams();
+	const { department_id, department_info } = useParams();
+
+	const info = JSON.parse(department_info);
 
 	const [data, setData] = useState();
 
-	// eslint-disable-next-line no-unused-vars
 	const listData = useMemo(() => data?.data || [], [data]);
 
 	const [classes, setClasses] = useState([]);
@@ -117,6 +32,9 @@ const SheetsDepartmentPage = () => {
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
+		department_id: Number(department_id),
+		academic_id: Number(info?.academic?.id),
+		semester_id: Number(info?.semester?.id),
 		class_id: '',
 		status: -1,
 		input: '',
@@ -127,8 +45,9 @@ const SheetsDepartmentPage = () => {
 
 	//#region Event
 	const getData = async () => {
-		// const res = await getSheet()
-		const res = { status: 200, data: {} };
+		const _filter = cleanObjValue(filter);
+
+		const res = await getAdminClassSheetsByDepartment(_filter);
 
 		if (isSuccess(res)) setData(res.data);
 	};
@@ -166,12 +85,14 @@ const SheetsDepartmentPage = () => {
 			<MDepartmentFilter filter={filter} onFilterChange={setFilter} classes={classes} />
 
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				Học kỳ II ( 06/2021-09/2021) - Năm học 2021-2022
+				{`Học kỳ ${info?.semester?.name} (${formatDate(
+					info?.semester?.start
+				)} - ${formatDate(info?.semester?.end)}) - Năm học ${info?.academic?.name}`}
 			</Typography>
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						Khoa giáo dục mầm non
+						{info?.department?.name}
 					</Typography>
 				</Paper>
 			</Box>
@@ -199,7 +120,7 @@ const SheetsDepartmentPage = () => {
 				</Button>
 			</Stack>
 
-			<ListSheets data={FAKE_DATA} />
+			<ListSheets data={listData} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>

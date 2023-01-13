@@ -6,7 +6,15 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import { ROUTES } from '_constants/routes';
 
-export const Row = ({ data, index }) => {
+export const Row = ({ data, index, academic, semester }) => {
+	const department_info = useMemo(() =>
+		JSON.stringify({
+			department: data,
+			academic,
+			semester,
+		})
+	);
+
 	const status = useMemo(
 		() =>
 			data?.status?.toString() === 'true' ? (
@@ -25,7 +33,7 @@ export const Row = ({ data, index }) => {
 					underline='hover'
 					textTransform='uppercase'
 					component={RouterLink}
-					to={`${ROUTES.ADMIN.SHEETS}/${data?.id}`}
+					to={`${ROUTES.ADMIN.SHEETS}/${data?.id}/${department_info}`}
 				>
 					{data?.name}
 				</Link>

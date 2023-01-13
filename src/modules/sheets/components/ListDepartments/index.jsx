@@ -1,7 +1,8 @@
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+
 import { Row } from './Row';
 
-export const ListDepartments = ({ data }) => {
+export const ListDepartments = ({ data, academic, semester }) => {
 	//#region Data
 	//#endregion
 
@@ -22,7 +23,13 @@ export const ListDepartments = ({ data }) => {
 				<TableBody>
 					{data?.length > 0 &&
 						data.map((row, index) => (
-							<Row key={row?.id} data={row} index={index + 1} />
+							<Row
+								key={row?.id}
+								data={row}
+								index={index + 1}
+								academic={academic}
+								semester={semester}
+							/>
 						))}
 				</TableBody>
 			</Table>

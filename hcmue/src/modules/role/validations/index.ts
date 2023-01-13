@@ -23,6 +23,7 @@ import {
   DATABASE_EXIT_CODE,
   VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { RoleCode } from '../../../constants/enums/role_enum';
 
 export const validateClass = async (
   class_id: number,
@@ -82,11 +83,11 @@ export const validateRole = async (
 };
 
 export const validateUser = async (
-  user_id: number,
+  std_code: string,
   user_service: UserService,
   req: Request,
 ): Promise<UserEntity | HttpException> => {
-  if (isEmpty(user_id)) {
+  if (isEmpty(std_code)) {
     //#region throw HandlerException
     return new HandlerException(
       VALIDATION_EXIT_CODE.EMPTY,
@@ -96,30 +97,38 @@ export const validateUser = async (
       HttpStatus.BAD_REQUEST,
     );
     //#endregion
-  } else if (isNaN(user_id)) {
-    //#region throw HandlerException
-    return new HandlerException(
-      VALIDATION_EXIT_CODE.INVALID_VALUE,
-      req.method,
-      req.url,
-      ErrorMessage.USER_ID_INVALID_ERROR,
-      HttpStatus.BAD_REQUEST,
-    );
-    //#endregion
   } else {
-    const user = await user_service.getUserById(user_id);
+    const user = await user_service.getUserByCode(std_code);
     if (!user) {
       //#region throw HandlerException
       return new HandlerException(
         DATABASE_EXIT_CODE.UNKNOW_VALUE,
         req.method,
         req.url,
-        sprintf(ErrorMessage.STUDENT_NOT_FOUND_ERROR, user_id),
+        sprintf(ErrorMessage.STUDENT_NOT_FOUND_ERROR, std_code),
         HttpStatus.NOT_FOUND,
       );
       //#endregion
     }
 
-    return user[0];
+    return user;
   }
+};
+
+export const validateAllowedChangeRole = (role: RoleEntity, req: Request) => {
+  if (
+    [RoleCode.ADMIN, RoleCode.ADVISER, RoleCode.DEPARTMENT].includes(role.code)
+  ) {
+    //#region throw HandlerException
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.NO_MATCHING,
+      req.method,
+      req.url,
+      ErrorMessage.CANNOT_ALLOWED_CHANGLE_ROLE_ERROR,
+      HttpStatus.NOT_FOUND,
+    );
+    //#endregion
+  }
+
+  return null;
 };

@@ -22,6 +22,7 @@ import {
   validateDepartment,
   validateRole,
   validateUser,
+  validateAllowedChangeRole,
 } from '../validations';
 
 import { RoleDto } from '../dtos/role.dto';
@@ -58,7 +59,11 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { GetUserDto } from '../dtos/get_user.dto';
 import { ErrorMessage } from '../constants/enums/errors.enum';
-import { generateCheckRoleUserSuccessResponse } from '../utils';
+import {
+  generateCheckRoleUserSuccessResponse,
+  generateFailedResponse,
+} from '../utils';
+import { RoleCode } from '../../../constants/enums/role_enum';
 
 @Controller('roles')
 export class RoleController {
@@ -84,12 +89,12 @@ export class RoleController {
    * @return HttpResponse<RoleUserResponse> | HttpException
    * @page roles page
    */
-  @Put(':user_id')
+  @Put(':std_code')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.ADVISER)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateRole(
-    @Param('user_id') user_id: number,
+    @Param('std_code') std_code: string,
     @Body() params: RoleDto,
     @Req() req: Request,
   ): Promise<HttpResponse<RoleUserResponse> | HttpException> {
@@ -100,14 +105,14 @@ export class RoleController {
           ' - ' +
           req.url +
           ': ' +
-          JSON.stringify({ user_id, ...params }),
+          JSON.stringify({ std_code, ...params }),
       );
 
       this._logger.writeLog(
         Levels.LOG,
         req.method,
         req.url,
-        JSON.stringify({ user_id, ...params }),
+        JSON.stringify({ std_code, ...params }),
       );
 
       //#region Get params
@@ -131,38 +136,64 @@ export class RoleController {
       if (department instanceof HttpException) throw department;
       //#endregion
 
-      //#region Validate role
-      const role = await validateRole(role_id, this._roleService, req);
-      if (role instanceof HttpException) throw role;
-      //#endregion
+      if (role_id === RoleCode.STUDENT) {
+        const result = await this._roleUserService.unlink(std_code);
+        if (result) {
+          const payload: RoleUserResponse = {
+            id: 0,
+            name: 'Sinh viên',
+          };
+          return {
+            data: payload,
+            errorCode: 0,
+            message: null,
+            errors: null,
+          };
+        } else {
+          throw generateFailedResponse(
+            req,
+            ErrorMessage.OPERATOR_ROLE_USER_ERROR,
+          );
+        }
+      } else {
+        //#region Validate role
+        const role = await validateRole(role_id, this._roleService, req);
+        if (role instanceof HttpException) throw role;
+        //#endregion
 
-      //#region Validate user
-      const user = await validateUser(user_id, this._userService, req);
-      if (user instanceof HttpException) throw user;
-      //#endregion
-      //#endregion
+        //#region Validate user
+        const user = await validateUser(std_code, this._userService, req);
+        if (user instanceof HttpException) throw user;
+        //#endregion
 
-      //#region Get data jwt payload
-      const { username: request_code } = req.user as JwtPayload;
-      //#endregion
+        //#region valid role adviser, department, admin
+        const valid = validateAllowedChangeRole(role, req);
+        if (valid instanceof HttpException) throw valid;
+        //#endregion
+        //#endregion
 
-      //#region Create role_user
-      const result = await createRoleUser(
-        request_code,
-        class_id,
-        department_id,
-        user.std_code,
-        role,
-        this._roleUserService,
-        this._dataSource,
-        req,
-      );
-      //#endregion
+        //#region Get data jwt payload
+        const { username: request_code } = req.user as JwtPayload;
+        //#endregion
 
-      //#region Generate response
-      if (result instanceof HttpException) throw result;
-      return result;
-      //#endregion
+        //#region Create role_user
+        const result = await createRoleUser(
+          request_code,
+          class_id,
+          department_id,
+          user.std_code,
+          role,
+          this._roleUserService,
+          this._dataSource,
+          req,
+        );
+        //#endregion
+
+        //#region Generate response
+        if (result instanceof HttpException) throw result;
+        return result;
+        //#endregion
+      }
     } catch (err) {
       console.log(err);
       console.log('----------------------------------------------------------');
@@ -180,7 +211,7 @@ export class RoleController {
   }
 
   /**
-   * @method Post
+   * @method POST
    * @url /api/roles/check
    * @access private
    * @param department_id
@@ -193,7 +224,7 @@ export class RoleController {
   @Post('check')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.ADVISER)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async checkRole(
     @Body() params: GetUserDto,
@@ -217,7 +248,8 @@ export class RoleController {
       );
 
       //#region Get params
-      const { class_id, department_id, role_id } = params;
+      const { class_id, department_id, role_id, academic_id, semester_id } =
+        params;
       //#endregion
 
       const role_user = await this._roleUserService.checkRoleUser(
@@ -227,7 +259,11 @@ export class RoleController {
       );
 
       if (role_user) {
-        const user = await this._userService.getUserByCode(role_user.std_code);
+        const user = await this._userService.getUserByCode(
+          role_user.std_code,
+          academic_id,
+          semester_id,
+        );
         if (user) {
           return generateCheckRoleUserSuccessResponse(
             role_user,

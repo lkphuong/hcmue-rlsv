@@ -10,4 +10,6 @@ export enum ErrorMessage {
 
   USER_ID_EMPTY_ERROR = 'Bạn vui lòng chọn [sinh viên].',
   USER_ID_INVALID_ERROR = 'Giá trị [user_id] không hợp lệ.',
+
+  CANNOT_ALLOWED_CHANGLE_ROLE_ERROR = 'Không thể thay đổi quyền cho cố vấn học tập, khoa và admin.',
 }

@@ -452,7 +452,11 @@ export class UserService {
     }
   }
 
-  async getUserByCode(std_code: string): Promise<UserEntity | null> {
+  async getUserByCode(
+    std_code: string,
+    academic_id?: number,
+    semester_id?: number,
+  ): Promise<UserEntity | null> {
     try {
       const conditions = this._userRepository
         .createQueryBuilder('user')
@@ -463,7 +467,16 @@ export class UserService {
           `class.id = user.class_id AND class.delete_flag = 0`,
         )
         .where('user.std_code = :std_code', { std_code })
+        .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: 0 });
+
+      if (academic_id && academic_id !== 0) {
+        conditions.andWhere('user.academic_id = :academic_id', { academic_id });
+      }
+
+      if (semester_id && semester_id !== 0) {
+        conditions.andWhere('user.semester_id = :semester_id', { semester_id });
+      }
 
       const user = await conditions.orderBy('user.created_at', 'DESC').getOne();
 

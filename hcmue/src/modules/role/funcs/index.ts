@@ -9,11 +9,9 @@ import { RoleUsersEntity } from '../../../entities/role_users.entity';
 
 import { RoleUsersService } from '../services/role_users/role_users.service';
 
-import { RoleCode } from '../../../constants/enums/role_enum';
-
-import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
+import { ErrorMessage } from '../constants/enums/errors.enum';
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
 export const createRoleUser = async (
@@ -34,25 +32,19 @@ export const createRoleUser = async (
     // Start transaction
     await query_runner.startTransaction();
 
-    if (role.code !== RoleCode.ADMIN && role.code !== RoleCode.STUDENT) {
-      //#region Role = RoleCode.CLASS | RoleCode.DEPARTMENT
-      const success = await role_user_service.buklUnlink(
-        role.code,
-        role.id,
-        department_id,
+    //#region Update old role user
+    const old_role_user = await role_user_service.checkRoleUser(
+      department_id,
+      role.code,
+      class_id,
+    );
+    if (old_role_user) {
+      await role_user_service.unlink(
+        old_role_user.std_code,
         query_runner.manager,
       );
-
-      if (!success) {
-        //#region throw HandlerException
-        throw generateFailedResponse(
-          req,
-          ErrorMessage.OPERATOR_ROLE_USER_ERROR,
-        );
-        //#endregion
-      }
-      //#endregion
     }
+    //#endregion
 
     //#region Get role user
     let role_user = await role_user_service.getRoleUserByStdCode(std_code);

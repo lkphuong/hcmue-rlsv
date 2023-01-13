@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { Box, Typography } from '@mui/material';
 
+import dayjs from 'dayjs';
+
 import { CPagination } from '_controls/';
 
 import { ListDepartments, MFilter } from '_modules/sheets/components';
@@ -10,11 +12,13 @@ import { getAdminSheets } from '_api/sheets.api';
 
 import { isSuccess, cleanObjValue } from '_func/';
 
+const formatDate = (date) => dayjs(date).format('DD/MM/YYYY');
+
 const SheetsManagementPage = () => {
 	//#region Data
 	const [data, setData] = useState();
 
-	const listData = useMemo(() => data?.data || [], [data]);
+	const listData = useMemo(() => data?.data?.department || [], [data]);
 
 	const [filter, setFilter] = useState({
 		page: 1,
@@ -53,13 +57,31 @@ const SheetsManagementPage = () => {
 		<Box>
 			<MFilter filter={filter} onFilterChange={setFilter} />
 
-			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				Học kỳ II ( 06/2021-09/2021) - Năm học 2021-2022
-			</Typography>
+			{data && (
+				<>
+					<Typography
+						fontWeight={700}
+						fontSize={25}
+						lineHeight='30px'
+						textAlign='center'
+						mb={4}
+					>
+						{`Học kỳ ${data?.data?.semester?.name} (${formatDate(
+							data?.data?.semester?.start
+						)} - ${formatDate(data?.data?.semester?.end)}) - Năm học ${
+							data?.data?.academic?.name
+						}`}
+					</Typography>
 
-			<ListDepartments data={listData} />
+					<ListDepartments data={listData} />
 
-			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
+					<CPagination
+						page={paginate.page}
+						pages={paginate.pages}
+						onChange={onPageChange}
+					/>
+				</>
+			)}
 		</Box>
 	);
 

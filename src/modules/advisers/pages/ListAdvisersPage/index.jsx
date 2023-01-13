@@ -144,7 +144,7 @@ const ListAdvisersPage = memo(() => {
 		<Box>
 			<MFilter
 				filter={filter}
-				onChangeFilter={setFilter}
+				onFilterChange={setFilter}
 				departments={departments}
 				academic_years={academic_years}
 				classes={classes}

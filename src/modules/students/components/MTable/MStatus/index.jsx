@@ -1,62 +1,53 @@
-import { forwardRef, useContext, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 
-import { Box, Button, FormControlLabel, Menu, Radio, RadioGroup } from '@mui/material';
-
-import { ROLES } from '_constants/variables';
-import { ERRORS } from '_constants/messages';
-
-import { updateRole } from '_api/roles.api';
+import { FormControlLabel, Menu, Radio, RadioGroup } from '@mui/material';
 
 import { isSuccess } from '_func/';
-import { alert } from '_func/alert';
 
-import { ConfigRoleContext } from '_modules/students/pages/ListStudentsPage';
+import { getStatuses } from '_api/statuses.api';
 
 import './index.scss';
 
-export const MStatus = forwardRef(({ id, department_id, class_id }, ref) => {
+export const MStatus = forwardRef(({ onFilterChange }, ref) => {
 	//#region Data
 	const [anchorEl, setAnchorEl] = useState(null);
 	const open = Boolean(anchorEl);
 
-	const [value, setValue] = useState(null);
+	const [value, setValue] = useState('');
 
-	const { getData } = useContext(ConfigRoleContext);
+	const [statuses, setStatuses] = useState([]);
 	//#endregion
 
-	//#region Event
-	const turnOnMenu = (event, roleId) => {
-		setValue(roleId);
+	//#region EventPhúc
+	const turnOnMenu = (event) => {
 		setAnchorEl(event.currentTarget);
 	};
 
 	const turnOffMenu = () => setAnchorEl(null);
 
-	const onChangeRole = (event) => setValue(event.target.value);
+	const getStatus = async () => {
+		const res = await getStatuses();
 
-	const onClick = async () => {
-		const body = {
-			department_id,
-			class_id,
-			role_id: Number(value),
-		};
+		if (isSuccess(res)) setStatuses(res.data);
+	};
 
-		const res = await updateRole(id, body);
+	const onStatusChange = (event) => {
+		const { value } = event.target;
 
-		if (isSuccess(res)) {
-			getData();
+		setValue(value);
 
-			turnOffMenu();
+		onFilterChange((prev) => ({ ...prev, page: 1, status_id: value ? Number(value) : null }));
 
-			alert.success({ text: 'Cập nhật quyền thành công.' });
-		} else {
-			alert.fail({ text: res?.message || ERRORS.FAIL });
-		}
+		turnOffMenu();
 	};
 	//#endregion
 
+	useEffect(() => {
+		getStatus();
+	}, []);
+
 	useImperativeHandle(ref, () => ({
-		onMenu: (event, roleId) => turnOnMenu(event, roleId),
+		onMenu: (event) => turnOnMenu(event),
 	}));
 
 	//#region Render
@@ -68,21 +59,19 @@ export const MStatus = forwardRef(({ id, department_id, class_id }, ref) => {
 			className='role-menu'
 			anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
 			transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+			keepMounted
 		>
-			<RadioGroup value={value} onChange={onChangeRole}>
-				{ROLES.slice(0, 4).map((role) => (
+			<RadioGroup value={value} onChange={onStatusChange}>
+				<FormControlLabel value={''} control={<Radio />} label='Tất cả' />
+				{statuses.map((status) => (
 					<FormControlLabel
-						key={role.id}
-						value={role.id}
+						key={status.id}
+						value={status.id}
 						control={<Radio />}
-						label={role.name}
+						label={status.name}
 					/>
 				))}
 			</RadioGroup>
-
-			<Box textAlign='center' onClick={onClick}>
-				<Button variant='contained'>Lưu</Button>
-			</Box>
 		</Menu>
 	);
 

@@ -4,7 +4,7 @@ import { Box, Button, Container, Grid, Paper, Stack, Typography } from '@mui/mat
 
 import { CAutocomplete, CInput } from '_controls/';
 
-export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_years, classes }) => {
+export const FilterStudent = ({ filter, onFilterChange, semesters, academic_years, classes }) => {
 	//#region Data
 	const searchRef = useRef();
 
@@ -13,11 +13,11 @@ export const FilterStudent = ({ filter, onChangeFilter, semesters, academic_year
 
 	//#region Event
 	const handleChangeFilter = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
+		onFilterChange((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
 
 	const handleChangeInput = (event) => setInput(event.target.value);
 
-	const handleSearch = () => onChangeFilter((prev) => ({ ...prev, input, page: 1, pages: 0 }));
+	const handleSearch = () => onFilterChange((prev) => ({ ...prev, input, page: 1, pages: 0 }));
 
 	const onKeyPress = (e) => {
 		if (e.key === 'Enter') searchRef.current.click();

@@ -95,7 +95,7 @@ const RolePage = memo(() => {
 			<ConfigRoleContext.Provider value={{ getData }}>
 				<MFilter
 					filter={filter}
-					onChangeFilter={setFilter}
+					onFilterChange={setFilter}
 					departments={departments}
 					academic_years={academic_years}
 					classes={classes}

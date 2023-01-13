@@ -4,7 +4,7 @@ import { CAutocomplete } from '_controls/';
 
 const Filter = ({
 	filter,
-	onChangeFilter,
+	onFilterChange,
 	departments,
 	classes,
 	semesters,
@@ -16,10 +16,10 @@ const Filter = ({
 
 	//#region Event
 	const handleChangeStringId = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: value?.id }));
+		onFilterChange((prev) => ({ ...prev, [key]: value?.id }));
 
 	const handleChangeFilter = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
+		onFilterChange((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
 	//#endregion
 
 	//#region Render

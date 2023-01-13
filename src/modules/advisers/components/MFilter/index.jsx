@@ -2,13 +2,13 @@ import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
-export const MFilter = ({ filter, onChangeFilter, classes, departments, academic_years }) => {
+export const MFilter = ({ filter, onFilterChange, classes, departments, academic_years }) => {
 	//#region Data
 	//#endregion
 
 	//#region Event
 	const handleChangeStringId = (key) => (value) =>
-		onChangeFilter((prev) => {
+		onFilterChange((prev) => {
 			if (key === 'department_id') {
 				return { ...prev, [key]: value?.id, page: 1, pages: 0, class_id: null };
 			}
@@ -16,7 +16,7 @@ export const MFilter = ({ filter, onChangeFilter, classes, departments, academic
 		});
 
 	const handleChangeFilter = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
+		onFilterChange((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
 	//#endregion
 
 	//#region Render

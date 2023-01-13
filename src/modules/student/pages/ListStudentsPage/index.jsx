@@ -82,7 +82,7 @@ const ListStudentsPage = () => {
 		<Box>
 			<Filter
 				filter={filter}
-				onChangeFilter={setFilter}
+				onFilterChange={setFilter}
 				semesters={semesters}
 				departments={departments}
 				academic_years={academic_years}

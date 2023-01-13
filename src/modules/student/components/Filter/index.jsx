@@ -8,7 +8,7 @@ import { STATUS } from '_constants/variables';
 
 export const Filter = ({
 	filter,
-	onChangeFilter,
+	onFilterChange,
 	semesters,
 	academic_years,
 	departments,
@@ -22,14 +22,14 @@ export const Filter = ({
 
 	//#region Event
 	const handleChangeStringId = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: value?.id }));
+		onFilterChange((prev) => ({ ...prev, [key]: value?.id }));
 
 	const handleChangeFilter = (key) => (value) =>
-		onChangeFilter((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
+		onFilterChange((prev) => ({ ...prev, [key]: parseInt(value?.id) }));
 
 	const handleChangeInput = (event) => setInput(event.target.value);
 
-	const handleSearch = () => onChangeFilter((prev) => ({ ...prev, input }));
+	const handleSearch = () => onFilterChange((prev) => ({ ...prev, input }));
 
 	const onKeyPress = (e) => {
 		if (e.key === 'Enter') searchRef.current.click();

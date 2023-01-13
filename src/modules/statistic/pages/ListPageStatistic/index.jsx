@@ -76,7 +76,7 @@ const ListPageStatistic = () => {
 		<Box>
 			<Filter
 				filter={filter}
-				onChangeFilter={setFilter}
+				onFilterChange={setFilter}
 				departments={departments}
 				semesters={[]}
 				classes={classes}

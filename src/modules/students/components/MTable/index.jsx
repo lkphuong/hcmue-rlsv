@@ -17,11 +17,16 @@ import { CLoadingSpinner } from '_others/';
 import { MRow } from './MRow';
 import { MStatus } from './MStatus';
 
-export const MTable = ({ data, isLoading }) => {
+export const MTable = ({ data, isLoading, onFilterChange }) => {
+	//#region Data
 	const statusRef = useRef();
+	//#endregion
 
+	//#region Event
 	const toggle = (event) => statusRef.current.onMenu(event);
+	//#endregion
 
+	//#region Render
 	return (
 		<TableContainer className='c-table'>
 			<Table stickyHeader>
@@ -69,7 +74,8 @@ export const MTable = ({ data, isLoading }) => {
 				</TableBody>
 			</Table>
 
-			<MStatus ref={statusRef} />
+			<MStatus ref={statusRef} onFilterChange={onFilterChange} />
 		</TableContainer>
 	);
+	//#endregion
 };

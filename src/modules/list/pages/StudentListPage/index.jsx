@@ -118,7 +118,7 @@ const StudentListPage = () => {
 
 				<FilterStudent
 					filter={filter}
-					onChangeFilter={setFilter}
+					onFilterChange={setFilter}
 					semesters={semesters}
 					academic_years={academic_years}
 				/>

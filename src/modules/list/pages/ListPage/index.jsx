@@ -35,7 +35,7 @@ const ListPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<FilterClass filter={body} onChangeFilter={setBody} classes={classes} />
+			<FilterClass filter={body} onFilterChange={setBody} classes={classes} />
 
 			{classes?.length > 0 && <ListClasses data={classes} />}
 		</Box>

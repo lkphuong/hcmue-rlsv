@@ -178,7 +178,7 @@ const ListStudentsPage = memo(() => {
 			<ConfigRoleContext.Provider value={{ getData }}>
 				<MFilter
 					filter={filter}
-					onChangeFilter={setFilter}
+					onFilterChange={setFilter}
 					departments={departments}
 					academic_years={academic_years}
 					semesters={semesters || []}
@@ -217,7 +217,7 @@ const ListStudentsPage = memo(() => {
 				</Stack>
 
 				<Stack direction='column' justifyContent='space-between'>
-					<MTable data={dataTable} isLoading={isLoading} />
+					<MTable data={dataTable} isLoading={isLoading} onFilterChange={setFilter} />
 
 					<CPagination
 						page={paginate.page}

@@ -87,7 +87,7 @@ const ListFormsPage = () => {
 				</Paper>
 			</Box>
 
-			<Filter filter={filter} onChangeFilter={setFilter} />
+			<Filter filter={filter} onFilterChange={setFilter} />
 
 			<Box textAlign='right' my={2}>
 				<Link to={ROUTES.FORM_CREATE}>

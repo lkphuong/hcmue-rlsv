@@ -12,7 +12,7 @@ import { getSemestersByYear } from '_api/options.api';
 
 import { isSuccess, isEmpty } from '_func/';
 
-const Filter = ({ filter, onChangeFilter }) => {
+const Filter = ({ filter, onFilterChange }) => {
 	//#region Data
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
@@ -29,14 +29,14 @@ const Filter = ({ filter, onChangeFilter }) => {
 
 	const handleChangeFilter = (key) => (value) =>
 		key === 'department_id'
-			? onChangeFilter((prev) => ({
+			? onFilterChange((prev) => ({
 					...prev,
 					[key]: parseInt(value?.id),
 					page: 1,
 					pages: 0,
 					semester_id: null,
 			  }))
-			: onChangeFilter((prev) => ({
+			: onFilterChange((prev) => ({
 					...prev,
 					[key]: parseInt(value?.id),
 					page: 1,

@@ -1592,6 +1592,7 @@ export class SheetController {
         (page - 1) * itemsPerPage,
         itemsPerPage,
         department_id,
+        class_id,
       );
       //#endregion
 

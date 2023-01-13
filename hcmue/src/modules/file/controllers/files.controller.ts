@@ -39,7 +39,7 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
-import { validateFileId } from '../validations';
+import { validateFileId, validateFileSize } from '../validations';
 
 @Controller('files')
 export class FilesController {
@@ -80,6 +80,15 @@ export class FilesController {
         req.url,
         JSON.stringify(file),
       );
+
+      //#region Validate file size
+      const valid = await validateFileSize(
+        this._configurationService,
+        file,
+        req,
+      );
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
 
       const { username: request_code } = req.user as JwtPayload;
 

@@ -1245,9 +1245,9 @@ export const generateUpdateSheet = async (
     sheet.sum_of_adviser_marks = sum_of_marks;
   else sheet.sum_of_department_marks = sum_of_marks;
 
-  sheet.status = sheet.status > status ? status : sheet.status;
+  sheet.status = sheet.status < status ? status : sheet.status;
   sheet.graded = 1;
-  sheet.level = sheet.status >= status ? new_level : sheet.level;
+  sheet.level = sheet.status <= status ? new_level : sheet.level;
   sheet.updated_at = new Date();
   sheet.updated_by = request_code;
 

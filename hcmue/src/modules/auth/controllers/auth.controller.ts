@@ -239,7 +239,6 @@ export class AuthController {
 
               //#region Generate session
               let session = await this._authService.contains(username);
-
               if (!session) {
                 session = await this._authService.add(
                   other.id,
@@ -261,7 +260,6 @@ export class AuthController {
                 );
               }
 
-              console.log('session: ', session);
               //#region Generate response
               return await generateResponse(
                 session,
@@ -294,6 +292,7 @@ export class AuthController {
           }
         default:
           const student = await this._authService.getUserByUsername(username);
+          console.log('student: ', student);
           if (student) {
             const isMatch = await validatePassword(password, student.password);
 
@@ -648,7 +647,6 @@ export class AuthController {
             request_code,
           );
 
-          console.log('adviser_session: ', adviser_session);
           //#region get class of adviser
           const adviser_classes =
             await this._adviserClassService.getClassByAdviserId(

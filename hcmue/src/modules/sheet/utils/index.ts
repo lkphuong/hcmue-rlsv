@@ -23,8 +23,6 @@ import {
   BaseResponse,
   ClassResponse,
   ClassSheetsResponse,
-  ClassStatusResponse,
-  DepartmentResponse,
   ManagerDepartmentResponse,
 } from '../interfaces/sheet_response.interface';
 

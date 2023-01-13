@@ -6,4 +6,6 @@ export enum ErrorMessage {
   ID_NAN_ERROR = 'Giá trị [id] không hợp lệ.',
 
   STUDENT_ROLE_INVALID_ERROR = 'Bạn không thể xóa [file minh chứng] của sinh viên khác (name: %s).',
+
+  FILE_SIZE_TOO_LARGE_ERROR = 'File [%s] kích thước không hợp lệ (<= %s)',
 }

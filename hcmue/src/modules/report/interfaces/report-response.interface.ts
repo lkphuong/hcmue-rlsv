@@ -16,3 +16,9 @@ export interface ReportResponse {
   sum_of_levels: LevelResponse[];
   sum_of_std_in_classes: number;
 }
+
+export interface ReportDepartmentsResponse {
+  departments: ClassResponse[];
+  sum_of_levels: LevelResponse[];
+  sum_of_std_in_departments: number;
+}

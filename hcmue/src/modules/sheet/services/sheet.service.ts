@@ -421,6 +421,48 @@ export class SheetService {
     }
   }
 
+  async countSheetsByDepartment(
+    academic_id: number,
+    semester_id: number,
+    department_id: number,
+    status: SheetStatus,
+  ): Promise<number> {
+    try {
+      let conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .innerJoin('sheet.semester', 'semester')
+        .innerJoin('sheet.academic_year', 'academic_year')
+        .leftJoinAndSelect('sheet.level', 'level')
+        .select('COUNT(DISTINCT sheet.id)', 'count')
+        .where('semester.id = :semester_id', { semester_id })
+        .andWhere('academic_year.id = :academic_id', { academic_id })
+        .andWhere('sheet.department_id = :department_id', { department_id })
+        .andWhere('sheet.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('level.deleted = :deleted', { deleted: false });
+            qb.orWhere('level.deleted IS NULL');
+          }),
+        );
+
+      if (status != SheetStatus.ALL) {
+        conditions = conditions.andWhere('sheet.status = :status', { status });
+      }
+
+      const { count } = await conditions.getRawOne();
+      return count;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.countSheetsByDepartment()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async countSheetByStatus(
     academic_id: number,
     semester_id: number,

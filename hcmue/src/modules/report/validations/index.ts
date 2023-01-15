@@ -69,25 +69,30 @@ export const validateClass = async (
 };
 
 export const validateDepartment = async (
-  department_id: number,
+  department_id: number | null,
   department_service: DepartmentService,
   req: Request,
 ) => {
-  const department = await department_service.getDepartmentById(department_id);
-  if (!department) {
-    //#region throw HandlerException
-    return new UnknownException(
+  if (department_id) {
+    const department = await department_service.getDepartmentById(
       department_id,
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      sprintf(ErrorMessage.DEPARTMENT_NOT_FOUND_ERROR, department_id),
-      HttpStatus.NOT_FOUND,
     );
-    //#endregion
-  }
+    if (!department) {
+      //#region throw HandlerException
+      return new UnknownException(
+        department_id,
+        DATABASE_EXIT_CODE.UNKNOW_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.DEPARTMENT_NOT_FOUND_ERROR, department_id),
+        HttpStatus.NOT_FOUND,
+      );
+      //#endregion
+    }
 
-  return department;
+    return department;
+  }
+  return null;
 };
 
 export const validateRole = async (

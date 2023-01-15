@@ -103,6 +103,29 @@ export class DepartmentService {
     }
   }
 
+  async getDepartmentsByIds(ids: number[]): Promise<DepartmentEntity[] | null> {
+    try {
+      const conditions = this._departmentRepository
+        .createQueryBuilder('department')
+        .where(`department.id IN (${ids.toString()})`)
+        .andWhere('department.deleted = :deleted', { deleted: false });
+
+      const departments = await conditions
+        .orderBy('department.created_at', 'DESC')
+        .getMany();
+
+      return departments || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'DepartmentService.getDepartmentsByIds()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async count(department_id?: number, input?: string): Promise<number> {
     try {
       let conditions = this._departmentRepository

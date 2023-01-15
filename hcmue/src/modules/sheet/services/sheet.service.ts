@@ -72,6 +72,74 @@ export class SheetService {
     }
   }
 
+  async getSheets(
+    department_id: number,
+    class_id: number,
+    academic_id: number,
+    semester_id: number,
+    status: number,
+    role: number,
+    user_ids?: number[],
+  ): Promise<SheetEntity[] | null> {
+    try {
+      let conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .innerJoin('sheet.semester', 'semester')
+        .innerJoin('sheet.academic_year', 'academic_year')
+        .leftJoinAndSelect(
+          'sheet.level',
+          'level',
+          `level.id = sheet.level AND 
+          level.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.user',
+          UserEntity,
+          'user',
+          `user.std_code = sheet.std_code 
+          AND user.deleted = 0`,
+        )
+        .where('semester.id = :semester_id', { semester_id })
+        .andWhere('academic_year.id = :academic_id', { academic_id })
+        .andWhere('sheet.department_id = :department_id', { department_id })
+        .andWhere('sheet.class_id = :class_id', { class_id })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      if (status != SheetStatus.ALL) {
+        conditions = conditions.andWhere('sheet.status = :status', { status });
+      }
+
+      if (user_ids && user_ids.length > 0) {
+        conditions = conditions.andWhere(
+          `sheet.std_code IN (${user_ids.toString()})`,
+        );
+      }
+
+      if (role) {
+        const sheet_status = this.generateStatus(role);
+        conditions = conditions.andWhere('sheet.status >= :status', {
+          status: sheet_status,
+        });
+      }
+
+      const sheets = await conditions
+        .orderBy('sheet.created_at', 'DESC')
+        .getMany();
+
+      return sheets || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.getSheets()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getSheetsPaging(
     offset: number,
     length: number,
@@ -95,11 +163,11 @@ export class SheetService {
           level.deleted = 0`,
         )
         .innerJoinAndMapOne(
-          'sheet.user_id',
+          'sheet.user',
           UserEntity,
           'user',
-          `user.id = sheet.user_id 
-          AND user.deleted = : 0`,
+          `user.std_code = sheet.std_code 
+          AND user.deleted = 0`,
         )
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic_year.id = :academic_id', { academic_id })
@@ -115,7 +183,7 @@ export class SheetService {
 
       if (user_ids && user_ids.length > 0) {
         conditions = conditions.andWhere(
-          `sheet.user_id IN (${user_ids.toString()})`,
+          `sheet.std_code IN (${user_ids.toString()})`,
         );
       }
 

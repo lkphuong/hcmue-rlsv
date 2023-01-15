@@ -36,6 +36,7 @@ import {
   generateObjectIdFromUsers,
   generateResponses,
   generateSheet,
+  generateSheetsResponses,
   generateUserSheetsResponse,
 } from '../utils';
 
@@ -56,6 +57,7 @@ import {
 import { UserEntity } from '../../../entities/user.entity';
 
 import { ApproveAllDto } from '../dtos/approve_all.dto';
+import { GetAllSheetsByClassDto } from '../dtos/get_all_sheets_by_class.dto';
 import { GetClassDto } from '../dtos/get_class.dto';
 import { GetClassStatusAdviserDto } from '../dtos/get_classes_status_adviser.dto';
 import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
@@ -373,6 +375,157 @@ export class SheetController {
         );
         //#endregion
       }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method Post
+   * @url /api/sheets/class/:class_id
+   * @access private
+   * @param class_id
+   * @description Hiển thị danh sách phiếu đánh giá theo lớp không phân trang
+   * @return  HttpResponse<ClassSheetsResponse> | HttpException
+   * @page sheets page
+   */
+  @Post('class/all')
+  @UseGuards(JwtAuthGuard)
+  @Roles(
+    Role.ADMIN,
+    Role.DEPARTMENT,
+    Role.MONITOR,
+    Role.SECRETARY,
+    Role.CHAIRMAN,
+  )
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getAllSheetsByClass(
+    @Body() params: GetAllSheetsByClassDto,
+    @Req() req: Request,
+  ): Promise<HttpResponse<ClassSheetsResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ params: params }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ params: params }),
+      );
+
+      //#region Get params
+      const { academic_id, department_id, input, semester_id, class_id } =
+        params;
+
+      let users: UserEntity[] = null;
+      let user_ids: number[] = null;
+      //#endregion
+
+      //#region Get Jwt Payload
+      const { role, username: request_code } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Validation
+      //#region Validate class
+      const $class = validateClass(class_id, this._classService, req);
+
+      if ($class instanceof HttpException) throw $class;
+      //#endregion
+
+      //#region Validate department
+      const department = validateDepartment(
+        department_id,
+        this._departmentService,
+        req,
+      );
+
+      if (department instanceof HttpException) throw department;
+      //#endregion
+
+      //#region Validate role
+      const valid = validateOthersRole(
+        role,
+        class_id,
+        department_id,
+        request_code,
+        this._userService,
+        req,
+      );
+
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Get users if input != null
+      if (input) {
+        users = await this._userService.getUsersByInput(
+          academic_id,
+          semester_id,
+          class_id,
+          department_id,
+          input,
+        );
+
+        user_ids = generateObjectIdFromUsers(users);
+        if (!user_ids) {
+          //#region throw HandlerException
+          throw new HandlerException(
+            DATABASE_EXIT_CODE.NO_CONTENT,
+            req.method,
+            req.url,
+            ErrorMessage.NO_CONTENT,
+            HttpStatus.NOT_FOUND,
+          );
+          //#endregion
+        }
+      }
+      //#endregion
+
+      //#region Get sheets
+      const sheets = await this._sheetService.getSheets(
+        department_id,
+        class_id,
+        academic_id,
+        semester_id,
+        SheetStatus.ALL,
+        role,
+        user_ids,
+      );
+      //#endregion
+
+      if (sheets && sheets.length > 0) {
+        //#region Generate reponse
+        return generateSheetsResponses(sheets, req);
+        //#endregion
+      }
+
+      //#region throw HandlerException
+      throw new HandlerException(
+        DATABASE_EXIT_CODE.NO_CONTENT,
+        req.method,
+        req.url,
+        ErrorMessage.NO_CONTENT,
+        HttpStatus.NOT_FOUND,
+      );
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

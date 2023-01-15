@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 
 import { AcademicYearEntity } from './academic_year.entity';
-import { ApprovalEntity } from './approval.entity';
 import { ClassEntity } from './class.entity';
 import { DepartmentEntity } from './department.entity';
 import { EvaluationEntity } from './evaluation.entity';

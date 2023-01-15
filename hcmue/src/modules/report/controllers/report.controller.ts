@@ -38,7 +38,10 @@ import { SheetService } from '../../sheet/services/sheet.service';
 import { UserService } from '../../user/services/user.service';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
-import { ReportDepartmentsResponse, ReportResponse } from '../interfaces/report-response.interface';
+import {
+  ReportDepartmentsResponse,
+  ReportResponse,
+} from '../interfaces/report-response.interface';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';

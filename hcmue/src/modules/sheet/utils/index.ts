@@ -330,6 +330,21 @@ export const generateResponses = async (
   return returnObjectsWithPaging<ClassSheetsResponse>(pages, page, payload);
 };
 
+export const generateSheetsResponses = async (
+  sheets: SheetEntity[],
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+  console.log('data: ', sheets);
+
+  // Transform SheetEntity class to ClassSheetsResponse class
+  const payload = await generateAdminSheets(sheets);
+
+  // Returns objects
+  return returnObjects<ClassSheetsResponse>(payload);
+};
+
 export const generateObjectIDString = (object_ids: string[]) => {
   return object_ids.map((value) => `"${value}"`).join(',');
 };

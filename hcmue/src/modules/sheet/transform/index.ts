@@ -50,6 +50,7 @@ export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
 
         status: sheet.status,
         sum_of_class_marks: sheet.sum_of_class_marks,
+        sum_of_adviser_marks: sheet.sum_of_adviser_marks,
         sum_of_department_marks: sheet.sum_of_department_marks,
         sum_of_personal_marks: sheet.sum_of_personal_marks,
         user: {
@@ -90,6 +91,7 @@ export const generateUserSheets = (sheets: SheetEntity[] | null) => {
           : null,
         sum_of_personal_marks: sheet.sum_of_personal_marks,
         sum_of_class_marks: sheet.sum_of_class_marks,
+        sum_of_adviser_marks: sheet.sum_of_adviser_marks,
         sum_of_department_marks: sheet.sum_of_department_marks,
         status: sheet.status,
       };
@@ -121,6 +123,7 @@ export const generateClassSheets = async (sheets: SheetEntity[] | null) => {
               }
             : null,
           sum_of_personal_marks: sheet.sum_of_personal_marks,
+          sum_of_adviser_marks: sheet.sum_of_adviser_marks,
           sum_of_department_marks: sheet.sum_of_department_marks,
           sum_of_class_marks: sheet.sum_of_class_marks,
           status: sheet.status,
@@ -201,6 +204,7 @@ export const generateData2Object = async (sheet: SheetEntity | null) => {
       status: sheet.status,
       sum_of_personal_marks: sheet.sum_of_personal_marks,
       sum_of_class_marks: sheet.sum_of_class_marks,
+      sum_of_adviser_marks: sheet.sum_of_adviser_marks,
       sum_of_department_marks: sheet.sum_of_department_marks,
       headers: [],
       start: sheet.form.start,

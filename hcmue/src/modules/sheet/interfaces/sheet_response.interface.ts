@@ -12,6 +12,7 @@ export interface UserResponse {
 export interface MarkResponse {
   sum_of_personal_marks: number;
   sum_of_class_marks: number;
+  sum_of_adviser_marks: number;
   sum_of_department_marks: number;
 }
 

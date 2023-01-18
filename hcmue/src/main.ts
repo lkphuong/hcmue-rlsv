@@ -12,6 +12,7 @@ import { ConfigurationService } from './modules/shared/services/configuration/co
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bufferLogs: true,
+    cors: true,
   });
 
   app.enableCors({

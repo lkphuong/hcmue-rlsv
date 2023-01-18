@@ -20,7 +20,7 @@ const HistorySheetsPage = () => {
 
 	const [data, setData] = useState();
 
-	const listData = useMemo(() => data?.data || [], [data]);
+	const listData = useMemo(() => data?.data?.department || [], [data]);
 
 	const [filter, setFilter] = useState({
 		page: 1,
@@ -83,7 +83,11 @@ const HistorySheetsPage = () => {
 				onFilterChange={setFilter}
 			/>
 
-			<ListDepartmentsHistory data={listData} />
+			<ListDepartmentsHistory
+				data={listData}
+				academic={data?.data?.academic}
+				semester={data?.data?.semester}
+			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>

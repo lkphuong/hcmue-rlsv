@@ -10,7 +10,7 @@ import {
 
 import { Row } from './Row';
 
-export const ListDepartmentsHistory = ({ data }) => {
+export const ListDepartmentsHistory = ({ data, academic, semester }) => {
 	//#region Data
 	//#endregion
 
@@ -32,7 +32,15 @@ export const ListDepartmentsHistory = ({ data }) => {
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row, index) => <Row key={row?.id} data={row} index={index + 1} />)
+						data.map((row, index) => (
+							<Row
+								key={row?.id}
+								data={row}
+								index={index + 1}
+								academic={academic}
+								semester={semester}
+							/>
+						))
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

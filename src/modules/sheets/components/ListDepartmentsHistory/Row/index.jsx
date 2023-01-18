@@ -6,7 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import { ROUTES } from '_constants/routes';
 
-export const Row = ({ data, index }) => {
+export const Row = ({ data, index, academic, semester }) => {
 	const status = useMemo(
 		() =>
 			data?.status?.toString() === 'true' ? (
@@ -30,8 +30,8 @@ export const Row = ({ data, index }) => {
 					{data?.name}
 				</Link>
 			</TableCell>
-			<TableCell align='center'>{data?.semester?.display}</TableCell>
-			<TableCell align='center'>{data?.academic?.name}</TableCell>
+			<TableCell align='center'>{semester?.name}</TableCell>
+			<TableCell align='center'>{academic?.name}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 		</TableRow>
 	);

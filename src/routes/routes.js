@@ -1,3 +1,5 @@
+import { lazy } from 'react';
+
 import { ROUTES } from '_constants/routes';
 
 import { CLoginLayout, CMainLayout } from '_layouts/';
@@ -10,6 +12,8 @@ import { CLASS_ROUTES } from './class.routes';
 import { DEPARTMENT_ROUTES } from './department.routes';
 import { STUDENT_ROUTES } from './student.routes';
 
+const ChangePasswordPage = lazy(() => import('_modules/auth/pages/ChangePassword'));
+
 export const browserRouter = [
 	{
 		path: ROUTES.HOME,
@@ -21,6 +25,11 @@ export const browserRouter = [
 			...ADVISER_ROUTES,
 			...DEPARTMENT_ROUTES,
 			...ADMIN_ROUTES,
+			{
+				path: ROUTES.CHANGE_PASSWORD,
+				errorElement: <CErrorPage />,
+				element: <ChangePasswordPage />,
+			},
 		],
 	},
 	{

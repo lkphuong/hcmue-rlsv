@@ -20,6 +20,7 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 			return {
 				personal_mark_level: 0,
 				class_mark_level: 0,
+				adviser_mark_level: 0,
 				department_mark_level: 0,
 			};
 
@@ -29,6 +30,7 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 			return {
 				personal_mark_level: 0,
 				class_mark_level: 0,
+				adviser_mark_level: 0,
 				department_mark_level: 0,
 			};
 

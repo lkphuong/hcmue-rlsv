@@ -72,7 +72,7 @@ export const Form = ({ data }) => {
 				onConfirm: () => {
 					dispatch(actions.clearMarks());
 
-					navigate(ROUTES.MY_SCORE, { replace: true });
+					navigate(ROUTES.STUDENT.SELF, { replace: true });
 				},
 				fullname: data?.user?.fullname,
 				mark: data?.sum_of_personal_marks,
@@ -115,7 +115,7 @@ export const Form = ({ data }) => {
 							>
 								Khung điểm
 							</TableCell>
-							<TableCell align='center' colSpan={3} sx={{ minWidth: '390px' }}>
+							<TableCell align='center' colSpan={4} sx={{ minWidth: '390px' }}>
 								Điểm đánh giá
 							</TableCell>
 						</TableRow>
@@ -125,6 +125,9 @@ export const Form = ({ data }) => {
 							</TableCell>
 							<TableCell align='center' width={130}>
 								Lớp
+							</TableCell>
+							<TableCell align='center' width={130}>
+								CVHT
 							</TableCell>
 							<TableCell align='center' width={130}>
 								Khoa

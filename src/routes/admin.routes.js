@@ -29,8 +29,6 @@ const ListDepartmentAccountPage = lazy(() =>
 
 const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
 
-const ChangePasswordPage = lazy(() => import('_modules/auth/pages/ChangePassword'));
-
 export const ADMIN_ROUTES = [
 	{
 		path: ROUTES.ADMIN.REPORT,
@@ -139,10 +137,5 @@ export const ADMIN_ROUTES = [
 				<ConfigPage />
 			</CPermission>
 		),
-	},
-	{
-		path: ROUTES.CHANGE_PASSWORD,
-		errorElement: <CErrorPage />,
-		element: <ChangePasswordPage />,
 	},
 ];

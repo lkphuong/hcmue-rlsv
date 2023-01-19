@@ -53,14 +53,17 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 						)}
 					/>
 				) : (
-					<Typography>{currentMark.personal_mark_level || 0}</Typography>
+					<Typography>{currentMark.personal_mark_level}</Typography>
 				)}
 			</TableCell>
 			<TableCell align='center'>
-				<Typography>{currentMark.class_mark_level || 0}</Typography>
+				<Typography>{currentMark.class_mark_level}</Typography>
 			</TableCell>
 			<TableCell align='center'>
-				<Typography>{currentMark.department_mark_level || 0}</Typography>
+				<Typography>{currentMark.adviser_mark_level}</Typography>
+			</TableCell>
+			<TableCell align='center'>
+				<Typography>{currentMark.department_mark_level}</Typography>
 			</TableCell>
 		</>
 	);

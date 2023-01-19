@@ -141,7 +141,12 @@ const SemesterDetail = () => {
 								<Typography fontSize={20} p={1.5} fontWeight={600}>
 									{`${data?.user.fullname}`}
 								</Typography>
-								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
+								<Button
+									disabled={data?.status !== 4}
+									startIcon={<Print />}
+									sx={{ p: 1.5 }}
+									onClick={handlePrint}
+								>
 									In phiếu
 								</Button>
 							</Stack>

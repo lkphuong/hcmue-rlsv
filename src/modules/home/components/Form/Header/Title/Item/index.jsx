@@ -16,8 +16,10 @@ import Control from './Control';
 const Item = memo(({ data, headerId, titleId, index }) => {
 	//#region Data
 	const fileRef = useRef();
+
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+
 	const { itemsMark } = useContext(StudentMarksContext);
 
 	const dispatch = useDispatch();

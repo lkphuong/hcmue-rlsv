@@ -12,8 +12,6 @@ const StudentDetailPage = lazy(() => import('_modules/home/pages/StudentDetailPa
 
 const HistoryStudentSheetsPage = lazy(() => import('_modules/home/pages/HistoryStudentSheetsPage'));
 
-const ChangePasswordPage = lazy(() => import('_modules/auth/pages/ChangePassword'));
-
 export const STUDENT_ROUTES = [
 	{
 		path: ROUTES.STUDENT.SELF,
@@ -41,10 +39,5 @@ export const STUDENT_ROUTES = [
 				<HistoryStudentSheetsPage />
 			</CPermission>
 		),
-	},
-	{
-		path: ROUTES.CHANGE_PASSWORD,
-		errorElement: <CErrorPage />,
-		element: <ChangePasswordPage />,
 	},
 ];

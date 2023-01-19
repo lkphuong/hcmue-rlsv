@@ -29,34 +29,10 @@ export const ROLES_NAME = {
 };
 
 export const ENTITY_KEY = {
-	DASHBOARD: {
-		key: 'DASHBOARD',
-		roles: [ROLES_NAME.STUDENT, ROLES_NAME.CLASS],
-	},
-	CLASS_SCORE: {
-		key: 'CLASS_SCORE',
-		roles: [ROLES_NAME.CLASS],
-	},
-	SHEET: {
-		key: 'SHEET',
-		roles: [ROLES_NAME.DEPARTMENT],
-	},
-	STATISTIC: {
-		key: 'STATISTIC',
-		roles: [ROLES_NAME.DEPARTMENT, ROLES_NAME.ADMIN],
-	},
-	FORMS: {
-		key: 'FORMS',
-		roles: [ROLES_NAME.ADMIN],
-	},
-	NOTES: {
-		key: 'NOTES',
-		roles: [ROLES_NAME.ADMIN],
-	},
 	//
 	STUDENT: {
 		key: 'STUDENT',
-		roles: [ROLES_NAME.STUDENT],
+		roles: [ROLES_NAME.STUDENT, ROLES_NAME.MONITOR, ROLES_NAME.SECRETARY, ROLES_NAME.CHAIRMAN],
 	},
 	CLASS: {
 		key: 'CLASS',

@@ -326,7 +326,7 @@ export default function componentStyleOverrides(theme) {
 			styleOverrides: {
 				root: {
 					padding: '6px 10px',
-					'& .MuiIconButton-root': {
+					'& .MuiIconButton-root:not(.MuiAutocomplete-popupIndicator)': {
 						borderRadius: '8px',
 						fontSize: '1.25rem',
 						color: 'transparent',

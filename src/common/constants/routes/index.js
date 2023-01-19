@@ -27,9 +27,6 @@ export const ROUTES = {
 	},
 
 	CLASS_OFFICER: {
-		SELF: '/student/student-sheets',
-		SELF_HISTORY: '/student/student-history',
-
 		CLASS: '/class/class-sheets',
 		CLASS_HISTORY: '/class/class-history',
 	},

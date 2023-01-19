@@ -10,60 +10,11 @@ import { isSuccess } from '_func/';
 
 import { CPagination } from '_controls/';
 
-const FAKE_DATA = [
-	{
-		id: 1,
-		semester: { id: 1, display: 'Học kỳ II (06/2021 - 09/2021)' },
-		academic: { id: 1, name: '2021-2022' },
-		mark: 80,
-		level: { name: 'Giỏi' },
-		status: 'Hoàn thành',
-	},
-	{
-		id: 2,
-		semester: { id: 1, display: 'Học kỳ II (06/2021 - 09/2021)' },
-		academic: { id: 1, name: '2021-2022' },
-		mark: 80,
-		level: { name: 'Giỏi' },
-		status: 'Hoàn thành',
-	},
-	{
-		id: 3,
-		semester: { id: 1, display: 'Học kỳ II (06/2021 - 09/2021)' },
-		academic: { id: 1, name: '2021-2022' },
-		mark: 80,
-		level: { name: 'Giỏi' },
-		status: 'Hoàn thành',
-	},
-	{
-		id: 4,
-		semester: { id: 1, display: 'Học kỳ II (06/2021 - 09/2021)' },
-		academic: { id: 1, name: '2021-2022' },
-		mark: 80,
-		level: { name: 'Giỏi' },
-		status: 'Hoàn thành',
-	},
-	{
-		id: 5,
-		semester: { id: 1, display: 'Học kỳ II (06/2021 - 09/2021)' },
-		academic: { id: 1, name: '2021-2022' },
-		mark: 80,
-		level: { name: 'Giỏi' },
-		status: 'Hoàn thành',
-	},
-	{
-		id: 6,
-		semester: { id: 1, display: 'Học kỳ II (06/2021 - 09/2021)' },
-		academic: { id: 1, name: '2021-2022' },
-		mark: 80,
-		level: { name: 'Giỏi' },
-		status: 'Hoàn thành',
-	},
-];
+import { getStudentHistorySheets } from '_api/sheets.api';
 
 const HistoryStudentSheetsPage = () => {
 	//#region Data
-	const { user_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { username } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const [data, setData] = useState();
 
@@ -72,29 +23,25 @@ const HistoryStudentSheetsPage = () => {
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
+		std_code: username || null,
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
 	//#endregion
 
 	//#region Event
-	const getData = async (id) => {
-		try {
-			// const res = await getCurrentStudentSheet(id);
-			const res = { status: 200, data: { data: FAKE_DATA, page: 1, pages: 3 } };
-
-			if (isSuccess(res)) setData(res?.data);
-		} catch (error) {
-			throw error;
-		}
+	const getData = async () => {
+		const res = await getStudentHistorySheets(filter);
+		console.log(res);
+		if (isSuccess(res)) setData(res?.data);
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
 	//#endregion
 
 	useEffect(() => {
-		if (user_id) getData(user_id);
-	}, [filter, user_id]);
+		if (username) getData();
+	}, [filter, username]);
 
 	useEffect(() => {
 		setPaginate({

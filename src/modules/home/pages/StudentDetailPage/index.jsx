@@ -7,8 +7,6 @@ import { useReactToPrint } from 'react-to-print';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
-import dayjs from 'dayjs';
-
 import { Form } from '_modules/home/components';
 
 import { getItemsMarks, getSheetById } from '_api/sheets.api';

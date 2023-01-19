@@ -22,6 +22,7 @@ export const ListSheets = ({ data }) => {
 						<TableCell align='center'>Tổng điểm</TableCell>
 						<TableCell align='center'>Xếp loại</TableCell>
 						<TableCell align='center'>Trạng thái</TableCell>
+						<TableCell align='center' />
 					</TableRow>
 				</TableHead>
 				<TableBody>

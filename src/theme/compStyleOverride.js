@@ -364,6 +364,7 @@ export default function componentStyleOverrides(theme) {
 			styleOverrides: {
 				root: {
 					'&.statistic-table': {
+						backgroundColor: 'rgb(243, 244, 246)',
 						'& .MuiTableHead-root': {
 							'& .MuiTableCell-root': {
 								lineHeight: '1.1rem',

@@ -68,10 +68,10 @@ const SemesterDetail = () => {
 					navigate(-1);
 				}
 
-				const { time_student } = res.data;
-				if (!dayjs().isBetween(time_student.start, time_student.end, '[]')) {
-					dispatch(actions.setNotAvailable());
-				}
+				// const { time_student } = res.data;
+				// if (!dayjs().isBetween(time_student.start, time_student.end, '[]')) {
+				// 	dispatch(actions.setNotAvailable());
+				// }
 
 				setData(res.data);
 			}
@@ -141,7 +141,7 @@ const SemesterDetail = () => {
 						<Paper className='paper-wrapper'>
 							<Stack direction='row' justifyContent='space-between'>
 								<Typography fontSize={20} p={1.5} fontWeight={600}>
-									{`${data?.semester?.name} - Năm học ${data?.academic?.name}`}
+									{`${data?.user.fullname}`}
 								</Typography>
 								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
 									In phiếu

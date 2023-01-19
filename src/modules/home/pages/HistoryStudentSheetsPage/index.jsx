@@ -6,8 +6,6 @@ import { Box, Paper, Typography } from '@mui/material';
 
 import { ListSheets } from '_modules/home/components';
 
-// import { getStudentSheets } from '_api/sheets.api';
-
 import { isSuccess } from '_func/';
 
 import { CPagination } from '_controls/';
@@ -82,7 +80,7 @@ const HistoryStudentSheetsPage = () => {
 	//#region Event
 	const getData = async (id) => {
 		try {
-			// const res = await getStudentSheets(id);
+			// const res = await getCurrentStudentSheet(id);
 			const res = { status: 200, data: { data: FAKE_DATA, page: 1, pages: 3 } };
 
 			if (isSuccess(res)) setData(res?.data);

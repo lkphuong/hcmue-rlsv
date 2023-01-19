@@ -72,4 +72,5 @@ export const SHEET_STATUS = [
 	{ id: 2, name: 'Chờ CVHT xét duyệt' },
 	{ id: 3, name: 'Chờ khoa xét duyệt' },
 	{ id: 4, name: 'Hoàn thành' },
+	{ id: 5, name: 'Bị từ chối' },
 ];

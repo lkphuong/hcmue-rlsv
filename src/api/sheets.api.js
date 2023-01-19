@@ -18,8 +18,8 @@ export const getItemsMarks = (sheet_id) => {
 	return get(`${SHEETS.GET_ITEMS_MARK}/${sheet_id}`);
 };
 
-export const getStudentSheets = (id) => {
-	return get(`${SHEETS.SHEETS_GET_BY_STUDENT_ID}/${id}`);
+export const getCurrentStudentSheet = (std_code) => {
+	return get(`${SHEETS.GET_BY_STD_CODE}/${std_code}`);
 };
 
 export const updateStudentSheets = (id, body = { role_id: 0, data: [] }) => {

@@ -24,7 +24,7 @@ export const MRow = ({ data, index }) => {
 	//#region Render
 	return (
 		<>
-			<TableRow>
+			<TableRow sx={{ '& .MuiTableCell-root': { fontSize: '12px!important' } }}>
 				<TableCell align='center'>{index + 1}</TableCell>
 				<TableCell align='center'>{data?.std_code}</TableCell>
 				<TableCell align='center'>{data?.status?.name}</TableCell>
@@ -37,7 +37,9 @@ export const MRow = ({ data, index }) => {
 				<TableCell align='center'>{data?.classes?.name}</TableCell>
 				<TableCell align='center'>
 					<Stack direction='row' spacing={1} alignItems='center' justifyContent='end'>
-						<Typography>{role}</Typography>
+						<Typography whiteSpace='nowrap' fontSize={12}>
+							{role}
+						</Typography>
 						<Tooltip title='Phân quyền'>
 							<IconButton onClick={onClick}>
 								<CSettingIcon />
@@ -48,9 +50,9 @@ export const MRow = ({ data, index }) => {
 			</TableRow>
 
 			<MMenuRole
-				id={data?.user_id}
-				department_id={data?.department?.id}
-				class_id={data?.classes?.id}
+				id={data?.std_code}
+				department_id={Number(data?.department?.id)}
+				class_id={Number(data?.classes?.id)}
 				ref={menuRef}
 			/>
 		</>

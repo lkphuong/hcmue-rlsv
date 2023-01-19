@@ -34,11 +34,12 @@ export const MTable = ({ data, isLoading, onFilterChange }) => {
 					<TableRow>
 						<TableCell align='center'>STT</TableCell>
 						<TableCell align='center'>MSSV</TableCell>
-						<TableCell align='center'>
+						<TableCell align='center' sx={{ whiteSpace: 'nowrap' }}>
 							<Button
 								sx={{ color: 'rgba(34, 51, 84, 0.7)' }}
 								endIcon={<FilterAlt />}
 								onClick={toggle}
+								size='small'
 							>
 								TÌNH TRẠNG HỌC
 							</Button>

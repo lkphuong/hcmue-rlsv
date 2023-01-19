@@ -10,6 +10,7 @@ import {
   Get,
   UsePipes,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
@@ -20,6 +21,7 @@ import * as md5 from 'md5';
 import { returnObjects, sprintf } from '../../../utils';
 
 import {
+  forgotPasswordSuccess,
   generateAccessToken,
   generateRefreshToken,
   generateResponse,
@@ -27,9 +29,13 @@ import {
   validatePassword,
 } from '../utils';
 
+import { sendEmail } from '../funcs';
+
 import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { LoginParamsDto } from '../dtos/login-params.dto';
 import { RenewalParamsDto } from '../dtos/renewal-params.dto';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { ConfirmPasswordDto } from '../dtos/confirm-password.dto';
 
 import { JwtPayload } from '../interfaces/payloads/jwt-payload.interface';
 
@@ -55,7 +61,7 @@ import { UnknownException } from '../../../exceptions/UnknownException';
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { LogoutGuard } from '../guards/logout.guard';
 
-import { validateConfirmPassword } from '../validations';
+import { validateConfirmPassword, validateToken } from '../validations';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { Levels } from '../../../constants/enums/level.enum';
@@ -1037,6 +1043,188 @@ export class AuthController {
         message: null,
         errors: null,
       };
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/auth/forgot-password
+   * @access public
+   * @return HttpResponse | HttpException
+   * @description Nhập mssv để lấy lại mật khẩu
+   * @page auth page
+   */
+  @Post('forgot-password')
+  @UsePipes(ValidationPipe)
+  async forgotPassword(@Body() params: ForgotPasswordDto, @Req() req: Request) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url);
+
+      this._logger.writeLog(Levels.LOG, req.method, req.url, params.std_code);
+
+      //#region Get params
+      const { std_code } = params;
+      //#endregion
+
+      //#region Get student by std_code
+      const user = await this._userService.getUserByCode(std_code);
+      console.log('user: ', user)
+      if (user) {
+        //#region Send message to service
+        await sendEmail();
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw new UnknownException(
+          std_code,
+          VALIDATION_EXIT_CODE.NOT_FOUND,
+          req.method,
+          req.url,
+          sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, std_code),
+        );
+      }
+      //#endregion
+    } catch (err) {
+      console.log(err)
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method GET
+   * @url api/auth/reset-password
+   * @access public
+   * @return
+   * @description xác thực url
+   * @page auth page
+   */
+  @Get('reset-password')
+  @UsePipes(ValidationPipe)
+  async confirmUrl(@Query('token') token: string, @Req() req: Request) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url);
+
+      this._logger.writeLog(Levels.LOG, req.method, req.url, token);
+
+      //#region Validation
+      const valid = await validateToken(
+        token,
+        this._configurationService,
+        this._jwtService,
+        req,
+      );
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      return {
+        data: token,
+        errorCode: 0,
+        message: null,
+        errors: null,
+      };
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/auth/reset-password
+   * @access public
+   * @return
+   * @description Cập nhật mật khẩu mới
+   * @page auth page
+   */
+  @Post('reset-password')
+  @UsePipes(ValidationPipe)
+  async resetPassword(@Body() params: ConfirmPasswordDto, @Req() req: Request) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url);
+
+      this._logger.writeLog(Levels.LOG, req.method, req.url, null);
+
+      //#region Get params
+      const { confirm_password, new_password, token } = params;
+      //#endregion
+
+      //#region Validation
+      //#region Validate password
+      const valid_password = validateConfirmPassword(
+        new_password,
+        confirm_password,
+        req,
+      );
+      if (valid_password instanceof HttpException) throw valid_password;
+      //#endregion
+      //#region Validate token
+      const valid_token = await validateToken(
+        token,
+        this._configurationService,
+        this._jwtService,
+        req,
+      );
+      if (valid_token instanceof HttpException) throw valid_token;
+      //#endregion
+      //#endregion
+
+      //#region Update password
+      let user = await this._userService.getUserByCode(valid_token.username);
+      if (user) {
+        user.password = md5(new_password);
+        user.updated_at = new Date();
+        user.updated_by = 'system';
+
+        user = await this._userService.update(user);
+
+        return forgotPasswordSuccess(user, req);
+      } else {
+        //#region throw HandlerException
+        throw new UnknownException(
+          (req.user as any).user_id,
+          VALIDATION_EXIT_CODE.NOT_FOUND,
+          req.method,
+          req.url,
+          ErrorMessage.OPERATOR_PASSWORD_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

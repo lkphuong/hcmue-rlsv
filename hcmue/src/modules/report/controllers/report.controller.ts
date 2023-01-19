@@ -183,6 +183,9 @@ export class ReportController {
       if (cache_classes && cache_classes.length > 0) {
         //#region Generate response
         return await generateReportsResponse(
+          academic,
+          department,
+          semester,
           academic_id,
           class_id,
           department_id,
@@ -298,6 +301,9 @@ export class ReportController {
       if (cache_classes && cache_classes.length > 0) {
         //#region Generate response
         return await generateReportsDepartmentResponse(
+          academic,
+          department,
+          semester,
           academic_id,
           semester_id,
           cache_classes,

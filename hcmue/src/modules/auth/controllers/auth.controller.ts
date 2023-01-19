@@ -1081,7 +1081,6 @@ export class AuthController {
 
       //#region Get student by std_code
       const user = await this._userService.getUserByCode(std_code);
-      console.log('user: ', user)
       if (user) {
         //#region Send message to service
         await sendEmail();
@@ -1098,7 +1097,7 @@ export class AuthController {
       }
       //#endregion
     } catch (err) {
-      console.log(err)
+      console.log(err);
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
 

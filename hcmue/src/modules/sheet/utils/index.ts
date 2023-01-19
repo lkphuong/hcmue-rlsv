@@ -24,6 +24,7 @@ import {
   ClassResponse,
   ClassSheetsResponse,
   ManagerDepartmentResponse,
+  UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
 
 import {
@@ -71,6 +72,21 @@ export const generateUserSheetsResponse = (
 
   // Returns data
   return returnObjects(payload);
+};
+
+export const generateUserSheetsPagingResponse = (
+  pages: number,
+  page: number,
+  sheets: SheetEntity[],
+  req: Request,
+) => {
+  console.log('----------------------------------------------------------');
+  console.log(req.method + ' - ' + req.url);
+
+  // Transform SheetEntity class to UserSheetsResponse
+  const payload = generateUserSheets(sheets);
+
+  return returnObjectsWithPaging<UserSheetsResponse>(pages, page, payload);
 };
 
 export const generateClassSheetsResponse = async (

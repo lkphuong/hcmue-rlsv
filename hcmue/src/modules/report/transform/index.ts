@@ -1,7 +1,10 @@
 import { convertString2Float } from '../../../utils';
 
+import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 import { CacheClassEntity } from '../../../entities/cache_class.entity';
+import { DepartmentEntity } from '../../../entities/department.entity';
 import { LevelEntity } from '../../../entities/level.entity';
+import { SemesterEntity } from '../../../entities/semester.entity';
 
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
@@ -18,6 +21,9 @@ import { NO_LEVEL } from '../constants';
 import { SheetStatus } from '../../sheet/constants/enums/status.enum';
 
 export const generateCacheClassesResponse = async (
+  academic_year: AcademicYearEntity,
+  department: DepartmentEntity,
+  semester: SemesterEntity,
   academic_id: number,
   class_id: number,
   department_id: number,
@@ -89,7 +95,26 @@ export const generateCacheClassesResponse = async (
       }
     }
     //#endregion
-
+    report_response.department = department
+      ? {
+          id: department.id,
+          name: department.name,
+        }
+      : null;
+    report_response.academic = academic_year
+      ? {
+          id: academic_year.id,
+          name: academic_year.start + ' - ' + academic_year.end,
+        }
+      : null;
+    report_response.semester = semester
+      ? {
+          id: semester.id,
+          name: semester.name,
+          start: semester.start,
+          end: semester.end,
+        }
+      : null;
     report_response.classes = class_response;
     report_response.sum_of_levels = sum_of_levels;
     report_response.sum_of_std_in_classes = sum_of_std;
@@ -101,6 +126,9 @@ export const generateCacheClassesResponse = async (
 };
 
 export const generateCacheDepartmentsResponse = async (
+  academic_year: AcademicYearEntity,
+  department: DepartmentEntity,
+  semester: SemesterEntity,
   academic_id: number,
   semester_id: number,
   cache_classes: CacheClassEntity[] | null,
@@ -170,7 +198,26 @@ export const generateCacheDepartmentsResponse = async (
       }
     }
     //#endregion
-
+    report_response.department = department
+      ? {
+          id: department.id,
+          name: department.name,
+        }
+      : null;
+    report_response.academic = academic_year
+      ? {
+          id: academic_year.id,
+          name: academic_year.start + ' - ' + academic_year.end,
+        }
+      : null;
+    report_response.semester = semester
+      ? {
+          id: semester.id,
+          name: semester.name,
+          start: semester.start,
+          end: semester.end,
+        }
+      : null;
     report_response.departments = department_response;
     report_response.sum_of_levels = sum_of_levels;
     report_response.sum_of_std_in_departments = sum_of_std;

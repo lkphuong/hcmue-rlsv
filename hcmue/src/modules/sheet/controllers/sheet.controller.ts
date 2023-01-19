@@ -37,6 +37,7 @@ import {
   generateResponses,
   generateSheet,
   generateSheetsResponses,
+  generateUserSheetsPagingResponse,
   generateUserSheetsResponse,
 } from '../utils';
 
@@ -792,7 +793,7 @@ export class SheetController {
   async getSheetsHistoryByUser(
     @Body() params: GetSheetStudentHistoryDto,
     @Req() req: Request,
-  ): Promise<HttpResponse<UserSheetsResponse> | HttpException> {
+  ): Promise<HttpPagingResponse<UserSheetsResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -852,11 +853,11 @@ export class SheetController {
       );
       //#endregion
 
-      console.log('sheets: ', sheets);
+      //console.log('sheets: ', sheets);
 
       if (sheets && sheets.length > 0) {
         //#region Generate response
-        return generateUserSheetsResponse(sheets, req);
+        return generateUserSheetsPagingResponse(pages, page, sheets, req);
         //#endregion
       } else {
         //#region throw HandlerException

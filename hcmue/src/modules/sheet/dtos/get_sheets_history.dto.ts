@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 import { LengthValidator } from '../../../validators/length.validator';

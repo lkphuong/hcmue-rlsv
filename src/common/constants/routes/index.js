@@ -54,6 +54,7 @@ export const ROUTES = {
 
 	ADMIN: {
 		REPORT: '/admin/report',
+		REPORT_DEPARTMENT: '/admin/report/:department_id/:info',
 
 		FORMS: '/admin/forms',
 		FORMS_CREATE: '/admin/forms/create',

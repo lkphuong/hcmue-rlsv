@@ -20,14 +20,13 @@ import { isSuccess, isEmpty } from '_func/';
 import MRow from './MRow';
 import MFooter from './MFooter';
 
-const MTable = ({ data, onClick, departmentName }) => {
+export const MDepartmentTable = ({ data, filter, departmentName }) => {
 	//#region Data
 	const [height, setHeight] = useState(0);
 
 	const [levels, setLevels] = useState([]);
 
 	const heightRef = useRef(null);
-
 	//#endregion
 
 	//#region Event
@@ -55,7 +54,7 @@ const MTable = ({ data, onClick, departmentName }) => {
 					departmentName ? 'khoa ' + departmentName : 'tất cả các khoa'
 				}`}
 			/>
-			{levels?.length > 0 && data?.classes?.length > 0 ? (
+			{levels?.length > 0 && data?.departments?.length > 0 ? (
 				<TableContainer className='c-table'>
 					<Table stickyHeader className='statistic-table'>
 						<TableHead>
@@ -64,7 +63,7 @@ const MTable = ({ data, onClick, departmentName }) => {
 									STT
 								</TableCell>
 								<TableCell rowSpan={2} align='center'>
-									Lớp
+									Khoa
 								</TableCell>
 								<TableCell rowSpan={2} align='center' className='border-right'>
 									Sĩ số
@@ -102,13 +101,13 @@ const MTable = ({ data, onClick, departmentName }) => {
 							</TableRow>
 						</TableHead>
 						<TableBody>
-							{data?.classes?.length > 0 &&
-								data.classes.map((row, index) => (
+							{data?.departments?.length > 0 &&
+								data.departments.map((row, index) => (
 									<MRow
 										key={row.id}
 										index={index}
 										data={row}
-										previewClass={onClick}
+										department_info={{ ...filter }}
 									/>
 								))}
 						</TableBody>
@@ -127,5 +126,3 @@ const MTable = ({ data, onClick, departmentName }) => {
 	);
 	//#endregion
 };
-
-export default MTable;

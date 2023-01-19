@@ -72,7 +72,7 @@ export const MFilter = ({ filter, onFilterChange, classes, departments, academic
 										onChange={handleChangeFilter('academic_id')}
 										options={academic_years}
 										display='name'
-										placeholder='ALL'
+										placeholder='Tất cả'
 										renderOption={(props, option) => (
 											<Box component='li' {...props} key={option.id}>
 												{option.name}

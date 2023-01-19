@@ -20,7 +20,8 @@ const ListStudentsPage = lazy(() => import('_modules/students/pages/ListStudents
 
 const ListAdvisersPage = lazy(() => import('_modules/advisers/pages/ListAdvisersPage'));
 
-const ListPageStatistic = lazy(() => import('_modules/statistic/pages/ListPageStatistic'));
+const DepartmentReportPage = lazy(() => import('_modules/reports/pages/DepartmentReportPage'));
+const ClassReportPage = lazy(() => import('_modules/reports/pages/ClassReportPage'));
 
 const ListDepartmentAccountPage = lazy(() =>
 	import('_modules/department/pages/ListDepartmentAccountPage')
@@ -36,7 +37,16 @@ export const ADMIN_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
-				<ListPageStatistic />
+				<DepartmentReportPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADMIN.REPORT_DEPARTMENT,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<ClassReportPage />
 			</CPermission>
 		),
 	},

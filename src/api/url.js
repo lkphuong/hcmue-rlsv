@@ -90,6 +90,8 @@ export const DEPARTMENTS = {
 
 export const REPORTS = {
 	GET_REPORTS: '/reports',
+
+	GET_CLASS_REPORTS: '/reports/class',
 };
 
 export const LEVELS = {

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 
 import {
 	Box,
-	CardHeader,
 	Paper,
 	Table,
 	TableBody,
@@ -20,14 +19,13 @@ import { isSuccess, isEmpty } from '_func/';
 import MRow from './MRow';
 import MFooter from './MFooter';
 
-const MTable = ({ data, onClick, departmentName }) => {
+export const MClassTable = ({ data, filter }) => {
 	//#region Data
 	const [height, setHeight] = useState(0);
 
 	const [levels, setLevels] = useState([]);
 
 	const heightRef = useRef(null);
-
 	//#endregion
 
 	//#region Event
@@ -50,11 +48,6 @@ const MTable = ({ data, onClick, departmentName }) => {
 	//#region Render
 	return (
 		<Box>
-			<CardHeader
-				title={`Danh sách thống kê phiếu chấm điểm rèn luyện của ${
-					departmentName ? 'khoa ' + departmentName : 'tất cả các khoa'
-				}`}
-			/>
 			{levels?.length > 0 && data?.classes?.length > 0 ? (
 				<TableContainer className='c-table'>
 					<Table stickyHeader className='statistic-table'>
@@ -108,7 +101,7 @@ const MTable = ({ data, onClick, departmentName }) => {
 										key={row.id}
 										index={index}
 										data={row}
-										previewClass={onClick}
+										department_info={{ ...filter }}
 									/>
 								))}
 						</TableBody>
@@ -127,5 +120,3 @@ const MTable = ({ data, onClick, departmentName }) => {
 	);
 	//#endregion
 };
-
-export default MTable;

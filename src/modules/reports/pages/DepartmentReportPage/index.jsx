@@ -3,14 +3,14 @@ import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
 
-import { Filter, MTable } from '_modules/statistic/components';
+import { Filter, MDepartmentTable } from '_modules/reports/components';
 
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 
 import { getReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
 
-const ListPageStatistic = () => {
+const DepartmentReportPage = () => {
 	//#region Data
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
@@ -50,7 +50,6 @@ const ListPageStatistic = () => {
 		if (isSuccess(res)) setSemesters(res.data);
 		else setSemesters([]);
 	};
-
 	//#endregion
 
 	useEffect(() => {
@@ -79,10 +78,10 @@ const ListPageStatistic = () => {
 				isDepartment={role_id === 5}
 			/>
 
-			<MTable data={data} departmentName={departmentName} />
+			<MDepartmentTable data={data} filter={filter} departmentName={departmentName} />
 		</Box>
 	);
 	//#endregion
 };
 
-export default ListPageStatistic;
+export default DepartmentReportPage;

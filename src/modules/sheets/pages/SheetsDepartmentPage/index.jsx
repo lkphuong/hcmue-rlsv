@@ -10,7 +10,7 @@ import { CPagination } from '_controls/';
 
 import { ListSheets, MDepartmentFilter, MSearch } from '_modules/sheets/components';
 
-import { isSuccess, cleanObjValue } from '_func/';
+import { isSuccess, cleanObjValue, isEmpty } from '_func/';
 
 import { getClassesByDepartment } from '_api/classes.api';
 import { getAdminClassSheetsByDepartment } from '_api/sheets.api';
@@ -50,6 +50,7 @@ const SheetsDepartmentPage = () => {
 		const res = await getAdminClassSheetsByDepartment(_filter);
 
 		if (isSuccess(res)) setData(res.data);
+		else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
 	};
 
 	const getClassesData = async () => {

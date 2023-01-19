@@ -11,7 +11,10 @@ export function isFalsy(value) {
 }
 
 export function isEmpty(response) {
-	return response?.status?.toString() === '404' && response?.errorCode?.toString() === '4008';
+	return (
+		response?.status?.toString() === '404' &&
+		(response?.errorCode?.toString() === '4008' || response?.errorCode?.toString() === '4007')
+	);
 }
 
 export const getCurrentState = (state) => {

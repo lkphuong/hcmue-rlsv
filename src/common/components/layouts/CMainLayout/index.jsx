@@ -93,7 +93,7 @@ export const CMainLayout = () => {
 				if (isSuccess(resDepartment)) {
 					const departments = resDepartment.data.map((e) => ({
 						...e,
-						id: e.id,
+						id: parseInt(e.id),
 					}));
 
 					dispatch(optionsAction.setDepartments(departments));

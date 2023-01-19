@@ -2,7 +2,7 @@ import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
-const Filter = ({
+export const Filter = ({
 	filter,
 	onFilterChange,
 	departments,
@@ -97,5 +97,3 @@ const Filter = ({
 	);
 	//#endregion
 };
-
-export default Filter;

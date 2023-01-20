@@ -41,8 +41,15 @@ export const MTable = ({ data, isLoading }) => {
 						))
 					) : (
 						<TableRow>
-							<TableCell height={300} colSpan='100%' align='center'>
-								Không có dữ liệu hiển thị
+							<TableCell colSpan='100%'>
+								<Box
+									minHeight={300}
+									display='flex'
+									justifyContent='center'
+									alignItems='center'
+								>
+									Không có dữ liệu hiển thị
+								</Box>
 							</TableCell>
 						</TableRow>
 					)}

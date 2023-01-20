@@ -1,4 +1,4 @@
-// import { lazy } from 'react';
+import { lazy } from 'react';
 
 import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
 import { ROUTES } from '_constants/routes';
@@ -6,6 +6,8 @@ import { ROUTES } from '_constants/routes';
 import { CPermission } from '_controls/';
 
 import { CErrorPage } from '_others/';
+
+const RolesPage = lazy(() => import('_modules/advisers/pages/RolesPage'));
 
 export const ADVISER_ROUTES = [
 	{
@@ -40,7 +42,7 @@ export const ADVISER_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
-				<div>Quản lý phân quyền</div>
+				<RolesPage />
 			</CPermission>
 		),
 	},

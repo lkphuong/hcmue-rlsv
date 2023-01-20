@@ -40,8 +40,15 @@ export const MTable = ({ data, isLoading }) => {
 						data.map((row, index) => <MRow key={row?.id} index={index} data={row} />)
 					) : (
 						<TableRow>
-							<TableCell height={300} colSpan='100%' align='center'>
-								Không có dữ liệu hiển thị
+							<TableCell colSpan='100%'>
+								<Box
+									minHeight={300}
+									display='flex'
+									justifyContent='center'
+									alignItems='center'
+								>
+									Không có dữ liệu hiển thị
+								</Box>
 							</TableCell>
 						</TableRow>
 					)}

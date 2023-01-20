@@ -18,12 +18,12 @@ export const MSearch = ({ onFilterChange }) => {
 
 	//#region Render
 	return (
-		<Stack spacing={1.5} alignItems='center' direction='row' mb={1.5}>
+		<Stack spacing={1.5} alignItems='center' direction='row'>
 			<CInput
 				isSearch
 				value={currentInput}
 				onChange={onChange}
-				placeholder='Nhập tên để tìm kiếm'
+				placeholder='Nhập MSSV hoặc tên'
 			/>
 
 			<Button variant='contained' onClick={updateFilter}>

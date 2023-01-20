@@ -7,8 +7,6 @@ import { useReactToPrint } from 'react-to-print';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
-import dayjs from 'dayjs';
-
 import { Form } from '_modules/class/components';
 
 import { getItemsMarks, getSheetById } from '_api/sheets.api';
@@ -56,47 +54,34 @@ const ClassDetailPage = () => {
 	//#region Event
 	const getForm = useCallback(async () => {
 		if (!sheet_id) return;
-		try {
-			const res = await getSheetById(sheet_id);
 
-			if (isSuccess(res)) {
-				if (res.data === null) {
-					alert.fail({
-						text: 'Tài khoản này không thuộc sinh viên để chấm điểm cá nhân.',
-					});
-					navigate(-1);
-				}
+		const res = await getSheetById(sheet_id);
 
-				const { time_class } = res.data;
-
-				if (!dayjs().isBetween(time_class.start, time_class.end, '[]')) {
-					dispatch(actions.setNotAvailable());
-				}
-
-				setData(res.data);
+		if (isSuccess(res)) {
+			if (res.data === null) {
+				alert.fail({
+					text: 'Tài khoản này không thuộc sinh viên để chấm điểm cá nhân.',
+				});
+				navigate(-1);
 			}
-		} catch (error) {
-			throw error;
+
+			setData(res.data);
 		}
 	}, [sheet_id]);
 
 	const getMarks = useCallback(async () => {
-		try {
-			const res = await getItemsMarks(data.id);
+		if (!data?.id) return;
 
-			if (isSuccess(res))
-				setItemsMark(() => {
-					return res.data.map((e) => ({ ...e, id: Number(e.id) }));
-				});
-		} catch (error) {
-			throw error;
-		}
+		const res = await getItemsMarks(data.id);
+
+		if (isSuccess(res))
+			setItemsMark(() => {
+				return res.data.map((e) => ({ ...e, id: Number(e.id) }));
+			});
 	}, [data?.id]);
 
 	const handlePrint = useReactToPrint({
-		content: () => {
-			return ref.current;
-		},
+		content: () => ref.current,
 	});
 	//#endregion
 
@@ -151,7 +136,12 @@ const ClassDetailPage = () => {
 								<Typography fontSize={20} p={1.5} fontWeight={600}>
 									{`${data?.user?.fullname} - ${data?.user?.std_code}`}
 								</Typography>
-								<Button startIcon={<Print />} sx={{ p: 1.5 }} onClick={handlePrint}>
+								<Button
+									disabled={data?.status !== 4}
+									startIcon={<Print />}
+									sx={{ p: 1.5 }}
+									onClick={handlePrint}
+								>
 									In phiếu
 								</Button>
 							</Stack>

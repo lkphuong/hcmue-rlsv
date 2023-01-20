@@ -127,7 +127,17 @@ export const getProfile = async (token) => {
 
 			updateAbility(role_id);
 
-			store.dispatch(actions.setProfile({ ...res.data, role_id }));
+			store.dispatch(
+				actions.setProfile({
+					...res.data,
+					role_id,
+					department_id: Number(res?.data?.department_id),
+					class_ids:
+						res?.data?.class_id?.length > 0
+							? res.data.class_id.map((e) => Number(e))
+							: [],
+				})
+			);
 
 			return res;
 		} else {

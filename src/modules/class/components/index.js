@@ -1,5 +1,7 @@
-import ListStudents from './ListStudents';
-import Filter from './Filter';
-import Form from './Form';
-
-export { ListStudents, Filter, Form };
+export * from './MTable';
+export * from './Filter';
+export * from './MHistoryTable';
+export * from './MClassFilter';
+export * from './MSearch';
+export * from './ListStudentsTable';
+export * from './Form';

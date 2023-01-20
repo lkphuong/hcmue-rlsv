@@ -15,6 +15,9 @@ export const SHEETS = {
 	STUDENT_GET_HISTORY: '/sheets/student/history',
 	UPDATE_STUDENT_SHEET: '/sheets/student',
 
+	GET_CURRENT_CLASS_SHEET: '/sheets/adviser',
+	CLASS_GET_HISTORY: '/sheets/adviser/history',
+
 	SHEETS_GET_BY_CLASS_ID: '/sheets/class',
 	UPDATE_CLASS_SHEET: '/sheets/class',
 

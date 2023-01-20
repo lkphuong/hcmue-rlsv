@@ -20,8 +20,6 @@ import { alert } from '_func/alert';
 
 import { isSuccess } from '_func/';
 
-import { ROUTES } from '_constants/routes';
-
 import { updateClassSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
@@ -30,7 +28,7 @@ import Header from './Header';
 
 import './index.scss';
 
-const Form = ({ data }) => {
+export const Form = ({ data }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
@@ -73,7 +71,7 @@ const Form = ({ data }) => {
 				onConfirm: () => {
 					dispatch(actions.clearMarks());
 
-					navigate(ROUTES.CLASS_SCORE, { replace: true });
+					navigate(-1, { replace: true });
 				},
 				fullname: data?.user?.fullname,
 				mark: data?.sum_of_class_marks,
@@ -94,7 +92,7 @@ const Form = ({ data }) => {
 
 					alert.success({ text: 'Cập nhật không xếp loại cho sinh viên thành công.' });
 
-					navigate(ROUTES.CLASS_SCORE, { replace: true });
+					navigate(-1, { replace: true });
 				}
 			},
 			text: 'Bạn chắc chắn điều chỉnh sinh viên này thành không xếp loại.',
@@ -133,7 +131,7 @@ const Form = ({ data }) => {
 							>
 								Khung điểm
 							</TableCell>
-							<TableCell align='center' colSpan={3} sx={{ minWidth: '390px' }}>
+							<TableCell align='center' colSpan={4} sx={{ minWidth: '390px' }}>
 								Điểm đánh giá
 							</TableCell>
 						</TableRow>
@@ -143,6 +141,9 @@ const Form = ({ data }) => {
 							</TableCell>
 							<TableCell align='center' width={130}>
 								Lớp
+							</TableCell>
+							<TableCell align='center' width={130}>
+								CVHT
 							</TableCell>
 							<TableCell align='center' width={130}>
 								Khoa
@@ -184,4 +185,3 @@ const Form = ({ data }) => {
 	);
 	//#endregion
 };
-export default Form;

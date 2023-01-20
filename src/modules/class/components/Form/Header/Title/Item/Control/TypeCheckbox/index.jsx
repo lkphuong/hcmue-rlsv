@@ -47,6 +47,9 @@ const TypeCheckbox = ({ mark, unit, initialMark, currentMark, available, titleId
 				)}
 			</TableCell>
 			<TableCell align='center'>
+				<Typography>{currentMark.adviser_mark_level}</Typography>
+			</TableCell>
+			<TableCell align='center'>
 				<Typography>{currentMark.department_mark_level}</Typography>
 			</TableCell>
 		</>

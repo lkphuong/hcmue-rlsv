@@ -9,8 +9,12 @@ import { CErrorPage } from '_others/';
 
 const CurrentSheetPage = lazy(() => import('_modules/home/pages/CurrentSheetPage'));
 const StudentDetailPage = lazy(() => import('_modules/home/pages/StudentDetailPage'));
-
 const HistoryStudentSheetsPage = lazy(() => import('_modules/home/pages/HistoryStudentSheetsPage'));
+
+const CurrentClassSheetsPage = lazy(() => import('_modules/class/pages/CurrentClassSheetsPage'));
+const HistoryClassSheetsPage = lazy(() => import('_modules/class/pages/HistoryClassSheetsPage'));
+const ListStudentSheetsPage = lazy(() => import('_modules/class/pages/ListStudentSheetsPage'));
+const ClassDetailPage = lazy(() => import('_modules/class/pages/ClassDetailPage'));
 
 export const CLASS_ROUTES = [
 	{
@@ -45,7 +49,7 @@ export const CLASS_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
-				<div>Điểm rèn luyện của lớp</div>
+				<CurrentClassSheetsPage />
 			</CPermission>
 		),
 	},
@@ -54,7 +58,26 @@ export const CLASS_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
-				<div>Lịch sử điểm rèn luyện của lớp</div>
+				<HistoryClassSheetsPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.CLASS_OFFICER.STUDENT_LIST,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+				<ListStudentSheetsPage />
+			</CPermission>
+		),
+	},
+
+	{
+		path: ROUTES.CLASS_OFFICER.DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+				<ClassDetailPage />
 			</CPermission>
 		),
 	},

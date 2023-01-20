@@ -37,6 +37,7 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 		return {
 			personal_mark_level: foundItem.personal_mark_level,
 			class_mark_level: foundItem.class_mark_level,
+			adviser_mark_level: foundItem.adviser_mark_level,
 			department_mark_level: foundItem.department_mark_level,
 		};
 	}, [id, itemsMark]);

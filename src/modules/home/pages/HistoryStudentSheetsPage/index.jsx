@@ -32,7 +32,7 @@ const HistoryStudentSheetsPage = () => {
 	//#region Event
 	const getData = async () => {
 		const res = await getStudentHistorySheets(filter);
-		console.log(res);
+
 		if (isSuccess(res)) setData(res?.data);
 	};
 

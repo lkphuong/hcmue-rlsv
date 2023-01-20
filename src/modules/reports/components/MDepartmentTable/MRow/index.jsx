@@ -19,11 +19,7 @@ const MRow = ({ data, index, department_info }) => {
 		<TableRow className='statistic-row'>
 			<TableCell align='center'>{index + 1}</TableCell>
 			<TableCell align='center' sx={{ fontWeight: 600 }}>
-				<CLink
-					underline='hover'
-					sx={{ cursor: 'pointer' }}
-					to={`${ROUTES.ADMIN.REPORT}/${data?.id}/${info}`}
-				>
+				<CLink underline='hover' to={`${ROUTES.ADMIN.REPORT}/${data?.id}/${info}`}>
 					{data?.name}
 				</CLink>
 			</TableCell>

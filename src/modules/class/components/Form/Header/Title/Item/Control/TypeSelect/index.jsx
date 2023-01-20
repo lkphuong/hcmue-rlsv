@@ -25,7 +25,7 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 		<>
 			<TableCell />
 			<TableCell align='center'>
-				<Typography>{currentMark.personal_mark_level || 0}</Typography>
+				<Typography>{currentMark.personal_mark_level}</Typography>
 			</TableCell>
 			<TableCell align='center'>
 				{available ? (
@@ -52,11 +52,14 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 						)}
 					/>
 				) : (
-					<Typography>{currentMark.class_mark_level || 0}</Typography>
+					<Typography>{currentMark.class_mark_level}</Typography>
 				)}
 			</TableCell>
 			<TableCell align='center'>
-				<Typography>{currentMark.department_mark_level || 0}</Typography>
+				<Typography>{currentMark.adviser_mark_level}</Typography>
+			</TableCell>
+			<TableCell align='center'>
+				<Typography>{currentMark.department_mark_level}</Typography>
 			</TableCell>
 		</>
 	);

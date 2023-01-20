@@ -707,6 +707,7 @@ export const generateEvaluationsArray = async (
 };
 
 export const generateClassStatusAdviser = async (
+  role: number,
   department_id: number,
   $class: ClassEntity[],
   form: FormEntity,
@@ -727,14 +728,27 @@ export const generateClassStatusAdviser = async (
   };
 
   for (const i of $class) {
-    const count = await sheet_service.countSheetByStatus(
-      form.academic_year.id,
-      form.semester.id,
-      SheetStatus.WAITING_ADVISER,
-      department_id,
-      i.id,
-      form.id,
-    );
+    let count = 0;
+    if (role == RoleCode.ADVISER) {
+      count = await sheet_service.countSheetByStatus(
+        form.academic_year.id,
+        form.semester.id,
+        SheetStatus.WAITING_ADVISER,
+        department_id,
+        i.id,
+        form.id,
+      );
+    } else {
+      count = await sheet_service.countSheetByStatus(
+        form.academic_year.id,
+        form.semester.id,
+        SheetStatus.WAITING_CLASS,
+        department_id,
+        i.id,
+        form.id,
+      );
+    }
+
     const item: ClassResponse = {
       id: i.id,
       code: i.code,
@@ -748,6 +762,7 @@ export const generateClassStatusAdviser = async (
 };
 
 export const generateClassStatusAdviserHistory = async (
+  role: number,
   params: GetClassStatusAdviserHistoryDto,
   $class: ClassEntity,
   forms: FormEntity[],
@@ -759,14 +774,27 @@ export const generateClassStatusAdviserHistory = async (
   const { class_id, department_id, academic_id, semester_id } = params;
   //#endregion
   for (const i of forms) {
-    const count = await sheet_service.countSheetByStatus(
-      academic_id,
-      semester_id,
-      SheetStatus.WAITING_ADVISER,
-      department_id,
-      class_id,
-      i.id,
-    );
+    let count = 0;
+    if (role === RoleCode.ADVISER) {
+      count = await sheet_service.countSheetByStatus(
+        academic_id,
+        semester_id,
+        SheetStatus.WAITING_ADVISER,
+        department_id,
+        class_id,
+        i.id,
+      );
+    } else {
+      count = await sheet_service.countSheetByStatus(
+        academic_id,
+        semester_id,
+        SheetStatus.WAITING_CLASS,
+        department_id,
+        class_id,
+        i.id,
+      );
+    }
+
     const item: ClassResponse = {
       id: $class.id,
       code: $class.code,

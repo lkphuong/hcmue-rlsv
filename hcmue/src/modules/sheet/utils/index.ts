@@ -207,6 +207,7 @@ export const generateEvaluationsResponse = async (
 };
 
 export const generateClassStatusAdviserResponse = async (
+  role: number,
   department_id: number,
   form: FormEntity,
   $class: ClassEntity[],
@@ -218,6 +219,7 @@ export const generateClassStatusAdviserResponse = async (
   console.log('data: ', $class);
 
   const payload = await generateClassStatusAdviser(
+    role,
     department_id,
     $class,
     form,
@@ -233,6 +235,7 @@ export const generateClassStatusAdviserResponse = async (
 };
 
 export const generateClassStatusAdviserHistoryResponse = async (
+  role: number,
   pages: number,
   page: number,
   params: GetClassStatusAdviserHistoryDto,
@@ -247,6 +250,7 @@ export const generateClassStatusAdviserHistoryResponse = async (
   console.log('forms: ', forms);
 
   const payload = await generateClassStatusAdviserHistory(
+    role,
     params,
     $class,
     forms,

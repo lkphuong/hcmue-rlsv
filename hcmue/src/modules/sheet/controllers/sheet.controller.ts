@@ -918,6 +918,11 @@ export class SheetController {
         req.url,
         JSON.stringify({ params: params }),
       );
+
+      //#region Get jwtpayload
+      const { role } = req.user as JwtPayload;
+      //#endregion
+
       //#region Get params
       const { class_ids, department_id } = params;
       //#endregion
@@ -933,6 +938,7 @@ export class SheetController {
       if (form && $class) {
         //#region Count sheet status < status waitting class
         return await generateClassStatusAdviserResponse(
+          role,
           department_id,
           form,
           $class,
@@ -1000,6 +1006,10 @@ export class SheetController {
         JSON.stringify({ params: params }),
       );
 
+      //#region Get jwtpayload
+      const { role } = req.user as JwtPayload;
+      //#endregion
+
       //#region Get params
       const { page, academic_id, semester_id, class_id } = params;
       let { pages } = params;
@@ -1032,6 +1042,7 @@ export class SheetController {
 
       if (forms && forms.length > 0 && $class) {
         return await generateClassStatusAdviserHistoryResponse(
+          role,
           pages,
           page,
           params,

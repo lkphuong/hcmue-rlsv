@@ -90,7 +90,7 @@ export class ReportController {
    * @page reports page
    */
   @Post('/class')
-  @Roles(Role.ADMIN, Role.DEPARTMENT)
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -234,7 +234,7 @@ export class ReportController {
    * @page reports page
    */
   @Post('/')
-  @Roles(Role.ADMIN, Role.DEPARTMENT)
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

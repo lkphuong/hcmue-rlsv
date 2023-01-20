@@ -48,6 +48,7 @@ import { ProfileResponse } from '../interfaces/auth-response.interface';
 import { AdviserClassesService } from '../../adviser/services/adviser-classes/adviser_classes.service';
 import { AdviserService } from '../../adviser/services/adviser/adviser.service';
 import { AuthService } from '../services/auth.service';
+import { ClassService } from '../../class/services/class.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 import { OtherService } from '../../other/services/other.service';
@@ -82,6 +83,7 @@ export class AuthController {
     private readonly _authService: AuthService,
     private readonly _adviserService: AdviserService,
     private readonly _adviserClassService: AdviserClassesService,
+    private readonly _classService: ClassService,
     private readonly _otherService: OtherService,
     private readonly _userService: UserService,
     private readonly _configurationService: ConfigurationService,
@@ -673,6 +675,16 @@ export class AuthController {
                       return item.class_id;
                     })
                   : [],
+              classes:
+                adviser_classes && adviser_classes.length > 0
+                  ? adviser_classes.map((item) => {
+                      return {
+                        id: item.class.id,
+                        code: item.class.code,
+                        name: item.class.name,
+                      };
+                    })
+                  : null,
               department_id: adviser_session.department_id ?? null,
               role: role,
             });
@@ -699,6 +711,7 @@ export class AuthController {
               username: other_session?.username,
               fullname: other_session?.department?.name ?? null,
               class_id: null,
+              classes: null,
               department_id: other_session.department_id ?? null,
               role: role,
             });
@@ -716,12 +729,25 @@ export class AuthController {
         default:
           const session = await this._authService.getProfile(user_id);
           if (session) {
+            const $class = session.class
+              ? await this._classService.getClassById(session.class)
+              : null;
+
             //#region Generate response
             return returnObjects<ProfileResponse>({
               user_id: session.user_id,
               username: session.username,
               fullname: session.fullname,
               class_id: [session.class],
+              classes: $class
+                ? [
+                    {
+                      id: $class.id,
+                      name: $class.name,
+                      code: $class.code,
+                    },
+                  ]
+                : null,
               department_id: session.department,
               role: role,
             });

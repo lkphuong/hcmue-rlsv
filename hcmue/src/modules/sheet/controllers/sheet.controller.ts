@@ -1094,6 +1094,7 @@ export class SheetController {
     Role.MONITOR,
     Role.SECRETARY,
     Role.CHAIRMAN,
+    Role.ADVISER,
   )
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))

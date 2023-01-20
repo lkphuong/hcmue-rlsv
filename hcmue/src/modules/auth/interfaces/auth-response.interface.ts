@@ -5,6 +5,13 @@ export interface ProfileResponse {
   class_id?: number[];
   department_id?: number;
   role?: number;
+  classes?: ClassResponse[];
+}
+
+export interface ClassResponse {
+  id: number;
+  code: string;
+  name: string;
 }
 
 export interface UserResponse extends ProfileResponse {

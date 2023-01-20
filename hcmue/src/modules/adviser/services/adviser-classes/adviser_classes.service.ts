@@ -8,6 +8,7 @@ import { LogService } from '../../../log/services/log.service';
 
 import { Levels } from '../../../../constants/enums/level.enum';
 import { Methods } from '../../../../constants/enums/method.enum';
+import { ClassEntity } from '../../../../entities/class.entity';
 
 @Injectable()
 export class AdviserClassesService {
@@ -24,6 +25,12 @@ export class AdviserClassesService {
     try {
       const conditions = this._adviserClassRepository
         .createQueryBuilder('adviser_class')
+        .innerJoinAndMapOne(
+          'adviser_class.class',
+          ClassEntity,
+          'class',
+          'adviser_class.class_id = class.id AND class.deleted = 0',
+        )
         .where('adviser_class.adviser_id = :adviser_id', { adviser_id })
         .andWhere('adviser_class.active = :active', { active: true })
         .andWhere('adviser_class.deleted = :deleted', { deleted: false });

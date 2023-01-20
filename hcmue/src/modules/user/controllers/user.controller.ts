@@ -86,7 +86,7 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @Post('/')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.ADMIN)
+  @Roles(Role.ADMIN, Role.ADVISER)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getUsers(
     @Body() params: GetUsersDto,

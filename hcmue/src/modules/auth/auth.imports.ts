@@ -4,6 +4,7 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AdviserModule } from '../adviser/adviser.module';
+import { ClassModule } from '../class/class.module';
 import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 import { OtherModule } from '../other/other.module';
@@ -29,6 +30,7 @@ import { JwtStrategy } from './strategy/jwt';
 
 export const modules = [
   AdviserModule,
+  ClassModule,
   SharedModule,
   TypeOrmModule.forFeature([
     RoleEntity,

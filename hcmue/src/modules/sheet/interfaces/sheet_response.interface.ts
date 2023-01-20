@@ -62,6 +62,7 @@ export interface EvaluationsResponse {
   files?: FileResponse[] | null;
   personal_mark_level: number;
   class_mark_level: number;
+  adviser_mark_level: number;
   department_mark_level: number;
 }
 
@@ -123,6 +124,8 @@ export interface ClassResponse {
   id: number;
   code: string;
   status: boolean;
+  academic?: AcademicYearResponse;
+  semester?: SemesterResponse;
 }
 
 export interface DepartmentResponse {

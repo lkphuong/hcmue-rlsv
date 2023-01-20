@@ -315,6 +315,7 @@ export const generateItemsArray = async (
                   : null,
               personal_mark_level: evaluation.personal_mark_level,
               class_mark_level: evaluation.class_mark_level,
+              adviser_mark_level: evaluation.adviser_mark_level,
               department_mark_level: evaluation.department_mark_level,
             };
 
@@ -363,6 +364,7 @@ export const generateItemsArray = async (
                   : null,
               personal_mark_level: student_evaluation.personal_mark_level,
               class_mark_level: class_evaluation.class_mark_level,
+              adviser_mark_level: class_evaluation.adviser_mark_level,
               department_mark_level: class_evaluation.department_mark_level,
             };
             payload.push(result);
@@ -381,6 +383,10 @@ export const generateItemsArray = async (
           );
           const student_evaluation = item.evaluations.find(
             (e) => e.category == EvaluationCategory.STUDENT,
+          );
+
+          const adviser_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.ADVISER,
           );
 
           if (student_evaluation) {
@@ -414,6 +420,7 @@ export const generateItemsArray = async (
                   : null,
               personal_mark_level: student_evaluation.personal_mark_level ?? 0,
               class_mark_level: class_evaluation.class_mark_level ?? 0,
+              adviser_mark_level: adviser_evaluation.adviser_mark_level ?? 0,
               department_mark_level:
                 department_evaluation.department_mark_level ?? 0,
             };
@@ -421,6 +428,57 @@ export const generateItemsArray = async (
           }
         }
 
+        return payload;
+
+      case RoleCode.ADVISER:
+        for (const item of items) {
+          const adviser_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.ADVISER,
+          );
+
+          const class_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.CLASS,
+          );
+
+          const student_evaluation = item.evaluations.find(
+            (e) => e.category == EvaluationCategory.STUDENT,
+          );
+          if (student_evaluation) {
+            const files = await file_service.getFileByEvaluation(
+              student_evaluation.ref,
+              student_evaluation.sheet.id,
+            );
+            const result: EvaluationsResponse = {
+              id: class_evaluation.id,
+              item: {
+                id: item.id,
+                content: item.content,
+              },
+              options: class_evaluation.option
+                ? {
+                    id: class_evaluation.option.id,
+                    content: class_evaluation.option.content,
+                  }
+                : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return {
+                        id: file.id,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
+                      };
+                    })
+                  : null,
+              personal_mark_level: student_evaluation.personal_mark_level,
+              class_mark_level: class_evaluation.class_mark_level,
+              adviser_mark_level: adviser_evaluation.adviser_mark_level,
+              department_mark_level: adviser_evaluation.department_mark_level,
+            };
+            payload.push(result);
+          }
+        }
         return payload;
     }
   }
@@ -444,6 +502,12 @@ export const generateEvaluationsArray = async (
             const class_evaluation = evaluations.find(
               (e) =>
                 e.category === EvaluationCategory.CLASS &&
+                e.item.id == evaluation.item.id,
+            );
+
+            const addviser_evaluation = evaluations.find(
+              (e) =>
+                e.category == EvaluationCategory.ADVISER &&
                 e.item.id == evaluation.item.id,
             );
 
@@ -485,6 +549,7 @@ export const generateEvaluationsArray = async (
                 personal_mark_level:
                   student_evaluation.personal_mark_level ?? 0,
                 class_mark_level: class_evaluation.class_mark_level ?? 0,
+                adviser_mark_level: addviser_evaluation.adviser_mark_level ?? 0,
                 department_mark_level: evaluation.department_mark_level ?? 0,
               };
               payload.push(result);
@@ -534,13 +599,67 @@ export const generateEvaluationsArray = async (
                 personal_mark_level:
                   student_evaluation.personal_mark_level ?? 0,
                 class_mark_level: evaluation.class_mark_level ?? 0,
+                adviser_mark_level: evaluation.adviser_mark_level ?? 0,
                 department_mark_level: evaluation.department_mark_level ?? 0,
               };
               payload.push(result);
             }
           }
         }
+      case RoleCode.ADVISER:
+        for (const evaluation of evaluations) {
+          if (evaluation.category === EvaluationCategory.ADVISER) {
+            const class_evaluation = evaluations.find(
+              (e) =>
+                e.category === EvaluationCategory.CLASS &&
+                e.item.id == evaluation.item.id,
+            );
 
+            const student_evaluation = evaluations.find(
+              (e) =>
+                e.category === EvaluationCategory.STUDENT &&
+                e.item.id == evaluation.item.id,
+            );
+
+            if (student_evaluation) {
+              const files = await file_service.getFileByEvaluation(
+                student_evaluation.ref,
+                student_evaluation.sheet.id,
+              );
+
+              const result: EvaluationsResponse = {
+                id: evaluation.id,
+                item: {
+                  id: evaluation.item.id,
+                  content: evaluation.item.content,
+                },
+                options: evaluation.option
+                  ? {
+                      id: evaluation.option.id,
+                      content: evaluation.option.content,
+                    }
+                  : null,
+                files:
+                  files && files.length > 0
+                    ? files.map((file) => {
+                        return {
+                          id: file.id,
+                          url: '/' + file.url,
+                          name: file.originalName,
+                          type: file.extension == PDF_EXTENSION ? 0 : 1,
+                        };
+                      })
+                    : null,
+                personal_mark_level:
+                  student_evaluation.personal_mark_level ?? 0,
+                class_mark_level: class_evaluation.class_mark_level ?? 0,
+                adviser_mark_level: evaluation.adviser_mark_level ?? 0,
+                department_mark_level: evaluation.department_mark_level ?? 0,
+              };
+              payload.push(result);
+            }
+          }
+        }
       case RoleCode.STUDENT:
         for (const evaluation of evaluations) {
           if (evaluation.category === EvaluationCategory.STUDENT) {
@@ -573,6 +692,7 @@ export const generateEvaluationsArray = async (
                   : null,
               personal_mark_level: evaluation.personal_mark_level ?? 0,
               class_mark_level: evaluation.class_mark_level ?? 0,
+              adviser_mark_level: evaluation.adviser_mark_level ?? 0,
               department_mark_level: evaluation.department_mark_level ?? 0,
             };
             payload.push(result);
@@ -651,6 +771,16 @@ export const generateClassStatusAdviserHistory = async (
       id: $class.id,
       code: $class.code,
       status: count > 0 ? false : true,
+      academic: {
+        id: i.academic_year.id,
+        name: i.academic_year.start + ' - ' + i.academic_year.end,
+      },
+      semester: {
+        id: i.semester.id,
+        name: i.semester.name,
+        start: i.semester.start,
+        end: i.semester.end,
+      },
     };
 
     payload.push(item);

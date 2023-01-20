@@ -36,6 +36,8 @@ export const ROUTES = {
 	ADVISER: {
 		CLASS: '/adviser/class-sheets',
 		HISTORY: '/adviser/class-history',
+		STUDENT_LIST: 'adviser/:class_id',
+		DETAIL: '/adviser/detail/:sheet_id',
 
 		REPORT: '/adviser/report',
 

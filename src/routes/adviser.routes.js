@@ -7,6 +7,11 @@ import { CPermission } from '_controls/';
 
 import { CErrorPage } from '_others/';
 
+const CurrentClassSheetsPage = lazy(() => import('_modules/advisers/pages/CurrentClassSheetsPage'));
+const HistoryClassSheetsPage = lazy(() => import('_modules/advisers/pages/HistoryClassSheetsPage'));
+const ListStudentSheetsPage = lazy(() => import('_modules/advisers/pages/ListStudentSheetsPage'));
+const AdviserDetailPage = lazy(() => import('_modules/advisers/pages/AdviserDetailPage'));
+
 const RolesPage = lazy(() => import('_modules/advisers/pages/RolesPage'));
 
 export const ADVISER_ROUTES = [
@@ -15,7 +20,7 @@ export const ADVISER_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
-				<div>Điểm rèn luyện của lớp</div>
+				<CurrentClassSheetsPage />
 			</CPermission>
 		),
 	},
@@ -24,7 +29,25 @@ export const ADVISER_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
-				<div>Lịch sử điểm rèn luyện của lớp</div>
+				<HistoryClassSheetsPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADVISER.STUDENT_LIST,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
+				<ListStudentSheetsPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.CLASS_OFFICER.DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
+				<AdviserDetailPage />
 			</CPermission>
 		),
 	},

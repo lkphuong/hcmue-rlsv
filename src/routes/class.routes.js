@@ -71,7 +71,6 @@ export const CLASS_ROUTES = [
 			</CPermission>
 		),
 	},
-
 	{
 		path: ROUTES.CLASS_OFFICER.DETAIL,
 		errorElement: <CErrorPage />,

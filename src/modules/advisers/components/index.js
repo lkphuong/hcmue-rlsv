@@ -3,3 +3,8 @@ export * from './MTable';
 export * from './MSearch';
 export * from './MRoleFilter';
 export * from './MRoleTable';
+export * from './MCurrentTable';
+export * from './MHistoryTable';
+export * from './ListStudentsTable';
+export * from './MClassFilter';
+export * from './MHistoryClassFilter';

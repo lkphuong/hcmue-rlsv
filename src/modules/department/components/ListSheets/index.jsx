@@ -92,7 +92,7 @@ export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect })
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{data?.length > 0 &&
+						{data?.length > 0 ? (
 							data.map((row, index) => (
 								<Row
 									key={row?.id}
@@ -102,7 +102,21 @@ export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect })
 									onSelect={onSelect(Number(row.id))}
 									isSelected={selected?.includes(Number(row.id)) || isSelectedAll}
 								/>
-							))}
+							))
+						) : (
+							<TableRow>
+								<TableCell colSpan='100%'>
+									<Box
+										minHeight={300}
+										display='flex'
+										justifyContent='center'
+										alignItems='center'
+									>
+										Không có dữ liệu hiển thị
+									</Box>
+								</TableCell>
+							</TableRow>
+						)}
 					</TableBody>
 				</Table>
 			</TableContainer>

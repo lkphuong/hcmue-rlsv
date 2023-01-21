@@ -32,10 +32,24 @@ export const MListDepartmentAccounts = ({ data, refetch }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{data?.length > 0 &&
+						{data?.length > 0 ? (
 							data.map((row, index) => (
 								<Row key={row.id} index={index} data={row} refetch={refetch} />
-							))}
+							))
+						) : (
+							<TableRow>
+								<TableCell colSpan='100%'>
+									<Box
+										minHeight={300}
+										display='flex'
+										justifyContent='center'
+										alignItems='center'
+									>
+										Không có dữ liệu hiển thị
+									</Box>
+								</TableCell>
+							</TableRow>
+						)}
 					</TableBody>
 				</Table>
 			</TableContainer>

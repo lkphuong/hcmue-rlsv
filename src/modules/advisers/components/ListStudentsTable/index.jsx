@@ -1,4 +1,12 @@
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
+import {
+	Box,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+} from '@mui/material';
 
 import Row from './Row';
 
@@ -29,10 +37,24 @@ export const ListStudentsTable = ({ data, saveFilter }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.length > 0 &&
+					{data?.length > 0 ? (
 						data.map((row, index) => (
 							<Row key={row.id} index={index} data={row} saveFilter={saveFilter} />
-						))}
+						))
+					) : (
+						<TableRow>
+							<TableCell colSpan='100%'>
+								<Box
+									minHeight={300}
+									display='flex'
+									justifyContent='center'
+									alignItems='center'
+								>
+									Không có dữ liệu hiển thị
+								</Box>
+							</TableCell>
+						</TableRow>
+					)}
 				</TableBody>
 			</Table>
 		</TableContainer>

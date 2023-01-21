@@ -34,7 +34,7 @@ const ListSemester = ({ data, refetch, saveFilter }) => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{data?.length > 0 &&
+						{data?.length > 0 ? (
 							data.map((row, index) => (
 								<Row
 									key={row.id}
@@ -43,7 +43,21 @@ const ListSemester = ({ data, refetch, saveFilter }) => {
 									refetch={refetch}
 									saveFilter={saveFilter}
 								/>
-							))}
+							))
+						) : (
+							<TableRow>
+								<TableCell colSpan='100%'>
+									<Box
+										minHeight={300}
+										display='flex'
+										justifyContent='center'
+										alignItems='center'
+									>
+										Không có dữ liệu hiển thị
+									</Box>
+								</TableCell>
+							</TableRow>
+						)}
 					</TableBody>
 				</Table>
 			</TableContainer>

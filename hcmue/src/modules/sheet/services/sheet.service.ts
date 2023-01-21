@@ -693,6 +693,8 @@ export class SheetService {
         return SheetStatus.WAITING_CLASS;
       case RoleCode.DEPARTMENT:
         return SheetStatus.WAITING_DEPARTMENT;
+      case RoleCode.ADVISER:
+        return SheetStatus.WAITING_ADVISER;
     }
   };
 }

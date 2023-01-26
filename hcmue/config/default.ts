@@ -15,6 +15,9 @@ export default {
   MONGODB_PASSWORD: 'adminYouth2022',
   MOGODB_DATABASE_NAME: 'youth-app-product',
 
+  EMAIL_USERNAME: 'kphuonght22@gmail.com',
+  EMAIL_PASSWORD: 'kkepsdmgwgmjqxmo',
+
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',
 
@@ -25,6 +28,11 @@ export default {
   ITEMS_PER_PAGE: 10,
 
   BASE_URL: 'http://103.154.176.80:3020/uploads/',
+
+  FORGOT_PASSWORD_URL:
+    'http://103.154.176.80:3020/api/auth/reset-password/?token=',
+
+  FORGOT_PASSWORD_TOKEN_EXPIRESIN: '600s',
 
   MAX_FILE_SIZE_NAME: '10MiB',
   MAX_FILE_SIZE_VALUE: 10 * 1024 * 1024,

@@ -300,7 +300,6 @@ export class AuthController {
           }
         default:
           const student = await this._authService.getUserByUsername(username);
-          console.log('student: ', student);
           if (student) {
             const isMatch = await validatePassword(password, student.password);
 
@@ -557,9 +556,6 @@ export class AuthController {
         default:
           //#region  Get table orther
           let user = await this._userService.getUserByCode(request_code);
-          console.log('old_password: ', old_password);
-          console.log('new_password: ', new_password);
-          console.log('confirm_password: ', confirm_password);
           if (user) {
             const isMatch = await validatePassword(old_password, user.password);
             console.log(
@@ -1109,7 +1105,13 @@ export class AuthController {
       const user = await this._userService.getUserByCode(std_code);
       if (user) {
         //#region Send message to service
-        await sendEmail();
+        await sendEmail(
+          std_code,
+          this._configurationService,
+          this._jwtService,
+          this._userService,
+          req,
+        );
         //#endregion
       } else {
         //#region throw HandlerException
@@ -1159,7 +1161,7 @@ export class AuthController {
       const valid = await validateToken(
         token,
         this._configurationService,
-        this._jwtService,
+        this._logger,
         req,
       );
       if (valid instanceof HttpException) throw valid;
@@ -1220,15 +1222,16 @@ export class AuthController {
       const valid_token = await validateToken(
         token,
         this._configurationService,
-        this._jwtService,
+        this._logger,
         req,
       );
+      console.log('valid_token: ', valid_token);
       if (valid_token instanceof HttpException) throw valid_token;
       //#endregion
       //#endregion
 
       //#region Update password
-      let user = await this._userService.getUserByCode(valid_token.username);
+      let user = await this._userService.getUserByCode('1');
       if (user) {
         user.password = md5(new_password);
         user.updated_at = new Date();

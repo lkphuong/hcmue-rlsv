@@ -1,14 +1,22 @@
 import { HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 
-import { ErrorMessage } from '../constants/enums/errors.enum';
+import * as jsonwebtoken from 'jsonwebtoken';
+
 import { HandlerException } from '../../../exceptions/HandlerException';
-import { VALIDATION_EXIT_CODE } from '../../../constants/enums/error-code.enum';
-import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
-import { JwtService } from '@nestjs/jwt';
-import { Configuration } from '../../shared/constants/configuration.enum';
 import { ExpiredTokenException } from '../exceptions/ExpiredTokenException';
+import { InvalidTokenException } from '../exceptions/InvalidTokenException';
+
+import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
+import { LogService } from '../../log/services/log.service';
+
 import { JwtPayload } from '../interfaces/payloads/jwt-payload.interface';
+
+import { ErrorMessage } from '../constants/enums/errors.enum';
+import { Configuration } from '../../shared/constants/configuration.enum';
+import { VALIDATION_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import { Levels } from '../../../constants/enums/level.enum';
+import { JWT_ERROR } from '../../../constants/enums/jwt-error.enum';
 
 export const validateConfirmPassword = (
   password: string,
@@ -33,20 +41,38 @@ export const validateConfirmPassword = (
 export const validateToken = (
   token: string,
   configuration_service: ConfigurationService,
-  jwt_service: JwtService,
+  log_service: LogService,
   req: Request,
 ) => {
-  //#region Decode token
-  const decoded = jwt_service.verify(token, {
-    secret: configuration_service.get(Configuration.ACCESS_SECRET_KEY),
-  });
-  //#endregion
+  if (token) {
+    //#region Decode token
+    const decoded = jsonwebtoken.verify(
+      token,
+      configuration_service.get(Configuration.ACCESS_SECRET_KEY),
+      (err) => {
+        if (err) {
+          if (err.message == JWT_ERROR.JWT_EXPIRED) {
+            return new ExpiredTokenException(token, 1003, req.method, req.url);
+          } else {
+            return new InvalidTokenException(token, 1002, req.method, req.url);
+          }
+        }
+      },
+    );
+    //#endregion
 
-  //#region Expired Token
-  if (Date.now() >= decoded.exp * 1000) {
-    return new ExpiredTokenException(token, 1003, req.method, req.url);
+    return decoded as unknown as JwtPayload;
+    //#endregion
+  } else {
+    //#region Invalid Token
+    log_service.writeLog(
+      Levels.ERROR,
+      req.method,
+      req.url,
+      `Invalid Token (access_token: ${token})`,
+    );
+
+    return new InvalidTokenException(token, 1002, req.method, req.url);
+    //#endregion
   }
-
-  return decoded as JwtPayload;
-  //#endregion
 };

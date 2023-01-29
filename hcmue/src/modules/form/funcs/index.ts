@@ -23,8 +23,9 @@ import {
   validateMaxMarkHeaderByForm,
   validateRequiredOption,
   validateSemester,
-  validateSemesterNotBelongAcademic,
+  validateSemesterNotBelongToAcademic,
   validateTime,
+  validateTimeNotBelongToSemester,
 } from '../validations';
 
 import { HeaderDto } from '../dtos/header.dto';
@@ -98,7 +99,12 @@ export const createForm = async (
   //#endregion
 
   //#region Validate not belong academic year
-  valid = validateSemesterNotBelongAcademic(semester, academic, req);
+  valid = validateSemesterNotBelongToAcademic(semester, academic, req);
+  if (valid instanceof HttpException) throw valid;
+  //#endregion
+
+  //#region Validate time belong to semester
+  valid = validateTimeNotBelongToSemester(start, end, semester, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
 
@@ -416,7 +422,7 @@ export const updateForm = async (
   //#endregion
 
   //#region validate semester not belong academic year
-  valid = validateSemesterNotBelongAcademic(semester, academic, req);
+  valid = validateSemesterNotBelongToAcademic(semester, academic, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
 

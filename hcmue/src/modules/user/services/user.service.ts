@@ -43,13 +43,13 @@ export class UserService {
         .innerJoin(
           AcademicYearEntity,
           'academic',
-          `user.academic_id = user.academic_id AND
+          `user.academic_id = academic.id AND
            academic.deleted = 0`,
         )
         .innerJoin(
           SemesterEntity,
           'semester',
-          `semester.academic_id = user.academic_id AND
+          `semester.id = user.semester_id AND
            semester.deleted = 0`,
         )
         .innerJoin(
@@ -117,6 +117,43 @@ export class UserService {
           }),
         );
       }
+
+      const { count } = await conditions.getRawOne();
+
+      return count;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.count()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async countByAcademicAndSemester(
+    academic_id: number,
+    semester_id: number,
+  ): Promise<number> {
+    try {
+      const conditions = this._userRepository
+        .createQueryBuilder('user')
+        .select('COUNT(user.id)', 'count')
+        .innerJoin(
+          AcademicYearEntity,
+          'academic',
+          `user.academic_id = user.academic_id AND
+           academic.deleted = 0`,
+        )
+        .innerJoin(
+          SemesterEntity,
+          'semester',
+          `semester.id = user.semester_id AND
+           semester.deleted = 0`,
+        )
+        .where('semester.id = :semester_id', { semester_id })
+        .andWhere('academic.id = :academic_id', { academic_id });
 
       const { count } = await conditions.getRawOne();
 

@@ -46,6 +46,7 @@ import {
 } from '../funcs';
 
 import {
+  isAnyListUsers,
   isAnyPublished,
   valiadteTitle,
   validateForm,
@@ -75,6 +76,7 @@ import { LogService } from '../../log/services/log.service';
 import { OptionService } from '../../option/services/option.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { TitleService } from '../../title/services/title.service';
+import { UserService } from '../../user/services/user.service';
 
 import { HttpPagingResponse } from '../../../interfaces/http-paging-response.interface';
 import { HttpResponse } from '../../../interfaces/http-response.interface';
@@ -116,6 +118,7 @@ export class FormController {
     private readonly _optionService: OptionService,
     private readonly _semesterService: SemesterService,
     private readonly _titleService: TitleService,
+    private readonly _userService: UserService,
     private readonly _configurationService: ConfigurationService,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
@@ -410,6 +413,17 @@ export class FormController {
 
         if (valid instanceof HttpException) throw valid;
         //#endregion
+
+        //#region Validate check any list of users belong to academic year and semester
+        valid = await isAnyListUsers(
+          form.academic_year.id,
+          form.semester.id,
+          this._userService,
+          req,
+        );
+        if (valid instanceof HttpException) throw valid;
+        //#endregion
+
         //#endregion
 
         //#region Validate time publish

@@ -17,6 +17,7 @@ import { HeaderService } from '../../header/services/header.service';
 import { ItemService } from '../../item/services/item.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { TitleService } from '../../title/services/title.service';
+import { UserService } from '../../user/services/user.service';
 
 import { FormStatus } from '../constants/enums/statuses.enum';
 
@@ -159,7 +160,7 @@ export const validateForm = async (
   return form;
 };
 
-export const validateSemesterNotBelongAcademic = (
+export const validateSemesterNotBelongToAcademic = (
   semester: SemesterEntity,
   academic_year: AcademicYearEntity,
   req: Request,
@@ -169,7 +170,32 @@ export const validateSemesterNotBelongAcademic = (
       VALIDATION_EXIT_CODE.NO_MATCHING,
       req.method,
       req.url,
-      sprintf(ErrorMessage.SEMESTER_NOT_BELONG_ACADEMIC_ERROR, semester.id),
+      sprintf(ErrorMessage.SEMESTER_NOT_BELONG_TO_ACADEMIC_ERROR, semester.id),
+      HttpStatus.BAD_REQUEST,
+    );
+  }
+
+  return null;
+};
+
+export const validateTimeNotBelongToSemester = (
+  start: string,
+  end: string,
+  semester: SemesterEntity,
+  req: Request,
+) => {
+  const { start: semester_start, end: semester_end } = semester;
+  if (
+    new Date(start) < new Date(semester_start) ||
+    new Date(start) > new Date(semester_end) ||
+    new Date(end) < new Date(semester_start) ||
+    new Date(end) > new Date(semester_end)
+  ) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.NO_MATCHING,
+      req.method,
+      req.url,
+      ErrorMessage.TIME_NOT_BELONG_TO_SEMESTER_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   }
@@ -605,4 +631,30 @@ export const validateTimePublish = (start: Date, req: Request) => {
       HttpStatus.BAD_REQUEST,
     );
   }
+};
+
+export const isAnyListUsers = async (
+  academic_id: number,
+  semester_id: number,
+  user_service: UserService,
+  req: Request,
+) => {
+  const count = await user_service.countByAcademicAndSemester(
+    academic_id,
+    semester_id,
+  );
+
+  if (count == 0 || !count) {
+    //#region throw HandlerException
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.INVALID_VALUE,
+      req.method,
+      req.url,
+      ErrorMessage.NO_LIST_OF_USERS,
+      HttpStatus.BAD_REQUEST,
+    );
+    //#endregion
+  }
+
+  return null;
 };

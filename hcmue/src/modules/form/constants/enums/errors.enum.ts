@@ -32,7 +32,7 @@ export enum ErrorMessage {
 
   TIME_NAN_ERROR = '[Thời gian] không hợp lệ.',
   INVALID_TIME_ERROR = '[Thời gian bắt đầu] và [thời gian kết thúc] tối thiểu 1 ngày.',
-  TIME_PUBLISH_ERROR = '[Thơi gian phát hành] phải lớn hơn hiện tại',
+  TIME_PUBLISH_ERROR = '[Thơi gian phát hành] phải lớn hơn hiện tại.',
 
   ACADEMIC_YEAR_NOT_FOUND_ERROR = '[Niên khóa] không tồn tại (id: %s)',
   SEMESTER_NOT_FOUND_ERROR = '[Học kì] không tồn tại (id: %s)',
@@ -46,7 +46,10 @@ export enum ErrorMessage {
   FROM_OR_TO_MARK_EMPTY_ERROR = 'Bạn vui lòng nhập giá trị [điểm tối thiểu] và [điểm tối đa] cho nội dung chấm điểm.',
   FROM_IN_PROGRESS_OR_DONE_ERROR = 'Bạn không thể thêm/chỉnh sửa khi [biểu mẫu] đã/đang phát hành (id: %s).',
 
-  SEMESTER_NOT_BELONG_ACADEMIC_ERROR = 'Học kì không thuộc năm học (id: %s).',
+  NO_LIST_OF_USERS = 'Thời gian phát hành biểu mẫu không tồn tại danh sách sinh viên. Vui lòng kiểm tra lại!',
+
+  SEMESTER_NOT_BELONG_TO_ACADEMIC_ERROR = 'Học kì không thuộc năm học (id: %s).',
+  TIME_NOT_BELONG_TO_SEMESTER_ERROR = 'Thời gian phát hành không thuộc học kì.',
 
   OPERATOR_FORM_ERROR = 'Lưu thông tin biểu mẫu thất bại.',
   OPERATOR_HEADERS_ERROR = 'Lưu nội dung tiêu đề thất bại.',

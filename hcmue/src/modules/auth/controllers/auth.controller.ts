@@ -715,7 +715,7 @@ export class AuthController {
           }
           //#region throw HandlerException
           throw new UnknownException(
-            (req.user as any).user_id,
+            (req.user as any).username,
             VALIDATION_EXIT_CODE.NOT_FOUND,
             req.method,
             req.url,
@@ -723,7 +723,8 @@ export class AuthController {
           );
         //#endregion
         default:
-          const session = await this._authService.getProfile(user_id);
+          const session = await this._authService.getProfile(request_code);
+
           if (session) {
             const $class = session.class
               ? await this._classService.getClassById(session.class)
@@ -1051,8 +1052,8 @@ export class AuthController {
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
       if (req.user) {
-        const user_id = (req.user as JwtPayload).user_id;
-        const session = await this._authService.getProfile(user_id);
+        const request_code = (req.user as JwtPayload).username;
+        const session = await this._authService.getProfile(request_code);
         if (session) {
           //#region Cacncel session
           await this._authService.update(null, new Date(), session);
@@ -1089,6 +1090,7 @@ export class AuthController {
    * @page auth page
    */
   @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
   @UsePipes(ValidationPipe)
   async forgotPassword(@Body() params: ForgotPasswordDto, @Req() req: Request) {
     try {
@@ -1105,13 +1107,15 @@ export class AuthController {
       const user = await this._userService.getUserByCode(std_code);
       if (user) {
         //#region Send message to service
-        await sendEmail(
+        const success = await sendEmail(
           std_code,
           this._configurationService,
           this._jwtService,
           this._userService,
           req,
         );
+        if (success instanceof HttpException) throw success;
+        else return success;
         //#endregion
       } else {
         //#region throw HandlerException

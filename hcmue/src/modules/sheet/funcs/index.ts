@@ -87,7 +87,7 @@ export const generatePersonalMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  let valid = await validateTime(sheet.form, role_id, req);
+  let valid = await validateTime(sheet.form, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
 
@@ -198,7 +198,7 @@ export const generateClassMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  let valid = await validateTime(sheet.form, role_id, req);
+  let valid = await validateTime(sheet.form, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
 
@@ -306,7 +306,7 @@ export const generateAdviserMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(sheet.form, role_id, req);
+  const valid = await validateTime(sheet.form, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion
@@ -409,7 +409,7 @@ export const generateDepartmentMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(sheet.form, role_id, req);
+  const valid = await validateTime(sheet.form, req);
   if (valid instanceof HttpException) throw valid;
   //#endregion
   //#endregion

@@ -17,8 +17,8 @@ export const generateData2Array = (semesters: SemesterEntity[] | null) => {
         start: semester.start,
         end: semester.end,
         display: `${semester.name} (${moment(semester.start).format(
-          'DD/MM/YYYY',
-        )} - ${moment(semester.end).format('DD/MM/YYYY')})`,
+          'MM/YYYY',
+        )} - ${moment(semester.end).format('MM/YYYY')})`,
       };
 
       payload.push(item);
@@ -40,8 +40,8 @@ export const generateData2Object = (semester: SemesterEntity | null) => {
       start: semester.start,
       end: semester.end,
       display: `${semester.name} (${moment(semester.start).format(
-        'DD/MM/YYYY',
-      )} - ${moment(semester.end).format('DD/MM/YYYY')})`,
+        'MM/YYYY',
+      )} - ${moment(semester.end).format('MM/YYYY')})`,
     };
     return payload;
   }

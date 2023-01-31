@@ -114,12 +114,11 @@ export class AuthService {
     }
   }
 
-  async getProfile(user_id: number): Promise<SessionEntity | null> {
+  async getProfile(username: string): Promise<SessionEntity | null> {
     try {
-      console.log('user_id: ', user_id);
       const conditions = this._sessionRepository
         .createQueryBuilder('session')
-        .where('session.user_id = :user_id', { user_id })
+        .where('session.username = :username', { username })
         .andWhere('session.active = :active', { active: true })
         .andWhere('session.deleted = :deleted', { deleted: false });
 

@@ -11,7 +11,11 @@ import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
-import { DATABASE_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import {
+  DATABASE_EXIT_CODE,
+  UNKNOW_EXIT_CODE,
+} from '../../../constants/enums/error-code.enum';
+import { forgotPasswordSuccess } from '../utils';
 
 export const sendEmail = async (
   std_code: string,
@@ -66,18 +70,32 @@ export const sendEmail = async (
 
   const mailOptions = {
     from: 'Hỗ trợ sinh viên',
-    to: 'lekhphuong@gmail.com',
-    subject: 'Subject',
+    to: `${user.email}`,
+    subject: 'Cấp lại mật khẩu',
     text: 'Email content',
-    html: `Nhập vào đường link để được cấp lại mật khẩu: ${url}`,
+    html: `Nhập vào đường link để được cấp lại mật khẩu: <a href="${url}">${url}</a>`,
   };
 
+  let flag = true;
   transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
-      console.log(error);
+      console.log('error: ', error);
+      flag = false;
     } else {
       console.log('Email sent: ' + info.response);
-      // do something useful
     }
   });
+  if (flag) {
+    return forgotPasswordSuccess(user, req);
+  } else {
+    //#region throw HandlerException
+    return new HandlerException(
+      UNKNOW_EXIT_CODE.UNKNOW_ERROR,
+      req.method,
+      req.url,
+      ErrorMessage.OPERATOR_SEND_EMAIL_ERROR,
+      HttpStatus.EXPECTATION_FAILED,
+    );
+    //#endregion
+  }
 };

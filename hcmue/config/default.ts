@@ -15,8 +15,8 @@ export default {
   MONGODB_PASSWORD: 'adminYouth2022',
   MOGODB_DATABASE_NAME: 'youth-app-product',
 
-  EMAIL_USERNAME: 'kphuonght22@gmail.com',
-  EMAIL_PASSWORD: 'kkepsdmgwgmjqxmo',
+  EMAIL_USERNAME: 'hopthusinhvien@hcmue.edu.vn',
+  EMAIL_PASSWORD: 'nbjnkclaystlvkje',
 
   LOGGING: ['query', 'error', 'info', 'warn'],
   LOGGER: 'file',

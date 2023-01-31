@@ -117,12 +117,12 @@ export class SheetService {
         );
       }
 
-      if (role) {
-        const sheet_status = this.generateStatus(role);
-        conditions = conditions.andWhere('sheet.status >= :status', {
-          status: sheet_status,
-        });
-      }
+      // if (role) {
+      //   const sheet_status = this.generateStatus(role);
+      //   conditions = conditions.andWhere('sheet.status >= :status', {
+      //     status: sheet_status,
+      //   });
+      // }
 
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')
@@ -187,17 +187,17 @@ export class SheetService {
         );
       }
 
-      if (role) {
-        const sheet_status = this.generateStatus(role);
-        conditions = conditions.andWhere('sheet.status >= :status', {
-          status: sheet_status,
-        });
-      }
+      // if (role) {
+      //   const sheet_status = this.generateStatus(role);
+      //   conditions = conditions.andWhere('sheet.status >= :status', {
+      //     status: sheet_status,
+      //   });
+      // }
 
       const sheets = await conditions
-        .orderBy('sheet.created_at', 'DESC')
-        .skip(offset)
         .take(length)
+        .skip(offset)
+        .orderBy('sheet.created_at', 'DESC')
         .getMany();
 
       return sheets || null;
@@ -305,7 +305,7 @@ export class SheetService {
     role: RoleCode,
   ): Promise<SheetEntity[] | null> {
     try {
-      let conditions = this._sheetRepository
+      const conditions = this._sheetRepository
         .createQueryBuilder('sheet')
         .innerJoin('sheet.semester', 'semester')
         .innerJoin('sheet.academic_year', 'academic_year')
@@ -323,8 +323,8 @@ export class SheetService {
         .andWhere('semester.deleted = :deleted', { deleted: false })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
 
-      const status = this.generateStatus(role);
-      conditions = conditions.andWhere('sheet.status >= :status', { status });
+      // const status = this.generateStatus(role);
+      // conditions = conditions.andWhere('sheet.status >= :status', { status });
 
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')
@@ -417,7 +417,7 @@ export class SheetService {
         .andWhere('academic_year.deleted = :deleted', { deleted: false })
         .andWhere('form.deleted = :deleted', { deleted: false });
 
-      const sheet = await conditions.getOne();
+      const sheet = await conditions.orderBy('header.id', 'ASC').getOne();
       return sheet || null;
     } catch (e) {
       this._logger.writeLog(
@@ -469,12 +469,12 @@ export class SheetService {
         );
       }
 
-      if (role) {
-        const sheet_status = this.generateStatus(role);
-        conditions = conditions.andWhere('sheet.status >= :status', {
-          status: sheet_status,
-        });
-      }
+      // if (role) {
+      //   const sheet_status = this.generateStatus(role);
+      //   conditions = conditions.andWhere('sheet.status >= :status', {
+      //     status: sheet_status,
+      //   });
+      // }
 
       const { count } = await conditions.getRawOne();
       return count;

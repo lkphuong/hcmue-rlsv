@@ -26,7 +26,7 @@ export enum ErrorMessage {
   CHECKBOX_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] không hợp lệ. Giá trị [điểm đánh giá] phải bằng [%s].',
   RANGE_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] tối thiểu [%s] & tối đa là [%s].',
 
-  OUT_OF_EVALUATE_TIME_ERROR = 'Bạn đã quá hạn đánh giá (level: %s, time: %s).',
+  OUT_OF_EVALUATE_TIME_ERROR = 'Bạn đã quá hạn đánh giá.',
   ADVISER_APPROVED_ERROR = 'Cố vấn học tập đã đánh giá. Bạn không thể chỉnh sửa.',
 
   OPERATOR_EVALUATION_ERROR = 'Cập nhật điểm thất bại.',

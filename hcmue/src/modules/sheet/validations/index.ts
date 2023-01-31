@@ -32,6 +32,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { ItemCategory } from '../constants/enums/item_category.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { FormStatus } from '../../form/constants/enums/statuses.enum';
 
 export const validateClassId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -457,7 +458,6 @@ export const validateSheet = async (
       );
       //#endregion
     }
-
     return sheet;
   }
 };
@@ -505,21 +505,17 @@ export const validateUser = async (
   }
 };
 
-export const validateTime = async (
-  form: FormEntity,
-  role: RoleCode,
-  req: Request,
-) => {
+export const validateTime = async (form: FormEntity, req: Request) => {
   const current = new Date();
-  const start = form.start;
+  const start = new Date(form.start);
   const end = new Date(form.end);
   const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
-  if (current < start || current > deadline) {
+  if (current < start || current > deadline || form.status == FormStatus.DONE) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.NO_MATCHING,
       req.method,
       req.url,
-      sprintf(ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR, role, current),
+      ErrorMessage.OUT_OF_EVALUATE_TIME_ERROR,
       HttpStatus.BAD_REQUEST,
     );
   }

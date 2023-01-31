@@ -8,4 +8,6 @@ export enum ErrorMessage {
   OLD_PASSWORD_NO_MATCHING_ERROR = 'Mật khẩu hiện tại không chính xác.',
 
   OPERATOR_PASSWORD_ERROR = 'Cập nhật mật khẩu thất bại.',
+
+  OPERATOR_SEND_EMAIL_ERROR = 'Gửi email thất bại.',
 }

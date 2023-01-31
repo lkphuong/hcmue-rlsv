@@ -408,6 +408,7 @@ export class SheetController {
     Role.MONITOR,
     Role.SECRETARY,
     Role.CHAIRMAN,
+    Role.ADVISER,
   )
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -896,6 +897,7 @@ export class SheetController {
    * @page sheets page
    */
   @Post('adviser')
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassStatus(
@@ -983,6 +985,7 @@ export class SheetController {
    * @page sheets page
    */
   @Post('adviser/history')
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassStatusHistory(
@@ -1266,6 +1269,7 @@ export class SheetController {
    * @page sheets page
    */
   @Post('department')
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassStatusDepartment(
@@ -1375,6 +1379,7 @@ export class SheetController {
    * @page sheet page
    */
   @Post('department/history')
+  @Roles(Role.ADMIN, Role.DEPARTMENT)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassStatusDepartmentHistory(
@@ -1481,6 +1486,7 @@ export class SheetController {
    * @page sheets page
    */
   @Post('admin')
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getDepartmentStatus(
@@ -1582,6 +1588,7 @@ export class SheetController {
    * @page sheets page
    */
   @Post('admin/history')
+  @Roles(Role.ADMIN)
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getDepartmentStatusHistory(
@@ -2010,7 +2017,7 @@ export class SheetController {
    */
   @Put('adviser/:id')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.MONITOR, Role.SECRETARY, Role.CHAIRMAN)
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkAdviser(
     @Param('id') id: number,

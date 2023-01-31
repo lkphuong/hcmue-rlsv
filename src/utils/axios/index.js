@@ -136,6 +136,10 @@ export const getProfile = async (token) => {
 						res?.data?.class_id?.length > 0
 							? res.data.class_id.map((e) => Number(e))
 							: [],
+					classes:
+						res?.data?.classes?.length > 0
+							? res.data.classes.map((e) => ({ ...e, id: Number(e?.id) }))
+							: [],
 				})
 			);
 

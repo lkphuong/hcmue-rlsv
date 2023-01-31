@@ -36,6 +36,7 @@ export const MHistoryClassFilter = ({
 										Lớp
 									</Typography>
 									<CAutocomplete
+										disableClearable
 										value={filter?.class_id}
 										onChange={handleChangeFilter('class_id')}
 										options={classes}

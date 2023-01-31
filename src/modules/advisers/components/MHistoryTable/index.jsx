@@ -30,7 +30,7 @@ export const MHistoryTable = ({ data }) => {
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row) => <MRow key={row?.id} data={row} />)
+						data.map((row, index) => <MRow key={row?.id + index} data={row} />)
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

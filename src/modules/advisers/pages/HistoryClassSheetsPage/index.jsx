@@ -14,7 +14,7 @@ import { CPagination } from '_controls/';
 
 const HistoryClassSheetsPage = () => {
 	//#region Data
-	const { department_id, class_ids } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { department_id, classes } = useSelector((state) => state.auth.profile, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
 	const [semesters, setSemesters] = useState([]);
@@ -27,7 +27,7 @@ const HistoryClassSheetsPage = () => {
 		page: 1,
 		pages: 0,
 		department_id,
-		class_id: class_ids[0] ?? null,
+		class_id: classes[0]?.id ?? null,
 		academic_id: null,
 		semester_id: null,
 	});
@@ -78,7 +78,7 @@ const HistoryClassSheetsPage = () => {
 				onFilterChange={setFilter}
 				academic_years={academic_years}
 				semesters={semesters}
-				classes={class_ids}
+				classes={classes}
 			/>
 
 			<MHistoryTable data={listData} />

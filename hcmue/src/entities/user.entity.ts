@@ -92,6 +92,13 @@ export class UserEntity extends RootEntity {
   })
   semester_id: number;
 
+  @Column('boolean', {
+    name: 'is_change',
+    nullable: true,
+    default: 0,
+  })
+  is_change?: boolean = false;
+
   status: StatusEntity | null;
 
   class: ClassEntity | null;

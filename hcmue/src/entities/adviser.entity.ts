@@ -66,6 +66,13 @@ export class AdviserEntity extends RootEntity {
   })
   degree: string;
 
+  @Column('boolean', {
+    name: 'is_change',
+    nullable: true,
+    default: 0,
+  })
+  is_change?: boolean = false;
+
   department: DepartmentEntity | null;
 
   adviser_classes: AdviserClassesEntity[] | null;

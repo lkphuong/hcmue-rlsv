@@ -458,7 +458,7 @@ export class AuthController {
             if (isMatch) {
               //#region Update new password
               adviser.password = md5(new_password);
-
+              adviser.is_change = true;
               adviser = await this._adviserService.update(adviser);
 
               if (adviser) {
@@ -558,16 +558,10 @@ export class AuthController {
           let user = await this._userService.getUserByCode(request_code);
           if (user) {
             const isMatch = await validatePassword(old_password, user.password);
-            console.log(
-              md5(old_password),
-              user.password,
-              md5(old_password) === user.password,
-              isMatch,
-            );
             if (isMatch) {
               //#region Update new password
               user.password = md5(new_password);
-
+              user.is_change = true;
               user = await this._userService.update(user);
 
               if (user) {
@@ -1235,9 +1229,10 @@ export class AuthController {
       //#endregion
 
       //#region Update password
-      let user = await this._userService.getUserByCode('1');
+      let user = await this._userService.getUserByCode(valid_token);
       if (user) {
         user.password = md5(new_password);
+        user.is_change = true;
         user.updated_at = new Date();
         user.updated_by = 'system';
 
@@ -1247,7 +1242,7 @@ export class AuthController {
       } else {
         //#region throw HandlerException
         throw new UnknownException(
-          (req.user as any).user_id,
+          valid_token,
           VALIDATION_EXIT_CODE.NOT_FOUND,
           req.method,
           req.url,

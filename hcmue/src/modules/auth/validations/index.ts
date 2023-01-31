@@ -46,22 +46,26 @@ export const validateToken = (
 ) => {
   if (token) {
     //#region Decode token
+    let std_code;
     const decoded = jsonwebtoken.verify(
       token,
       configuration_service.get(Configuration.ACCESS_SECRET_KEY),
-      (err) => {
+      (err, result) => {
         if (err) {
           if (err.message == JWT_ERROR.JWT_EXPIRED) {
             return new ExpiredTokenException(token, 1003, req.method, req.url);
           } else {
             return new InvalidTokenException(token, 1002, req.method, req.url);
           }
+        } else {
+          const { username } = result as JwtPayload;
+          std_code = username;
         }
       },
     );
     //#endregion
 
-    return decoded as unknown as JwtPayload;
+    return std_code;
     //#endregion
   } else {
     //#region Invalid Token

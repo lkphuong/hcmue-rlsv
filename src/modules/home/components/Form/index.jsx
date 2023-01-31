@@ -19,8 +19,6 @@ import { alert } from '_func/alert';
 
 import { isSuccess } from '_func/';
 
-import { ROUTES } from '_constants/routes';
-
 import { updateStudentSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
@@ -72,7 +70,7 @@ export const Form = ({ data }) => {
 				onConfirm: () => {
 					dispatch(actions.clearMarks());
 
-					navigate(ROUTES.STUDENT.SELF, { replace: true });
+					navigate(-1, { replace: true });
 				},
 				fullname: data?.user?.fullname,
 				mark: data?.sum_of_personal_marks,

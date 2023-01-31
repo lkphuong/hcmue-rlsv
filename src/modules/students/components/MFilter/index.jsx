@@ -63,7 +63,7 @@ export const MFilter = ({
 										placeholder='Tất cả'
 										value={filter.class_id}
 										onChange={handleChangeStringId('class_id')}
-										options={classes}
+										options={filter?.department_id ? classes : []}
 										display='code'
 										renderOption={(props, option) => (
 											<Box component='li' {...props} key={option.id}>

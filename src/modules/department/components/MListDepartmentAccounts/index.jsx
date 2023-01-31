@@ -34,7 +34,12 @@ export const MListDepartmentAccounts = ({ data, refetch }) => {
 					<TableBody>
 						{data?.length > 0 ? (
 							data.map((row, index) => (
-								<Row key={row.id} index={index} data={row} refetch={refetch} />
+								<Row
+									key={row?.id + index}
+									index={index}
+									data={row}
+									refetch={refetch}
+								/>
 							))
 						) : (
 							<TableRow>

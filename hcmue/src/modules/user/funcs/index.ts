@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 import { DataSource, QueryRunner } from 'typeorm';
+
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
 import * as xlsx from 'xlsx';
 import * as path from 'path';
 import * as md5 from 'md5';
@@ -62,6 +65,7 @@ import {
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
+import { EventKey } from '../../shared/constants/event-key.enum';
 
 export const generateImportUsers = async (
   params: ImportUsersDto,
@@ -77,6 +81,7 @@ export const generateImportUsers = async (
   status_service: StatusService,
   user_service: UserService,
   data_source: DataSource,
+  event_emitter: EventEmitter2,
   req: Request,
 ) => {
   //#region Get params
@@ -107,6 +112,10 @@ export const generateImportUsers = async (
   const form = await validateTime(form_service, req);
   if (form instanceof HttpException) throw form;
   //#endregion
+  //#endregion
+
+  //#region Get User
+  const user = await user_service.getOneUser();
   //#endregion
 
   // Make the QueryRunner
@@ -317,9 +326,9 @@ export const generateImportUsers = async (
     }
     //#endregion
 
-    //#region Update old users
-    await user_service.bulkUnlink(query_runner.manager);
-    //#endregion
+    // //#region Update old users
+    // await user_service.bulkUnlink(query_runner.manager);
+    // //#endregion
 
     //#region Create user
     const users = await generateCreateUser(
@@ -345,6 +354,18 @@ export const generateImportUsers = async (
 
     //#endregion
     //#region
+
+    //#region Emit generate update password
+    if (user) {
+      event_emitter.emit(
+        EventKey.HCMUE_GENERATE_USER_UPDATE_PASSWORD,
+        user.academic_id,
+        user.semester_id,
+        academic_id,
+        semester_id,
+      );
+    }
+    //#endregion
 
     //#region response
     return await generateImportSuccessResponse(query_runner, req);

@@ -1,6 +1,9 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
 import { DataSource, QueryRunner } from 'typeorm';
+
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
 import * as xlsx from 'xlsx';
 import * as path from 'path';
 import * as md5 from 'md5';
@@ -41,6 +44,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
+import { EventKey } from '../../shared/constants/event-key.enum';
 
 export const generateImportAdviser = async (
   params: ImportAdviserDto,
@@ -54,6 +58,7 @@ export const generateImportAdviser = async (
   role_service: RoleService,
   role_user_service: RoleUsersService,
   data_source: DataSource,
+  event_emitter: EventEmitter2,
   req: Request,
 ) => {
   //#region Get params
@@ -95,10 +100,14 @@ export const generateImportAdviser = async (
     //#region Get role adviser
     const role_adviser = await role_service.getRoleByCode(RoleCode.ADVISER);
     //#endregion
+
+    //#region Get academic old
+    const adviser = await adviser_service.getOneAdviser();
+    //#endregion
+
     if (role_adviser) {
       //#region Update old data
       await Promise.all([
-        adviser_service.bulkUnlink(query_runner.manager),
         adviser_classes_service.bulkUnlink(query_runner.manager),
         role_user_service.bulkUpdateByRole(
           role_adviser.id,
@@ -134,6 +143,16 @@ export const generateImportAdviser = async (
             query_runner,
           );
           if (role_users) {
+            //#region Emit generate update password
+            if (adviser) {
+              event_emitter.emit(
+                EventKey.HCMUE_GENERATE_ADVISER_UPDATE_PASSWORD,
+                adviser.academic_id,
+                academic_id,
+              );
+            }
+            //#endregion
+
             //#region response
             return await generateImportSuccessResponse(query_runner, req);
             //#endregions

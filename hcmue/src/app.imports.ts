@@ -1,4 +1,5 @@
 import { JwtModule } from '@nestjs/jwt';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
@@ -30,6 +31,7 @@ import { ConfigurationService } from './modules/shared/services/configuration/co
 
 export const modules = [
   SharedModule,
+  EventEmitterModule.forRoot(),
   JwtModule.registerAsync({
     imports: [SharedModule],
     inject: [ConfigurationService],

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { DataSource } from 'typeorm';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { generateResponses } from '../utils';
 import { generateImportUsers } from '../funcs';
@@ -67,6 +68,7 @@ export class UserController {
     private readonly _statusService: StatusService,
     private readonly _majorService: MajorService,
     private readonly _dataSource: DataSource,
+    private readonly _eventEmitter: EventEmitter2,
     private _logger: LogService,
   ) {}
 
@@ -226,6 +228,7 @@ export class UserController {
         this._statusService,
         this._userService,
         this._dataSource,
+        this._eventEmitter,
         req,
       );
       if (data instanceof HttpException) throw data;

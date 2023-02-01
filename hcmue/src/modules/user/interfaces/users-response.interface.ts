@@ -1,6 +1,7 @@
 export interface BaseResponse {
   id: number;
   name: string;
+  flag?: boolean;
 }
 
 export interface ClassResponse {

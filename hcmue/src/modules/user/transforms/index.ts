@@ -43,7 +43,11 @@ export const generateUsersArray = async (users: UserEntity[] | null) => {
         major: user.major ? { id: user.major_id, name: user.major.name } : null,
 
         status: user.status
-          ? { id: user.status_id, name: user.status.name }
+          ? {
+              id: user.status_id,
+              name: user.status.name,
+              flag: user.status.flag,
+            }
           : null,
 
         k: user.class

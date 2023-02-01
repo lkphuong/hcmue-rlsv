@@ -1,4 +1,4 @@
 export enum EventKey {
-  'ASSET_GENERATE_CODE' = 'asset.generate-code',
-  'ASSET_GENARATE_APPROVALS' = 'asset.generate-approvals',
+  'HCMUE_GENERATE_USER_UPDATE_PASSWORD' = 'asset.generate-user-update-password',
+  'HCMUE_GENERATE_ADVISER_UPDATE_PASSWORD' = 'asset.generate-adviser-update-password',
 }

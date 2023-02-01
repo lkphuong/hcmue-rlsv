@@ -11,8 +11,9 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
-
 import { Request } from 'express';
+
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import { generateImportAdviser } from '../funcs';
 
@@ -59,6 +60,7 @@ export class AdviserController {
     private readonly _roleService: RoleService,
     private readonly _roleUserService: RoleUsersService,
     private readonly _dataSource: DataSource,
+    private readonly _eventEmitter: EventEmitter2,
     private _logger: LogService,
   ) {}
 
@@ -201,6 +203,7 @@ export class AdviserController {
         this._roleService,
         this._roleUserService,
         this._dataSource,
+        this._eventEmitter,
         req,
       );
       if (data instanceof HttpException) throw data;

@@ -580,6 +580,28 @@ export class UserService {
     }
   }
 
+  async getOneUser(): Promise<UserEntity | null> {
+    try {
+      const conditions = this._userRepository
+        .createQueryBuilder('user')
+        .where('user.deleted = :deleted', { deleted: false })
+        .andWhere('user.active = :active', { active: true })
+        .orderBy('user.created_at', 'DESC');
+
+      const user = await conditions.getOne();
+
+      return user || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.getOneUser()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async bulkAdd(users: UserEntity[], manager?: EntityManager) {
     try {
       if (!manager) {
@@ -616,6 +638,42 @@ export class UserService {
         Levels.ERROR,
         Methods.UPDATE,
         'UserService.update()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async bulkUpdatePassword(
+    source_academic_id: number,
+    source_semester_id: number,
+    target_academic_id: number,
+    targer_semester_id: number,
+    manager?: EntityManager,
+  ): Promise<boolean> {
+    try {
+      let success = false;
+
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.query(
+        `call sp_update_users(${source_academic_id}, ${source_semester_id}, ${target_academic_id}, ${targer_semester_id});`,
+      );
+
+      console.log('results: ', results);
+
+      if (results && results.length > 0) {
+        success = results[0].success != 0;
+      }
+
+      return success;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'UserService.bulkUpdatePassword()',
         e,
       );
       return null;

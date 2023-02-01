@@ -175,7 +175,8 @@ export class AdviserService {
         .createQueryBuilder('adviser')
         .where('adviser.email = :email', { email })
         .andWhere('adviser.deleted = :deleted', { deleted: false })
-        .andWhere('adviser.active = :active', { active: true });
+        .andWhere('adviser.active = :active', { active: true })
+        .orderBy('adviser.created_at', 'DESC');
 
       const adviser = await conditions.getOne();
 
@@ -188,6 +189,27 @@ export class AdviserService {
         e,
       );
       return null;
+    }
+  }
+
+  async getOneAdviser(): Promise<AdviserEntity | null> {
+    try {
+      const conditions = this._adviserRepository
+        .createQueryBuilder('adviser')
+        .where('adviser.deleted = :deleted', { deleted: false })
+        .andWhere('adviser.active = :active', { active: true })
+        .orderBy('adviser.created_at', 'DESC');
+
+      const adviser = await conditions.getOne();
+
+      return adviser || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AdviserService.getOneAdviser()',
+        e,
+      );
     }
   }
 
@@ -228,6 +250,40 @@ export class AdviserService {
         Levels.ERROR,
         Methods.UPDATE,
         'AdviserService.update()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async bulkUpdatePassword(
+    source_academic_id: number,
+    targer_academic_id: number,
+    manager?: EntityManager,
+  ): Promise<boolean> {
+    try {
+      let success = false;
+
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results =
+        await manager.query(`call sp_update_advisers(${source_academic_id}, ${targer_academic_id});
+      `);
+
+      console.log('results: ', results);
+
+      if (results && results.length > 0) {
+        success = results[0].success != 0;
+      }
+
+      return success;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'AdviserService.bulkUpdatePassword()',
         e,
       );
       return null;

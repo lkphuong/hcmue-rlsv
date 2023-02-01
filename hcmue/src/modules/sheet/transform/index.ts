@@ -34,6 +34,7 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { FormStatus } from '../../form/constants/enums/statuses.enum';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -202,6 +203,7 @@ export const generateData2Object = async (sheet: SheetEntity | null) => {
           }
         : null,
       status: sheet.status,
+      success: sheet.form.status == FormStatus.DONE ? true : false,
       sum_of_personal_marks: sheet.sum_of_personal_marks,
       sum_of_class_marks: sheet.sum_of_class_marks,
       sum_of_adviser_marks: sheet.sum_of_adviser_marks,

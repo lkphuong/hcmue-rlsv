@@ -675,12 +675,15 @@ export const updateItem = async (
 
     //#region Remove old options if available`
     const results = await removeItemOptions(
+      form_id,
       item_id,
       request_code,
       option_service,
       query_runner,
       req,
     );
+
+    console.log('results: ', results);
 
     if (results instanceof HttpException) throw results;
     //#endregion
@@ -946,6 +949,7 @@ export const unlinkItem = async (
 
     //#region Remove old options if available`
     const results = await removeItemOptions(
+      form_id,
       item_id,
       request_code,
       option_service,
@@ -1262,6 +1266,7 @@ export const createItemOptions = async (
 };
 
 export const removeItemOptions = async (
+  form_id: number,
   item_id: number,
   request_code: string,
   option_service: OptionService,
@@ -1269,13 +1274,14 @@ export const removeItemOptions = async (
   req: Request,
 ): Promise<HttpException | null> => {
   //#region Get options by item_id
-  const options = await option_service.getOptionsByItemId(item_id);
-  //#endregion
+  const options = await option_service.getOptionsByItemId(form_id, item_id);
+  //#endregion;
 
   if (options && options.length > 0) {
     //#region Delete options
     const success = await option_service.bulkUnlink(
-      item_id,
+      form_id,
+      options[0].parent_ref,
       request_code,
       query_runner.manager,
     );

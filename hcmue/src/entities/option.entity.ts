@@ -9,6 +9,7 @@ import {
 
 import { EvaluationEntity } from './evaluation.entity';
 import { FormEntity } from './form.entity';
+import { ItemEntity } from './item.entity';
 import { RootEntity } from './root.entity';
 
 @Entity('options')
@@ -49,4 +50,6 @@ export class OptionEntity extends RootEntity {
 
   @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.option)
   evaluations: EvaluationEntity[];
+
+  item?: ItemEntity = null;
 }

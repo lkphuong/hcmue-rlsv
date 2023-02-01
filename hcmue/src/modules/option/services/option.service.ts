@@ -8,6 +8,7 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { ItemEntity } from '../../../entities/item.entity';
 
 @Injectable()
 export class OptionService {
@@ -38,12 +39,21 @@ export class OptionService {
     }
   }
 
-  async getOptionsByItemId(item_id: number): Promise<OptionEntity[] | null> {
+  async getOptionsByItemId(
+    form_id: number,
+    item_id: number,
+  ): Promise<OptionEntity[] | null> {
     try {
       const conditions = this._optionRepository
         .createQueryBuilder('option')
-        .innerJoin('option.item', 'item')
+        .innerJoinAndMapOne(
+          'option.item',
+          ItemEntity,
+          'item',
+          `item.ref = option.parent_ref AND item.delete_flag = 0`,
+        )
         .where('item.id = :item_id', { item_id })
+        .andWhere('option.form_id = :form_id', { form_id })
         .andWhere('item.deleted = :deleted', { deleted: false })
         .andWhere('option.deleted = :deleted', { deleted: false });
 
@@ -85,7 +95,8 @@ export class OptionService {
   }
 
   async bulkUnlink(
-    item_id: number,
+    form_id: number,
+    parent_ref: string,
     request_code: string,
     manager?: EntityManager,
   ): Promise<boolean> {
@@ -96,7 +107,7 @@ export class OptionService {
 
       const results = await manager.update(
         OptionEntity,
-        { item: item_id },
+        { form: form_id, parent_ref: parent_ref },
         { deleted: true, deleted_at: new Date(), deleted_by: request_code },
       );
 

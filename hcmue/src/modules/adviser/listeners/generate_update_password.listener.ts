@@ -25,6 +25,9 @@ export class GenerateAdviserUpdateListener {
     source_academic_id: number,
     target_academic_id: number,
   ) {
+    console.log('source_academic_id: ', source_academic_id);
+    console.log('target_academic_id: ', target_academic_id);
+
     this._logger.writeLog(
       Levels.LOG,
       Methods.LISTENER,

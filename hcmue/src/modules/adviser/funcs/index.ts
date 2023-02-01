@@ -81,6 +81,10 @@ export const generateImportAdviser = async (
   //#endregion
   //#endregion
 
+  //#region Get academic old
+  const adviser = await adviser_service.getOneAdviser();
+  //#endregion
+
   // Make the QueryRunner
   const query_runner = data_source.createQueryRunner();
   await query_runner.connect();
@@ -99,10 +103,6 @@ export const generateImportAdviser = async (
 
     //#region Get role adviser
     const role_adviser = await role_service.getRoleByCode(RoleCode.ADVISER);
-    //#endregion
-
-    //#region Get academic old
-    const adviser = await adviser_service.getOneAdviser();
     //#endregion
 
     if (role_adviser) {
@@ -143,16 +143,6 @@ export const generateImportAdviser = async (
             query_runner,
           );
           if (role_users) {
-            //#region Emit generate update password
-            if (adviser) {
-              event_emitter.emit(
-                EventKey.HCMUE_GENERATE_ADVISER_UPDATE_PASSWORD,
-                adviser.academic_id,
-                academic_id,
-              );
-            }
-            //#endregion
-
             //#region response
             return await generateImportSuccessResponse(query_runner, req);
             //#endregions
@@ -190,6 +180,16 @@ export const generateImportAdviser = async (
   } finally {
     // Release transaction
     await query_runner.release();
+
+    //#region Emit generate update password
+    if (adviser) {
+      event_emitter.emit(
+        EventKey.HCMUE_GENERATE_ADVISER_UPDATE_PASSWORD,
+        adviser.academic_id,
+        academic_id,
+      );
+    }
+    //#endregion
   }
 };
 

@@ -27,6 +27,11 @@ export class GenerateUserUpdateListener {
     target_academic_id: number,
     targer_semester_id: number,
   ) {
+    console.log('source_academic_id: ', source_academic_id);
+    console.log('source_semester_id: ', source_semester_id);
+    console.log('source_academic_id: ', source_academic_id);
+    console.log('targer_semester_id: ', targer_semester_id);
+
     this._logger.writeLog(
       Levels.LOG,
       Methods.LISTENER,

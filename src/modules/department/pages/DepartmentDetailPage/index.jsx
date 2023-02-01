@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useRef, createContext } from 'react';
+import { createContext, useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -7,7 +7,7 @@ import { useReactToPrint } from 'react-to-print';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
-import { Form } from '_modules/home/components';
+import { Form } from '_modules/department/components';
 
 import { getItemsMarks, getSheetById } from '_api/sheets.api';
 
@@ -20,11 +20,11 @@ import { CPrintComponent } from '_others/';
 
 import { useResolver, useFocusError } from '_hooks/';
 
-import { validationSchema } from '_modules/home/form';
+import { validationSchemaForm } from '_modules/department/form';
 
-export const StudentMarksContext = createContext();
+export const DepartmentMarksContext = createContext();
 
-const SemesterDetail = () => {
+const DepartmentDetailPage = () => {
 	const ref = useRef();
 
 	//#region Data
@@ -33,9 +33,9 @@ const SemesterDetail = () => {
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
 
-	const resolver = useResolver(validationSchema(data?.headers));
+	const resolver = useResolver(validationSchemaForm(data?.headers));
 
-	const methods = useForm({ resolver, mode: 'all', shouldFocusError: true });
+	const methods = useForm({ resolver });
 	const {
 		formState: { errors, isSubmitting },
 		setFocus,
@@ -66,7 +66,7 @@ const SemesterDetail = () => {
 
 			const { status, success } = res.data;
 
-			if (success || status > 1) dispatch(actions.setAvailable(false));
+			if (success || status > 3) dispatch(actions.setAvailable(false));
 
 			setData(res.data);
 		}
@@ -97,14 +97,24 @@ const SemesterDetail = () => {
 	}, [getMarks]);
 
 	useEffect(() => {
-		const payload = itemsMark.map((e) => ({
-			item_id: Number(e.item.id),
-			personal_mark_level: e.personal_mark_level,
-			option_id: Number(e.options?.id) || null,
-		}));
+		if (data?.status < 3) {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				adviser_mark_level: e.class_mark_level,
+				option_id: Number(e.options?.id) || null,
+			}));
 
-		dispatch(actions.renewMarks(payload));
-	}, [itemsMark]);
+			dispatch(actions.renewMarks(payload));
+		} else {
+			const payload = itemsMark.map((e) => ({
+				item_id: Number(e.item.id),
+				adviser_mark_level: e.adviser_mark_level,
+				option_id: Number(e.options?.id) || null,
+			}));
+
+			dispatch(actions.renewMarks(payload));
+		}
+	}, [data?.status, itemsMark]);
 
 	useEffect(() => {
 		dispatch(actions.clearMarks());
@@ -114,12 +124,12 @@ const SemesterDetail = () => {
 	return data ? (
 		<Box>
 			<FormProvider {...methods}>
-				<StudentMarksContext.Provider value={{ itemsMark }}>
+				<DepartmentMarksContext.Provider value={{ itemsMark, status: data?.status }}>
 					<Box mb={1.5}>
 						<Paper className='paper-wrapper'>
 							<Stack direction='row' justifyContent='space-between'>
 								<Typography fontSize={20} p={1.5} fontWeight={600}>
-									{`${data?.user.fullname}`}
+									{`${data?.user?.fullname} - ${data?.user?.std_code}`}
 								</Typography>
 								<Button
 									disabled={data?.status !== 4}
@@ -138,7 +148,7 @@ const SemesterDetail = () => {
 					</Paper>
 
 					<CPrintComponent data={data} marks={itemsMark} ref={ref} />
-				</StudentMarksContext.Provider>
+				</DepartmentMarksContext.Provider>
 			</FormProvider>
 		</Box>
 	) : (
@@ -148,4 +158,4 @@ const SemesterDetail = () => {
 	//#endregion
 };
 
-export default SemesterDetail;
+export default DepartmentDetailPage;

@@ -31,8 +31,8 @@ export const markSlice = createSlice({
 
 			state.marks = updatedValues;
 		},
-		setNotAvailable: (state) => {
-			state.available = false;
+		setAvailable: (state, action) => {
+			state.available = action.payload;
 		},
 		clearMarks: (state) => {
 			state.marks = [];

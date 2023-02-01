@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useReactToPrint } from 'react-to-print';
@@ -16,7 +16,7 @@ import { alert } from '_func/alert';
 
 import { actions } from '_slices/mark.slice';
 
-import { CExpired, CPrintComponent } from '_others/';
+import { CPrintComponent } from '_others/';
 
 import { useResolver, useFocusError } from '_hooks/';
 
@@ -26,9 +26,8 @@ export const ClassMarksContext = createContext();
 
 const ClassDetailPage = () => {
 	const ref = useRef();
-	//#region Data
-	const available = useSelector((state) => state.mark.available, shallowEqual);
 
+	//#region Data
 	const { sheet_id } = useParams();
 
 	const [data, setData] = useState(null);
@@ -65,6 +64,10 @@ const ClassDetailPage = () => {
 				navigate(-1);
 			}
 
+			const { status, success } = res.data;
+
+			if (success || status > 2) dispatch(actions.setAvailable(false));
+
 			setData(res.data);
 		}
 	}, [sheet_id]);
@@ -94,7 +97,7 @@ const ClassDetailPage = () => {
 	}, [getMarks]);
 
 	useEffect(() => {
-		if (data?.status < 3) {
+		if (data?.status < 2) {
 			const payload = itemsMark.map((e) => ({
 				item_id: Number(e.item.id),
 				class_mark_level: e.personal_mark_level,
@@ -122,14 +125,6 @@ const ClassDetailPage = () => {
 		<Box>
 			<FormProvider {...methods}>
 				<ClassMarksContext.Provider value={{ itemsMark, status: data?.status }}>
-					{!available && (
-						<CExpired
-							roleName='lớp'
-							start={data?.time_class?.start}
-							end={data?.time_class?.end}
-						/>
-					)}
-
 					<Box mb={1.5}>
 						<Paper className='paper-wrapper'>
 							<Stack direction='row' justifyContent='space-between'>

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useRef, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useReactToPrint } from 'react-to-print';
@@ -7,7 +7,7 @@ import { useReactToPrint } from 'react-to-print';
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
-import { Form } from '_modules/class/components';
+import { Form } from '_modules/advisers/components';
 
 import { getItemsMarks, getSheetById } from '_api/sheets.api';
 
@@ -16,19 +16,18 @@ import { alert } from '_func/alert';
 
 import { actions } from '_slices/mark.slice';
 
-import { CExpired, CPrintComponent } from '_others/';
+import { CPrintComponent } from '_others/';
 
 import { useResolver, useFocusError } from '_hooks/';
 
-import { validationSchema } from '_modules/class/form';
+import { validationSchema } from '_modules/advisers/form';
 
-export const ClassMarksContext = createContext();
+export const AdviserMarksContext = createContext();
 
 const AdviserDetailPage = () => {
 	const ref = useRef();
-	//#region Data
-	const available = useSelector((state) => state.mark.available, shallowEqual);
 
+	//#region Data
 	const { sheet_id } = useParams();
 
 	const [data, setData] = useState(null);
@@ -65,6 +64,10 @@ const AdviserDetailPage = () => {
 				navigate(-1);
 			}
 
+			const { status, success } = res.data;
+
+			if (success || status > 3) dispatch(actions.setAvailable(false));
+
 			setData(res.data);
 		}
 	}, [sheet_id]);
@@ -97,7 +100,7 @@ const AdviserDetailPage = () => {
 		if (data?.status < 3) {
 			const payload = itemsMark.map((e) => ({
 				item_id: Number(e.item.id),
-				class_mark_level: e.personal_mark_level,
+				adviser_mark_level: e.class_mark_level,
 				option_id: Number(e.options?.id) || null,
 			}));
 
@@ -105,7 +108,7 @@ const AdviserDetailPage = () => {
 		} else {
 			const payload = itemsMark.map((e) => ({
 				item_id: Number(e.item.id),
-				class_mark_level: e.class_mark_level,
+				adviser_mark_level: e.adviser_mark_level,
 				option_id: Number(e.options?.id) || null,
 			}));
 
@@ -121,15 +124,7 @@ const AdviserDetailPage = () => {
 	return data ? (
 		<Box>
 			<FormProvider {...methods}>
-				<ClassMarksContext.Provider value={{ itemsMark, status: data?.status }}>
-					{!available && (
-						<CExpired
-							roleName='lớp'
-							start={data?.time_class?.start}
-							end={data?.time_class?.end}
-						/>
-					)}
-
+				<AdviserMarksContext.Provider value={{ itemsMark, status: data?.status }}>
 					<Box mb={1.5}>
 						<Paper className='paper-wrapper'>
 							<Stack direction='row' justifyContent='space-between'>
@@ -153,7 +148,7 @@ const AdviserDetailPage = () => {
 					</Paper>
 
 					<CPrintComponent data={data} marks={itemsMark} ref={ref} />
-				</ClassMarksContext.Provider>
+				</AdviserMarksContext.Provider>
 			</FormProvider>
 		</Box>
 	) : (

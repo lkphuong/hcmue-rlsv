@@ -43,7 +43,7 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 	}, [id, itemsMark]);
 
 	const initialMark = useMemo(() => {
-		if (status < 3) {
+		if (status < 2) {
 			return currentMark.personal_mark_level;
 		} else {
 			return currentMark.class_mark_level;

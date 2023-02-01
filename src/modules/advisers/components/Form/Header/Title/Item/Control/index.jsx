@@ -1,7 +1,7 @@
 import { memo, useContext, useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { DepartmentMarksContext } from '_modules/department/pages/DepartmentDetailPage';
+import { AdviserMarksContext } from '_modules/advisers/pages/AdviserDetailPage';
 
 import TypeInput from './TypeInput';
 import TypeCheckbox from './TypeCheckbox';
@@ -9,7 +9,7 @@ import TypeSelect from './TypeSelect';
 
 const Control = memo(({ data, id, titleId, index, available }) => {
 	//#region Data
-	const { itemsMark, status } = useContext(DepartmentMarksContext);
+	const { itemsMark, status } = useContext(AdviserMarksContext);
 
 	const { resetField } = useFormContext();
 
@@ -43,21 +43,19 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 	}, [id, itemsMark]);
 
 	const initialMark = useMemo(() => {
-		if (status < 4) {
-			return currentMark.adviser_mark_level;
+		if (status < 3) {
+			return currentMark.class_mark_level;
 		} else {
-			return currentMark.department_mark_level;
+			return currentMark.adviser_mark_level;
 		}
-	}, [currentMark.adviser_mark_level, currentMark.department_mark_level, status]);
+	}, [currentMark.class_mark_level, currentMark.adviser_mark_level, status]);
 
 	const optionId = useMemo(() => {
 		return !currentMark?.option_id ? null : Number(currentMark.option_id);
 	}, [currentMark?.option_id]);
 
 	useEffect(() => {
-		resetField(`title_${titleId}[${index}].department_mark_level`, {
-			defaultValue: initialMark,
-		});
+		resetField(`title_${titleId}[${index}].adviser_mark_level`, { defaultValue: initialMark });
 		resetField(`title_${titleId}[${index}].option_id`, { defaultValue: optionId });
 	}, [initialMark, titleId, index, optionId]);
 

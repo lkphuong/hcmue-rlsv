@@ -9,6 +9,7 @@ import { CErrorPage } from '_others/';
 
 const SheetsManagementPage = lazy(() => import('_modules/department/pages/SheetsManagementPage'));
 const SheetsDepartmentPage = lazy(() => import('_modules/department/pages/SheetsDepartmentPage'));
+const DepartmentDetailPage = lazy(() => import('_modules/department/pages/DepartmentDetailPage'));
 
 const HistorySheetsPage = lazy(() => import('_modules/department/pages/HistorySheetsPage'));
 
@@ -37,6 +38,16 @@ export const DEPARTMENT_ROUTES = [
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
 				<SheetsDepartmentPage />
+			</CPermission>
+		),
+	},
+
+	{
+		path: ROUTES.DEPARTMENT.SHEET_DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+				<DepartmentDetailPage />
 			</CPermission>
 		),
 	},

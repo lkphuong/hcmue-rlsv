@@ -5,7 +5,7 @@ import { Controller } from 'react-hook-form';
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 import { ImageSearch } from '@mui/icons-material';
 
-import { DepartmentMarksContext } from '_modules/department/pages/DepartmentDetailPage';
+import { AdviserMarksContext } from '_modules/advisers/pages/AdviserDetailPage';
 
 import { actions } from '_slices/mark.slice';
 
@@ -18,7 +18,7 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 	const fileRef = useRef();
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
-	const { itemsMark } = useContext(DepartmentMarksContext);
+	const { itemsMark } = useContext(AdviserMarksContext);
 
 	const dispatch = useDispatch();
 	//#endregion

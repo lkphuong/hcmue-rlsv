@@ -31,13 +31,10 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 				<Typography>{currentMark.class_mark_level}</Typography>
 			</TableCell>
 			<TableCell align='center'>
-				<Typography>{currentMark.adviser_mark_level}</Typography>
-			</TableCell>
-			<TableCell align='center'>
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}[${index}].department_mark_level`}
+						name={`title_${titleId}[${index}].adviser_mark_level`}
 						defaultValue={initialMark}
 						render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
 							<CAutocomplete
@@ -58,8 +55,11 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 						)}
 					/>
 				) : (
-					<Typography>{currentMark.department_mark_level}</Typography>
+					<Typography>{currentMark.adviser_mark_level}</Typography>
 				)}
+			</TableCell>
+			<TableCell align='center'>
+				<Typography>{currentMark.department_mark_level}</Typography>
 			</TableCell>
 		</>
 	);

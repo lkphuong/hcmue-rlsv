@@ -24,11 +24,11 @@ const TypeInput = ({
 	const handleChange = (CallbackFunc) => (e) => {
 		if (e.target.value === '') {
 			CallbackFunc('');
-			trigger(`title_${titleId}[${index}].department_mark_level`);
+			trigger(`title_${titleId}[${index}].adviser_mark_level`);
 			return;
 		}
 		CallbackFunc(Number(e.target.value));
-		trigger(`title_${titleId}[${index}].department_mark_level`);
+		trigger(`title_${titleId}[${index}].adviser_mark_level`);
 	};
 	//#endregion
 
@@ -49,13 +49,10 @@ const TypeInput = ({
 				<Typography>{currentMark.class_mark_level}</Typography>
 			</TableCell>
 			<TableCell align='center'>
-				<Typography>{currentMark.adviser_mark_level}</Typography>
-			</TableCell>
-			<TableCell align='center'>
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}[${index}].department_mark_level`}
+						name={`title_${titleId}[${index}].adviser_mark_level`}
 						defaultValue={initialMark}
 						render={({
 							field: { name, onChange, ref, value },
@@ -74,8 +71,11 @@ const TypeInput = ({
 						)}
 					/>
 				) : (
-					<Typography>{currentMark.department_mark_level}</Typography>
+					<Typography>{currentMark.adviser_mark_level}</Typography>
 				)}
+			</TableCell>
+			<TableCell align='center'>
+				<Typography>{currentMark.department_mark_level}</Typography>
 			</TableCell>
 		</>
 	);

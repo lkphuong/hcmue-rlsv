@@ -90,7 +90,7 @@ const ListFormsPage = () => {
 			<Filter filter={filter} onFilterChange={setFilter} />
 
 			<Box textAlign='right' my={2}>
-				<Link to={ROUTES.FORM_CREATE}>
+				<Link to={ROUTES.ADMIN.FORMS_CREATE}>
 					<Button variant='contained'>Thêm mới</Button>
 				</Link>
 			</Box>

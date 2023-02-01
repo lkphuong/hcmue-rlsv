@@ -29,7 +29,7 @@ export const MCurrentTable = ({ data }) => {
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row) => <MRow id={row?.code} data={row} />)
+						data.map((row) => <MRow key={row?.id} data={row} />)
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

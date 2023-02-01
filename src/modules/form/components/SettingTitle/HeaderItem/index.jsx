@@ -99,7 +99,10 @@ const HeaderItem = memo(({ data }) => {
 									spacing={1}
 								>
 									<Grid item xs='auto'>
-										<IconButton onClick={onDelete(title.id)}>
+										<IconButton
+											disabled={status === 3 || status === 2}
+											onClick={onDelete(title.id)}
+										>
 											<RemoveCircleOutline />
 										</IconButton>
 									</Grid>

@@ -35,6 +35,7 @@ export const formSlice = createSlice({
 			state.header_id = null;
 			state.title_id = null;
 			state.step = null;
+			state.status = null;
 		},
 	},
 });

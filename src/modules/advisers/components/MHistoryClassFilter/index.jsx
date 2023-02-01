@@ -14,12 +14,18 @@ export const MHistoryClassFilter = ({
 
 	//#region Event
 	const handleChangeFilter = (key) => (value) => {
-		onFilterChange((prev) => ({
-			...prev,
-			[key]: parseInt(value?.id),
-			page: 1,
-			semester_id: key === 'academic_id' ? null : prev?.semester_id,
-		}));
+		key === 'academic_id'
+			? onFilterChange((prev) => ({
+					...prev,
+					[key]: parseInt(value?.id),
+					page: 1,
+					semester_id: null,
+			  }))
+			: onFilterChange((prev) => ({
+					...prev,
+					[key]: parseInt(value?.id),
+					page: 1,
+			  }));
 	};
 	//#endregion1
 

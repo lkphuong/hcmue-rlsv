@@ -11,8 +11,22 @@ export const MHistoryFilter = ({ filter, academic_years, semesters, onFilterChan
 	//#endregion
 
 	//#region Event
-	const handleDepartmentChange = (key) => (value) =>
-		onFilterChange((prev) => ({ ...prev, [key]: value?.id, page: 1, pages: 0 }));
+	const handleChange = (key) => (value) => {
+		key === 'academic_id'
+			? onFilterChange((prev) => ({
+					...prev,
+					[key]: Number(value?.id),
+					page: 1,
+					pages: 0,
+					semester_id: null,
+			  }))
+			: onFilterChange((prev) => ({
+					...prev,
+					[key]: Number(value?.id),
+					page: 1,
+					pages: 0,
+			  }));
+	};
 	//#endregion
 
 	//#region Render
@@ -29,7 +43,7 @@ export const MHistoryFilter = ({ filter, academic_years, semesters, onFilterChan
 									</Typography>
 									<CAutocomplete
 										value={filter.department_id}
-										onChange={handleDepartmentChange('department_id')}
+										onChange={handleChange('department_id')}
 										options={departments}
 										display='name'
 										placeholder='Tất cả'
@@ -51,7 +65,7 @@ export const MHistoryFilter = ({ filter, academic_years, semesters, onFilterChan
 									<CAutocomplete
 										disableClearable
 										value={filter.academic_id}
-										onChange={handleDepartmentChange('academic_id')}
+										onChange={handleChange('academic_id')}
 										options={academic_years}
 										display='name'
 										placeholder='Tất cả'
@@ -73,7 +87,7 @@ export const MHistoryFilter = ({ filter, academic_years, semesters, onFilterChan
 									<CAutocomplete
 										disableClearable
 										value={filter.semester_id}
-										onChange={handleDepartmentChange('semester_id')}
+										onChange={handleChange('semester_id')}
 										options={semesters}
 										display='display'
 										placeholder='Tất cả'

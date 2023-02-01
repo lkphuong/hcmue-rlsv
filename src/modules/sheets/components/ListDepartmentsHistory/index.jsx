@@ -8,9 +8,11 @@ import {
 	TableRow,
 } from '@mui/material';
 
+import { CLoadingSpinner } from '_others/';
+
 import { Row } from './Row';
 
-export const ListDepartmentsHistory = ({ data, academic, semester }) => {
+export const ListDepartmentsHistory = ({ data, academic, semester, isLoading }) => {
 	//#region Data
 	//#endregion
 
@@ -31,7 +33,15 @@ export const ListDepartmentsHistory = ({ data, academic, semester }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.length > 0 ? (
+					{isLoading ? (
+						<TableRow>
+							<TableCell colSpan='100%' height={500}>
+								<Box display='flex' alignItems='center' justifyContent='center'>
+									<CLoadingSpinner />
+								</Box>
+							</TableCell>
+						</TableRow>
+					) : data?.length > 0 ? (
 						data.map((row, index) => (
 							<Row
 								key={row?.id}

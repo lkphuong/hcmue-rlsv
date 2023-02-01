@@ -26,6 +26,7 @@ const ListStudentsPage = memo(() => {
 
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+
 	const [isLoading, setIsLoading] = useState(false);
 
 	const [data, setData] = useState();

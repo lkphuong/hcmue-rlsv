@@ -16,6 +16,8 @@ const HistorySheetsPage = () => {
 	//#region Data
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
+	const [isLoading, setIsLoading] = useState(false);
+
 	const [semesters, setSemesters] = useState([]);
 
 	const [data, setData] = useState();
@@ -42,11 +44,20 @@ const HistorySheetsPage = () => {
 	};
 
 	const getData = async () => {
-		const _filter = cleanObjValue(filter);
+		setIsLoading(true);
 
-		const res = await getAdminHistorySheets(_filter);
+		try {
+			const _filter = cleanObjValue(filter);
 
-		if (isSuccess(res)) setData(res.data);
+			const res = await getAdminHistorySheets(_filter);
+
+			if (isSuccess(res)) setData(res.data);
+			else setData({ data: {}, page: 1, pages: 0 });
+		} catch (error) {
+			throw error;
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
@@ -87,9 +98,15 @@ const HistorySheetsPage = () => {
 				data={listData}
 				academic={data?.data?.academic}
 				semester={data?.data?.semester}
+				isLoading={isLoading}
 			/>
 
-			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
+			<CPagination
+				page={paginate.page}
+				pages={paginate.pages}
+				onChange={onPageChange}
+				isLoading={isLoading}
+			/>
 		</Box>
 	);
 

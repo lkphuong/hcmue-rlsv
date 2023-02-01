@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
@@ -8,104 +9,17 @@ import { CPagination } from '_controls/';
 
 import { ListSheets, MDepartmentFilter, MSearch } from '_modules/department/components';
 
-import { isSuccess } from '_func/';
-
 import { getClassesByDepartment } from '_api/classes.api';
+import { getClassSheets } from '_api/sheets.api';
 
-const FAKE_DATA = [
-	{
-		id: 1,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 2,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 3,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 4,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 5,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 6,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 7,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-	{
-		id: 8,
-		name: 'Lê Trương Quỳnh Như',
-		std_code: '47.01.902.026',
-		student_mark: 50,
-		class_mark: 100,
-		adviser_mark: 120,
-		department_mark: 80,
-		level: 'Giỏi',
-		status: 'Chưa đánh giá',
-	},
-];
+import { cleanObjValue, isSuccess } from '_func/index';
 
 const SheetsDepartmentPage = () => {
 	//#region Data
-	const { department_id } = useParams();
+	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
+
+	const { class_id } = useParams();
 
 	const [selected, setSelected] = useState([]);
 
@@ -121,7 +35,9 @@ const SheetsDepartmentPage = () => {
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
-		class_id: '',
+		department_id,
+		academic_id: academic_years[0]?.id,
+		semester_id: null,
 		status: -1,
 		input: '',
 	});
@@ -131,8 +47,9 @@ const SheetsDepartmentPage = () => {
 
 	//#region Event
 	const getData = async () => {
-		// const res = await getSheet()
-		const res = { status: 200, data: {} };
+		const _filter = cleanObjValue(filter);
+
+		const res = await getClassSheets(class_id, _filter);
 
 		if (isSuccess(res)) setData(res.data);
 	};
@@ -232,7 +149,7 @@ const SheetsDepartmentPage = () => {
 			</Stack>
 
 			<ListSheets
-				data={FAKE_DATA}
+				data={listData}
 				refetch={getData}
 				isSelectedAll={isSelectedAll}
 				selected={selected}

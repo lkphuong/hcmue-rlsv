@@ -41,9 +41,11 @@ export const MRow = ({ data, index }) => {
 							{role}
 						</Typography>
 						<Tooltip title='Phân quyền'>
-							<IconButton onClick={onClick}>
-								<CSettingIcon />
-							</IconButton>
+							<span>
+								<IconButton disabled={!data?.status?.flag} onClick={onClick}>
+									<CSettingIcon />
+								</IconButton>
+							</span>
 						</Tooltip>
 					</Stack>
 				</TableCell>

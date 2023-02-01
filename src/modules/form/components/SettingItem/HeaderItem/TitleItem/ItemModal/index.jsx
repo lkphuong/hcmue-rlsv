@@ -125,7 +125,7 @@ const ItemModal = memo(
 					setItemId(id);
 
 					reset(editData);
-				}
+				} else reset(initialItem);
 
 				toggleModal();
 			},

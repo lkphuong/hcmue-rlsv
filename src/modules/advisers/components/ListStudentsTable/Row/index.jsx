@@ -20,7 +20,7 @@ const Row = memo(({ data, index, saveFilter }) => {
 	//#region Event
 	const onEdit = () => {
 		saveFilter();
-		navigate(`/class/detail/${data?.id}`);
+		navigate(`/adviser/detail/${data?.id}`);
 	};
 	//#endregion
 

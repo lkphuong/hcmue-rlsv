@@ -45,7 +45,7 @@ export const ADVISER_ROUTES = [
 		),
 	},
 	{
-		path: ROUTES.CLASS_OFFICER.DETAIL,
+		path: ROUTES.ADVISER.DETAIL,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>

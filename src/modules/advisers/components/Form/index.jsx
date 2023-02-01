@@ -4,7 +4,6 @@ import { useFormContext } from 'react-hook-form';
 
 import {
 	Box,
-	Button,
 	Table,
 	TableBody,
 	TableCell,
@@ -20,7 +19,7 @@ import { alert } from '_func/alert';
 
 import { isSuccess } from '_func/';
 
-import { updateAdviserSheets, updateClassSheets } from '_api/sheets.api';
+import { updateAdviserSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
 
@@ -80,23 +79,6 @@ export const Form = ({ data }) => {
 		} else {
 			alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
 		}
-	};
-
-	const handleDeny = () => {
-		alert.question({
-			onConfirm: async () => {
-				const res = await updateClassSheets(data.id, { role_id, graded: 0 });
-
-				if (isSuccess(res)) {
-					dispatch(actions.clearMarks());
-
-					alert.success({ text: 'Cập nhật không xếp loại cho sinh viên thành công.' });
-
-					navigate(-1, { replace: true });
-				}
-			},
-			text: 'Bạn chắc chắn điều chỉnh sinh viên này thành không xếp loại.',
-		});
 	};
 	//#endregion
 
@@ -160,15 +142,6 @@ export const Form = ({ data }) => {
 			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
-				<Button
-					variant='contained'
-					onClick={handleDeny}
-					color='error'
-					sx={{ mr: 1, mb: 2 }}
-					disabled={!available || isSubmitting}
-				>
-					Không xếp loại
-				</Button>
 				<LoadingButton
 					sx={{ mb: 2 }}
 					variant='contained'

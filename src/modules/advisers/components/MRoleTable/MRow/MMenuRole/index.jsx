@@ -10,7 +10,7 @@ import { updateRole } from '_api/roles.api';
 import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
-import { ConfigRoleContext } from '_modules/students/pages/ListStudentsPage';
+import { ConfigRoleContext } from '_modules/advisers/pages/RolesPage';
 
 import './index.scss';
 

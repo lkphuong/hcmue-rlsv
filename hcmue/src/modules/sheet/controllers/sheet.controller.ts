@@ -1275,7 +1275,7 @@ export class SheetController {
   async getClassStatusDepartment(
     @Body() params: GetClassStatusDepartmentDto,
     @Req() req: Request,
-  ): Promise<HttpPagingResponse<ClassResponse> | HttpException> {
+  ): Promise<HttpPagingResponse<ClassStatusResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -1328,6 +1328,8 @@ export class SheetController {
             form.semester.id,
             department_id,
             classes,
+            this._academicYearService,
+            this._semesterService,
             this._sheetService,
             req,
           );
@@ -1385,7 +1387,7 @@ export class SheetController {
   async getClassStatusDepartmentHistory(
     @Body() params: GetClassStatusDepartmentHistoryDto,
     @Req() req: Request,
-  ): Promise<HttpPagingResponse<ClassResponse> | HttpException> {
+  ): Promise<HttpPagingResponse<ClassStatusResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -1433,10 +1435,12 @@ export class SheetController {
           return await generateClassStatusDepartmentResponse(
             pages,
             page,
-            form.academic_year.id,
-            form.semester.id,
+            academic_id,
+            semester_id,
             department_id,
             classes,
+            this._academicYearService,
+            this._semesterService,
             this._sheetService,
             req,
           );

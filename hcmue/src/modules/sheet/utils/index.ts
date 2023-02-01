@@ -4,6 +4,9 @@ import { Request } from 'express';
 
 import { returnObjects, returnObjectsWithPaging } from '../../../utils';
 
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
+import { SemesterService } from '../../semester/services/semester.service';
+
 import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 import { ClassEntity } from '../../../entities/class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
@@ -23,6 +26,7 @@ import {
   BaseResponse,
   ClassResponse,
   ClassSheetsResponse,
+  ClassStatusResponse,
   ManagerDepartmentResponse,
   UserSheetsResponse,
 } from '../interfaces/sheet_response.interface';
@@ -189,7 +193,6 @@ export const generateEvaluationsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', evaluations);
 
   const payload = await generateEvaluationsArray(
     role,
@@ -268,6 +271,8 @@ export const generateClassStatusDepartmentResponse = async (
   semester_id: number,
   department_id: number,
   classes: ClassEntity[],
+  academic_year_serivce: AcademicYearService,
+  semester_service: SemesterService,
   sheet_service: SheetService,
   req: Request,
 ) => {
@@ -280,11 +285,13 @@ export const generateClassStatusDepartmentResponse = async (
     semester_id,
     department_id,
     classes,
+    academic_year_serivce,
+    semester_service,
     sheet_service,
   );
 
   // Returns objects
-  return returnObjectsWithPaging<ClassResponse>(pages, page, payload);
+  return returnObjectsWithPaging<ClassStatusResponse>(pages, page, payload);
 };
 
 export const generateDepartmentStatusResponse = async (

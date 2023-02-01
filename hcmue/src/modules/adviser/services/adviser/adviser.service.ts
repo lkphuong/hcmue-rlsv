@@ -290,7 +290,7 @@ export class AdviserService {
     }
   }
 
-  async bulkUnlink(manager?: EntityManager) {
+  async bulkUnlink(academic_id: number, manager?: EntityManager) {
     try {
       if (!manager) {
         manager = this._dataSource.manager;
@@ -298,6 +298,7 @@ export class AdviserService {
       const results = await manager.update(
         AdviserEntity,
         {
+          academic_id: academic_id,
           active: 1,
           deleted: false,
         },

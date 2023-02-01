@@ -108,6 +108,7 @@ export const generateImportAdviser = async (
     if (role_adviser) {
       //#region Update old data
       await Promise.all([
+        adviser_service.bulkUnlink(academic_id, query_runner.manager),
         adviser_classes_service.bulkUnlink(query_runner.manager),
         role_user_service.bulkUpdateByRole(
           role_adviser.id,

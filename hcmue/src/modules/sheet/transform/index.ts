@@ -35,6 +35,8 @@ import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum'
 import { PDF_EXTENSION } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
+import { SemesterService } from '../../semester/services/semester.service';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -824,9 +826,29 @@ export const generateClassStatusDepartment = async (
   semester_id: number,
   department_id: number,
   classes: ClassEntity[],
+  academic_year_serivce: AcademicYearService,
+  semester_service: SemesterService,
   sheet_service: SheetService,
 ) => {
-  const payload: ClassResponse[] = [];
+  // const payload: ClassResponse[] = [];
+
+  const academic = await academic_year_serivce.getAcademicYearById(academic_id);
+  const semester = await semester_service.getSemesterById(semester_id);
+
+  const payload: ClassStatusResponse = {
+    academic: {
+      id: academic.id ?? null,
+      name: academic.start + ' - ' + academic.end,
+    },
+    semester: {
+      id: semester.id,
+      name: semester.name,
+      start: semester.start,
+      end: semester.end,
+    },
+    class: [],
+  };
+
   for await (const i of classes) {
     const count = await sheet_service.countSheetByStatus(
       academic_id,
@@ -841,7 +863,7 @@ export const generateClassStatusDepartment = async (
       status: count > 0 ? false : true,
     };
 
-    payload.push(item);
+    payload.class.push(item);
   }
 
   return payload;

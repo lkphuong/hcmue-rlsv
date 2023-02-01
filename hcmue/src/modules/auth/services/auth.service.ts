@@ -73,6 +73,7 @@ export class AuthService {
         .createQueryBuilder('role_user')
         .innerJoinAndSelect('role_user.role', 'role')
         .where('role_user.std_code = :std_code', { std_code })
+        .andWhere('role_user.deleted = :deleted', { deleted: false })
         .andWhere('role.deleted = :deleted', { deleted: false });
 
       const role = await conditions.getOne();

@@ -1290,9 +1290,31 @@ export const getLevelBySortOrder = async (
   level_service: LevelService,
   req: Request,
 ) => {
-  const ids = params.data.map((item) => {
-    return item.item_id;
+  let ids = params.data.map((item) => {
+    if (item instanceof StudentMarkDtos) {
+      if (item.personal_mark_level) {
+        return item.item_id;
+      }
+    } else if (item instanceof ClassMarkDtos) {
+      if (item.class_mark_level) {
+        return item.item_id;
+      }
+    } else if (item instanceof AdviserMarkDtos) {
+      if (item.adviser_mark_level) {
+        return item.item_id;
+      }
+    } else if (item instanceof DepartmentMarkDtos) {
+      if (item.department_mark_level) {
+        return item.item_id;
+      }
+    }
   });
+
+  //#region Remove Item undefined
+  ids = ids.filter(function (element) {
+    return element !== undefined;
+  });
+  //#endregion
 
   const sort_order = await item_service.getMaxSortOrder(ids);
   if (!sort_order) {

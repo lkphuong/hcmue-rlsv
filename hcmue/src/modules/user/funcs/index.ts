@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { Request } from 'express';
-import { DataSource, QueryRunner } from 'typeorm';
+import { DataSource, InsertResult, QueryRunner } from 'typeorm';
 
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
@@ -116,6 +116,7 @@ export const generateImportUsers = async (
 
   //#region Get User
   const user = await user_service.getOneUser();
+  let result: InsertResult | null = null;
   //#endregion
 
   // Make the QueryRunner
@@ -331,7 +332,7 @@ export const generateImportUsers = async (
     // //#endregion
 
     //#region Create user
-    const users = await generateCreateUser(
+    result = await generateCreateUser(
       path.join(root, file.fileName),
       academic_id,
       semester_id,
@@ -342,7 +343,7 @@ export const generateImportUsers = async (
       user_service,
       query_runner,
     );
-    if (!users) {
+    if (!result) {
       throw new HandlerException(
         DATABASE_EXIT_CODE.OPERATOR_ERROR,
         req.method,
@@ -354,18 +355,6 @@ export const generateImportUsers = async (
 
     //#endregion
     //#region
-
-    //#region Emit generate update password
-    if (user) {
-      event_emitter.emit(
-        EventKey.HCMUE_GENERATE_USER_UPDATE_PASSWORD,
-        user.academic_id,
-        user.semester_id,
-        academic_id,
-        semester_id,
-      );
-    }
-    //#endregion
 
     //#region response
     return await generateImportSuccessResponse(query_runner, req);
@@ -391,6 +380,18 @@ export const generateImportUsers = async (
   } finally {
     // Release transaction
     await query_runner.release();
+
+    //#region Emit generate update password
+    if (user && result) {
+      event_emitter.emit(
+        EventKey.HCMUE_GENERATE_USER_UPDATE_PASSWORD,
+        user.academic_id,
+        user.semester_id,
+        academic_id,
+        semester_id,
+      );
+    }
+    //#endregion
   }
 };
 

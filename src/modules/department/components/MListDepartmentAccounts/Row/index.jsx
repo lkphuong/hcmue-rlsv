@@ -2,7 +2,7 @@ import { useRef } from 'react';
 
 import { IconButton, Stack, TableCell, TableRow, Tooltip } from '@mui/material';
 
-import { CDeleteIcon, CEditIcon } from '_others/';
+import { CAddIcon, CDeleteIcon, CEditIcon } from '_others/';
 
 import { deleteDepartmentAccount } from '_api/others.api';
 
@@ -13,7 +13,7 @@ import { alert } from '_func/alert';
 
 import { MModal } from '../..';
 
-export const Row = ({ data, index, refetch }) => {
+export const Row = ({ data, index, refetch, onAdd }) => {
 	//#region Data
 	const modalRef = useRef();
 	//#endregion
@@ -44,20 +44,30 @@ export const Row = ({ data, index, refetch }) => {
 			<TableRow>
 				<TableCell align='center'>{index + 1}</TableCell>
 				<TableCell align='left'>{data?.department?.name}</TableCell>
-				<TableCell align='center'>{data.username}</TableCell>
+				<TableCell align='center'>
+					{data?.username ? data.username : 'Chưa có tài khoản, hãy thêm mới'}
+				</TableCell>
 				<TableCell align='center' width={100}>
-					<Stack direction='row' alignItems='center' justifyContent='space-between'>
-						<Tooltip title='Sửa'>
-							<IconButton onClick={onEdit} sx={{ color: 'white!important' }}>
-								<CEditIcon />
+					{data?.id ? (
+						<Stack direction='row' alignItems='center' justifyContent='space-between'>
+							<Tooltip title='Sửa'>
+								<IconButton onClick={onEdit} sx={{ color: 'white!important' }}>
+									<CEditIcon />
+								</IconButton>
+							</Tooltip>
+							<Tooltip title='Xóa'>
+								<IconButton onClick={onDelete}>
+									<CDeleteIcon />
+								</IconButton>
+							</Tooltip>
+						</Stack>
+					) : (
+						<Tooltip title='Thêm mới'>
+							<IconButton onClick={() => onAdd(data?.department?.id)}>
+								<CAddIcon />
 							</IconButton>
 						</Tooltip>
-						<Tooltip title='Xóa'>
-							<IconButton onClick={onDelete}>
-								<CDeleteIcon />
-							</IconButton>
-						</Tooltip>
-					</Stack>
+					)}
 				</TableCell>
 			</TableRow>
 

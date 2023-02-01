@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { shallowEqual, useSelector } from 'react-redux';
 import { Controller, useForm } from 'react-hook-form';
 
@@ -24,15 +24,10 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 	const resolver = useResolver(editData ? validationSchemaEdit : validationSchema);
 
 	const { control, handleSubmit, reset } = useForm({
-		defaultValues: editData
-			? {
-					...editData,
-					isEdit: true,
-					department_id: editData.department.id,
-			  }
-			: { ...initialValues, department_id: departments[0].id },
+		defaultValues: { ...initialValues, department_id: departments[0].id },
 		mode: 'all',
 		shouldFocusError: true,
+
 		resolver,
 	});
 	//#endregion
@@ -67,8 +62,22 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 	//#endregion
 
 	useImperativeHandle(ref, () => ({
-		open: () => setOpen(true),
+		open: (department_id) => {
+			department_id && reset({ ...initialValues, department_id: department_id });
+			setOpen(true);
+		},
 	}));
+
+	useEffect(() => {
+		return (
+			editData &&
+			reset({
+				...editData,
+				isEdit: true,
+				department_id: editData.department.id,
+			})
+		);
+	}, [editData]);
 
 	//#region Render
 	return (

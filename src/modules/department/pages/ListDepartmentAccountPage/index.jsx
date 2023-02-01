@@ -68,7 +68,11 @@ const ListDepartmentAccountPage = () => {
 				</Button>
 			</Box>
 
-			<MListDepartmentAccounts data={listData} refetch={getData} />
+			<MListDepartmentAccounts
+				data={listData}
+				refetch={getData}
+				onAdd={(department_id) => modalRef.current.open(department_id)}
+			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 

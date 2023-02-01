@@ -326,20 +326,21 @@ export default function componentStyleOverrides(theme) {
 			styleOverrides: {
 				root: {
 					padding: '6px 10px',
-					'& .MuiIconButton-root:not(.MuiAutocomplete-popupIndicator)': {
-						borderRadius: '8px',
-						fontSize: '1.25rem',
-						color: 'transparent',
-						'&:hover': {
-							backgroundColor: 'rgb(208 206 244)',
-						},
-						'&.Mui-disabled': {
+					'& .MuiIconButton-root:not(.MuiAutocomplete-popupIndicator,.MuiAutocomplete-clearIndicator)':
+						{
+							borderRadius: '8px',
+							fontSize: '1.25rem',
 							color: 'transparent',
-							'& path': {
-								stroke: 'rgb(0 0 0 / 20%)',
+							'&:hover': {
+								backgroundColor: 'rgb(208 206 244)',
+							},
+							'&.Mui-disabled': {
+								color: 'transparent',
+								'& path': {
+									stroke: 'rgb(0 0 0 / 20%)',
+								},
 							},
 						},
-					},
 					'&.border-left': {
 						borderLeft: '1px solid rgba(224, 224, 224, 1)',
 					},

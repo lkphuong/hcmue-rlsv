@@ -298,22 +298,6 @@ export const NAVIGATIONS = {
 	],
 	6: [
 		{
-			id: 'report',
-			title: 'Thống kê',
-			type: 'collapse',
-			icon: Equalizer,
-			entity: ENTITY_KEY.ADMIN.key,
-			children: [
-				{
-					id: 'report',
-					title: 'Thống kê phiếu',
-					type: 'item',
-					path: '/admin/report',
-					entity: ENTITY_KEY.ADMIN.key,
-				},
-			],
-		},
-		{
 			id: 'rlsv',
 			title: 'Rèn luyện sinh viên',
 			type: 'collapse',
@@ -339,6 +323,22 @@ export const NAVIGATIONS = {
 					title: 'Lịch sử phiếu đánh giá',
 					type: 'item',
 					path: '/admin/history',
+					entity: ENTITY_KEY.ADMIN.key,
+				},
+			],
+		},
+		{
+			id: 'report',
+			title: 'Thống kê',
+			type: 'collapse',
+			icon: Equalizer,
+			entity: ENTITY_KEY.ADMIN.key,
+			children: [
+				{
+					id: 'report',
+					title: 'Thống kê phiếu',
+					type: 'item',
+					path: '/admin/report',
 					entity: ENTITY_KEY.ADMIN.key,
 				},
 			],

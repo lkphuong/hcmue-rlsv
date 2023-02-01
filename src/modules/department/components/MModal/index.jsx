@@ -144,7 +144,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 							{!editData && (
 								<>
 									<Stack direction='column' spacing={1} mb={3}>
-										<Typography>Mật khẩu mới</Typography>
+										<Typography>Mật khẩu</Typography>
 										<Controller
 											control={control}
 											name='password'

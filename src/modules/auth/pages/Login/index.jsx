@@ -132,7 +132,7 @@ export const LoginPage = () => {
 											}) => (
 												<CInput
 													fullWidth
-													placeholder='Nhập mssv...'
+													placeholder='Nhập tên đăng nhập'
 													onChange={onChange}
 													onBlur={onBlur}
 													value={value}

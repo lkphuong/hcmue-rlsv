@@ -86,7 +86,9 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 		navigate(`${ROUTES.ADMIN.FORMS}/${data.id}`);
 	};
 
-	const onDelete = () => {
+	const onDelete = (e) => {
+		e.stopPropagation();
+
 		alert.warningDelete({
 			onConfirm: async () => {
 				const res = await deleteForm(data.id);
@@ -102,7 +104,9 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 		});
 	};
 
-	const onClone = () => {
+	const onClone = (e) => {
+		e.stopPropagation();
+
 		alert.question({
 			onConfirm: async () => {
 				const res = await cloneForm(data.id);

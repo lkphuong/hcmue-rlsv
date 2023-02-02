@@ -19,6 +19,7 @@ export const CInput = forwardRef(
 			helperText,
 			isPassword,
 			isSearch,
+			inputRef,
 			...props
 		},
 		ref
@@ -32,6 +33,7 @@ export const CInput = forwardRef(
 		return (
 			<TextField
 				ref={ref}
+				inputRef={inputRef}
 				id={id}
 				name={name}
 				value={value}

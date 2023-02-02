@@ -25,7 +25,7 @@ export const MHistoryTable = ({ data }) => {
 						<TableCell align='center'>Tên lớp</TableCell>
 						<TableCell align='center'>Học kỳ</TableCell>
 						<TableCell align='center'>Năm học</TableCell>
-						<TableCell align='center'>Tình trạng chấm của ban cán sự</TableCell>
+						<TableCell align='center'>Tình trạng chấm của sinh viên</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>

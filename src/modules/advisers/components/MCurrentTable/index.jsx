@@ -24,7 +24,7 @@ export const MCurrentTable = ({ data }) => {
 				<TableHead>
 					<TableRow>
 						<TableCell align='center'>Tên lớp</TableCell>
-						<TableCell align='center'>Tình trạng chấm của ban cán sự</TableCell>
+						<TableCell align='center'>Tình trạng chấm của sinh viên</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>

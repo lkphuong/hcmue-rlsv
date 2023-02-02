@@ -18,6 +18,7 @@ import { StatusModule } from '../status/status.module';
 
 import { UserController } from './controllers/user.controller';
 import { UserService } from './services/user.service';
+import { GenerateUserUpdateListener } from './listeners/generate_update_password.listener';
 
 export const modules = [
   TypeOrmModule.forFeature([UserEntity]),
@@ -36,5 +37,5 @@ export const modules = [
 ];
 
 export const controllers = [UserController];
-export const providers = [UserService];
-export const exporteds = [UserService];
+export const providers = [UserService, GenerateUserUpdateListener];
+export const exporteds = [UserService, GenerateUserUpdateListener];

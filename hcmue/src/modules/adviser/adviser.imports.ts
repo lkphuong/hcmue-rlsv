@@ -16,6 +16,7 @@ import { AdviserController } from './controllers/adviser.controller';
 
 import { AdviserService } from './services/adviser/adviser.service';
 import { AdviserClassesService } from './services/adviser-classes/adviser_classes.service';
+import { GenerateAdviserUpdateListener } from './listeners/generate_update_password.listener';
 
 export const modules = [
   TypeOrmModule.forFeature([AdviserEntity, AdviserClassesEntity]),
@@ -29,5 +30,13 @@ export const modules = [
 ];
 
 export const controllers = [AdviserController];
-export const providers = [AdviserService, AdviserClassesService];
-export const exporteds = [AdviserService, AdviserClassesService];
+export const providers = [
+  AdviserService,
+  AdviserClassesService,
+  GenerateAdviserUpdateListener,
+];
+export const exporteds = [
+  AdviserService,
+  AdviserClassesService,
+  GenerateAdviserUpdateListener,
+];

@@ -12,7 +12,6 @@ import Row from './Row';
 
 export const ListSheets = ({ data }) => {
 	//#region Data
-	console.log(data);
 	//#endregion
 
 	//#region Event

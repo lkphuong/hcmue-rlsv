@@ -6,6 +6,7 @@ import { DepartmentEntity } from '../../../entities/department.entity';
 import { LevelEntity } from '../../../entities/level.entity';
 import { SemesterEntity } from '../../../entities/semester.entity';
 
+import { CacheClassService } from '../services/cache-class.service';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { SheetService } from '../../sheet/services/sheet.service';
@@ -135,6 +136,7 @@ export const generateCacheDepartmentsResponse = async (
   levels: LevelEntity[],
   department_service: DepartmentService,
   sheet_service: SheetService,
+  cache_class_service: CacheClassService,
 ) => {
   if (cache_classes) {
     const report_response: ReportDepartmentsResponse = {
@@ -157,10 +159,10 @@ export const generateCacheDepartmentsResponse = async (
 
       if (data.has(cache_class.department_id)) {
         items = data.get(cache_class.department_id);
-        items = generateLocalLevelResponse(items, cache_class);
+        items = await generateLocalLevelResponse(items, cache_class);
       } else {
         items = generateLevelsResponse(levels);
-        items = generateLocalLevelResponse(items, cache_class);
+        items = await generateLocalLevelResponse(items, cache_class);
       }
 
       sum_of_levels = generateGlobalLevelResponse(sum_of_levels, cache_class);
@@ -175,6 +177,14 @@ export const generateCacheDepartmentsResponse = async (
     if (departments && departments.length > 0) {
       for await (const key of data.keys()) {
         const levels = data.get(key);
+
+        await generateDepartmentLocalLevelResponse(
+          levels,
+          academic_id,
+          semester_id,
+          key,
+          cache_class_service,
+        );
         const department = departments.find((d) => d.id === key);
 
         //#region Get num_of_std by department
@@ -184,6 +194,7 @@ export const generateCacheDepartmentsResponse = async (
           key,
           SheetStatus.ALL,
         );
+
         sum_of_std += convertString2Float(num_of_std.toString());
         //#endregion
 
@@ -275,6 +286,26 @@ export const generateLocalLevelResponse = (
   return items;
 };
 
+export const generateDepartmentLocalLevelResponse = async (
+  items: LevelResponse[],
+  academic_id: number,
+  semester_id: number,
+  department_id: number,
+  cache_class_service: CacheClassService,
+) => {
+  for await (const i of items) {
+    const amount = await cache_class_service.amountLevelCacheDepartment(
+      academic_id,
+      semester_id,
+      department_id,
+      i.id as number,
+    );
+    i.count = amount ? parseInt(amount.toString()) : 0;
+  }
+
+  return items;
+};
+
 export const generateGlobalLevelResponse = (
   items: LevelResponse[],
   cache_class: CacheClassEntity,
@@ -284,6 +315,5 @@ export const generateGlobalLevelResponse = (
   if (index !== -1) {
     items[index].count = items[index].count + cache_class.amount;
   }
-
   return items;
 };

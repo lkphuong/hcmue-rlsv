@@ -310,6 +310,7 @@ export class ReportController {
           levels,
           this._departmentService,
           this._sheetService,
+          this._cacheClassService,
           req,
         );
         //#endregion

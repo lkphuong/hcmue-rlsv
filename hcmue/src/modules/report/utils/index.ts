@@ -14,6 +14,7 @@ import { LevelEntity } from '../../../entities/level.entity';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { SheetService } from '../../sheet/services/sheet.service';
+import { CacheClassService } from '../services/cache-class.service';
 
 export const generateReportsResponse = async (
   academic_year: AcademicYearEntity,
@@ -67,6 +68,7 @@ export const generateReportsDepartmentResponse = async (
   levels: LevelEntity[],
   department_service: DepartmentService,
   sheet_service: SheetService,
+  cache_class_service: CacheClassService,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
@@ -84,6 +86,7 @@ export const generateReportsDepartmentResponse = async (
     levels,
     department_service,
     sheet_service,
+    cache_class_service,
   );
 
   // Returns objects

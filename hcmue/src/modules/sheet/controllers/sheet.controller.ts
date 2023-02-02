@@ -897,7 +897,14 @@ export class SheetController {
    * @page sheets page
    */
   @Post('adviser')
-  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
+  @Roles(
+    Role.ADMIN,
+    Role.DEPARTMENT,
+    Role.ADVISER,
+    Role.MONITOR,
+    Role.SECRETARY,
+    Role.CHAIRMAN,
+  )
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassStatus(
@@ -985,7 +992,14 @@ export class SheetController {
    * @page sheets page
    */
   @Post('adviser/history')
-  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
+  @Roles(
+    Role.ADMIN,
+    Role.DEPARTMENT,
+    Role.ADVISER,
+    Role.MONITOR,
+    Role.SECRETARY,
+    Role.CHAIRMAN,
+  )
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassStatusHistory(

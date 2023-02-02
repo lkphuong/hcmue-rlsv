@@ -105,4 +105,36 @@ export class CacheClassService {
       return null;
     }
   }
+
+  async amountLevelCacheDepartment(
+    academic_id: number,
+    semester_id: number,
+    department_id: number,
+    level_id: number,
+  ): Promise<number> {
+    try {
+      const conditions = this._cacheClassRepository
+        .createQueryBuilder('cache_class')
+        .select('SUM(amount)', 'amount')
+        .where('cache_class.academic_id = :academic_id', { academic_id })
+        .andWhere('cache_class.semester_id = :semester_id', { semester_id })
+        .andWhere('cache_class.level_id = :level_id', { level_id })
+        .andWhere('cache_class.department_id = :department_id', {
+          department_id,
+        })
+        .andWhere('cache_class.deleted = :deleted', { deleted: false });
+
+      const { amount } = await conditions.getRawOne();
+
+      return amount || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'CacheClassService.amountLevelCacheDepartment()',
+        e,
+      );
+      return null;
+    }
+  }
 }

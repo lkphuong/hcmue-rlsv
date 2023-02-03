@@ -2,11 +2,11 @@ import { useCallback, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
-import { Checkbox, IconButton, TableCell, TableRow } from '@mui/material';
+import { Checkbox, IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
 import { SHEET_STATUS } from '_constants/variables';
 
-import { CEditIcon } from '_others/';
+import { CEditIcon, CViewIcon } from '_others/';
 
 export const Row = ({ data, index, isSelected, onSelect }) => {
 	const navigate = useNavigate();
@@ -50,9 +50,19 @@ export const Row = ({ data, index, isSelected, onSelect }) => {
 			<TableCell align='center'>{data.level?.name || 'Chưa đánh giá'}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center'>
-				<IconButton onClick={onClick}>
-					<CEditIcon />
-				</IconButton>
+				{data?.status === 5 ? (
+					<Tooltip title='Xem'>
+						<IconButton onClick={onClick}>
+							<CViewIcon />
+						</IconButton>
+					</Tooltip>
+				) : (
+					<Tooltip title='Chấm điểm'>
+						<IconButton onClick={onClick}>
+							<CEditIcon />
+						</IconButton>
+					</Tooltip>
+				)}
 			</TableCell>
 		</TableRow>
 	);

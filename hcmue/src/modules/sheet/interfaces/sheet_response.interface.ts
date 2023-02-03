@@ -124,6 +124,7 @@ export interface AcademicYearResponse {
 export interface ClassResponse {
   id: number;
   code: string;
+  name: string;
   status: boolean;
   academic?: AcademicYearResponse;
   semester?: SemesterResponse;

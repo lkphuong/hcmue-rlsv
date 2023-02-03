@@ -377,10 +377,10 @@ export const generateObjectIDString = (object_ids: string[]) => {
 };
 
 export const generateObjectIdFromUsers = (users: UserEntity[]) => {
-  let user_ids: number[] = null;
+  let std_code: string[] = null;
   if (users && users.length > 0) {
-    user_ids = users.map((user) => user.id);
+    std_code = users.map((user) => `"${user.std_code}"`);
   }
 
-  return user_ids;
+  return [...new Set(std_code)];
 };

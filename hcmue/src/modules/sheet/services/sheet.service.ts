@@ -79,7 +79,7 @@ export class SheetService {
     semester_id: number,
     status: number,
     role: number,
-    user_ids?: number[],
+    user_ids?: string[],
   ): Promise<SheetEntity[] | null> {
     try {
       let conditions = this._sheetRepository
@@ -149,7 +149,7 @@ export class SheetService {
     semester_id: number,
     status: number,
     role: number,
-    user_ids?: number[],
+    user_ids?: string[],
   ): Promise<SheetEntity[] | null> {
     try {
       let conditions = this._sheetRepository
@@ -437,7 +437,7 @@ export class SheetService {
     semester_id: number,
     status: SheetStatus,
     role?: number,
-    user_ids?: number[],
+    user_ids?: string[],
   ): Promise<number> {
     try {
       let conditions = this._sheetRepository
@@ -465,9 +465,11 @@ export class SheetService {
 
       if (user_ids && user_ids.length > 0) {
         conditions = conditions.andWhere(
-          `sheet.user_id IN (${user_ids.toString()})`,
+          `sheet.std_code IN (${user_ids.toString()})`,
         );
       }
+
+      console.log('sql: ', conditions.getSql());
 
       // if (role) {
       //   const sheet_status = this.generateStatus(role);

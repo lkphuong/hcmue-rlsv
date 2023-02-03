@@ -438,7 +438,7 @@ export class SheetController {
         params;
 
       let users: UserEntity[] = null;
-      let user_ids: number[] = null;
+      let user_ids: string[] = null;
       //#endregion
 
       //#region Get Jwt Payload
@@ -598,7 +598,7 @@ export class SheetController {
 
       let { pages } = params;
       let users: UserEntity[] = null;
-      let user_ids: number[] = null;
+      let user_ids: string[] = null;
 
       const itemsPerPage = parseInt(
         this._configurationService.get(Configuration.ITEMS_PER_PAGE),
@@ -1142,7 +1142,7 @@ export class SheetController {
 
       let { pages } = params;
       let users: UserEntity[] = null;
-      let user_ids: number[] = null;
+      let user_ids: string[] = null;
 
       const itemsPerPage = parseInt(
         this._configurationService.get(Configuration.ITEMS_PER_PAGE),
@@ -1195,6 +1195,7 @@ export class SheetController {
         );
 
         user_ids = generateObjectIdFromUsers(users);
+
         if (!user_ids) {
           //#region throw HandlerException
           throw new HandlerException(

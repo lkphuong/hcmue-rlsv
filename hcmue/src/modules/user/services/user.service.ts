@@ -392,7 +392,7 @@ export class UserService {
           'user.semester',
           SemesterEntity,
           'semester',
-          `semester.academic_id = academic_id AND
+          `semester.academic_id = academic.id AND
            semester.deleted = 0`,
         )
         .innerJoinAndMapOne(

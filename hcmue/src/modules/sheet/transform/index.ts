@@ -34,7 +34,6 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
-import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { SemesterService } from '../../semester/services/semester.service';
 
@@ -800,6 +799,7 @@ export const generateClassStatusAdviser = async (
 
     const item: ClassResponse = {
       id: i.id,
+      name: i.name,
       code: i.code,
       status: count > 0 ? false : true,
     };
@@ -847,6 +847,7 @@ export const generateClassStatusAdviserHistory = async (
     const item: ClassResponse = {
       id: $class.id,
       code: $class.code,
+      name: $class.name,
       status: count > 0 ? false : true,
       academic: {
         id: i.academic_year.id,
@@ -905,6 +906,7 @@ export const generateClassStatusDepartment = async (
     const item: ClassResponse = {
       id: i.id,
       code: i.code,
+      name: i.name,
       status: count > 0 ? false : true,
     };
 

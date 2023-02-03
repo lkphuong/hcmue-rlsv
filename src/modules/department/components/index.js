@@ -8,3 +8,5 @@ export * from './ListSheets';
 export * from './ListClassesHistory';
 export * from './MHistoryFilter';
 export * from './Form';
+export * from './MReportDepartmentFilter';
+export * from './MReportDepartmentTable';

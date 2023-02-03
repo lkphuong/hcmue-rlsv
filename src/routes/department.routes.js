@@ -13,6 +13,8 @@ const DepartmentDetailPage = lazy(() => import('_modules/department/pages/Depart
 
 const HistorySheetsPage = lazy(() => import('_modules/department/pages/HistorySheetsPage'));
 
+const ReportDepartmentPage = lazy(() => import('_modules/department/pages/ReportDepartmentPage'));
+
 export const DEPARTMENT_ROUTES = [
 	{
 		path: ROUTES.DEPARTMENT.SHEETS,
@@ -75,7 +77,7 @@ export const DEPARTMENT_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
-				<div>Thống kê phiếu</div>
+				<ReportDepartmentPage />
 			</CPermission>
 		),
 	},

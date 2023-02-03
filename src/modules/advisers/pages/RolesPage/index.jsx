@@ -99,7 +99,7 @@ const RolesPage = memo(() => {
 
 				<MSearch onFilterChange={setFilter} />
 
-				<Stack direction='column' justifyContent='space-between'>
+				<Stack direction='column' justifyContent='space-between' mt={1.5}>
 					<MRoleTable data={dataTable} onFilterChange={setFilter} />
 
 					<CPagination

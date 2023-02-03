@@ -10,7 +10,7 @@ import {
 
 import { MRow } from './MRow';
 
-export const MCurrentTable = ({ data }) => {
+export const MCurrentTable = ({ data, onSetCurrent }) => {
 	//#region Data
 	//#endregion
 
@@ -29,7 +29,9 @@ export const MCurrentTable = ({ data }) => {
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row) => <MRow key={row?.id} data={row} />)
+						data.map((row) => (
+							<MRow key={row?.id} data={row} onSetCurrent={onSetCurrent} />
+						))
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

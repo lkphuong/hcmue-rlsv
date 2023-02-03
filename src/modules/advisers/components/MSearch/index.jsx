@@ -18,7 +18,7 @@ export const MSearch = ({ onFilterChange }) => {
 
 	//#region Render
 	return (
-		<Stack spacing={1.5} alignItems='center' direction='row' mb={1.5}>
+		<Stack spacing={1.5} alignItems='center' direction='row'>
 			<CInput
 				isSearch
 				value={currentInput}

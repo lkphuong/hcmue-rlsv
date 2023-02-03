@@ -1,17 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Typography } from '@mui/material';
-
-import dayjs from 'dayjs';
 
 import { MCurrentTable } from '_modules/advisers/components';
 
 import { getCurrentClassSheet } from '_api/sheets.api';
 
-import { isSuccess } from '_func/index';
+import { formatTimeSemester, isSuccess } from '_func/index';
 
-const formatDate = (date) => dayjs(date).format('DD/MM/YYYY');
+import { actions } from '_slices/currentInfo.slice';
 
 const CurrentClassSheetsPage = () => {
 	//#region Data
@@ -20,6 +18,8 @@ const CurrentClassSheetsPage = () => {
 	const [data, setData] = useState();
 
 	const listData = useMemo(() => data?.class || [], [data]);
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -29,6 +29,15 @@ const CurrentClassSheetsPage = () => {
 		const res = await getCurrentClassSheet(body);
 
 		if (isSuccess(res)) setData(res.data);
+	};
+
+	const handleSetCurrent = () => {
+		const info = {
+			academic: data?.academic,
+			semester: data?.semester,
+		};
+
+		dispatch(actions.setInfo(info));
 	};
 	//#endregion
 
@@ -46,12 +55,12 @@ const CurrentClassSheetsPage = () => {
 				lineHeight='30px'
 				mb={1.5}
 			>
-				{`${data?.semester?.name} (${formatDate(data?.semester?.start)}-${formatDate(
-					data?.semester?.end
-				)}) - Năm học ${data?.academic?.name}`}
+				{`${data?.semester?.name} (${formatTimeSemester(
+					data?.semester?.start
+				)}-${formatTimeSemester(data?.semester?.end)}) - Năm học ${data?.academic?.name}`}
 			</Typography>
 
-			<MCurrentTable data={listData} />
+			<MCurrentTable data={listData} onSetCurrent={handleSetCurrent} />
 		</Box>
 	);
 	//#endregion

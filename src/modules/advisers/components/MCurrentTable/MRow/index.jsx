@@ -4,7 +4,7 @@ import { Chip, TableCell, TableRow } from '@mui/material';
 
 import { CLink } from '_controls/';
 
-export const MRow = ({ data }) => {
+export const MRow = ({ data, onSetCurrent }) => {
 	//#region Data
 	const status = useMemo(
 		() =>
@@ -24,8 +24,8 @@ export const MRow = ({ data }) => {
 	return (
 		<TableRow>
 			<TableCell align='center'>
-				<CLink underline='hover' to={`/adviser/${data?.id}`}>
-					{data?.code}
+				<CLink underline='hover' to={`${data?.id}`} onClick={onSetCurrent}>
+					{data?.name + ' - ' + data?.code}
 				</CLink>
 			</TableCell>
 			<TableCell align='center'>{status}</TableCell>

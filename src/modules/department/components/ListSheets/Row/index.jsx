@@ -9,13 +9,16 @@ import { SHEET_STATUS } from '_constants/variables';
 import { CEditIcon, CViewIcon } from '_others/';
 
 export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) => {
+	//#region Data
 	const navigate = useNavigate();
 
 	const status = useMemo(
 		() => SHEET_STATUS.find((e) => e.id.toString() === data?.status?.toString())?.name || null,
 		[data?.status]
 	);
+	//#endregion
 
+	//#region Event
 	const onClick = () => navigate(`detail/${data.id}`);
 
 	const handleSelect = useCallback(
@@ -27,7 +30,9 @@ export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) 
 
 		[onSelect]
 	);
+	//#endregion
 
+	//#region Render
 	return (
 		<TableRow
 			onClick={data?.status === 3 ? handleSelect : undefined}
@@ -70,4 +75,5 @@ export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) 
 			)}
 		</TableRow>
 	);
+	//#endregion
 };

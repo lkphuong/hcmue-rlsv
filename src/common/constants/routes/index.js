@@ -17,12 +17,16 @@ export const ROUTES = {
 	},
 
 	ADVISER: {
-		CLASS: '/adviser/class-sheets',
-		HISTORY: '/adviser/class-history',
-		STUDENT_LIST: '/adviser/:class_id',
-		DETAIL: '/adviser/detail/:sheet_id',
+		SHEETS: '/adviser/sheets',
+		SHEETS_CLASS: '/adviser/sheets/:class_id',
+		SHEET_DETAIL: '/adviser/sheets/:class_id/detail/:sheet_id',
+
+		HISTORY: '/adviser/history',
+		HISTORY_CLASS: '/adviser/history/:class_id',
+		HISTORY_DETAIL: '/adviser/history/:class_id/detail/:sheet_id',
 
 		REPORT: '/adviser/report',
+		REPORT_CLASS: '/adviser/report/:class_id',
 
 		ROLE: '/adviser/role',
 	},

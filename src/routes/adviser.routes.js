@@ -8,17 +8,21 @@ import { CPermission } from '_controls/';
 import { CErrorPage } from '_others/';
 
 const CurrentClassSheetsPage = lazy(() => import('_modules/advisers/pages/CurrentClassSheetsPage'));
-const HistoryClassSheetsPage = lazy(() => import('_modules/advisers/pages/HistoryClassSheetsPage'));
 const ListStudentSheetsPage = lazy(() => import('_modules/advisers/pages/ListStudentSheetsPage'));
+
+const HistorySheetsPage = lazy(() => import('_modules/advisers/pages/HistorySheetsPage'));
+const HistoryClassPage = lazy(() => import('_modules/advisers/pages/HistoryClassPage'));
+
 const AdviserDetailPage = lazy(() => import('_modules/advisers/pages/AdviserDetailPage'));
 
 const ReportPage = lazy(() => import('_modules/advisers/pages/ReportPage'));
+// const ReportClassPage = lazy(() => import('_modules/adviser/pages/ReportClassPage'));
 
 const RolesPage = lazy(() => import('_modules/advisers/pages/RolesPage'));
 
 export const ADVISER_ROUTES = [
 	{
-		path: ROUTES.ADVISER.CLASS,
+		path: ROUTES.ADVISER.SHEETS,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
@@ -27,16 +31,7 @@ export const ADVISER_ROUTES = [
 		),
 	},
 	{
-		path: ROUTES.ADVISER.HISTORY,
-		errorElement: <CErrorPage />,
-		element: (
-			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
-				<HistoryClassSheetsPage />
-			</CPermission>
-		),
-	},
-	{
-		path: ROUTES.ADVISER.STUDENT_LIST,
+		path: ROUTES.ADVISER.SHEETS_CLASS,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
@@ -45,7 +40,7 @@ export const ADVISER_ROUTES = [
 		),
 	},
 	{
-		path: ROUTES.ADVISER.DETAIL,
+		path: ROUTES.ADVISER.SHEET_DETAIL,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
@@ -53,6 +48,35 @@ export const ADVISER_ROUTES = [
 			</CPermission>
 		),
 	},
+
+	{
+		path: ROUTES.ADVISER.HISTORY,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
+				<HistorySheetsPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADVISER.HISTORY_CLASS,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
+				<HistoryClassPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADVISER.HISTORY_DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
+				<AdviserDetailPage />
+			</CPermission>
+		),
+	},
+
 	{
 		path: ROUTES.ADVISER.REPORT,
 		errorElement: <CErrorPage />,
@@ -62,6 +86,16 @@ export const ADVISER_ROUTES = [
 			</CPermission>
 		),
 	},
+	{
+		path: ROUTES.ADVISER.REPORT_CLASS,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
+				{/* <ReportClassPage /> */}
+			</CPermission>
+		),
+	},
+
 	{
 		path: ROUTES.ADVISER.ROLE,
 		errorElement: <CErrorPage />,

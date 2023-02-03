@@ -3,16 +3,16 @@ import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
 
-import { cleanObjValue, isEmpty, isSuccess } from '_func/index';
+import { CPagination } from '_controls/';
+
+import { MHistoryClassFilter, MHistoryTable } from '_modules/advisers/components';
 
 import { getClassHistorySheets } from '_api/sheets.api';
 import { getSemestersByYear } from '_api/options.api';
 
-import { MHistoryClassFilter, MHistoryTable } from '_modules/advisers/components';
+import { cleanObjValue, isEmpty, isSuccess } from '_func/index';
 
-import { CPagination } from '_controls/';
-
-const HistoryClassSheetsPage = () => {
+const HistorySheetsPage = () => {
 	//#region Data
 	const { department_id, classes } = useSelector((state) => state.auth.profile, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
@@ -89,4 +89,4 @@ const HistoryClassSheetsPage = () => {
 	//#endregion
 };
 
-export default HistoryClassSheetsPage;
+export default HistorySheetsPage;

@@ -7,6 +7,7 @@ import {
 	TableHead,
 	TableRow,
 } from '@mui/material';
+
 import { MRow } from './MRow';
 
 export const MHistoryTable = ({ data }) => {

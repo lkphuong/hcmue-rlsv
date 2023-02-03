@@ -1,24 +1,21 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom';
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
-import { CPagination } from '_controls/';
-
-import { ListSheets, MDepartmentFilter, MSearch } from '_modules/department/components';
-
 import { getClassSheets } from '_api/sheets.api';
+
+import { CPagination } from '_controls/';
 
 import { cleanObjValue, formatTimeSemester, isEmpty, isSuccess } from '_func/index';
 
-const HistoryDepartmentPage = () => {
+import { ListStudentsTable, MClassFilter, MSearch } from '_modules/advisers/components';
+
+const HistoryClassPage = () => {
 	//#region Data
 	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
-	const { fullname: departmentName, department_id } = useSelector(
-		(state) => state.auth.profile,
-		shallowEqual
-	);
+	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const { class_id } = useParams();
 
@@ -102,7 +99,7 @@ const HistoryDepartmentPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<MDepartmentFilter filter={filter} onFilterChange={setFilter} />
+			<MClassFilter filter={filter} onFilterChange={setFilter} />
 
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
 				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
@@ -113,7 +110,7 @@ const HistoryDepartmentPage = () => {
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{departmentName}
+						Lớp
 					</Typography>
 				</Paper>
 			</Box>
@@ -128,7 +125,7 @@ const HistoryDepartmentPage = () => {
 				<MSearch onFilterChange={setFilter} placeholder='Nhập MSSV hoặc tên' />
 			</Stack>
 
-			<ListSheets
+			<ListStudentsTable
 				data={listData}
 				refetch={getData}
 				isSelectedAll={isSelectedAll}
@@ -143,4 +140,4 @@ const HistoryDepartmentPage = () => {
 	//#endregion
 };
 
-export default HistoryDepartmentPage;
+export default HistoryClassPage;

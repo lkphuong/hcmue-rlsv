@@ -28,7 +28,7 @@ export const Row = ({ data, index, onSetCurrent }) => {
 					to={`${ROUTES.DEPARTMENT.SHEETS}/${data?.id}`}
 					onClick={onSetCurrent}
 				>
-					{data?.code}
+					{(data?.name ?? '') + ' - ' + data?.code}
 				</Link>
 			</TableCell>
 			<TableCell align='center'>{status}</TableCell>

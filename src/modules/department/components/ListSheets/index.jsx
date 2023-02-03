@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { useLocation } from 'react-router-dom';
+
 import {
 	Box,
 	Button,
@@ -18,11 +20,17 @@ import { isSuccess } from '_func/';
 
 import { ERRORS } from '_constants/messages';
 
-import { Row } from './Row';
 import { CLoadingSpinner } from '_others/';
+
+import { Row } from './Row';
 
 export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect, loading }) => {
 	//#region Data
+	const { pathname } = useLocation();
+
+	const isHistory = useMemo(() => pathname.includes('history'), [pathname]);
+	const isReport = useMemo(() => pathname.includes('report'), [pathname]);
+
 	const isSelected = useMemo(
 		() => selected && !!Object.values(selected).filter((s) => s).length,
 		[selected]
@@ -59,23 +67,27 @@ export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect, l
 	//#region Render
 	return (
 		<>
-			<Box textAlign='left' my={1}>
-				<Button variant='contained' onClick={onApprovalAll}>
-					Duyệt tất cả
-				</Button>
-			</Box>
+			{!(isHistory || isReport) && (
+				<Box textAlign='left' my={1}>
+					<Button variant='contained' onClick={onApprovalAll}>
+						Duyệt tất cả
+					</Button>
+				</Box>
+			)}
 
 			<TableContainer sx={{ maxHeight: 500 }}>
 				<Table stickyHeader>
 					<TableHead>
 						<TableRow>
-							<TableCell width={50} align='center'>
-								<Checkbox
-									indeterminate={isSelected && !isSelectedAll}
-									onChange={onSelect(-1)}
-									checked={isSelectedAll || isSelected}
-								/>
-							</TableCell>
+							{!(isHistory || isReport) && (
+								<TableCell width={50} align='center'>
+									<Checkbox
+										indeterminate={isSelected && !isSelectedAll}
+										onChange={onSelect(-1)}
+										checked={isSelectedAll || isSelected}
+									/>
+								</TableCell>
+							)}
 							<TableCell align='center'>STT</TableCell>
 							<TableCell align='left'>Họ và tên</TableCell>
 							<TableCell align='center'>MSSV</TableCell>
@@ -85,7 +97,7 @@ export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect, l
 							<TableCell align='center'>Điểm khoa chấm</TableCell>
 							<TableCell align='center'>Xếp loại</TableCell>
 							<TableCell align='center'>Trạng thái</TableCell>
-							<TableCell />
+							{!isReport && <TableCell />}
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -105,6 +117,8 @@ export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect, l
 									index={index + 1}
 									onSelect={onSelect(Number(row.id))}
 									isSelected={selected?.includes(Number(row.id)) || isSelectedAll}
+									isHistory={isHistory}
+									isReport={isReport}
 								/>
 							))
 						) : (

@@ -19,7 +19,7 @@ import { isSuccess, isEmpty } from '_func/';
 import MRow from './MRow';
 import MFooter from './MFooter';
 
-export const MReportDepartmentTable = ({ data, filter }) => {
+export const MReportDepartmentTable = ({ data, onSetCurrent }) => {
 	//#region Data
 	const [height, setHeight] = useState(0);
 
@@ -101,7 +101,7 @@ export const MReportDepartmentTable = ({ data, filter }) => {
 										key={row.id}
 										index={index}
 										data={row}
-										department_info={{ ...filter }}
+										onSetCurrent={onSetCurrent}
 									/>
 								))}
 						</TableBody>

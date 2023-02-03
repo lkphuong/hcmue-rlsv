@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Paper, Typography } from '@mui/material';
 
@@ -9,6 +9,8 @@ import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 
 import { getClassReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
+
+import { actions } from '_slices/currentInfo.slice';
 
 const ReportDepartmentPage = () => {
 	//#region Data
@@ -24,6 +26,8 @@ const ReportDepartmentPage = () => {
 		semester_id: '',
 		department_id: department_id,
 	});
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -41,6 +45,16 @@ const ReportDepartmentPage = () => {
 
 		if (isSuccess(res)) setSemesters(res.data);
 		else setSemesters([]);
+	};
+
+	const handleSetCurrent = () => {
+		const info = {
+			academic: data?.academic,
+			semester: data?.semester,
+			department: data?.department,
+		};
+
+		dispatch(actions.setInfo(info));
 	};
 	//#endregion
 
@@ -77,7 +91,7 @@ const ReportDepartmentPage = () => {
 				</Paper>
 			</Box>
 
-			<MReportDepartmentTable data={data} />
+			<MReportDepartmentTable data={data} onSetCurrent={handleSetCurrent} />
 		</Box>
 	);
 	//#endregion

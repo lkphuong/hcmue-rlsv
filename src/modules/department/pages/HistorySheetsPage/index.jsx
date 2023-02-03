@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
 
@@ -12,6 +12,8 @@ import { getSemestersByYear } from '_api/options.api';
 
 import { isSuccess, cleanObjValue } from '_func/';
 
+import { actions } from '_slices/currentInfo.slice';
+
 const HistorySheetsPage = () => {
 	//#region Data
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
@@ -21,7 +23,7 @@ const HistorySheetsPage = () => {
 
 	const [data, setData] = useState();
 
-	const listData = useMemo(() => data?.data || [], [data]);
+	const listData = useMemo(() => data?.data?.class || [], [data]);
 
 	const [filter, setFilter] = useState({
 		page: 1,
@@ -32,6 +34,8 @@ const HistorySheetsPage = () => {
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -51,6 +55,15 @@ const HistorySheetsPage = () => {
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
+
+	const handleSetCurrent = () => {
+		const info = {
+			academic: data?.data?.academic,
+			semester: data?.data?.semester,
+		};
+
+		dispatch(actions.setInfo(info));
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -84,7 +97,7 @@ const HistorySheetsPage = () => {
 				onFilterChange={setFilter}
 			/>
 
-			<ListDepartmentsHistory data={listData} />
+			<ListDepartmentsHistory data={listData} onSetCurrent={handleSetCurrent} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>

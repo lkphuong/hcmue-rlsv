@@ -4,9 +4,7 @@ import { Chip, TableCell, TableRow, Link } from '@mui/material';
 
 import { Link as RouterLink } from 'react-router-dom';
 
-import { ROUTES } from '_constants/routes';
-
-export const Row = ({ data, index }) => {
+export const Row = ({ data, index, onSetCurrent }) => {
 	const status = useMemo(
 		() =>
 			data?.status?.toString() === 'true' ? (
@@ -25,13 +23,12 @@ export const Row = ({ data, index }) => {
 					underline='hover'
 					textTransform='uppercase'
 					component={RouterLink}
-					to={`${ROUTES.ADMIN.SHEETS}/${data?.id}`}
+					to={`${data?.id}`}
+					onClick={onSetCurrent}
 				>
-					{data?.name}
+					{(data?.name ?? '') + ' - ' + data?.code}
 				</Link>
 			</TableCell>
-			<TableCell align='center'>{data?.semester?.display}</TableCell>
-			<TableCell align='center'>{data?.academic?.name}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 		</TableRow>
 	);

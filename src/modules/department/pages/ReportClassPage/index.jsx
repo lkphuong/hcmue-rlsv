@@ -2,8 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import { Print } from '@mui/icons-material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
@@ -13,7 +12,7 @@ import { getClassSheets } from '_api/sheets.api';
 
 import { cleanObjValue, formatTimeSemester, isEmpty, isSuccess } from '_func/index';
 
-const SheetsDepartmentPage = () => {
+const ReportClassPage = () => {
 	//#region Data
 	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
 	const { fullname: departmentName, department_id } = useSelector(
@@ -127,19 +126,6 @@ const SheetsDepartmentPage = () => {
 				mb={2}
 			>
 				<MSearch onFilterChange={setFilter} placeholder='Nhập MSSV hoặc tên' />
-
-				<Button
-					variant='contained'
-					startIcon={<Print />}
-					sx={{
-						backgroundColor: '#3EAE42',
-						color: 'white',
-						'&:hover': { backgroundColor: '#0CDB13D2' },
-					}}
-					onClick={() => {}}
-				>
-					In thống kê
-				</Button>
 			</Stack>
 
 			<ListSheets
@@ -157,4 +143,4 @@ const SheetsDepartmentPage = () => {
 	//#endregion
 };
 
-export default SheetsDepartmentPage;
+export default ReportClassPage;

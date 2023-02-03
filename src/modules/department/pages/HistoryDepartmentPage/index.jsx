@@ -13,7 +13,7 @@ import { getClassSheets } from '_api/sheets.api';
 
 import { cleanObjValue, formatTimeSemester, isEmpty, isSuccess } from '_func/index';
 
-const SheetsDepartmentPage = () => {
+const HistoryDepartmentPage = () => {
 	//#region Data
 	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
 	const { fullname: departmentName, department_id } = useSelector(
@@ -157,4 +157,4 @@ const SheetsDepartmentPage = () => {
 	//#endregion
 };
 
-export default SheetsDepartmentPage;
+export default HistoryDepartmentPage;

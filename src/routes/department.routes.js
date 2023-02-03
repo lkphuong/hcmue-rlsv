@@ -9,11 +9,14 @@ import { CErrorPage } from '_others/';
 
 const SheetsManagementPage = lazy(() => import('_modules/department/pages/SheetsManagementPage'));
 const SheetsDepartmentPage = lazy(() => import('_modules/department/pages/SheetsDepartmentPage'));
-const DepartmentDetailPage = lazy(() => import('_modules/department/pages/DepartmentDetailPage'));
 
 const HistorySheetsPage = lazy(() => import('_modules/department/pages/HistorySheetsPage'));
+const HistoryDepartmentPage = lazy(() => import('_modules/department/pages/HistoryDepartmentPage'));
+
+const DepartmentDetailPage = lazy(() => import('_modules/department/pages/DepartmentDetailPage'));
 
 const ReportDepartmentPage = lazy(() => import('_modules/department/pages/ReportDepartmentPage'));
+const ReportClassPage = lazy(() => import('_modules/department/pages/ReportClassPage'));
 
 export const DEPARTMENT_ROUTES = [
 	{
@@ -58,7 +61,7 @@ export const DEPARTMENT_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
-				<SheetsDepartmentPage />
+				<HistoryDepartmentPage />
 			</CPermission>
 		),
 	},
@@ -78,6 +81,15 @@ export const DEPARTMENT_ROUTES = [
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
 				<ReportDepartmentPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.DEPARTMENT.REPORT_CLASS,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
+				<ReportClassPage />
 			</CPermission>
 		),
 	},

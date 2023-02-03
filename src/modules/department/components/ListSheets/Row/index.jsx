@@ -8,7 +8,7 @@ import { SHEET_STATUS } from '_constants/variables';
 
 import { CEditIcon, CViewIcon } from '_others/';
 
-export const Row = ({ data, index, isSelected, onSelect }) => {
+export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) => {
 	const navigate = useNavigate();
 
 	const status = useMemo(
@@ -33,13 +33,15 @@ export const Row = ({ data, index, isSelected, onSelect }) => {
 			onClick={data?.status === 3 ? handleSelect : undefined}
 			selected={isSelected && data?.status === 3}
 		>
-			<TableCell width={50} align='center'>
-				<Checkbox
-					checked={isSelected}
-					onChange={handleSelect}
-					onClick={(e) => e.preventDefault()}
-				/>
-			</TableCell>
+			{!(isHistory || isReport) && (
+				<TableCell width={50} align='center'>
+					<Checkbox
+						checked={isSelected}
+						onChange={handleSelect}
+						onClick={(e) => e.preventDefault()}
+					/>
+				</TableCell>
+			)}
 			<TableCell align='center'>{index}</TableCell>
 			<TableCell align='left'>{data?.user?.fullname}</TableCell>
 			<TableCell align='center'>{data?.user?.std_code}</TableCell>
@@ -49,21 +51,23 @@ export const Row = ({ data, index, isSelected, onSelect }) => {
 			<TableCell align='center'>{data?.sum_of_department_marks}</TableCell>
 			<TableCell align='center'>{data.level?.name || 'Chưa đánh giá'}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
-			<TableCell align='center'>
-				{data?.status === 5 ? (
-					<Tooltip title='Xem'>
-						<IconButton onClick={onClick}>
-							<CViewIcon />
-						</IconButton>
-					</Tooltip>
-				) : (
-					<Tooltip title='Chấm điểm'>
-						<IconButton onClick={onClick}>
-							<CEditIcon />
-						</IconButton>
-					</Tooltip>
-				)}
-			</TableCell>
+			{!isReport && (
+				<TableCell align='center'>
+					{isHistory || data?.status === 5 ? (
+						<Tooltip title='Xem'>
+							<IconButton onClick={onClick}>
+								<CViewIcon />
+							</IconButton>
+						</Tooltip>
+					) : (
+						<Tooltip title='Chấm điểm'>
+							<IconButton onClick={onClick}>
+								<CEditIcon />
+							</IconButton>
+						</Tooltip>
+					)}
+				</TableCell>
+			)}
 		</TableRow>
 	);
 };

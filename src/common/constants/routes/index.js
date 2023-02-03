@@ -37,6 +37,7 @@ export const ROUTES = {
 		HISTORY_DETAIL: '/department/history/:class_id/detail/:sheet_id',
 
 		REPORT: '/department/report',
+		REPORT_CLASS: '/department/report/:class_id',
 	},
 
 	ADMIN: {

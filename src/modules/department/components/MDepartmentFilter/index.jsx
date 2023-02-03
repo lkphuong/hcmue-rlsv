@@ -4,7 +4,7 @@ import { SHEET_STATUS } from '_constants/variables';
 
 import { CAutocomplete } from '_controls/';
 
-export const MDepartmentFilter = ({ filter, onFilterChange, classes }) => {
+export const MDepartmentFilter = ({ filter, onFilterChange }) => {
 	//#region Data
 	//#endregion
 

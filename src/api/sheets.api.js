@@ -50,9 +50,9 @@ export const updateAdviserSheets = (id, body = { role_id: 0, data: [] }) => {
 	return put(`${SHEETS.UPDATE_ADVISER_SHEET}/${id}`, body);
 };
 
-// export const getDepartmentSheets = (id, params = { semester_id: 0, academic_id: 0 }) => {
-// 	return post(`${SHEETS.SHEETS_GET_BY_DEPARTMENT_ID}/${id}`, params);
-// };
+export const getDepartmentHistorySheets = (body) => {
+	return post(SHEETS.DEPARTMENT_GET_HISTORY, body);
+};
 
 export const updateDepartmentSheets = (id, body = { role_id: 0, data: [] }) => {
 	return put(`${SHEETS.UPDATE_DEPARTMENT_SHEET}/${id}`, body);

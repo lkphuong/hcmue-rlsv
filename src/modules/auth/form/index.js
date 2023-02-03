@@ -17,9 +17,9 @@ export const initialValuesChangePassword = {
 //#region Validation
 export const validationSchema = yup.object({
 	username: yup
-		.string('Vui lòng nhập username(MSSV).')
+		.string('Vui lòng nhập username.')
 		.max(255, 'Username tối đa 255 kí tự.')
-		.required('Vui lòng nhập username(MSSV).'),
+		.required('Vui lòng nhập username.'),
 	password: yup
 		.string('Vui lòng nhập password.')
 		.max(255, 'Password tối đa 255 kí tự.')

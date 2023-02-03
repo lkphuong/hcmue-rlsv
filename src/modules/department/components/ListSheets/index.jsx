@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 
-import { useParams } from 'react-router-dom';
-
 import {
 	Box,
 	Button,
@@ -21,15 +19,14 @@ import { isSuccess } from '_func/';
 import { ERRORS } from '_constants/messages';
 
 import { Row } from './Row';
+import { CLoadingSpinner } from '_others/';
 
-export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect }) => {
+export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect, loading }) => {
 	//#region Data
 	const isSelected = useMemo(
 		() => selected && !!Object.values(selected).filter((s) => s).length,
 		[selected]
 	);
-
-	const { class_id } = useParams();
 	//#endregion
 
 	//#region Event
@@ -92,13 +89,20 @@ export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect })
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{data?.length > 0 ? (
+						{loading ? (
+							<TableRow>
+								<TableCell colSpan='100%' height={500}>
+									<Box display='flex' alignItems='center' justifyContent='center'>
+										<CLoadingSpinner />
+									</Box>
+								</TableCell>
+							</TableRow>
+						) : data?.length > 0 ? (
 							data.map((row, index) => (
 								<Row
 									key={row?.id}
 									data={row}
 									index={index + 1}
-									classId={class_id}
 									onSelect={onSelect(Number(row.id))}
 									isSelected={selected?.includes(Number(row.id)) || isSelectedAll}
 								/>

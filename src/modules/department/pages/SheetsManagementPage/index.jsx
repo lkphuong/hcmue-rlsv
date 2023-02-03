@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Typography } from '@mui/material';
 
@@ -9,15 +9,21 @@ import { ListClasses } from '_modules/department/components';
 
 import { getDepartmentSheets } from '_api/sheets.api';
 
-import { isSuccess, cleanObjValue } from '_func/';
+import { CLoadingSpinner } from '_others/';
+
+import { actions } from '_slices/currentInfo.slice';
+
+import { formatTimeSemester, isSuccess, cleanObjValue } from '_func/index';
 
 const SheetsManagementPage = () => {
 	//#region Data
 	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
+	const [loading, setLoading] = useState(false);
+
 	const [data, setData] = useState();
 
-	const listData = useMemo(() => data?.data || [], [data]);
+	const listData = useMemo(() => data?.data?.class || [], [data]);
 
 	const [filter, setFilter] = useState({
 		page: 1,
@@ -26,18 +32,37 @@ const SheetsManagementPage = () => {
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
 	const getData = async () => {
-		const _filter = cleanObjValue(filter);
+		setLoading(true);
 
-		const res = await getDepartmentSheets(_filter);
+		try {
+			const _filter = cleanObjValue(filter);
 
-		if (isSuccess(res)) setData(res.data);
+			const res = await getDepartmentSheets(_filter);
+
+			if (isSuccess(res)) setData(res.data);
+		} catch (error) {
+			throw error;
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
+
+	const handleSetCurrent = () => {
+		const info = {
+			academic: data?.data?.academic,
+			semester: data?.data?.semester,
+		};
+
+		dispatch(actions.setInfo(info));
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -52,16 +77,26 @@ const SheetsManagementPage = () => {
 	}, [data]);
 
 	//#region Render
-	return (
+	return loading ? (
+		<Box height='100%' display='flex' alignItems='center' justifyContent='center'>
+			<CLoadingSpinner />
+		</Box>
+	) : data?.data ? (
 		<Box>
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				Học kỳ II ( 06/2021-09/2021) - Năm học 2021-2022
+				{`${data?.data?.semester?.name} (${formatTimeSemester(
+					data?.data?.semester?.start
+				)}-${formatTimeSemester(data?.data?.semester?.end)}) - Năm học ${
+					data?.data?.academic?.name
+				}`}
 			</Typography>
 
-			<ListClasses data={listData} />
+			<ListClasses data={listData} onSetCurrent={handleSetCurrent} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>
+	) : (
+		<></>
 	);
 
 	//#endregion

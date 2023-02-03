@@ -1,16 +1,22 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
 import { Checkbox, IconButton, TableCell, TableRow } from '@mui/material';
-import { BorderColor } from '@mui/icons-material';
 
-import { ROUTES } from '_constants/routes';
+import { SHEET_STATUS } from '_constants/variables';
 
-export const Row = ({ data, index, classId, isSelected, onSelect }) => {
+import { CEditIcon } from '_others/';
+
+export const Row = ({ data, index, isSelected, onSelect }) => {
 	const navigate = useNavigate();
 
-	const onClick = () => navigate(`${ROUTES.ADMIN.SHEETS}/detail/${data.id}`);
+	const status = useMemo(
+		() => SHEET_STATUS.find((e) => e.id.toString() === data?.status?.toString())?.name || null,
+		[data?.status]
+	);
+
+	const onClick = () => navigate(`detail/${data.id}`);
 
 	const handleSelect = useCallback(
 		(e) => {
@@ -35,17 +41,17 @@ export const Row = ({ data, index, classId, isSelected, onSelect }) => {
 				/>
 			</TableCell>
 			<TableCell align='center'>{index}</TableCell>
-			<TableCell align='left'>{data?.name}</TableCell>
-			<TableCell align='center'>{data?.std_code}</TableCell>
-			<TableCell align='center'>{data?.student_mark}</TableCell>
-			<TableCell align='center'>{data?.class_mark}</TableCell>
-			<TableCell align='center'>{data?.adviser_mark}</TableCell>
-			<TableCell align='center'>{data?.department_mark}</TableCell>
-			<TableCell align='center'>{data?.level}</TableCell>
-			<TableCell align='center'>{data?.status}</TableCell>
+			<TableCell align='left'>{data?.user?.fullname}</TableCell>
+			<TableCell align='center'>{data?.user?.std_code}</TableCell>
+			<TableCell align='center'>{data?.sum_of_personal_marks}</TableCell>
+			<TableCell align='center'>{data?.sum_of_class_marks}</TableCell>
+			<TableCell align='center'>{data?.sum_of_adviser_marks}</TableCell>
+			<TableCell align='center'>{data?.sum_of_department_marks}</TableCell>
+			<TableCell align='center'>{data.level?.name || 'Chưa đánh giá'}</TableCell>
+			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center'>
 				<IconButton onClick={onClick}>
-					<BorderColor />
+					<CEditIcon />
 				</IconButton>
 			</TableCell>
 		</TableRow>

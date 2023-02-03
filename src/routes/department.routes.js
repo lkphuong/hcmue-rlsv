@@ -24,6 +24,25 @@ export const DEPARTMENT_ROUTES = [
 		),
 	},
 	{
+		path: ROUTES.DEPARTMENT.SHEETS_DEPARTMENT,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
+				<SheetsDepartmentPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.DEPARTMENT.SHEET_DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
+				<DepartmentDetailPage />
+			</CPermission>
+		),
+	},
+
+	{
 		path: ROUTES.DEPARTMENT.HISTORY,
 		errorElement: <CErrorPage />,
 		element: (
@@ -33,7 +52,7 @@ export const DEPARTMENT_ROUTES = [
 		),
 	},
 	{
-		path: ROUTES.DEPARTMENT.SHEETS_DEPARTMENT,
+		path: ROUTES.DEPARTMENT.HISTORY_DEPARTMENT,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
@@ -41,16 +60,16 @@ export const DEPARTMENT_ROUTES = [
 			</CPermission>
 		),
 	},
-
 	{
-		path: ROUTES.DEPARTMENT.SHEET_DETAIL,
+		path: ROUTES.DEPARTMENT.HISTORY_DETAIL,
 		errorElement: <CErrorPage />,
 		element: (
-			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.DEPARTMENT.key}>
 				<DepartmentDetailPage />
 			</CPermission>
 		),
 	},
+
 	{
 		path: ROUTES.DEPARTMENT.REPORT,
 		errorElement: <CErrorPage />,

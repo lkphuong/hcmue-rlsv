@@ -6,7 +6,7 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import { ROUTES } from '_constants/routes';
 
-export const Row = ({ data, index }) => {
+export const Row = ({ data, index, onSetCurrent }) => {
 	const status = useMemo(
 		() =>
 			data?.status?.toString() === 'true' ? (
@@ -26,6 +26,7 @@ export const Row = ({ data, index }) => {
 					textTransform='uppercase'
 					component={RouterLink}
 					to={`${ROUTES.DEPARTMENT.SHEETS}/${data?.id}`}
+					onClick={onSetCurrent}
 				>
 					{data?.code}
 				</Link>

@@ -9,17 +9,21 @@ import { CPagination } from '_controls/';
 
 import { ListSheets, MDepartmentFilter, MSearch } from '_modules/department/components';
 
-import { getClassesByDepartment } from '_api/classes.api';
 import { getClassSheets } from '_api/sheets.api';
 
-import { cleanObjValue, isSuccess } from '_func/index';
+import { cleanObjValue, formatTimeSemester, isSuccess } from '_func/index';
 
 const SheetsDepartmentPage = () => {
 	//#region Data
-	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
-	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
+	const { fullname: departmentName, department_id } = useSelector(
+		(state) => state.auth.profile,
+		shallowEqual
+	);
 
 	const { class_id } = useParams();
+
+	const [loading, setLoading] = useState(false);
 
 	const [selected, setSelected] = useState([]);
 
@@ -27,17 +31,14 @@ const SheetsDepartmentPage = () => {
 
 	const [data, setData] = useState();
 
-	// eslint-disable-next-line no-unused-vars
 	const listData = useMemo(() => data?.data || [], [data]);
-
-	const [classes, setClasses] = useState([]);
 
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
-		department_id,
-		academic_id: academic_years[0]?.id,
-		semester_id: null,
+		department_id: department_id,
+		academic_id: Number(academic?.id),
+		semester_id: Number(semester?.id),
 		status: -1,
 		input: '',
 	});
@@ -47,19 +48,18 @@ const SheetsDepartmentPage = () => {
 
 	//#region Event
 	const getData = async () => {
-		const _filter = cleanObjValue(filter);
+		setLoading(true);
 
-		const res = await getClassSheets(class_id, _filter);
+		try {
+			const _filter = cleanObjValue(filter);
 
-		if (isSuccess(res)) setData(res.data);
-	};
+			const res = await getClassSheets(class_id, _filter);
 
-	const getClassesData = async () => {
-		const res = await getClassesByDepartment(department_id);
-
-		if (isSuccess(res)) {
-			setClasses(res.data);
-			setFilter((prev) => ({ ...prev, class_id: Number(res.data[0]?.id) }));
+			if (isSuccess(res)) setData(res.data);
+		} catch (error) {
+			throw error;
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -74,17 +74,11 @@ const SheetsDepartmentPage = () => {
 				if (!isSelectedAll) {
 					setSelected((prev) => {
 						if (e.target.checked !== undefined) {
-							if (e.target.checked) {
-								return [...prev, id];
-							} else {
-								return prev.filter((e) => e !== id);
-							}
+							if (e.target.checked) return [...prev, id];
+							else return prev.filter((e) => e !== id);
 						} else {
-							if (status) {
-								return [...prev, id];
-							} else {
-								return prev.filter((e) => e !== id);
-							}
+							if (status) return [...prev, id];
+							else return prev.filter((e) => e !== id);
 						}
 					});
 				}
@@ -95,11 +89,7 @@ const SheetsDepartmentPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		if (department_id) getClassesData();
-	}, [department_id]);
-
-	useEffect(() => {
-		if (filter?.class_id) getData();
+		getData();
 	}, [filter]);
 
 	useEffect(() => {
@@ -112,15 +102,18 @@ const SheetsDepartmentPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<MDepartmentFilter filter={filter} onFilterChange={setFilter} classes={classes} />
+			<MDepartmentFilter filter={filter} onFilterChange={setFilter} />
 
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				Học kỳ II ( 06/2021-09/2021) - Năm học 2021-2022
+				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
+					semester?.end
+				)}) - Năm học ${academic?.name}`}
 			</Typography>
+
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						Khoa giáo dục mầm non
+						{departmentName}
 					</Typography>
 				</Paper>
 			</Box>
@@ -154,6 +147,7 @@ const SheetsDepartmentPage = () => {
 				isSelectedAll={isSelectedAll}
 				selected={selected}
 				onSelect={handleSelect}
+				loading={loading}
 			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />

@@ -1,9 +1,16 @@
+import dayjs from 'dayjs';
+
 import { FILE_NAME_REGEX } from '_constants/variables';
+
 import { alert } from './alert';
 
 export function isSuccess(response) {
 	return response?.status?.toString()[0] === '2';
 }
+
+export const formatTimeSemester = (date) => {
+	return dayjs(date).format('MM/YYYY');
+};
 
 // *Accept value 0
 export function isFalsy(value) {

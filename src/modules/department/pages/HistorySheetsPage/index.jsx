@@ -7,7 +7,7 @@ import { CPagination } from '_controls/';
 
 import { ListDepartmentsHistory, MHistoryFilter } from '_modules/department/components';
 
-import { getAdminHistorySheets } from '_api/sheets.api';
+import { getDepartmentHistorySheets } from '_api/sheets.api';
 import { getSemestersByYear } from '_api/options.api';
 
 import { isSuccess, cleanObjValue } from '_func/';
@@ -15,6 +15,7 @@ import { isSuccess, cleanObjValue } from '_func/';
 const HistorySheetsPage = () => {
 	//#region Data
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const [semesters, setSemesters] = useState([]);
 
@@ -27,7 +28,7 @@ const HistorySheetsPage = () => {
 		pages: 0,
 		academic_id: Number(academic_years[0]?.id) || '',
 		semester_id: '',
-		department_id: '',
+		department_id,
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
@@ -44,7 +45,7 @@ const HistorySheetsPage = () => {
 	const getData = async () => {
 		const _filter = cleanObjValue(filter);
 
-		const res = await getAdminHistorySheets(_filter);
+		const res = await getDepartmentHistorySheets(_filter);
 
 		if (isSuccess(res)) setData(res.data);
 	};

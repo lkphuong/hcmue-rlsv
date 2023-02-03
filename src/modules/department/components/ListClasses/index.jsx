@@ -10,7 +10,7 @@ import {
 
 import { Row } from './Row';
 
-export const ListClasses = ({ data }) => {
+export const ListClasses = ({ data, onSetCurrent }) => {
 	//#region Data
 	//#endregion
 
@@ -30,7 +30,14 @@ export const ListClasses = ({ data }) => {
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row, index) => <Row key={row?.id} data={row} index={index + 1} />)
+						data.map((row, index) => (
+							<Row
+								key={row?.id}
+								data={row}
+								index={index + 1}
+								onSetCurrent={onSetCurrent}
+							/>
+						))
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

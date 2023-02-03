@@ -30,8 +30,11 @@ export const ROUTES = {
 	DEPARTMENT: {
 		SHEETS: '/department/sheets',
 		SHEETS_DEPARTMENT: '/department/sheets/:class_id',
-		SHEET_DETAIL: '/department/sheets/detail/:sheet_id',
+		SHEET_DETAIL: '/department/sheets/:class_id/detail/:sheet_id',
+
 		HISTORY: '/department/history',
+		HISTORY_DEPARTMENT: '/department/history/:class_id',
+		HISTORY_DETAIL: '/department/history/:class_id/detail/:sheet_id',
 
 		REPORT: '/department/report',
 	},

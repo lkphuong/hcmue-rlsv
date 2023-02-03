@@ -89,6 +89,7 @@ export const generateCacheClassesResponse = async (
         class_response.push({
           id: $class.id,
           name: $class.name,
+          code: $class.code,
           levels: levels,
           num_of_std: num_of_std,
         });

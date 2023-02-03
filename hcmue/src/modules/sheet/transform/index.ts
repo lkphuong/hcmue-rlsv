@@ -164,6 +164,10 @@ export const generateClasses2Array = async (classes: ClassEntity[]) => {
 
 export const generateData2Object = async (sheet: SheetEntity | null) => {
   if (sheet) {
+    const current = new Date();
+    const end = new Date(sheet.form.end);
+    const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
+    const success = current > deadline || sheet.graded == 0 ? true : false;
     const payload: SheetDetailsResponse = {
       id: sheet.id,
       department: sheet.department
@@ -205,7 +209,7 @@ export const generateData2Object = async (sheet: SheetEntity | null) => {
           }
         : null,
       status: sheet.status,
-      success: sheet.form.status == FormStatus.DONE ? true : false,
+      success: success,
       sum_of_personal_marks: sheet.sum_of_personal_marks,
       sum_of_class_marks: sheet.sum_of_class_marks,
       sum_of_adviser_marks: sheet.sum_of_adviser_marks,

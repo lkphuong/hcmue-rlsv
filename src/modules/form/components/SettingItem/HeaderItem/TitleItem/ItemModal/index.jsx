@@ -1,5 +1,5 @@
 import { forwardRef, memo, useImperativeHandle, useState } from 'react';
-import { Controller, FormProvider, useController, useForm } from 'react-hook-form';
+import { Controller, FormProvider, useController, useForm, useWatch } from 'react-hook-form';
 import { shallowEqual, useSelector } from 'react-redux';
 
 import {
@@ -66,6 +66,8 @@ const ItemModal = memo(
 		const {
 			field: { onChange: onChangeCategory },
 		} = useController({ control, name: 'category', rules: { required: true } });
+
+		const controlValue = useWatch({ control, name: 'control' });
 		//#endregion
 
 		//#region Event
@@ -198,24 +200,28 @@ const ItemModal = memo(
 												/>
 											</Grid>
 
-											<Grid item xs={12} md={4}>
-												<Typography>Bắt buộc</Typography>
-											</Grid>
-											<Grid item xs={12} md={8}>
-												<Controller
-													control={control}
-													name='required'
-													render={({
-														field: { name, onChange, value },
-													}) => (
-														<Checkbox
-															name={name}
-															checked={value}
-															onChange={onChange}
+											{controlValue !== 1 && (
+												<>
+													<Grid item xs={12} md={4}>
+														<Typography>Bắt buộc</Typography>
+													</Grid>
+													<Grid item xs={12} md={8}>
+														<Controller
+															control={control}
+															name='required'
+															render={({
+																field: { name, onChange, value },
+															}) => (
+																<Checkbox
+																	name={name}
+																	checked={value}
+																	onChange={onChange}
+																/>
+															)}
 														/>
-													)}
-												/>
-											</Grid>
+													</Grid>
+												</>
+											)}
 
 											<Grid item xs={12} md={4}>
 												<Typography>Cần file minh chứng</Typography>

@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Print } from '@mui/icons-material';
 
 import { Filter, MDepartmentTable } from '_modules/reports/components';
 
@@ -9,6 +10,8 @@ import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 
 import { getReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
+
+import { actions } from '_slices/currentInfo.slice';
 
 const DepartmentReportPage = () => {
 	//#region Data
@@ -32,6 +35,8 @@ const DepartmentReportPage = () => {
 			'',
 		[departments, filter.department_id]
 	);
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -49,6 +54,17 @@ const DepartmentReportPage = () => {
 
 		if (isSuccess(res)) setSemesters(res.data);
 		else setSemesters([]);
+	};
+
+	const handleSetCurrent = (fields) => {
+		const info = {
+			academic: data?.academic,
+			semester: data?.semester,
+			department: data?.department,
+			...fields,
+		};
+
+		dispatch(actions.setInfo(info));
 	};
 	//#endregion
 
@@ -78,7 +94,26 @@ const DepartmentReportPage = () => {
 				isDepartment={role_id === 5}
 			/>
 
-			<MDepartmentTable data={data} filter={filter} departmentName={departmentName} />
+			<Box my={1.5}>
+				<Paper className='paper-wrapper'>
+					<Stack
+						p={1.5}
+						direction='row'
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Typography fontSize={20} fontWeight={600}>
+							{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${
+								departmentName ? 'khoa ' + departmentName : 'tất cả các khoa'
+							}`}
+						</Typography>
+
+						<Button startIcon={<Print />}>In thống kê</Button>
+					</Stack>
+				</Paper>
+			</Box>
+
+			<MDepartmentTable data={data} onSetCurrent={handleSetCurrent} />
 		</Box>
 	);
 	//#endregion

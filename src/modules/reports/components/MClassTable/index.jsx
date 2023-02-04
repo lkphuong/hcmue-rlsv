@@ -19,7 +19,7 @@ import { isSuccess, isEmpty } from '_func/';
 import MRow from './MRow';
 import MFooter from './MFooter';
 
-export const MClassTable = ({ data, filter }) => {
+export const MClassTable = ({ data }) => {
 	//#region Data
 	const [height, setHeight] = useState(0);
 
@@ -97,12 +97,7 @@ export const MClassTable = ({ data, filter }) => {
 						<TableBody>
 							{data?.classes?.length > 0 &&
 								data.classes.map((row, index) => (
-									<MRow
-										key={row.id}
-										index={index}
-										data={row}
-										department_info={{ ...filter }}
-									/>
+									<MRow key={row.id} index={index} data={row} />
 								))}
 						</TableBody>
 

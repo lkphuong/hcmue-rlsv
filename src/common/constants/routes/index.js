@@ -46,14 +46,15 @@ export const ROUTES = {
 
 	ADMIN: {
 		REPORT: '/admin/report',
-		REPORT_DEPARTMENT: '/admin/report/:department_id/:info',
+		REPORT_DEPARTMENT: '/admin/report/:department_id',
+		REPORT_CLASS: '/admin/report/:department_id/:class_id',
 
 		FORMS: '/admin/forms',
 		FORMS_CREATE: '/admin/forms/create',
 		FORMS_UPDATE: '/admin/forms/:form_id',
 
 		SHEETS: '/admin/sheets',
-		SHEETS_DEPARTMENT: '/admin/sheets/:department_id/:department_info',
+		SHEETS_DEPARTMENT: '/admin/sheets/:department_id',
 		SHEET_DETAIL: '/admin/sheets/detail/:sheet_id',
 		HISTORY: '/admin/history',
 

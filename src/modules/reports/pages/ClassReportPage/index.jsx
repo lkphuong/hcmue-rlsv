@@ -1,25 +1,40 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Paper, Typography } from '@mui/material';
 
 import { MClassTable } from '_modules/reports/components';
 
-import { isSuccess, isEmpty } from '_func/';
+import { isSuccess, isEmpty, formatTimeSemester } from '_func/';
 
 import { getClassReports } from '_api/reports.api';
 
 const ClassReportPage = () => {
 	//#region Data
-	const { department_id, info } = useParams();
+	const { semester, academic, department } = useSelector(
+		(state) => state.currentInfo,
+		shallowEqual
+	);
+
+	const { department_id } = useParams();
 
 	const [data, setData] = useState([]);
+
+	const filter = useMemo(
+		() => ({
+			department_id: Number(department_id),
+			academic_id: Number(academic?.id) ?? null,
+			semester_id: Number(semester?.id) ?? null,
+		}),
+		[department_id, academic, semester]
+	);
 	//#endregion
 
 	//#region Event
 	const getData = async () => {
-		const _ = JSON.parse(info);
-		const filter = { ..._, department_id: parseInt(department_id) };
+		if (!filter.academic_id || !filter?.semester_id) return;
 
 		const res = await getClassReports(filter);
 
@@ -30,19 +45,21 @@ const ClassReportPage = () => {
 
 	useEffect(() => {
 		getData();
-	}, [department_id, info]);
+	}, [filter]);
 
 	//#region Render
 	return (
 		<Box>
 			<Typography textAlign='center' fontWeight={700} fontSize={25} lineHeight='30px'>
-				Học kỳ II ( 06/2021-09/2021) - Năm học 2021-2022
+				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
+					semester?.end
+				)}) - Năm học ${academic?.name}`}
 			</Typography>
 
 			<Box my={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{`Danh sách thống kê phiếu chấm điểm rèn luyện của khoa: ${'Giáo dục mầm non'}`}
+						{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${department?.name}`}
 					</Typography>
 				</Paper>
 			</Box>

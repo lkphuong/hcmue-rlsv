@@ -1,6 +1,7 @@
 import { lazy } from 'react';
 
 import { ENTITY_KEY, FUNCTION_KEY } from '_config/permissions';
+
 import { ROUTES } from '_constants/routes';
 
 import { CPermission } from '_controls/';
@@ -22,6 +23,7 @@ const ListAdvisersPage = lazy(() => import('_modules/advisers/pages/ListAdvisers
 
 const DepartmentReportPage = lazy(() => import('_modules/reports/pages/DepartmentReportPage'));
 const ClassReportPage = lazy(() => import('_modules/reports/pages/ClassReportPage'));
+const ReportStudentsPage = lazy(() => import('_modules/reports/pages/ReportStudentsPage'));
 
 const ListDepartmentAccountPage = lazy(() =>
 	import('_modules/department/pages/ListDepartmentAccountPage')
@@ -48,6 +50,16 @@ export const ADMIN_ROUTES = [
 			</CPermission>
 		),
 	},
+	{
+		path: ROUTES.ADMIN.REPORT_CLASS,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<ReportStudentsPage />
+			</CPermission>
+		),
+	},
+
 	{
 		path: ROUTES.ADMIN.FORMS,
 		errorElement: <CErrorPage />,

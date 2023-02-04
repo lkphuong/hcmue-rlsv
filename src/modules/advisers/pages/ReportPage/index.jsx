@@ -1,19 +1,21 @@
 import { useEffect, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
 import { MClassTable, MReportFilter } from '_modules/advisers/components';
 
-import { isSuccess, isEmpty } from '_func/';
-
 import { getClassReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
 
+import { cleanObjValue, isSuccess, isEmpty } from '_func/index';
+
+import { actions } from '_slices/currentInfo.slice';
+
 const ReportPage = () => {
 	//#region Data
-	const { department_id, class_ids } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { department_id, classes } = useSelector((state) => state.auth.profile, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
 	const [semesters, setSemesters] = useState([]);
@@ -24,13 +26,19 @@ const ReportPage = () => {
 		academic_id: academic_years[0]?.id || null,
 		semester_id: null,
 		department_id,
-		class_id: class_ids[0] || null,
+		class_id: Number(classes[0]?.id) || null,
 	});
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
 	const getData = async () => {
-		const res = await getClassReports(filter);
+		const _filter = cleanObjValue(filter);
+
+		if (!(_filter?.academic_id && _filter?.class_id && _filter?.semester_id)) return;
+
+		const res = await getClassReports(_filter);
 
 		if (isSuccess(res)) setData(res.data);
 		else if (isEmpty(res)) setData([]);
@@ -42,11 +50,21 @@ const ReportPage = () => {
 		if (isSuccess(res)) setSemesters(res.data);
 		else setSemesters([]);
 	};
+
+	const handleSetCurrent = () => {
+		const info = {
+			academic: data?.academic,
+			semester: data?.semester,
+			department: data?.department,
+		};
+
+		dispatch(actions.setInfo(info));
+	};
 	//#endregion
 
 	useEffect(() => {
 		getData();
-	}, [department_id]);
+	}, [filter]);
 
 	useEffect(() => {
 		getSemestersData();
@@ -61,7 +79,7 @@ const ReportPage = () => {
 		<Box>
 			<MReportFilter
 				filter={filter}
-				classes={class_ids}
+				classes={classes}
 				semesters={semesters}
 				academic_years={academic_years}
 				onFilterChange={setFilter}
@@ -84,7 +102,7 @@ const ReportPage = () => {
 				</Paper>
 			</Box>
 
-			<MClassTable data={data} />
+			<MClassTable data={data} onSetCurrent={handleSetCurrent} />
 		</Box>
 	);
 	//#endregion

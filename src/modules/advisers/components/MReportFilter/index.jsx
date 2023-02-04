@@ -36,6 +36,8 @@ export const MReportFilter = ({ filter, onFilterChange, semesters, academic_year
 										Lớp
 									</Typography>
 									<CAutocomplete
+										disableClearable
+										disabled={classes?.length < 2}
 										value={filter?.class_id}
 										onChange={handleChangeFilter('class_id')}
 										options={classes}
@@ -57,6 +59,7 @@ export const MReportFilter = ({ filter, onFilterChange, semesters, academic_year
 										Năm học
 									</Typography>
 									<CAutocomplete
+										disableClearable
 										value={filter?.academic_id}
 										onChange={handleChangeFilter('academic_id')}
 										options={academic_years}
@@ -78,6 +81,7 @@ export const MReportFilter = ({ filter, onFilterChange, semesters, academic_year
 										Học kỳ
 									</Typography>
 									<CAutocomplete
+										disableClearable
 										value={filter?.semester_id}
 										onChange={handleChangeFilter('semester_id')}
 										options={semesters}

@@ -16,7 +16,7 @@ const HistoryClassPage = lazy(() => import('_modules/advisers/pages/HistoryClass
 const AdviserDetailPage = lazy(() => import('_modules/advisers/pages/AdviserDetailPage'));
 
 const ReportPage = lazy(() => import('_modules/advisers/pages/ReportPage'));
-// const ReportClassPage = lazy(() => import('_modules/adviser/pages/ReportClassPage'));
+const ReportClassPage = lazy(() => import('_modules/advisers/pages/ReportClassPage'));
 
 const RolesPage = lazy(() => import('_modules/advisers/pages/RolesPage'));
 
@@ -91,7 +91,7 @@ export const ADVISER_ROUTES = [
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADVISER.key}>
-				{/* <ReportClassPage /> */}
+				<ReportClassPage />
 			</CPermission>
 		),
 	},

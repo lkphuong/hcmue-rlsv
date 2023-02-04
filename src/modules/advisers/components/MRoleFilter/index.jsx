@@ -52,6 +52,8 @@ export const MRoleFilter = ({
 										Lớp
 									</Typography>
 									<CAutocomplete
+										disableClearable
+										disabled={classes?.length < 2}
 										placeholder='Tất cả'
 										value={filter.class_id}
 										onChange={handleChangeFilter('class_id')}

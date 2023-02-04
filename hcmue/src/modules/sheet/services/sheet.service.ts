@@ -417,7 +417,12 @@ export class SheetService {
         .andWhere('academic_year.deleted = :deleted', { deleted: false })
         .andWhere('form.deleted = :deleted', { deleted: false });
 
-      const sheet = await conditions.orderBy('header.id', 'ASC').getOne();
+      const sheet = await conditions
+        .orderBy('header.id', 'ASC')
+        .addOrderBy('title.id', 'ASC')
+        .addOrderBy('item.id', 'ASC')
+        .addOrderBy('options.id', 'ASC')
+        .getOne();
       return sheet || null;
     } catch (e) {
       this._logger.writeLog(

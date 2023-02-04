@@ -33,4 +33,8 @@ body > .print-source {
 	.print-source {
 		display: block;
 	}
+	@page {
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
 }

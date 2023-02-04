@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useRef } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useReactToPrint } from 'react-to-print';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
-import { Filter, MDepartmentTable } from '_modules/reports/components';
+import { Filter, MDepartmentTable, MReportPrint } from '_modules/reports/components';
 
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 
@@ -15,6 +16,8 @@ import { actions } from '_slices/currentInfo.slice';
 
 const DepartmentReportPage = () => {
 	//#region Data
+	const printRef = useRef();
+
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const { role_id, department_id } = useSelector((state) => state.auth.profile, shallowEqual);
@@ -66,6 +69,10 @@ const DepartmentReportPage = () => {
 
 		dispatch(actions.setInfo(info));
 	};
+
+	const handlePrint = useReactToPrint({
+		content: () => printRef.current,
+	});
 	//#endregion
 
 	useEffect(() => {
@@ -108,12 +115,21 @@ const DepartmentReportPage = () => {
 							}`}
 						</Typography>
 
-						<Button startIcon={<Print />}>In thống kê</Button>
+						<Button startIcon={<Print />} onClick={handlePrint}>
+							In thống kê
+						</Button>
 					</Stack>
 				</Paper>
 			</Box>
 
 			<MDepartmentTable data={data} onSetCurrent={handleSetCurrent} />
+
+			<MReportPrint
+				data={data}
+				academic={data?.academic}
+				semester={data?.semester}
+				ref={printRef}
+			/>
 		</Box>
 	);
 	//#endregion

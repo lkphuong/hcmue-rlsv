@@ -17,6 +17,7 @@ import {
 import { approveAll } from '_api/sheets.api';
 
 import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 import { ERRORS } from '_constants/messages';
 
@@ -24,7 +25,17 @@ import { CLoadingSpinner } from '_others/';
 
 import { Row } from './Row';
 
-export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect, loading }) => {
+export const ListSheets = ({
+	data,
+	refetch,
+	isSelectedAll,
+	selected,
+	onSelect,
+	loading,
+	academic_id,
+	semester_id,
+	department_id,
+}) => {
 	//#region Data
 	const { pathname } = useLocation();
 
@@ -46,6 +57,9 @@ export const ListSheets = ({ data, refetch, isSelectedAll, selected, onSelect, l
 				const body = {
 					include_ids,
 					all: isSelectedAll ? true : false,
+					academic_id,
+					semester_id,
+					department_id,
 				};
 
 				const res = await approveAll(body);

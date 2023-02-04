@@ -34,10 +34,7 @@ export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) 
 
 	//#region Render
 	return (
-		<TableRow
-			onClick={data?.status === 3 ? handleSelect : undefined}
-			selected={isSelected && data?.status === 3}
-		>
+		<TableRow onClick={handleSelect} selected={isSelected}>
 			{!(isHistory || isReport) && (
 				<TableCell width={50} align='center'>
 					<Checkbox

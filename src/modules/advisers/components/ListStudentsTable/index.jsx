@@ -15,6 +15,7 @@ import {
 } from '@mui/material';
 
 import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 import { approveAll } from '_api/sheets.api';
 
@@ -31,6 +32,9 @@ export const ListStudentsTable = ({
 	selected,
 	onSelect,
 	loading,
+	academic_id,
+	semester_id,
+	department_id,
 }) => {
 	//#region Data
 	const { pathname } = useLocation();
@@ -53,6 +57,9 @@ export const ListStudentsTable = ({
 				const body = {
 					include_ids,
 					all: isSelectedAll ? true : false,
+					academic_id,
+					semester_id,
+					department_id,
 				};
 
 				const res = await approveAll(body);
@@ -120,7 +127,7 @@ export const ListStudentsTable = ({
 							data.map((row, index) => (
 								<Row
 									key={row.id}
-									index={index}
+									index={index + 1}
 									data={row}
 									onSelect={onSelect(Number(row.id))}
 									isSelected={selected?.includes(Number(row.id)) || isSelectedAll}

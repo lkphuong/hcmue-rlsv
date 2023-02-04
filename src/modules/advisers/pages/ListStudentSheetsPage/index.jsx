@@ -83,6 +83,12 @@ const ListStudentSheetsPage = () => {
 		},
 		[isSelectedAll]
 	);
+
+	const refetch = async () => {
+		setSelected([]);
+		setSelectedAll(false);
+		await getData();
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -127,11 +133,14 @@ const ListStudentSheetsPage = () => {
 
 			<ListStudentsTable
 				data={listData}
-				refetch={getData}
+				refetch={refetch}
 				isSelectedAll={isSelectedAll}
 				selected={selected}
 				onSelect={handleSelect}
 				loading={loading}
+				academic_id={Number(academic?.id)}
+				semester_id={Number(semester?.id)}
+				department_id={department_id}
 			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />

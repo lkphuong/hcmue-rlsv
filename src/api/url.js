@@ -32,7 +32,7 @@ export const SHEETS = {
 	ADMIN_GET_HISTORY: '/sheets/admin/history',
 	ADMIN_GET_CLASS_SHEETS: '/sheets/admin/class',
 
-	APPROVE_ALL: '/sheets/department/approve-all',
+	APPROVE_ALL: '/sheets/approve-all',
 	GET_DETAIL_SHEET: '/sheets/detail',
 };
 

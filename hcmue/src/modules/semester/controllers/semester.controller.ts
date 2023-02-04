@@ -101,7 +101,6 @@ export class SemesterController {
       if (pages === 0) {
         //#region Count
         const count = await this._semesterService.count();
-
         if (count > 0) pages = Math.ceil(count / itemsPerPage);
         //#endregion
       }
@@ -112,6 +111,8 @@ export class SemesterController {
         (page - 1) * itemsPerPage,
         itemsPerPage,
       );
+
+      console.log('semesters: ', semesters);
       //#endregion
 
       if (semesters && semesters.length > 0) {

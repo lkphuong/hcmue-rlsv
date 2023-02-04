@@ -1,5 +1,5 @@
 import { Transform } from 'class-transformer';
-import { ArrayNotEmpty, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsNotEmpty, IsOptional } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
@@ -18,15 +18,6 @@ export class ApproveAllDto {
   all: number;
 
   @IsOptional()
-  @ArrayNotEmpty({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng chọn [phiếu đánh giá].'),
-  })
-  @MinValidator(1, {
-    each: true,
-    message: (arg) =>
-      generateValidationMessage(arg, 'Giá trị [phiếu đánh giá] không hợp lệ.'),
-  })
   include_ids: number[];
 
   @Transform((params) => parseInt(params.value) ?? 0)

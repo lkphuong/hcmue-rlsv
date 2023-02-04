@@ -59,4 +59,8 @@ export class GetSheetsByClassDto {
 
   @IsOptional()
   input: string;
+
+  @IsOptional()
+  @Transform((params) => parseInt(params.value) ?? -1)
+  status: number;
 }

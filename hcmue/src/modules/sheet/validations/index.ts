@@ -33,6 +33,7 @@ import {
 import { ItemCategory } from '../constants/enums/item_category.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
+import { OtherService } from '../../other/services/other.service';
 
 export const validateClassId = (id: number, req: Request) => {
   if (isEmpty(id)) {
@@ -311,13 +312,13 @@ export const validateOthersDepartment = async (
   role: number,
   department_id: number,
   user_id: number,
-  user_service: UserService,
+  other_service: OtherService,
   req: Request,
 ) => {
-  const user = await user_service.getUserById(user_id);
+  const other = await other_service.getOtherById(user_id);
 
   if (role !== RoleCode.ADMIN) {
-    if (user && user.department_id !== department_id) {
+    if (other && other.department_id !== department_id) {
       //#region throw HandlerException
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_VALUE,
@@ -325,7 +326,7 @@ export const validateOthersDepartment = async (
         req.url,
         sprintf(
           ErrorMessage.DEPARTMENT_ROLE_INVALID_ERROR,
-          user.department.name,
+          other.department.name,
         ),
         HttpStatus.BAD_REQUEST,
       );

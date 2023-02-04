@@ -84,7 +84,7 @@ import { FilesService } from '../../file/services/files.service';
 import { FormService } from '../../form/services/form.service';
 import { HeaderService } from '../../header/services/header.service';
 import { ItemService } from '../../item/services/item.service';
-import { KService } from '../../k/services/k.service';
+import { OtherService } from '../../other/services/other.service';
 import { LevelService } from '../../level/services/level.service';
 import { LogService } from '../../log/services/log.service';
 import { OptionService } from '../../option/services/option.service';
@@ -117,7 +117,6 @@ import { Roles } from '../../auth/decorators/roles.decorator';
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { Levels } from '../../../constants/enums/level.enum';
 import { Role } from '../../auth/constants/enums/role.enum';
-import { SheetStatus } from '../constants/enums/status.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 
 import {
@@ -137,7 +136,7 @@ export class SheetController {
     private readonly _formService: FormService,
     private readonly _headerService: HeaderService,
     private readonly _itemService: ItemService,
-    private readonly _kService: KService,
+    private readonly _otherService: OtherService,
     private readonly _levelService: LevelService,
     private readonly _optionService: OptionService,
     private readonly _sheetService: SheetService,
@@ -434,8 +433,14 @@ export class SheetController {
       );
 
       //#region Get params
-      const { academic_id, department_id, input, semester_id, class_id } =
-        params;
+      const {
+        academic_id,
+        department_id,
+        input,
+        semester_id,
+        class_id,
+        status,
+      } = params;
 
       let users: UserEntity[] = null;
       let user_ids: string[] = null;
@@ -507,7 +512,7 @@ export class SheetController {
         class_id,
         academic_id,
         semester_id,
-        SheetStatus.ALL,
+        status,
         role,
         user_ids,
       );
@@ -1138,7 +1143,8 @@ export class SheetController {
       );
 
       //#region Get params
-      const { academic_id, department_id, input, page, semester_id } = params;
+      const { academic_id, department_id, input, page, semester_id, status } =
+        params;
 
       let { pages } = params;
       let users: UserEntity[] = null;
@@ -1218,7 +1224,7 @@ export class SheetController {
           class_id,
           department_id,
           semester_id,
-          SheetStatus.ALL,
+          status,
           role,
           user_ids,
         );
@@ -1236,7 +1242,7 @@ export class SheetController {
         class_id,
         academic_id,
         semester_id,
-        SheetStatus.ALL,
+        status,
         role,
         user_ids,
       );
@@ -2185,21 +2191,27 @@ export class SheetController {
         role,
         department_id,
         user_id,
-        this._userService,
+        this._otherService,
         req,
       );
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
       if (all) {
-        include_ids = await this._sheetService.contains(
+        const results = await this._sheetService.contains(
           department_id,
           academic_id,
           semester_id,
+          role,
           class_id,
         );
+        include_ids = results.map((e) => e.id);
       }
-      const success = await this._evaluationService.bulkApprove(include_ids);
+
+      const success = await this._evaluationService.bulkApprove(
+        include_ids,
+        role,
+      );
       if (success) {
         //#region Generate response
         return generateApproveAllResponse(include_ids, success);

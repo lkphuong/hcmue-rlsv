@@ -145,6 +145,7 @@ export class EvaluationService {
 
   async bulkApprove(
     sheet_ids: number[],
+    role: number,
     manager?: EntityManager,
   ): Promise<boolean> {
     try {
@@ -153,7 +154,7 @@ export class EvaluationService {
       }
 
       const results = await manager.query(
-        `CALL sp_multiple_approval ('${sheet_ids.toString()}')`,
+        `CALL sp_multiple_approval ('${sheet_ids.toString()}', ${role})`,
       );
 
       return results[0][0].success ?? 0;

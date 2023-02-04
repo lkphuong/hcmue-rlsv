@@ -34,31 +34,31 @@ export class SheetService {
     department_id: number,
     academic_id: number,
     semester_id: number,
+    role: number,
     class_id?: number,
-  ): Promise<number[] | null> {
+  ) {
     try {
       let conditions = this._sheetRepository
         .createQueryBuilder('sheet')
         .select('sheet.id', 'id')
         .where('sheet.academic_id = :academic_id', { academic_id })
         .andWhere('sheet.semester_id = :semester_id', { semester_id })
-        .andWhere('sheet.deleted = :deleted', { deleted: false });
+        .andWhere('sheet.deleted = :deleted', { deleted: false })
+        .andWhere('sheet.department_id = :department_id', { department_id })
+        .andWhere('sheet.status = :status', {
+          status:
+            role == RoleCode.ADVISER
+              ? SheetStatus.WAITING_ADVISER
+              : SheetStatus.WAITING_DEPARTMENT,
+        });
 
       if (class_id && class_id !== 0) {
-        conditions = conditions
-          .andWhere('sheet.class_id = :class_id', { class_id })
-          .andWhere('sheet.status = :status', {
-            status: SheetStatus.WAITING_ADVISER,
-          });
-      } else {
-        conditions = conditions
-          .andWhere('sheet.department_id = :department_id', { department_id })
-          .andWhere('sheet.status = :status', {
-            status: SheetStatus.WAITING_DEPARTMENT,
-          });
+        conditions = conditions.andWhere('sheet.class_id = :class_id', {
+          class_id,
+        });
       }
 
-      const sheet_ids = await conditions.getRawMany<number>();
+      const sheet_ids = await conditions.getRawMany();
 
       return sheet_ids || null;
     } catch (e) {

@@ -10,7 +10,7 @@ import { FileModule } from '../file/file.module';
 import { FormModule } from '../form/form.module';
 import { HeaderModule } from '../header/header.module';
 import { ItemModule } from '../item/item.module';
-import { KModule } from '../k/k.module';
+import { OtherModule } from '../other/other.module';
 import { LevelModule } from '../level/level.module';
 import { LogModule } from '../log/log.module';
 import { OptionModule } from '../option/option.module';
@@ -32,7 +32,7 @@ export const modules = [
   FormModule,
   HeaderModule,
   ItemModule,
-  KModule,
+  OtherModule,
   LevelModule,
   LogModule,
   OptionModule,

@@ -448,14 +448,14 @@ export class UserService {
           'user.academic',
           AcademicYearEntity,
           'academic',
-          `user.academic_id = academic_id AND 
+          `user.academic_id = academic.id AND 
         academic.deleted = 0`,
         )
         .innerJoinAndMapOne(
           'user.semester',
           SemesterEntity,
           'semester',
-          `semester.academic_id = academic_id AND
+          `semester.academic_id = academic.id AND
          semester.deleted = 0`,
         )
         .innerJoinAndMapOne(
@@ -474,6 +474,8 @@ export class UserService {
         )
         .where('user.id = :id', { id })
         .andWhere('user.deleted = :deleted', { deleted: 0 });
+
+      console.log('sql: ', conditions.getSql());
 
       const user = await conditions.orderBy('user.created_at', 'DESC').getOne();
 

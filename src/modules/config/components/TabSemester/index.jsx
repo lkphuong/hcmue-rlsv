@@ -4,11 +4,12 @@ import { Box, Typography } from '@mui/material';
 
 import { getSemesters } from '_api/options.api';
 
-import { isSuccess } from '_func/';
+import { isSuccess, isEmpty } from '_func/';
+
+import { CPagination } from '_controls/';
 
 import { AddSection } from './AddSection';
 import { MTable } from './MTable';
-import { CPagination } from '_controls/';
 
 export const TabSemester = () => {
 	//#region Data
@@ -25,9 +26,8 @@ export const TabSemester = () => {
 	const getData = async () => {
 		const res = await getSemesters(params);
 
-		if (isSuccess(res)) {
-			setData(res?.data);
-		}
+		if (isSuccess(res)) setData(res?.data);
+		else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
 	};
 
 	const onPageChange = (event, newPage) => setParams((prev) => ({ ...prev, page: newPage }));

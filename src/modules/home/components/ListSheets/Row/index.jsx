@@ -36,7 +36,7 @@ const Row = memo(({ data, index, isHistory }) => {
 
 	//#region Render
 	return (
-		<TableRow hover onClick={onClick} sx={{ cursor: 'pointer' }}>
+		<TableRow>
 			<TableCell align='center'>{index}</TableCell>
 			<TableCell align='center'>{data.semester.display || data?.semester?.name}</TableCell>
 			<TableCell align='center'>{data.academic.name}</TableCell>

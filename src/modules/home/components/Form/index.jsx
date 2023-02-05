@@ -48,10 +48,8 @@ export const Form = ({ data }) => {
 
 		const _data = marks.map((e) => {
 			const obj = { ...e, item_id: Number(e.item_id) };
-
 			if (obj?.files) {
 				const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
-
 				return { ...obj, files };
 			} else return obj;
 		});

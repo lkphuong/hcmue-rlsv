@@ -64,9 +64,9 @@ const DepartmentDetailPage = () => {
 				navigate(-1);
 			}
 
-			const { status, success } = res.data;
+			// const { status, success } = res.data;
 
-			if (success || status > 3) dispatch(actions.setAvailable(false));
+			// if (success || status > 3) dispatch(actions.setAvailable(false));
 
 			setData(res.data);
 		}

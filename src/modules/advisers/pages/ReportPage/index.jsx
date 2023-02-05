@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useReactToPrint } from 'react-to-print';
 
 import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 import { Print } from '@mui/icons-material';
 
-import { MClassTable, MReportFilter } from '_modules/advisers/components';
+import { MClassTable, MReportFilter, MReportPrint } from '_modules/advisers/components';
 
 import { getClassReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
@@ -15,6 +16,8 @@ import { actions } from '_slices/currentInfo.slice';
 
 const ReportPage = () => {
 	//#region Data
+	const printRef = useRef();
+
 	const { department_id, classes } = useSelector((state) => state.auth.profile, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
@@ -60,6 +63,10 @@ const ReportPage = () => {
 
 		dispatch(actions.setInfo(info));
 	};
+
+	const handlePrint = useReactToPrint({
+		content: () => printRef.current,
+	});
 	//#endregion
 
 	useEffect(() => {
@@ -97,12 +104,23 @@ const ReportPage = () => {
 							Thống kê phiếu chấm điểm rèn luyện
 						</Typography>
 
-						<Button startIcon={<Print />}>In thống kê</Button>
+						<Button startIcon={<Print />} onClick={handlePrint}>
+							In thống kê
+						</Button>
 					</Stack>
 				</Paper>
 			</Box>
 
 			<MClassTable data={data} onSetCurrent={handleSetCurrent} />
+
+			<MReportPrint
+				ref={printRef}
+				data={data}
+				classData={classes[0]}
+				department={data?.department}
+				academic={data?.academic}
+				semester={data?.semester}
+			/>
 		</Box>
 	);
 	//#endregion

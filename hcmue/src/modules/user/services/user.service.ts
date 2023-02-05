@@ -30,10 +30,10 @@ export class UserService {
   async count(
     academic_id: number,
     semester_id: number,
-    class_id: number,
-    department_id: number,
-    status_id: number,
-    major_id: number,
+    class_id?: number,
+    department_id?: number,
+    status_id?: number,
+    major_id?: number,
     input?: string,
   ): Promise<number> {
     try {
@@ -79,7 +79,6 @@ export class UserService {
         .innerJoin(KEntity, 'k', `class.k = k.id AND k.deleted = 0`)
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic.id = :academic_id', { academic_id })
-        .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: false });
 
       if (class_id && class_id !== 0) {
@@ -693,7 +692,12 @@ export class UserService {
           active: 1,
           deleted: false,
         },
-        { updated_at: new Date(), updated_by: 'system', active: false },
+        {
+          updated_at: new Date(),
+          updated_by: 'system',
+          active: false,
+          deleted: true,
+        },
       );
       return results.affected > 0;
     } catch (e) {

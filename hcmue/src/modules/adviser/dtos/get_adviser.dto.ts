@@ -65,10 +65,6 @@ export class GetAdviserDto {
   @Transform((params) =>
     params.value ? params.value.toString().trim() : params.value,
   )
-  @IsNotEmpty({
-    message: (arg) =>
-      generateValidationMessage(arg, 'Bạn vui lòng nhập [input].'),
-  })
   @LengthValidator(1, 500, {
     message: (arg) =>
       generateValidationMessage(arg, '[input] độ dài tối đa 500 kí tự.'),

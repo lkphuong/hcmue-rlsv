@@ -327,9 +327,13 @@ export const generateImportUsers = async (
     }
     //#endregion
 
-    // //#region Update old users
-    // await user_service.bulkUnlink(query_runner.manager);
-    // //#endregion
+    //#region Update old users
+    const count = await user_service.count(academic_id, semester_id);
+    if (count > 0) {
+      await user_service.bulkUnlink(query_runner.manager);
+    }
+
+    //#endregion
 
     //#region Create user
     result = await generateCreateUser(

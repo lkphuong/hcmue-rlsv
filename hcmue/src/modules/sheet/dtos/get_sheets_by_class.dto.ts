@@ -58,9 +58,12 @@ export class GetSheetsByClassDto {
   semester_id: number;
 
   @IsOptional()
+  @Transform((params) =>
+    params.value ? params.value.toString().trim() : params.value,
+  )
   input: string;
 
   @IsOptional()
   @Transform((params) => parseInt(params.value) ?? -1)
-  status: number;
+  status?: number = -1;
 }

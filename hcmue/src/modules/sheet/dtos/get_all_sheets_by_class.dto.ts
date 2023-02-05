@@ -48,6 +48,9 @@ export class GetAllSheetsByClassDto {
   semester_id: number;
 
   @IsOptional()
+  @Transform((params) =>
+    params.value ? params.value.toString().trim() : params.value,
+  )
   input: string;
 
   @IsOptional()

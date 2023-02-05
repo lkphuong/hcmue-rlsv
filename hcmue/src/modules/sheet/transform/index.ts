@@ -36,6 +36,8 @@ import { PDF_EXTENSION } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { SemesterService } from '../../semester/services/semester.service';
+import { removeDuplicates } from '../../../utils';
+import { FileEntity } from '../../../entities/file.entity';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {
@@ -501,221 +503,172 @@ export const generateEvaluationsArray = async (
 ) => {
   if (evaluations) {
     const payload: EvaluationsResponse[] = [];
+    const ids = evaluations.map((i) => {
+      return i.item.id;
+    });
+    const results = removeDuplicates(ids);
     switch (role) {
       case RoleCode.ADMIN:
       case RoleCode.DEPARTMENT:
-        for (const evaluation of evaluations) {
-          if (evaluation.category === EvaluationCategory.DEPARTMENT) {
-            const class_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.CLASS &&
-                e.item.id == evaluation.item.id,
+        for (const i of results) {
+          const class_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.CLASS && e.item.id == i,
+          );
+
+          const addviser_evaluation = evaluations.find(
+            (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
+          );
+
+          const department_evaluation = evaluations.find(
+            (e) =>
+              e.category === EvaluationCategory.DEPARTMENT && e.item.id == i,
+          );
+
+          const student_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.STUDENT && e.item.id == i,
+          );
+
+          const evaluation = evaluations.find((e) => e.item.id == i);
+
+          let files: FileEntity[] | null = null;
+
+          if (student_evaluation) {
+            files = await file_service.getFileByEvaluation(
+              student_evaluation.ref,
+              student_evaluation.sheet.id,
             );
+          }
 
-            const addviser_evaluation = evaluations.find(
-              (e) =>
-                e.category == EvaluationCategory.ADVISER &&
-                e.item.id == evaluation.item.id,
-            );
-
-            const student_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.STUDENT &&
-                e.item.id == evaluation.item.id,
-            );
-
-            if (student_evaluation) {
-              const files = await file_service.getFileByEvaluation(
-                student_evaluation.ref,
-                student_evaluation.sheet.id,
-              );
-
-              const result: EvaluationsResponse = {
-                id: evaluation.id,
-                item: {
-                  id: evaluation.item.id,
-                  content: evaluation.item.content,
-                },
-                options: evaluation.option
-                  ? {
-                      id: evaluation.option.id,
-                      content: evaluation.option.content,
-                    }
+          if (evaluation) {
+            const result: EvaluationsResponse = {
+              id: department_evaluation?.id ?? 0,
+              item: {
+                id: i,
+                content: evaluation.item.content,
+              },
+              options: evaluation.option
+                ? {
+                    id: evaluation.option.id,
+                    content: evaluation.option.content,
+                  }
+                : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return {
+                        id: file.id,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
+                      };
+                    })
                   : null,
-                files:
-                  files && files.length > 0
-                    ? files.map((file) => {
-                        return {
-                          id: file.id,
-                          url: '/' + file.url,
-                          name: file.originalName,
-                          type: file.extension == PDF_EXTENSION ? 0 : 1,
-                        };
-                      })
-                    : null,
-                personal_mark_level:
-                  student_evaluation?.personal_mark_level ?? 0,
-                class_mark_level: class_evaluation?.class_mark_level ?? 0,
-                adviser_mark_level:
-                  addviser_evaluation?.adviser_mark_level ?? 0,
-                department_mark_level: evaluation?.department_mark_level ?? 0,
-              };
-              payload.push(result);
-            }
+              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
+              class_mark_level: class_evaluation?.class_mark_level ?? 0,
+              adviser_mark_level: addviser_evaluation?.adviser_mark_level ?? 0,
+              department_mark_level:
+                department_evaluation?.department_mark_level ?? 0,
+            };
+            payload.push(result);
           }
         }
+        break;
       case RoleCode.MONITOR:
       case RoleCode.SECRETARY:
       case RoleCode.CHAIRMAN:
-        for (const evaluation of evaluations) {
-          if (evaluation.category === EvaluationCategory.CLASS) {
-            const student_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.STUDENT &&
-                e.item.id == evaluation.item.id,
+        for (const i of results) {
+          const student_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.STUDENT && e.item.id == i,
+          );
+
+          const class_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.CLASS && e.item.id == i,
+          );
+
+          const department_evaluation = evaluations.find(
+            (e) =>
+              e.category === EvaluationCategory.DEPARTMENT && e.item.id == i,
+          );
+
+          const addviser_evaluation = evaluations.find(
+            (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
+          );
+
+          const evaluation = evaluations.find((e) => e.item.id == i);
+
+          let files: FileEntity[] | null = null;
+          if (student_evaluation) {
+            files = await file_service.getFileByEvaluation(
+              student_evaluation.ref,
+              student_evaluation.sheet.id,
             );
-
-            const department_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.DEPARTMENT &&
-                e.item.id == evaluation.item.id,
-            );
-
-            const addviser_evaluation = evaluations.find(
-              (e) =>
-                e.category == EvaluationCategory.ADVISER &&
-                e.item.id == evaluation.item.id,
-            );
-
-            if (student_evaluation) {
-              const files = await file_service.getFileByEvaluation(
-                student_evaluation.ref,
-                student_evaluation.sheet.id,
-              );
-
-              const result: EvaluationsResponse = {
-                id: evaluation.id,
-                item: {
-                  id: evaluation.item.id,
-                  content: evaluation.item.content,
-                },
-                options: evaluation.option
-                  ? {
-                      id: evaluation.option.id,
-                      content: evaluation.option.content,
-                    }
-                  : null,
-                files:
-                  files && files.length > 0
-                    ? files.map((file) => {
-                        return {
-                          id: file.id,
-                          url: '/' + file.url,
-                          name: file.originalName,
-                          type: file.extension == PDF_EXTENSION ? 0 : 1,
-                        };
-                      })
-                    : null,
-                personal_mark_level:
-                  student_evaluation?.personal_mark_level ?? 0,
-                class_mark_level: evaluation?.class_mark_level ?? 0,
-                adviser_mark_level:
-                  addviser_evaluation?.adviser_mark_level ?? 0,
-                department_mark_level:
-                  department_evaluation?.department_mark_level ?? 0,
-              };
-              payload.push(result);
-            }
           }
-        }
-      case RoleCode.ADVISER:
-        for (const evaluation of evaluations) {
-          if (evaluation.category === EvaluationCategory.ADVISER) {
-            const class_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.CLASS &&
-                e.item.id == evaluation.item.id,
-            );
-
-            const student_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.STUDENT &&
-                e.item.id == evaluation.item.id,
-            );
-
-            const department_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.DEPARTMENT &&
-                e.item.id == evaluation.item.id,
-            );
-
-            if (student_evaluation) {
-              const files = await file_service.getFileByEvaluation(
-                student_evaluation.ref,
-                student_evaluation.sheet.id,
-              );
-
-              const result: EvaluationsResponse = {
-                id: evaluation.id,
-                item: {
-                  id: evaluation.item.id,
-                  content: evaluation.item.content,
-                },
-                options: evaluation.option
-                  ? {
-                      id: evaluation.option.id,
-                      content: evaluation.option.content,
-                    }
-                  : null,
-                files:
-                  files && files.length > 0
-                    ? files.map((file) => {
-                        return {
-                          id: file.id,
-                          url: '/' + file.url,
-                          name: file.originalName,
-                          type: file.extension == PDF_EXTENSION ? 0 : 1,
-                        };
-                      })
-                    : null,
-                personal_mark_level:
-                  student_evaluation?.personal_mark_level ?? 0,
-                class_mark_level: class_evaluation?.class_mark_level ?? 0,
-                adviser_mark_level: evaluation?.adviser_mark_level ?? 0,
-                department_mark_level:
-                  department_evaluation?.department_mark_level ?? 0,
-              };
-              payload.push(result);
-            }
-          }
-        }
-      case RoleCode.STUDENT:
-        for (const evaluation of evaluations) {
-          if (evaluation.category === EvaluationCategory.STUDENT) {
-            const class_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.CLASS &&
-                e.item.id == evaluation.item.id,
-            );
-
-            const department_evaluation = evaluations.find(
-              (e) =>
-                e.category === EvaluationCategory.DEPARTMENT &&
-                e.item.id == evaluation.item.id,
-            );
-
-            const addviser_evaluation = evaluations.find(
-              (e) =>
-                e.category == EvaluationCategory.ADVISER &&
-                e.item.id == evaluation.item.id,
-            );
-
-            const files = await file_service.getFileByEvaluation(
-              evaluation.ref,
-              evaluation.sheet.id,
-            );
+          if (evaluation) {
             const result: EvaluationsResponse = {
-              id: evaluation.id,
+              id: class_evaluation?.id ?? 0,
+              item: {
+                id: class_evaluation?.id ?? 0,
+                content: evaluation.item.content,
+              },
+              options: evaluation.option
+                ? {
+                    id: evaluation.option.id,
+                    content: evaluation.option.content,
+                  }
+                : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return {
+                        id: file.id,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
+                      };
+                    })
+                  : null,
+              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
+              class_mark_level: class_evaluation?.class_mark_level ?? 0,
+              adviser_mark_level: addviser_evaluation?.adviser_mark_level ?? 0,
+              department_mark_level:
+                department_evaluation?.department_mark_level ?? 0,
+            };
+            payload.push(result);
+          }
+        }
+        break;
+      case RoleCode.ADVISER:
+        for (const i of results) {
+          const class_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.CLASS && e.item.id == i,
+          );
+
+          const adviser_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.ADVISER && e.item.id == i,
+          );
+
+          const student_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.STUDENT && e.item.id == i,
+          );
+
+          const department_evaluation = evaluations.find(
+            (e) =>
+              e.category === EvaluationCategory.DEPARTMENT && e.item.id == i,
+          );
+
+          const evaluation = evaluations.find((e) => e.item.id == i);
+
+          let files: FileEntity[] | null = null;
+          if (student_evaluation) {
+            files = await file_service.getFileByEvaluation(
+              student_evaluation.ref,
+              student_evaluation.sheet.id,
+            );
+          }
+
+          if (evaluation) {
+            const result: EvaluationsResponse = {
+              id: adviser_evaluation?.id ?? 0,
               item: {
                 id: evaluation.item.id,
                 content: evaluation.item.content,
@@ -737,7 +690,69 @@ export const generateEvaluationsArray = async (
                       };
                     })
                   : null,
-              personal_mark_level: evaluation?.personal_mark_level ?? 0,
+              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
+              class_mark_level: class_evaluation?.class_mark_level ?? 0,
+              adviser_mark_level: adviser_evaluation?.adviser_mark_level ?? 0,
+              department_mark_level:
+                department_evaluation?.department_mark_level ?? 0,
+            };
+            payload.push(result);
+          }
+        }
+        break;
+      case RoleCode.STUDENT:
+        for (const i of results) {
+          const class_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.CLASS && e.item.id == i,
+          );
+
+          const student_evaluation = evaluations.find(
+            (e) => e.category === EvaluationCategory.STUDENT && e.item.id == i,
+          );
+          const department_evaluation = evaluations.find(
+            (e) =>
+              e.category === EvaluationCategory.DEPARTMENT && e.item.id == i,
+          );
+
+          const addviser_evaluation = evaluations.find(
+            (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
+          );
+
+          const evaluation = evaluations.find((e) => e.item.id == i);
+
+          let files: FileEntity[] | null = null;
+          if (student_evaluation) {
+            files = await file_service.getFileByEvaluation(
+              student_evaluation.ref,
+              student_evaluation.sheet.id,
+            );
+          }
+
+          if (evaluation) {
+            const result: EvaluationsResponse = {
+              id: student_evaluation?.id ?? 0,
+              item: {
+                id: evaluation.item.id,
+                content: evaluation.item.content,
+              },
+              options: evaluation.option
+                ? {
+                    id: evaluation.option.id,
+                    content: evaluation.option.content,
+                  }
+                : null,
+              files:
+                files && files.length > 0
+                  ? files.map((file) => {
+                      return {
+                        id: file.id,
+                        url: '/' + file.url,
+                        name: file.originalName,
+                        type: file.extension == PDF_EXTENSION ? 0 : 1,
+                      };
+                    })
+                  : null,
+              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
               class_mark_level: class_evaluation?.class_mark_level ?? 0,
               adviser_mark_level: addviser_evaluation?.adviser_mark_level ?? 0,
               department_mark_level:
@@ -746,6 +761,7 @@ export const generateEvaluationsArray = async (
             payload.push(result);
           }
         }
+        break;
     }
 
     return payload;

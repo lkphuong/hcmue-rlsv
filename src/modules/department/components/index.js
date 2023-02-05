@@ -10,3 +10,4 @@ export * from './MHistoryFilter';
 export * from './Form';
 export * from './MReportDepartmentFilter';
 export * from './MReportDepartmentTable';
+export * from './MReportPrint';

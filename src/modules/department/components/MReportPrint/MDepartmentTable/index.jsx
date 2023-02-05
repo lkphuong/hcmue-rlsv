@@ -45,7 +45,7 @@ export const MDepartmentTable = ({ data }) => {
 	}, []);
 
 	//#region Render
-	return levels?.length > 0 && data?.departments?.length > 0 ? (
+	return levels?.length > 0 && data?.classes?.length > 0 ? (
 		<TableContainer
 			className='c-table'
 			sx={{ '& *': { fontSize: '85%!important' }, maxHeight: 'unset!important' }}
@@ -89,8 +89,8 @@ export const MDepartmentTable = ({ data }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.departments?.length > 0 &&
-						data.departments.map((row, index) => (
+					{data?.classes?.length > 0 &&
+						data.classes.map((row, index) => (
 							<MRow key={row.id} index={index + 1} data={row} />
 						))}
 				</TableBody>

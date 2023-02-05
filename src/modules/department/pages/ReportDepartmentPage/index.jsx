@@ -1,9 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useReactToPrint } from 'react-to-print';
 
-import { Box, Paper, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Print } from '@mui/icons-material';
 
-import { MReportDepartmentFilter, MReportDepartmentTable } from '_modules/department/components';
+import {
+	MReportDepartmentFilter,
+	MReportDepartmentTable,
+	MReportPrint,
+} from '_modules/department/components';
 
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 
@@ -14,6 +20,8 @@ import { actions } from '_slices/currentInfo.slice';
 
 const ReportDepartmentPage = () => {
 	//#region Data
+	const printRef = useRef();
+
 	const { departments, academic_years } = useSelector((state) => state.options, shallowEqual);
 	const { department_id, fullname } = useSelector((state) => state.auth.profile, shallowEqual);
 
@@ -56,6 +64,10 @@ const ReportDepartmentPage = () => {
 
 		dispatch(actions.setInfo(info));
 	};
+
+	const handlePrint = useReactToPrint({
+		content: () => printRef.current,
+	});
 	//#endregion
 
 	useEffect(() => {
@@ -85,13 +97,32 @@ const ReportDepartmentPage = () => {
 
 			<Box my={1.5}>
 				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${fullname}`}
-					</Typography>
+					<Stack
+						p={1.5}
+						direction='row'
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Typography fontSize={20} fontWeight={600}>
+							{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${fullname}`}
+						</Typography>
+
+						<Button startIcon={<Print />} onClick={handlePrint}>
+							In thống kê
+						</Button>
+					</Stack>
 				</Paper>
 			</Box>
 
 			<MReportDepartmentTable data={data} onSetCurrent={handleSetCurrent} />
+
+			<MReportPrint
+				data={data}
+				academic={data?.academic}
+				semester={data?.semester}
+				departmentName={fullname}
+				ref={printRef}
+			/>
 		</Box>
 	);
 	//#endregion

@@ -13,8 +13,9 @@ import { uploadFile } from '_api/files.api';
 import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
-import './index.scss';
 import { ERRORS } from '_constants/messages';
+
+import './index.scss';
 
 const MAX_FILES = 5;
 
@@ -150,7 +151,15 @@ export const CUpload = ({ name, itemData }) => {
 						cursor: available ? 'pointer' : 'default',
 					}}
 				>
-					{available && <input type='file' ref={inputRef} onChange={onChange} hidden />}
+					{available && (
+						<input
+							type='file'
+							ref={inputRef}
+							onChange={onChange}
+							hidden
+							accept='image/*,application/pdf'
+						/>
+					)}
 				</Box>
 				<Box textAlign='center' fontWeight={600} p={1.1}>
 					<CloudUploadOutlined sx={{ fontSize: '3rem' }} color='primary' />

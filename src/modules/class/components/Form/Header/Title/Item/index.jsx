@@ -1,4 +1,4 @@
-import { memo, useContext, useEffect, useRef } from 'react';
+import { memo, useContext, useEffect, useMemo, useRef } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Controller } from 'react-hook-form';
 
@@ -16,11 +16,19 @@ import Control from './Control';
 const Item = memo(({ data, headerId, titleId, index }) => {
 	//#region Data
 	const fileRef = useRef();
+
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+
 	const { itemsMark } = useContext(ClassMarksContext);
 
 	const dispatch = useDispatch();
+
+	const indexMark = useMemo(() => {
+		if (!itemsMark?.length) return null;
+
+		return itemsMark.findIndex((e) => e?.item?.id === data?.id);
+	}, [itemsMark, data]);
 	//#endregion
 
 	//#region Event
@@ -73,7 +81,7 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 			<CFileModal
 				ref={fileRef}
 				name={`title_${titleId}.${index}.files`}
-				itemData={itemsMark[index]}
+				itemData={itemsMark[indexMark]}
 			/>
 		</TableRow>
 	);

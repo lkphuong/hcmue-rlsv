@@ -11,6 +11,8 @@ import { ListDepartments, MFilter } from '_modules/sheets/components';
 import { getAdminSheets } from '_api/sheets.api';
 
 import { isSuccess, cleanObjValue } from '_func/';
+import { useDispatch } from 'react-redux';
+import { actions } from '_slices/currentInfo.slice';
 
 const formatDate = (date) => dayjs(date).format('DD/MM/YYYY');
 
@@ -27,6 +29,8 @@ const SheetsManagementPage = () => {
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -39,6 +43,16 @@ const SheetsManagementPage = () => {
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
+
+	const handleSetCurrent = (additionalData) => {
+		const info = {
+			academic: data?.data?.academic,
+			semester: data?.data?.semester,
+			...additionalData,
+		};
+
+		dispatch(actions.setInfo(info));
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -73,11 +87,7 @@ const SheetsManagementPage = () => {
 						}`}
 					</Typography>
 
-					<ListDepartments
-						data={listData}
-						academic={data?.data?.academic}
-						semester={data?.data?.semester}
-					/>
+					<ListDepartments data={listData} onSetCurrent={handleSetCurrent} />
 
 					<CPagination
 						page={paginate.page}

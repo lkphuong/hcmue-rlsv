@@ -4,16 +4,10 @@ import { Chip, TableCell, TableRow, Link } from '@mui/material';
 
 import { Link as RouterLink } from 'react-router-dom';
 
-import { ROUTES } from '_constants/routes';
-
-export const Row = ({ data, index, academic, semester }) => {
-	const department_info = useMemo(() =>
-		JSON.stringify({
-			department: data,
-			academic,
-			semester,
-		})
-	);
+export const Row = ({ data, index, onSetCurrent }) => {
+	const onClick = () => {
+		onSetCurrent({ department: data });
+	};
 
 	const status = useMemo(
 		() =>
@@ -33,7 +27,8 @@ export const Row = ({ data, index, academic, semester }) => {
 					underline='hover'
 					textTransform='uppercase'
 					component={RouterLink}
-					to={`${ROUTES.ADMIN.SHEETS}/${data?.id}/${department_info}`}
+					to={`${data?.id}`}
+					onClick={onClick}
 				>
 					{data?.name}
 				</Link>

@@ -1,27 +1,28 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import { Print } from '@mui/icons-material';
-
-import dayjs from 'dayjs';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
 import { ListSheets, MDepartmentFilter, MSearch } from '_modules/sheets/components';
 
-import { isSuccess, cleanObjValue, isEmpty } from '_func/';
+import { isSuccess, cleanObjValue, isEmpty, formatTimeSemester } from '_func/';
 
 import { getClassesByDepartment } from '_api/classes.api';
 import { getAdminClassSheetsByDepartment } from '_api/sheets.api';
 
-const formatDate = (date) => dayjs(date).format('DD/MM/YYYY');
-
 const SheetsDepartmentPage = () => {
 	//#region Data
-	const { department_id, department_info } = useParams();
+	const { academic, semester, department } = useSelector(
+		(state) => state.currentInfo,
+		shallowEqual
+	);
 
-	const info = JSON.parse(department_info);
+	const { department_id } = useParams();
+
+	const [loading, setLoading] = useState(false);
 
 	const [data, setData] = useState();
 
@@ -33,8 +34,8 @@ const SheetsDepartmentPage = () => {
 		page: 1,
 		pages: 0,
 		department_id: Number(department_id),
-		academic_id: Number(info?.academic?.id),
-		semester_id: Number(info?.semester?.id),
+		academic_id: Number(academic?.id),
+		semester_id: Number(semester?.id),
 		class_id: '',
 		status: -1,
 		input: '',
@@ -45,12 +46,20 @@ const SheetsDepartmentPage = () => {
 
 	//#region Event
 	const getData = async () => {
-		const _filter = cleanObjValue(filter);
+		setLoading(true);
 
-		const res = await getAdminClassSheetsByDepartment(_filter);
+		try {
+			const _filter = cleanObjValue(filter);
 
-		if (isSuccess(res)) setData(res.data);
-		else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
+			const res = await getAdminClassSheetsByDepartment(_filter);
+
+			if (isSuccess(res)) setData(res.data);
+			else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
+		} catch (error) {
+			throw error;
+		} finally {
+			setLoading(false);
+		}
 	};
 
 	const getClassesData = async () => {
@@ -86,14 +95,14 @@ const SheetsDepartmentPage = () => {
 			<MDepartmentFilter filter={filter} onFilterChange={setFilter} classes={classes} />
 
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				{`Học kỳ ${info?.semester?.name} (${formatDate(
-					info?.semester?.start
-				)} - ${formatDate(info?.semester?.end)}) - Năm học ${info?.academic?.name}`}
+				{`${semester?.name} (${formatTimeSemester(semester?.start)} - ${formatTimeSemester(
+					semester?.end
+				)}) - Năm học ${academic?.name}`}
 			</Typography>
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{info?.department?.name}
+						{department?.name}
 					</Typography>
 				</Paper>
 			</Box>
@@ -106,22 +115,9 @@ const SheetsDepartmentPage = () => {
 				mb={2}
 			>
 				<MSearch onFilterChange={setFilter} />
-
-				<Button
-					variant='contained'
-					startIcon={<Print />}
-					sx={{
-						backgroundColor: '#3EAE42',
-						color: 'white',
-						'&:hover': { backgroundColor: '#0CDB13D2' },
-					}}
-					onClick={() => {}}
-				>
-					In thống kê
-				</Button>
 			</Stack>
 
-			<ListSheets data={listData} />
+			<ListSheets data={listData} loading={loading} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>

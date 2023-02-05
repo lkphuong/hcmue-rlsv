@@ -1,19 +1,12 @@
 import { useMemo } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import { Chip, TableCell, TableRow, Link } from '@mui/material';
-
-import { Link as RouterLink } from 'react-router-dom';
-
-import { ROUTES } from '_constants/routes';
+import { actions } from '_slices/currentInfo.slice';
 
 export const Row = ({ data, index, academic, semester }) => {
-	const department_info = useMemo(() =>
-		JSON.stringify({
-			department: data,
-			academic,
-			semester,
-		})
-	);
+	const dispatch = useDispatch();
 
 	const status = useMemo(
 		() =>
@@ -25,6 +18,16 @@ export const Row = ({ data, index, academic, semester }) => {
 		[data?.status]
 	);
 
+	const onSetCurrent = () => {
+		const info = {
+			academic,
+			semester,
+			department: data,
+		};
+
+		dispatch(actions.setInfo(info));
+	};
+
 	return (
 		<TableRow>
 			<TableCell align='center'>{index}</TableCell>
@@ -33,7 +36,8 @@ export const Row = ({ data, index, academic, semester }) => {
 					underline='hover'
 					textTransform='uppercase'
 					component={RouterLink}
-					to={`${ROUTES.ADMIN.SHEETS}/${data?.id}/${department_info}`}
+					to={`${data?.id}`}
+					onClick={onSetCurrent}
 				>
 					{data?.name}
 				</Link>

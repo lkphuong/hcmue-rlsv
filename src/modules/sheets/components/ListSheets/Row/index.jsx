@@ -1,18 +1,17 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { IconButton, TableCell, TableRow } from '@mui/material';
+import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
-import { CEditIcon } from '_others/';
-
-import { ROUTES } from '_constants/routes';
 import { SHEET_STATUS } from '_constants/variables';
 
-export const Row = ({ data, index }) => {
+import { CEditIcon, CViewIcon } from '_others/';
+
+export const Row = ({ data, index, isHistory }) => {
 	//#region Data
 	const navigate = useNavigate();
 
-	const onClick = () => navigate(`${ROUTES.ADMIN.SHEETS}/detail/${data.id}`);
+	const onClick = () => navigate(`detail/${data.id}`);
 
 	const status = useMemo(
 		() => SHEET_STATUS.find((e) => e.id.toString() === data?.status?.toString())?.name || null,
@@ -46,9 +45,19 @@ export const Row = ({ data, index }) => {
 			<TableCell align='center'>{data?.level?.name ?? 'Không xếp loại'}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center'>
-				<IconButton onClick={onClick}>
-					<CEditIcon />
-				</IconButton>
+				{isHistory || data?.status === 5 ? (
+					<Tooltip title='Xem'>
+						<IconButton onClick={onClick}>
+							<CViewIcon />
+						</IconButton>
+					</Tooltip>
+				) : (
+					<Tooltip title='Điều chỉnh'>
+						<IconButton onClick={onClick}>
+							<CEditIcon />
+						</IconButton>
+					</Tooltip>
+				)}
 			</TableCell>
 		</TableRow>
 	);

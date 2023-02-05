@@ -10,7 +10,7 @@ import {
 
 import { Row } from './Row';
 
-export const ListDepartments = ({ data, academic, semester }) => {
+export const ListDepartments = ({ data, onSetCurrent }) => {
 	//#region Data
 	//#endregion
 
@@ -35,8 +35,7 @@ export const ListDepartments = ({ data, academic, semester }) => {
 								key={row?.id}
 								data={row}
 								index={index + 1}
-								academic={academic}
-								semester={semester}
+								onSetCurrent={onSetCurrent}
 							/>
 						))
 					) : (

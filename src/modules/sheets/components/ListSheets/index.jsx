@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import {
 	Box,
 	Table,
@@ -8,10 +11,15 @@ import {
 	TableRow,
 } from '@mui/material';
 
+import { CLoadingSpinner } from '_others/';
+
 import { Row } from './Row';
 
-export const ListSheets = ({ data }) => {
+export const ListSheets = ({ data, loading }) => {
 	//#region Data
+	const { pathname } = useLocation();
+
+	const isHistory = useMemo(() => pathname.includes('history'), [pathname]);
 	//#endregion
 
 	//#region Event
@@ -36,8 +44,18 @@ export const ListSheets = ({ data }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.length > 0 ? (
-						data.map((row, index) => <Row key={row?.id} data={row} index={index + 1} />)
+					{loading ? (
+						<TableRow>
+							<TableCell colSpan='100%' height={500}>
+								<Box display='flex' alignItems='center' justifyContent='center'>
+									<CLoadingSpinner />
+								</Box>
+							</TableCell>
+						</TableRow>
+					) : data?.length > 0 ? (
+						data.map((row, index) => (
+							<Row key={row?.id} data={row} index={index + 1} isHistory={isHistory} />
+						))
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

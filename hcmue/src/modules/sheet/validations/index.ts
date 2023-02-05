@@ -547,9 +547,15 @@ export const validateUpdateEvaluationMaxFile = (
 ) => {
   if (files && params) {
     const delete_file = params.filter((e) => e.deleted === 1).length;
-    const new_file = params.length - delete_file;
+
+    const new_file = params.filter((e) => e.id === 0).length;
 
     const max_file = files - delete_file + new_file;
+
+    console.log('delete_file: ', delete_file);
+    console.log('new_file: ', new_file);
+    console.log('max_file: ', max_file);
+    console.log('files: ', files);
 
     if (max_file > MAX_FILES) {
       return new HandlerException(

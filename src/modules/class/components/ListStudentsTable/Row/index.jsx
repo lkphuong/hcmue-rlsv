@@ -5,9 +5,9 @@ import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
 import { SHEET_STATUS } from '_constants/variables';
 
-import { CEditIcon } from '_others/';
+import { CEditIcon, CViewIcon } from '_others/';
 
-const Row = memo(({ data, index, saveFilter }) => {
+const Row = memo(({ data, index, saveFilter, isHistory }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -18,9 +18,9 @@ const Row = memo(({ data, index, saveFilter }) => {
 	//#endregion
 
 	//#region Event
-	const onEdit = () => {
+	const onClick = () => {
 		saveFilter();
-		navigate(`/class/detail/${data?.id}`);
+		navigate(`detail/${data?.id}`);
 	};
 	//#endregion
 
@@ -36,12 +36,20 @@ const Row = memo(({ data, index, saveFilter }) => {
 			<TableCell align='center'>{data.sum_of_department_marks}</TableCell>
 			<TableCell align='center'>{data.level?.name || 'Chưa đánh giá'}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
-			<TableCell>
-				<Tooltip title='Chấm điểm'>
-					<IconButton onClick={onEdit}>
-						<CEditIcon />
-					</IconButton>
-				</Tooltip>
+			<TableCell align='center'>
+				{isHistory || data?.status === 5 ? (
+					<Tooltip title='Xem'>
+						<IconButton onClick={onClick}>
+							<CViewIcon />
+						</IconButton>
+					</Tooltip>
+				) : (
+					<Tooltip title='Chấm điểm'>
+						<IconButton onClick={onClick}>
+							<CEditIcon />
+						</IconButton>
+					</Tooltip>
+				)}
 			</TableCell>
 		</TableRow>
 	);

@@ -21,7 +21,7 @@ export const CLASS_ROUTES = [
 		path: ROUTES.STUDENT.SELF,
 		errorElement: <CErrorPage />,
 		element: (
-			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STUDENT.key}>
 				<CurrentSheetPage />
 			</CPermission>
 		),
@@ -35,15 +35,26 @@ export const CLASS_ROUTES = [
 			</CPermission>
 		),
 	},
+
 	{
-		path: ROUTES.STUDENT.SELF_HISTORY,
+		path: ROUTES.STUDENT.HISTORY,
 		errorElement: <CErrorPage />,
 		element: (
-			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STUDENT.key}>
 				<HistoryStudentSheetsPage />
 			</CPermission>
 		),
 	},
+	{
+		path: ROUTES.STUDENT.HISTORY_DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STUDENT.key}>
+				<StudentDetailPage />
+			</CPermission>
+		),
+	},
+
 	{
 		path: ROUTES.CLASS_OFFICER.CLASS,
 		errorElement: <CErrorPage />,
@@ -54,16 +65,7 @@ export const CLASS_ROUTES = [
 		),
 	},
 	{
-		path: ROUTES.CLASS_OFFICER.CLASS_HISTORY,
-		errorElement: <CErrorPage />,
-		element: (
-			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
-				<HistoryClassSheetsPage />
-			</CPermission>
-		),
-	},
-	{
-		path: ROUTES.CLASS_OFFICER.STUDENT_LIST,
+		path: ROUTES.CLASS_OFFICER.CLASS_LIST,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
@@ -73,6 +75,35 @@ export const CLASS_ROUTES = [
 	},
 	{
 		path: ROUTES.CLASS_OFFICER.DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+				<ClassDetailPage />
+			</CPermission>
+		),
+	},
+
+	{
+		path: ROUTES.CLASS_OFFICER.CLASS_HISTORY,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+				<HistoryClassSheetsPage />
+			</CPermission>
+		),
+	},
+
+	{
+		path: ROUTES.CLASS_OFFICER.HISTORY_LIST,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>
+				<ListStudentSheetsPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.CLASS_OFFICER.HISTORY_DETAIL,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.CLASS.key}>

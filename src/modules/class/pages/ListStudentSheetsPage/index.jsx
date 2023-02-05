@@ -17,6 +17,7 @@ import { actions } from '_slices/filter.slice';
 
 const ListStudentSheetsPage = () => {
 	//#region Data
+	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
@@ -32,8 +33,8 @@ const ListStudentSheetsPage = () => {
 		page: 1,
 		pages: 0,
 		department_id,
-		academic_id: academic_years[0]?.id,
-		semester_id: null,
+		academic_id: Number(academic?.id),
+		semester_id: Number(semester?.id),
 		input: '',
 	});
 
@@ -95,7 +96,9 @@ const ListStudentSheetsPage = () => {
 				semesters={semesters}
 			/>
 
-			<MSearch onFilterChange={setFilter} />
+			<Box mb={1.5}>
+				<MSearch onFilterChange={setFilter} />
+			</Box>
 
 			<ListStudentsTable data={listData} saveFilter={saveFilter} />
 

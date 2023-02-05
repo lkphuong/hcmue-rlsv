@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
-import { CEditIcon } from '_others/';
+import { CEditIcon, CViewIcon } from '_others/';
 
 import { SHEET_STATUS } from '_constants/variables';
 
-const Row = memo(({ data, index }) => {
+const Row = memo(({ data, index, isHistory }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ const Row = memo(({ data, index }) => {
 	//#endregion
 
 	//#region Event
-	const onClick = () => navigate(`/student/detail/${data?.id}`);
+	const onClick = () => navigate(`detail/${data?.id}`);
 	//#endregion
 
 	//#region Render
@@ -44,11 +44,19 @@ const Row = memo(({ data, index }) => {
 			<TableCell align='center'>{data?.level?.name ?? 'Không xếp loại'}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center'>
-				<Tooltip title='Chấm điểm'>
-					<IconButton>
-						<CEditIcon />
-					</IconButton>
-				</Tooltip>
+				{isHistory || data?.status === 5 ? (
+					<Tooltip title='Xem'>
+						<IconButton onClick={onClick}>
+							<CViewIcon />
+						</IconButton>
+					</Tooltip>
+				) : (
+					<Tooltip title='Điều chỉnh'>
+						<IconButton onClick={onClick}>
+							<CEditIcon />
+						</IconButton>
+					</Tooltip>
+				)}
 			</TableCell>
 		</TableRow>
 	);

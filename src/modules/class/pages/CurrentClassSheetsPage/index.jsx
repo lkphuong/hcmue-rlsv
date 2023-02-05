@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Typography } from '@mui/material';
 
@@ -10,6 +10,7 @@ import { MTable } from '_modules/class/components';
 import { getCurrentClassSheet } from '_api/sheets.api';
 
 import { isSuccess } from '_func/index';
+import { actions } from '_slices/currentInfo.slice';
 
 const formatDate = (date) => dayjs(date).format('DD/MM/YYYY');
 
@@ -20,6 +21,8 @@ const CurrentClassSheetsPage = () => {
 	const [data, setData] = useState();
 
 	const listData = useMemo(() => data?.class || [], [data]);
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -29,6 +32,15 @@ const CurrentClassSheetsPage = () => {
 		const res = await getCurrentClassSheet(body);
 
 		if (isSuccess(res)) setData(res.data);
+	};
+
+	const handleSetCurrent = () => {
+		const info = {
+			semester: data?.semester,
+			academic: data?.academic,
+		};
+
+		dispatch(actions.setInfo(info));
 	};
 	//#endregion
 
@@ -51,7 +63,7 @@ const CurrentClassSheetsPage = () => {
 				)}) - Năm học ${data?.academic?.name}`}
 			</Typography>
 
-			<MTable data={listData} />
+			<MTable data={listData} onSetCurrent={handleSetCurrent} />
 		</Box>
 	);
 	//#endregion

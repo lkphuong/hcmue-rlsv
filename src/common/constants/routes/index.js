@@ -5,15 +5,20 @@ export const ROUTES = {
 	//
 	STUDENT: {
 		SELF: '/student-sheets',
+		DETAIL: '/student-sheets/detail/:sheet_id',
+
 		HISTORY: '/student-history',
-		DETAIL: '/student/detail/:sheet_id',
+		HISTORY_DETAIL: '/student-history/detail/:sheet_id',
 	},
 
 	CLASS_OFFICER: {
-		CLASS: '/class/class-sheets',
-		CLASS_HISTORY: '/class/class-history',
-		STUDENT_LIST: '/class/:class_id',
-		DETAIL: '/class/detail/:sheet_id',
+		CLASS: '/class/sheets',
+		CLASS_LIST: '/class/sheets/:class_id',
+		DETAIL: '/class/sheets/:class_id/detail/:sheet_id',
+
+		CLASS_HISTORY: '/class/history',
+		HISTORY_LIST: '/class/history/:class_id',
+		HISTORY_DETAIL: '/class/history/:class_id/detail/:sheet_id',
 	},
 
 	ADVISER: {

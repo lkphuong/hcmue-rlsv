@@ -25,12 +25,12 @@ export const MHistoryTable = ({ data }) => {
 						<TableCell align='center'>Tên lớp</TableCell>
 						<TableCell align='center'>Học kỳ</TableCell>
 						<TableCell align='center'>Năm học</TableCell>
-						<TableCell align='center'>Tình trạng chấm của ban cán sự</TableCell>
+						<TableCell align='center'>Tình trạng chấm của sinh viên</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row) => <MRow key={row?.id} data={row} />)
+						data.map((row, i) => <MRow key={row?.id?.toString() + i} data={row} />)
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

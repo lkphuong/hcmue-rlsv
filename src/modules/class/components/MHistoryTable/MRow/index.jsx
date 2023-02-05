@@ -1,11 +1,17 @@
 import { useMemo } from 'react';
 
+import { useDispatch } from 'react-redux';
+
 import { Chip, TableCell, TableRow } from '@mui/material';
 
 import { CLink } from '_controls/';
 
+import { actions } from '_slices/currentInfo.slice';
+
 export const MRow = ({ data }) => {
 	//#region Data
+	const dispatch = useDispatch();
+
 	const status = useMemo(
 		() =>
 			data?.status?.toString() === 'true' ? (
@@ -18,14 +24,22 @@ export const MRow = ({ data }) => {
 	//#endregion
 
 	//#region Event
+	const onSetCurrent = () => {
+		const info = {
+			academic: data?.academic,
+			semester: data?.semester,
+		};
+
+		dispatch(actions.setInfo(info));
+	};
 	//#endregion
 
 	//#region Render
 	return (
 		<TableRow>
 			<TableCell align='center'>
-				<CLink underline='hover' to={`/class/${data?.id}`}>
-					{data?.code}
+				<CLink underline='hover' to={`${data?.id}`} onClick={onSetCurrent}>
+					{data?.name + ' - ' + data?.code}
 				</CLink>
 			</TableCell>
 			<TableCell align='center'>{data?.semester?.name}</TableCell>

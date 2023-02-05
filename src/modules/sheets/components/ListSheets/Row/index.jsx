@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 
 import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
@@ -11,12 +12,12 @@ export const Row = ({ data, index, isHistory }) => {
 	//#region Data
 	const navigate = useNavigate();
 
-	const onClick = () => navigate(`detail/${data.id}`);
-
 	const status = useMemo(
 		() => SHEET_STATUS.find((e) => e.id.toString() === data?.status?.toString())?.name || null,
 		[data?.status]
 	);
+
+	const onClick = () => navigate(`detail/${data.id}`);
 	//#endregion
 
 	//#region Event

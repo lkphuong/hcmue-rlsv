@@ -1,3 +1,6 @@
+import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+
 import {
 	Box,
 	Table,
@@ -12,6 +15,9 @@ import Row from './Row';
 
 export const ListSheets = ({ data }) => {
 	//#region Data
+	const { pathname } = useLocation();
+
+	const isHistory = useMemo(() => pathname.includes('history'), [pathname]);
 	//#endregion
 
 	//#region Event
@@ -35,7 +41,12 @@ export const ListSheets = ({ data }) => {
 				<TableBody>
 					{data?.length > 0 ? (
 						data.map((row, index) => (
-							<Row key={row.id + index} index={index + 1} data={row} />
+							<Row
+								key={row.id + index}
+								index={index + 1}
+								data={row}
+								isHistory={isHistory}
+							/>
 						))
 					) : (
 						<TableRow>

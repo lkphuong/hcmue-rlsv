@@ -1,3 +1,7 @@
+import { useMemo } from 'react';
+
+import { useLocation } from 'react-router-dom';
+
 import {
 	Box,
 	Table,
@@ -12,7 +16,9 @@ import Row from './Row';
 
 export const ListStudentsTable = ({ data, saveFilter }) => {
 	//#region Data
+	const { pathname } = useLocation();
 
+	const isHistory = useMemo(() => pathname.includes('history'), [pathname]);
 	//#endregion
 
 	//#region Event
@@ -39,7 +45,13 @@ export const ListStudentsTable = ({ data, saveFilter }) => {
 				<TableBody>
 					{data?.length > 0 ? (
 						data.map((row, index) => (
-							<Row key={row.id} index={index} data={row} saveFilter={saveFilter} />
+							<Row
+								key={row.id}
+								index={index}
+								data={row}
+								saveFilter={saveFilter}
+								isHistory={isHistory}
+							/>
 						))
 					) : (
 						<TableRow>

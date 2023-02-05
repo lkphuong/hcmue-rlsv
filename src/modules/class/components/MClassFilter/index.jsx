@@ -1,4 +1,8 @@
+import { useMemo } from 'react';
+
 import { shallowEqual, useSelector } from 'react-redux';
+
+import { useLocation } from 'react-router-dom';
 
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
@@ -7,6 +11,10 @@ import { CAutocomplete } from '_controls/';
 export const MClassFilter = ({ filter, onFilterChange, semesters, academic_years }) => {
 	//#region Data
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
+
+	const { pathname } = useLocation();
+
+	const isHistory = useMemo(() => pathname.includes('history'), [pathname]);
 	//#endregion
 
 	//#region Event
@@ -60,6 +68,7 @@ export const MClassFilter = ({ filter, onFilterChange, semesters, academic_years
 										Năm học
 									</Typography>
 									<CAutocomplete
+										disabled={!isHistory}
 										disableClearable
 										value={filter?.academic_id}
 										onChange={handleChangeFilter('academic_id')}
@@ -82,6 +91,7 @@ export const MClassFilter = ({ filter, onFilterChange, semesters, academic_years
 										Học kỳ
 									</Typography>
 									<CAutocomplete
+										disabled={!isHistory}
 										disableClearable
 										value={filter?.semester_id}
 										onChange={handleChangeFilter('semester_id')}

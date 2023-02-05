@@ -9,7 +9,6 @@ import { CErrorPage } from '_others/';
 
 const CurrentSheetPage = lazy(() => import('_modules/home/pages/CurrentSheetPage'));
 const StudentDetailPage = lazy(() => import('_modules/home/pages/StudentDetailPage'));
-
 const HistoryStudentSheetsPage = lazy(() => import('_modules/home/pages/HistoryStudentSheetsPage'));
 
 export const STUDENT_ROUTES = [
@@ -31,12 +30,23 @@ export const STUDENT_ROUTES = [
 			</CPermission>
 		),
 	},
+
 	{
 		path: ROUTES.STUDENT.HISTORY,
 		errorElement: <CErrorPage />,
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STUDENT.key}>
 				<HistoryStudentSheetsPage />
+			</CPermission>
+		),
+	},
+
+	{
+		path: ROUTES.STUDENT.HISTORY_DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.STUDENT.key}>
+				<StudentDetailPage />
 			</CPermission>
 		),
 	},

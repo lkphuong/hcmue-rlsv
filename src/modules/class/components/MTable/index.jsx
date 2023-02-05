@@ -10,7 +10,7 @@ import {
 
 import { MRow } from './MRow';
 
-export const MTable = ({ data }) => {
+export const MTable = ({ data, onSetCurrent }) => {
 	//#region Data
 	//#endregion
 
@@ -24,12 +24,19 @@ export const MTable = ({ data }) => {
 				<TableHead>
 					<TableRow>
 						<TableCell align='center'>Tên lớp</TableCell>
-						<TableCell align='center'>Tình trạng chấm của ban cán sự</TableCell>
+						<TableCell align='center'>Tình trạng chấm của sinh viên</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row) => <MRow id={row?.code} data={row} />)
+						data.map((row) => (
+							<MRow
+								key={row?.id}
+								id={row?.code}
+								data={row}
+								onSetCurrent={onSetCurrent}
+							/>
+						))
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

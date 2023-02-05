@@ -607,7 +607,7 @@ export const generateEvaluationsArray = async (
             const result: EvaluationsResponse = {
               id: class_evaluation?.id ?? 0,
               item: {
-                id: class_evaluation?.id ?? 0,
+                id: i,
                 content: evaluation.item.content,
               },
               options: evaluation.option
@@ -670,7 +670,7 @@ export const generateEvaluationsArray = async (
             const result: EvaluationsResponse = {
               id: adviser_evaluation?.id ?? 0,
               item: {
-                id: evaluation.item.id,
+                id: i,
                 content: evaluation.item.content,
               },
               options: evaluation.option
@@ -732,7 +732,7 @@ export const generateEvaluationsArray = async (
             const result: EvaluationsResponse = {
               id: student_evaluation?.id ?? 0,
               item: {
-                id: evaluation.item.id,
+                id: i,
                 content: evaluation.item.content,
               },
               options: evaluation.option

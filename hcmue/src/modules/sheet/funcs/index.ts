@@ -69,6 +69,7 @@ import {
   UNKNOW_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
+import { RoleCode } from '../../../constants/enums/role_enum';
 
 export const generatePersonalMarks = async (
   request_code: string,
@@ -87,8 +88,11 @@ export const generatePersonalMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  let valid = await validateTime(sheet.form, req);
-  if (valid instanceof HttpException) throw valid;
+  let valid: HandlerException | null = null;
+  if (role_id !== RoleCode.ADMIN) {
+    valid = await validateTime(sheet.form, req);
+    if (valid instanceof HttpException) throw valid;
+  }
   //#endregion
 
   //#region Validate adviser approved
@@ -198,8 +202,12 @@ export const generateClassMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  let valid = await validateTime(sheet.form, req);
-  if (valid instanceof HttpException) throw valid;
+
+  let valid: HandlerException | null = null;
+  if (role_id !== RoleCode.ADMIN) {
+    valid = await validateTime(sheet.form, req);
+    if (valid instanceof HttpException) throw valid;
+  }
   //#endregion
 
   //#region Validate adviser approved
@@ -306,8 +314,11 @@ export const generateAdviserMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(sheet.form, req);
-  if (valid instanceof HttpException) throw valid;
+  let valid: HandlerException | null = null;
+  if (role_id !== RoleCode.ADMIN) {
+    valid = await validateTime(sheet.form, req);
+    if (valid instanceof HttpException) throw valid;
+  }
   //#endregion
   //#endregion
 
@@ -409,8 +420,11 @@ export const generateDepartmentMarks = async (
 ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> => {
   //#region Validation
   //#region Validate evaluate time
-  const valid = await validateTime(sheet.form, req);
-  if (valid instanceof HttpException) throw valid;
+  let valid: HandlerException | null = null;
+  if (role_id !== RoleCode.ADMIN) {
+    valid = await validateTime(sheet.form, req);
+    if (valid instanceof HttpException) throw valid;
+  }
   //#endregion
   //#endregion
 

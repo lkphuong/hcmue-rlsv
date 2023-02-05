@@ -83,7 +83,11 @@ export const ListStudentsTable = ({
 		<>
 			{!(isHistory || isReport) && (
 				<Box textAlign='left' my={1}>
-					<Button variant='contained' onClick={onApprovalAll}>
+					<Button
+						variant='contained'
+						onClick={onApprovalAll}
+						disabled={!isSelectedAll && selected?.length === 0}
+					>
 						Duyệt tất cả
 					</Button>
 				</Box>

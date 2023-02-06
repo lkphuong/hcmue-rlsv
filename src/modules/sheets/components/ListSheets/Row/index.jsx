@@ -43,7 +43,7 @@ export const Row = ({ data, index, isHistory }) => {
 					? 'Chưa chấm'
 					: data.sum_of_department_marks}
 			</TableCell>
-			<TableCell align='center'>{data?.level?.name ?? 'Không xếp loại'}</TableCell>
+			<TableCell align='center'>{data?.level?.name}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center'>
 				{isHistory || data?.status === 5 ? (

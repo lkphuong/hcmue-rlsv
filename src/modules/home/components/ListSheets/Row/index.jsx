@@ -41,7 +41,7 @@ const Row = memo(({ data, index, isHistory }) => {
 			<TableCell align='center'>{data.semester.display || data?.semester?.name}</TableCell>
 			<TableCell align='center'>{data.academic.name}</TableCell>
 			<TableCell align='center'>{total}</TableCell>
-			<TableCell align='center'>{data?.level?.name ?? 'Không xếp loại'}</TableCell>
+			<TableCell align='center'>{data?.level?.name}</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center'>
 				{isHistory || data?.status === 5 ? (

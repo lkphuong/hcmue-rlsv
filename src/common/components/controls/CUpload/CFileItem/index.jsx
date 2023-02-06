@@ -33,7 +33,7 @@ const FILE_IMAGE = {
 	other: blank,
 };
 
-export const CFileItem = ({ file, onDelete }) => {
+export const CFileItem = ({ file, onDelete, isAllowed }) => {
 	const url = process.env.REACT_APP_API_URL.replace('/api/', '') + file.url;
 
 	const type = useMemo(() => {
@@ -80,7 +80,7 @@ export const CFileItem = ({ file, onDelete }) => {
 				</Link>
 			</Stack>
 
-			<Box>
+			<Box display={isAllowed ? 'block' : 'none'}>
 				<IconButton color='error' onClick={onDelete}>
 					<DeleteForever />
 				</IconButton>

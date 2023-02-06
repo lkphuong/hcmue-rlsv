@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { TransitionGroup } from 'react-transition-group';
 import { useFieldArray, useFormContext } from 'react-hook-form';
 import { shallowEqual, useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 
 import { Box, Grow, List, Typography } from '@mui/material';
 import { CloudUploadOutlined } from '@mui/icons-material';
@@ -24,6 +25,14 @@ const MAX_FILE_SIZE = 10485760;
 export const CUpload = ({ name, itemData }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
+	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
+
+	const { pathname } = useLocation();
+
+	const isAllowed = useMemo(
+		() => (pathname.includes('student') || role_id === 0) && available,
+		[pathname]
+	);
 
 	const inputRef = useRef(null);
 
@@ -148,10 +157,10 @@ export const CUpload = ({ name, itemData }) => {
 					sx={{
 						inset: 0,
 						backgroundColor: 'transparent',
-						cursor: available ? 'pointer' : 'default',
+						cursor: isAllowed ? 'pointer' : 'default',
 					}}
 				>
-					{available && (
+					{isAllowed && (
 						<input
 							type='file'
 							ref={inputRef}
@@ -161,24 +170,37 @@ export const CUpload = ({ name, itemData }) => {
 						/>
 					)}
 				</Box>
-				<Box textAlign='center' fontWeight={600} p={1.1}>
+				<Box
+					textAlign='center'
+					fontWeight={600}
+					p={1.1}
+					sx={{ opacity: isAllowed ? 1 : 0.2 }}
+				>
 					<CloudUploadOutlined sx={{ fontSize: '3rem' }} color='primary' />
 					<Typography>Kéo & thả file để upload</Typography>
 				</Box>
 			</Box>
 
-			{fields.length > 0 && (
+			{fields.length > 0 ? (
 				<List sx={{ p: 0 }}>
 					<TransitionGroup>
 						{fields.map((file, index) => (
 							<Grow key={file.id}>
 								<div>
-									<CFileItem file={file} onDelete={onDelete(index)} />
+									<CFileItem
+										file={file}
+										onDelete={onDelete(index)}
+										isAllowed={isAllowed}
+									/>
 								</div>
 							</Grow>
 						))}
 					</TransitionGroup>
 				</List>
+			) : (
+				<Typography mt={2} fontSize={18} fontWeight={600} textAlign='center'>
+					Danh sách File trống
+				</Typography>
 			)}
 		</>
 

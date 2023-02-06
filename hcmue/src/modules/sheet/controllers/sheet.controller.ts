@@ -637,9 +637,10 @@ export class SheetController {
       //#endregion
 
       //#region Get pages
+      let count = 0;
       if (pages === 0) {
         //#region Count
-        const count = await this._sheetService.countSheets(
+        count = await this._sheetService.countSheets(
           academic_id,
           class_id,
           department_id,
@@ -670,7 +671,7 @@ export class SheetController {
 
       if (sheets && sheets.length > 0) {
         //#region Generate reponse
-        return generateResponses(pages, page, sheets, req);
+        return generateResponses(pages, page, count, sheets, req);
         //#endregion
       }
 
@@ -1217,9 +1218,10 @@ export class SheetController {
       //#endregion
 
       //#region Get pages
+      let count = 0;
       if (pages === 0) {
         //#region Count
-        const count = await this._sheetService.countSheets(
+        count = await this._sheetService.countSheets(
           academic_id,
           class_id,
           department_id,
@@ -1250,7 +1252,7 @@ export class SheetController {
 
       if (sheets && sheets.length > 0) {
         //#region Generate reponse
-        return generateResponses(pages, page, sheets, req);
+        return generateResponses(pages, page, count, sheets, req);
         //#endregion
       }
 

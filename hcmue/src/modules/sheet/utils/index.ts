@@ -343,6 +343,7 @@ export const groupItemsByHeader = <T>(
 export const generateResponses = async (
   pages: number,
   page: number,
+  count: number,
   sheets: SheetEntity[],
   req: Request,
 ) => {
@@ -354,7 +355,12 @@ export const generateResponses = async (
   const payload = await generateAdminSheets(sheets);
 
   // Returns objects
-  return returnObjectsWithPaging<ClassSheetsResponse>(pages, page, payload);
+  return returnObjectsWithPaging<ClassSheetsResponse>(
+    pages,
+    page,
+    payload,
+    count,
+  );
 };
 
 export const generateSheetsResponses = async (

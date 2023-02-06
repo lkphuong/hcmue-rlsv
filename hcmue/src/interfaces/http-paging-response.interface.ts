@@ -5,5 +5,6 @@ export type HttpPagingResponse<T> = HttpNoneResponse & {
     pages: number;
     page: number;
     data: T[] | T | null;
+    count?: number;
   };
 };

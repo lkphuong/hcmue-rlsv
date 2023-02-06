@@ -37,11 +37,7 @@ export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) 
 		<TableRow onClick={handleSelect} selected={isSelected}>
 			{!(isHistory || isReport) && (
 				<TableCell width={50} align='center'>
-					<Checkbox
-						checked={isSelected}
-						onChange={handleSelect}
-						onClick={(e) => e.preventDefault()}
-					/>
+					<Checkbox checked={isSelected} onChange={handleSelect} />
 				</TableCell>
 			)}
 			<TableCell align='center'>{index}</TableCell>

@@ -119,7 +119,7 @@ export const CPrintComponent = forwardRef(({ data, marks }, ref) => {
 									</TableCell>
 									<TableCell
 										align='center'
-										colSpan={3}
+										colSpan={4}
 										sx={{ padding: '1px 4px!important' }}
 									>
 										Điểm đánh giá
@@ -131,6 +131,9 @@ export const CPrintComponent = forwardRef(({ data, marks }, ref) => {
 									</TableCell>
 									<TableCell align='center' sx={{ padding: '1px 4px!important' }}>
 										Lớp
+									</TableCell>
+									<TableCell align='center' sx={{ padding: '1px 4px!important' }}>
+										CVHT
 									</TableCell>
 									<TableCell align='center' sx={{ padding: '1px 4px!important' }}>
 										Khoa

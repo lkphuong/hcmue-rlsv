@@ -23,13 +23,14 @@ import { ERRORS } from '_constants/messages';
 
 import { CLoadingSpinner } from '_others/';
 
-import Row from './Row';
+import { Row } from './Row';
 
 export const ListStudentsTable = ({
 	data,
 	refetch,
 	isSelectedAll,
 	selected,
+	except,
 	onSelect,
 	loading,
 	academic_id,
@@ -56,6 +57,7 @@ export const ListStudentsTable = ({
 
 				const body = {
 					include_ids,
+					except_ids: except,
 					all: isSelectedAll ? true : false,
 					academic_id,
 					semester_id,
@@ -100,7 +102,9 @@ export const ListStudentsTable = ({
 							{!(isHistory || isReport) && (
 								<TableCell width={50} align='center'>
 									<Checkbox
-										indeterminate={isSelected && !isSelectedAll}
+										indeterminate={
+											(isSelected && !isSelectedAll) || except?.length > 0
+										}
 										onChange={onSelect(-1)}
 										checked={isSelectedAll || isSelected}
 									/>
@@ -135,6 +139,7 @@ export const ListStudentsTable = ({
 									data={row}
 									onSelect={onSelect(Number(row.id))}
 									isSelected={selected?.includes(Number(row.id)) || isSelectedAll}
+									isRemoved={except?.includes(Number(row.id))}
 									isHistory={isHistory}
 									isReport={isReport}
 								/>

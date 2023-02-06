@@ -22,6 +22,7 @@ const ListStudentSheetsPage = () => {
 	const [loading, setLoading] = useState(false);
 
 	const [selected, setSelected] = useState([]);
+	const [except, setExcept] = useState([]);
 
 	const [isSelectedAll, setSelectedAll] = useState(false);
 
@@ -65,7 +66,14 @@ const ListStudentSheetsPage = () => {
 	const handleSelect = useCallback(
 		(id) => (e, status) => {
 			if (id === -1) {
-				if (isSelectedAll === false) setSelected([]);
+				if (isSelectedAll === false) {
+					setSelected([]);
+					setExcept([]);
+				} else if (except?.length > 0) {
+					setExcept([]);
+					return;
+				}
+
 				setSelectedAll(!isSelectedAll);
 			} else {
 				if (!isSelectedAll) {
@@ -78,14 +86,25 @@ const ListStudentSheetsPage = () => {
 							else return prev.filter((e) => e !== id);
 						}
 					});
+				} else {
+					setExcept((prev) => {
+						if (e.target.checked !== undefined) {
+							if (e.target.checked) return prev.filter((e) => e !== id);
+							else return [...prev, id];
+						} else {
+							if (status) return prev.filter((e) => e !== id);
+							else return [...prev, id];
+						}
+					});
 				}
 			}
 		},
-		[isSelectedAll]
+		[isSelectedAll, except]
 	);
 
 	const refetch = async () => {
 		setSelected([]);
+		setExcept([]);
 		setSelectedAll(false);
 		await getData();
 	};
@@ -136,6 +155,7 @@ const ListStudentSheetsPage = () => {
 				refetch={refetch}
 				isSelectedAll={isSelectedAll}
 				selected={selected}
+				except={except}
 				onSelect={handleSelect}
 				loading={loading}
 				academic_id={Number(academic?.id)}

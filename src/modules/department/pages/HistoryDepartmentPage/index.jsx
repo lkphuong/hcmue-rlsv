@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
 
@@ -23,10 +23,6 @@ const HistoryDepartmentPage = () => {
 	const { class_id } = useParams();
 
 	const [loading, setLoading] = useState(false);
-
-	const [selected, setSelected] = useState([]);
-
-	const [isSelectedAll, setSelectedAll] = useState(false);
 
 	const [data, setData] = useState();
 
@@ -65,27 +61,7 @@ const HistoryDepartmentPage = () => {
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
 
-	const handleSelect = useCallback(
-		(id) => (e, status) => {
-			if (id === -1) {
-				if (isSelectedAll === false) setSelected([]);
-				setSelectedAll(!isSelectedAll);
-			} else {
-				if (!isSelectedAll) {
-					setSelected((prev) => {
-						if (e.target.checked !== undefined) {
-							if (e.target.checked) return [...prev, id];
-							else return prev.filter((e) => e !== id);
-						} else {
-							if (status) return [...prev, id];
-							else return prev.filter((e) => e !== id);
-						}
-					});
-				}
-			}
-		},
-		[isSelectedAll]
-	);
+	const handleSelect = () => {};
 	//#endregion
 
 	useEffect(() => {
@@ -131,8 +107,8 @@ const HistoryDepartmentPage = () => {
 			<ListSheets
 				data={listData}
 				refetch={getData}
-				isSelectedAll={isSelectedAll}
-				selected={selected}
+				isSelectedAll={false}
+				selected={[]}
 				onSelect={handleSelect}
 				loading={loading}
 			/>

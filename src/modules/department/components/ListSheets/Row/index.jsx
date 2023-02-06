@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import { useNavigate } from 'react-router-dom';
 
@@ -8,7 +8,7 @@ import { SHEET_STATUS } from '_constants/variables';
 
 import { CEditIcon, CViewIcon } from '_others/';
 
-export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) => {
+export const Row = ({ data, index, isSelected, isRemoved, onSelect, isHistory, isReport }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -21,23 +21,19 @@ export const Row = ({ data, index, isSelected, onSelect, isHistory, isReport }) 
 	//#region Event
 	const onClick = () => navigate(`detail/${data.id}`);
 
-	const handleSelect = useCallback(
-		(e) => {
-			e.stopPropagation();
+	const handleSelect = (e) => {
+		e.stopPropagation();
 
-			return onSelect(e, !isSelected);
-		},
-
-		[onSelect]
-	);
+		return onSelect(e, isRemoved ? true : !isSelected);
+	};
 	//#endregion
 
 	//#region Render
 	return (
-		<TableRow onClick={handleSelect} selected={isSelected}>
+		<TableRow onClick={handleSelect} selected={isRemoved ? false : isSelected}>
 			{!(isHistory || isReport) && (
 				<TableCell width={50} align='center'>
-					<Checkbox checked={isSelected} onChange={handleSelect} />
+					<Checkbox checked={isRemoved ? false : isSelected} onClick={handleSelect} />
 				</TableCell>
 			)}
 			<TableCell align='center'>{index}</TableCell>

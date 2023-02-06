@@ -162,7 +162,10 @@ export const CPrintComponent = forwardRef(({ data, marks }, ref) => {
 							<Typography fontWeight={600} className='label'>
 								Xếp loại:
 								<Typography component='span'>
-									&nbsp;{data?.level?.name || 'Chưa đánh giá'}
+									&nbsp;
+									{!data?.level?.name && data?.status === 5
+										? 'Không xếp loại'
+										: data?.level?.name}
 								</Typography>
 							</Typography>
 						</Box>

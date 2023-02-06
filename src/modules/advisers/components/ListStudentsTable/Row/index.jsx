@@ -1,4 +1,5 @@
-import { memo, useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 
 import { Checkbox, IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
@@ -7,7 +8,7 @@ import { SHEET_STATUS } from '_constants/variables';
 
 import { CEditIcon, CViewIcon } from '_others/';
 
-const Row = memo(({ data, index, isSelected, onSelect, isHistory, isReport }) => {
+export const Row = ({ data, index, isSelected, isRemoved, onSelect, isHistory, isReport }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -20,23 +21,19 @@ const Row = memo(({ data, index, isSelected, onSelect, isHistory, isReport }) =>
 	//#region Event
 	const onClick = () => navigate(`detail/${data.id}`);
 
-	const handleSelect = useCallback(
-		(e) => {
-			e.stopPropagation();
+	const handleSelect = (e) => {
+		e.stopPropagation();
 
-			return onSelect(e, !isSelected);
-		},
-
-		[onSelect]
-	);
+		return onSelect(e, isRemoved ? true : !isSelected);
+	};
 	//#endregion
 
 	//#region Render
 	return (
-		<TableRow onClick={handleSelect} selected={isSelected}>
+		<TableRow onClick={handleSelect} selected={isRemoved ? false : isSelected}>
 			{!(isHistory || isReport) && (
 				<TableCell width={50} align='center'>
-					<Checkbox checked={isSelected} onChange={handleSelect} />
+					<Checkbox checked={isRemoved ? false : isSelected} onClick={handleSelect} />
 				</TableCell>
 			)}
 			<TableCell align='center'>{index}</TableCell>
@@ -46,7 +43,9 @@ const Row = memo(({ data, index, isSelected, onSelect, isHistory, isReport }) =>
 			<TableCell align='center'>{data?.sum_of_class_marks}</TableCell>
 			<TableCell align='center'>{data?.sum_of_adviser_marks}</TableCell>
 			<TableCell align='center'>{data?.sum_of_department_marks}</TableCell>
-			<TableCell align='center'>{data?.level?.name || 'Chưa đánh giá'}</TableCell>
+			<TableCell align='center'>
+				{!data?.level?.name && data?.status === 5 ? 'Không xếp loại' : data?.level?.name}
+			</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			{!isReport && (
 				<TableCell align='center'>
@@ -68,8 +67,4 @@ const Row = memo(({ data, index, isSelected, onSelect, isHistory, isReport }) =>
 		</TableRow>
 	);
 	//#endregion
-});
-
-Row.displayName = Row;
-
-export default Row;
+};

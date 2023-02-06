@@ -16,8 +16,8 @@ import { isSuccess } from '_func/';
 import { post } from './request';
 
 const apiInstance = axios.create({
-	// baseURL: process.env.REACT_APP_API_URL,
-	baseURL: 'http://hcmue.vtcode.vn:9093/api',
+	baseURL: process.env.REACT_APP_API_URL,
+	// baseURL: 'http://hcmue.vtcode.vn:9093/api',
 	// timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 

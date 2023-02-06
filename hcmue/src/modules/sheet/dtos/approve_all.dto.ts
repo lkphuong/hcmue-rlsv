@@ -20,6 +20,9 @@ export class ApproveAllDto {
   @IsOptional()
   include_ids: number[];
 
+  @IsOptional()
+  except_ids: number[];
+
   @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>

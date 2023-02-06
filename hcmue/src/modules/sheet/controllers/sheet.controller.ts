@@ -2182,7 +2182,14 @@ export class SheetController {
       //#endregion
 
       //#region Get params
-      const { all, academic_id, class_id, department_id, semester_id } = params;
+      const {
+        all,
+        academic_id,
+        class_id,
+        department_id,
+        semester_id,
+        except_ids,
+      } = params;
       let { include_ids } = params;
       //#endregion
 
@@ -2207,6 +2214,8 @@ export class SheetController {
         );
         include_ids = results.map((e) => e.id);
       }
+
+      include_ids = include_ids.filter((item) => !except_ids.includes(item));
 
       const success = await this._evaluationService.bulkApprove(
         include_ids,

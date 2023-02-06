@@ -193,8 +193,8 @@ export const validateSemester = async (
 
 export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
   if (
-    item.control === ItemControl.INPUT &&
-    item.category === ItemCategory.REANGE_VALUE
+    item.control == ItemControl.INPUT &&
+    item.category == ItemCategory.REANGE_VALUE
   ) {
     if (mark > item.to_mark || mark < item.from_mark) {
       //#region throw HandlerException
@@ -211,20 +211,41 @@ export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
       );
       //#endregion
     }
+  } else if (
+    item.control == ItemControl.INPUT &&
+    item.category == ItemCategory.PER_UNIT
+  ) {
+    // Check if either of the following conditions is true:
+    // 1. item.mark is positive and mark is negative, or
+    // 2. item.mark is negative and mark is positive, or
+    // 3. mark is not equal to zero and the remainder of mark divided by item.mark is not equal to zero
+    if (
+      (item.mark > 0 && mark < 0) ||
+      (item.mark < 0 && mark > 0) ||
+      (mark != 0 && mark % item.mark != 0)
+    ) {
+      //#region throw HandlerException
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.INVALID_FORMAT,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.PER_UNIT_INVALID_FORMAT, item.content),
+        HttpStatus.BAD_REQUEST,
+      );
+      //#endregion
+    }
+    // if (item.mark !== mark) {
+    //   //#region throw HandlerException
+    //   return new HandlerException(
+    //     VALIDATION_EXIT_CODE.INVALID_FORMAT,
+    //     req.method,
+    //     req.url,
+    //     sprintf(ErrorMessage.CHECKBOX_MARK_INVALID_FORMAT, item.mark),
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    //   //#endregion
+    // }
   }
-  // else if (item.control === ItemControl.CHECKBOX) {
-  //   if (item.mark !== mark) {
-  //     //#region throw HandlerException
-  //     return new HandlerException(
-  //       VALIDATION_EXIT_CODE.INVALID_FORMAT,
-  //       req.method,
-  //       req.url,
-  //       sprintf(ErrorMessage.CHECKBOX_MARK_INVALID_FORMAT, item.mark),
-  //       HttpStatus.BAD_REQUEST,
-  //     );
-  //     //#endregion
-  //   }
-  // }
   return null;
 };
 

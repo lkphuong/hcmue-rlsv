@@ -1275,7 +1275,7 @@ export const getLevel = async (
   req: Request,
 ) => {
   //#region convert mark when mark upper 100
-  mark = mark > 100 ? 100 : mark;
+  mark = mark > 100 ? 100 : mark < 0 ? 0 : mark;
   //#endregion
   const level = await level_service.getLevelByMark(mark);
   if (!level) {

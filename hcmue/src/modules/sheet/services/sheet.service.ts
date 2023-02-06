@@ -474,8 +474,6 @@ export class SheetService {
         );
       }
 
-      console.log('sql: ', conditions.getSql());
-
       // if (role) {
       //   const sheet_status = this.generateStatus(role);
       //   conditions = conditions.andWhere('sheet.status >= :status', {

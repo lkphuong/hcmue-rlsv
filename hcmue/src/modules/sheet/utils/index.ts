@@ -348,7 +348,7 @@ export const generateResponses = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', sheets);
+  //console.log('data: ', sheets);
 
   // Transform SheetEntity class to ClassSheetsResponse class
   const payload = await generateAdminSheets(sheets);

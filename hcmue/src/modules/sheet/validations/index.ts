@@ -316,9 +316,10 @@ export const validateOthersDepartment = async (
   req: Request,
 ) => {
   const other = await other_service.getOtherById(user_id);
+  console.log('other: ', other);
 
   if (role !== RoleCode.ADMIN) {
-    if (other && other.department_id !== department_id) {
+    if (other && other.department.id != department_id) {
       //#region throw HandlerException
       return new HandlerException(
         VALIDATION_EXIT_CODE.INVALID_VALUE,

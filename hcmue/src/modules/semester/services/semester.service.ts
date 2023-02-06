@@ -115,15 +115,15 @@ export class SemesterService {
       const conditions = this._semesterRepository
         .createQueryBuilder('semester')
         .select('COUNT(semester.id)', 'count')
-        .innerJoinAndMapOne(
-          'semester.academic',
+        .innerJoin(
           AcademicYearEntity,
           'academic',
-          `semester.academic_id = academic.id 
-          AND academic.deleted = 0`,
+          'semester.academic_id = academic.id',
         )
         .where('semester.active = :active', { active: 1 })
         .andWhere('semester.deleted = :deleted', { deleted: 0 });
+
+      console.log('sql: ', conditions.getSql());
 
       const { count } = await conditions.getRawOne();
 

@@ -101,6 +101,12 @@ export class OtherService {
     try {
       const conditions = this._otherRepository
         .createQueryBuilder('other')
+        .leftJoinAndMapOne(
+          'other.department',
+          DepartmentEntity,
+          'department',
+          `department.id = other.department_id AND department.deleted = 0`,
+        )
         .where('other.id = :other_id', { other_id })
         .andWhere('other.deleted = :deleted', { deleted: false });
 

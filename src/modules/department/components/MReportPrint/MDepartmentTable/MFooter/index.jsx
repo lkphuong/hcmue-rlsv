@@ -37,7 +37,7 @@ const MFooter = ({ data }) => {
 				</TableCell>
 				{data?.sum_of_levels?.map((e) => (
 					<TableCell key={e.id} align='center'>{`${(
-						(e?.count / data?.sum_of_std_in_departments) *
+						(e?.count / data?.sum_of_std_in_classes) *
 						100
 					).toFixed(2)}%`}</TableCell>
 				))}

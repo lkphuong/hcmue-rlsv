@@ -672,6 +672,7 @@ export class AuthController {
                         id: item.class.id,
                         code: item.class.code,
                         name: item.class.name,
+                        department_id: item.class.department_id,
                       };
                     })
                   : null,

@@ -47,7 +47,6 @@ import {
   validateDepartment,
   validateDepartmentId,
   validateOthersDepartment,
-  validateOthersRole,
   validateSemester,
   validateSheet,
   validateSheetId,
@@ -467,18 +466,6 @@ export class SheetController {
       if (department instanceof HttpException) throw department;
       //#endregion
 
-      //#region Validate role
-      const valid = validateOthersRole(
-        role,
-        class_id,
-        department_id,
-        request_code,
-        this._userService,
-        req,
-      );
-
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
       //#endregion
 
       //#region Get users if input != null
@@ -1177,18 +1164,6 @@ export class SheetController {
       if (department instanceof HttpException) throw department;
       //#endregion
 
-      //#region Validate role
-      const valid = validateOthersRole(
-        role,
-        class_id,
-        department_id,
-        request_code,
-        this._userService,
-        req,
-      );
-
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
       //#endregion
 
       //#region Get users if input != null
@@ -1973,18 +1948,6 @@ export class SheetController {
       const sheet = await validateSheet(id, this._sheetService, req);
       if (sheet instanceof HttpException) throw sheet;
       //#endregion
-      //#region Validate role
-      const valid = await validateOthersRole(
-        role,
-        sheet.class_id,
-        sheet.department_id,
-        request_code,
-        this._userService,
-        req,
-      );
-
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
       //#endregion
 
       if (graded) {
@@ -2086,18 +2049,6 @@ export class SheetController {
       if (sheet instanceof HttpException) throw sheet;
       //#endregion
 
-      //#region Validate role
-      const valid = await validateOthersRole(
-        role,
-        sheet.class_id,
-        sheet.department_id,
-        request_code,
-        this._userService,
-        req,
-      );
-
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
       //#endregion
 
       if (graded) {
@@ -2301,18 +2252,6 @@ export class SheetController {
       if (sheet instanceof HttpException) throw sheet;
       //#endregion
 
-      //#region Validate role
-      const valid = await validateOthersRole(
-        role,
-        sheet.class_id,
-        sheet.department_id,
-        request_code,
-        this._userService,
-        req,
-      );
-
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
       //#endregion
 
       if (graded) {

@@ -622,7 +622,7 @@ export const validateRequiredOption = (
       VALIDATION_EXIT_CODE.INVALID_VALUE,
       req.method,
       req.url,
-      sprintf(ErrorMessage.OPTION_EMPTY_ERROR, item.id),
+      sprintf(ErrorMessage.OPTION_EMPTY_ERROR, item.content),
       HttpStatus.BAD_REQUEST,
     );
   } else if (item.control !== ItemControl.SINGLE_SELECT && option_id) {

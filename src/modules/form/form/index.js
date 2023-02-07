@@ -27,7 +27,7 @@ export const initialItem = {
 	from_mark: 0,
 	to_mark: 1,
 	mark: 0,
-	category: 0,
+	category: 1,
 	unit: 'Điểm',
 	options: [],
 	is_file: false,

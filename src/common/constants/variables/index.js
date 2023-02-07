@@ -51,7 +51,7 @@ export const CONTROL = [
 ];
 
 export const CATEGORY = [
-	{ id: 0, name: 'Single value' },
+	// { id: 0, name: 'Single value' },
 	{ id: 1, name: 'Range value' },
 	{ id: 2, name: 'Per unit' },
 ];

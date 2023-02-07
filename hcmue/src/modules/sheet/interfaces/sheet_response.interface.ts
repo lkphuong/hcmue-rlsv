@@ -7,6 +7,16 @@ export interface BaseResponse {
 export interface UserResponse {
   fullname: string;
   std_code: string;
+  birthday?: string;
+  class?: {
+    id: number;
+    code: string;
+    name: string;
+  };
+  department?: {
+    id: number;
+    name: string;
+  };
 }
 
 export interface MarkResponse {

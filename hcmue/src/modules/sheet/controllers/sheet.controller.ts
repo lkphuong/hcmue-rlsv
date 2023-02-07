@@ -446,7 +446,7 @@ export class SheetController {
       //#endregion
 
       //#region Get Jwt Payload
-      const { role, username: request_code } = req.user as JwtPayload;
+      const { role } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation

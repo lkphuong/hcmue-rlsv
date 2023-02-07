@@ -55,5 +55,5 @@ export class GetAllSheetsByClassDto {
 
   @IsOptional()
   @Transform((params) => parseInt(params.value) ?? -1)
-  status: number;
+  status?: number = -1;
 }

@@ -60,6 +60,17 @@ export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
         user: {
           fullname: sheet.user.fullname,
           std_code: sheet.user.std_code,
+          birthday: sheet.user.birthday ?? null,
+          class: sheet.class
+            ? {
+                id: sheet.class.id,
+                code: sheet.class.code,
+                name: sheet.class.name,
+              }
+            : null,
+          department: sheet.department
+            ? { id: sheet.department.id, name: sheet.department.name }
+            : null,
         },
       };
 

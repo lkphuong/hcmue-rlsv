@@ -99,6 +99,18 @@ export class SheetService {
           `user.std_code = sheet.std_code 
           AND user.deleted = 0`,
         )
+        .innerJoinAndMapOne(
+          'sheet.department',
+          DepartmentEntity,
+          'department',
+          `sheet.department_id = department.id AND department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.class',
+          ClassEntity,
+          'class',
+          `sheet.class_id = class.id AND class.deleted = 0`,
+        )
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic_year.id = :academic_id', { academic_id })
         .andWhere('sheet.department_id = :department_id', { department_id })

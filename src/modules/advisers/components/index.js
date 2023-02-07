@@ -12,3 +12,4 @@ export * from './MClassTable';
 export * from './MReportFilter';
 export * from './Form';
 export * from './MReportPrint';
+export * from './MClassPrint';

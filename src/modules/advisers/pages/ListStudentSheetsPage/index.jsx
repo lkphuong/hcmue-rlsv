@@ -125,13 +125,11 @@ const ListStudentSheetsPage = () => {
 	return (
 		<Box>
 			<MClassFilter filter={filter} onFilterChange={setFilter} />
-
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
 				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
 					semester?.end
 				)}) - Năm học ${academic?.name}`}
 			</Typography>
-
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
@@ -139,7 +137,6 @@ const ListStudentSheetsPage = () => {
 					</Typography>
 				</Paper>
 			</Box>
-
 			<Stack
 				direction={{ xs: 'column', md: 'row' }}
 				spacing={1.5}
@@ -149,7 +146,6 @@ const ListStudentSheetsPage = () => {
 			>
 				<MSearch onFilterChange={setFilter} placeholder='Nhập MSSV hoặc tên' />
 			</Stack>
-
 			<ListStudentsTable
 				data={listData}
 				refetch={refetch}

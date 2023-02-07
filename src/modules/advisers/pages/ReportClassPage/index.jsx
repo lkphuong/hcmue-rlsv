@@ -1,12 +1,19 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
+import { useReactToPrint } from 'react-to-print';
 
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Print } from '@mui/icons-material';
 
 import { CPagination } from '_controls/';
 
-import { ListStudentsTable, MClassFilter, MSearch } from '_modules/advisers/components';
+import {
+	ListStudentsTable,
+	MClassFilter,
+	MClassPrint,
+	MSearch,
+} from '_modules/advisers/components';
 
 import { getClassSheets } from '_api/sheets.api';
 
@@ -14,6 +21,8 @@ import { cleanObjValue, formatTimeSemester, isEmpty, isSuccess } from '_func/ind
 
 const ReportClassPage = () => {
 	//#region Data
+	const printRef = useRef();
+
 	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
 	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
@@ -83,6 +92,10 @@ const ReportClassPage = () => {
 		},
 		[isSelectedAll]
 	);
+
+	const handlePrint = useReactToPrint({
+		content: () => printRef.current,
+	});
 	//#endregion
 
 	useEffect(() => {
@@ -100,7 +113,6 @@ const ReportClassPage = () => {
 	return (
 		<Box>
 			<MClassFilter filter={filter} onFilterChange={setFilter} />
-
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
 				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
 					semester?.end
@@ -109,9 +121,23 @@ const ReportClassPage = () => {
 
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{'Thống kê của lớp'}
-					</Typography>
+					<Stack
+						direction='row'
+						p={1.5}
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Typography fontSize={20} fontWeight={600}>
+							{'Thống kê của lớp'}
+						</Typography>
+						<Button
+							disabled={listData.length === 0}
+							startIcon={<Print />}
+							onClick={handlePrint}
+						>
+							In thống kê
+						</Button>
+					</Stack>
 				</Paper>
 			</Box>
 
@@ -135,6 +161,14 @@ const ReportClassPage = () => {
 			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
+
+			<MClassPrint
+				ref={printRef}
+				academic={academic}
+				semester={semester}
+				department_id={department_id}
+				class_id={class_id}
+			/>
 		</Box>
 	);
 	//#endregion

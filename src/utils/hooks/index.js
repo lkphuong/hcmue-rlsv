@@ -44,18 +44,14 @@ export function useConfirmExit(confirmExit, when = true) {
 	const { navigator } = useContext(NavigationContext);
 
 	useEffect(() => {
-		if (!when) {
-			return;
-		}
+		if (!when) return;
 
 		const push = navigator.push;
 
 		navigator.push = (...args) => {
 			const result = confirmExit();
 
-			if (result !== false) {
-				push(...args);
-			}
+			if (result !== false) push(...args);
 		};
 
 		return () => {
@@ -102,9 +98,7 @@ export function usePrompt(message, when = true, actionConfirm) {
 	const confirmExit = useCallback(() => {
 		const confirm = window.confirm(message);
 
-		if (confirm) {
-			dispatch(actionConfirm);
-		}
+		if (confirm) dispatch(actionConfirm);
 
 		return confirm;
 	}, [message]);
@@ -116,6 +110,7 @@ export function usePrompt(message, when = true, actionConfirm) {
 export const useFocusError = (isSubmitting, errors, setFocus) => {
 	useEffect(() => {
 		if (isSubmitting) return;
+
 		if (Object.keys(errors).length > 0) {
 			const firstError = Object.keys(errors)[0];
 
@@ -123,3 +118,4 @@ export const useFocusError = (isSubmitting, errors, setFocus) => {
 		}
 	}, [isSubmitting, errors, setFocus]);
 };
+//#endregion

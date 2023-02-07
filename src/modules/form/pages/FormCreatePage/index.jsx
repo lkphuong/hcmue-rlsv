@@ -84,7 +84,7 @@ const FormCreatePage = () => {
 	const onBack = () =>
 		setStep((prev) => {
 			if (prev - 1 < 0) {
-				navigate(ROUTES.FORM);
+				navigate(ROUTES.ADMIN.FORMS);
 				return prev;
 			}
 
@@ -94,7 +94,7 @@ const FormCreatePage = () => {
 	const onForward = () =>
 		setStep((prev) => {
 			if (prev + 1 > 3) {
-				navigate(ROUTES.FORM);
+				navigate(ROUTES.ADMIN.FORMS);
 				return prev;
 			}
 
@@ -167,7 +167,7 @@ const FormCreatePage = () => {
 						<Typography fontSize={20} p={1.5} flex={1}>
 							Quản lý biểu mẫu - Tạo mới biểu mẫu
 						</Typography>
-						<Link to={ROUTES.FORM}>
+						<Link to={ROUTES.ADMIN.FORMS}>
 							<Tooltip title='Trở về danh sách biểu mẫu'>
 								<ButtonBase sx={{ paddingX: 1.5 }}>
 									<Avatar

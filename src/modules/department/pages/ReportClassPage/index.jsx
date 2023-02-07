@@ -1,19 +1,28 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Box, Button, Paper, Stack, Typography } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
-import { ListSheets, MDepartmentFilter, MSearch } from '_modules/department/components';
+import {
+	ListSheets,
+	MClassPrint,
+	MDepartmentFilter,
+	MSearch,
+} from '_modules/department/components';
 
 import { getClassSheets } from '_api/sheets.api';
 
 import { cleanObjValue, formatTimeSemester, isEmpty, isSuccess } from '_func/index';
+import { Print } from '@mui/icons-material';
+import { useReactToPrint } from 'react-to-print';
 
 const ReportClassPage = () => {
 	//#region Data
+	const printRef = useRef();
+
 	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
 	const { fullname: departmentName, department_id } = useSelector(
 		(state) => state.auth.profile,
@@ -86,6 +95,10 @@ const ReportClassPage = () => {
 		},
 		[isSelectedAll]
 	);
+
+	const handlePrint = useReactToPrint({
+		content: () => printRef.current,
+	});
 	//#endregion
 
 	useEffect(() => {
@@ -112,9 +125,23 @@ const ReportClassPage = () => {
 
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{departmentName}
-					</Typography>
+					<Stack
+						direction='row'
+						p={1.5}
+						justifyContent='space-between'
+						alignItems='center'
+					>
+						<Typography fontSize={20} fontWeight={600}>
+							{departmentName}
+						</Typography>
+						<Button
+							disabled={listData.length === 0}
+							startIcon={<Print />}
+							onClick={handlePrint}
+						>
+							In thống kê
+						</Button>
+					</Stack>
 				</Paper>
 			</Box>
 
@@ -138,6 +165,15 @@ const ReportClassPage = () => {
 			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
+
+			<MClassPrint
+				ref={printRef}
+				academic={academic}
+				semester={semester}
+				department_id={department_id}
+				class_id={class_id}
+				departmentName={departmentName}
+			/>
 		</Box>
 	);
 	//#endregion

@@ -107,7 +107,11 @@ const ReportDepartmentPage = () => {
 							{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${fullname}`}
 						</Typography>
 
-						<Button startIcon={<Print />} onClick={handlePrint}>
+						<Button
+							disabled={data.length === 0}
+							startIcon={<Print />}
+							onClick={handlePrint}
+						>
 							In thống kê
 						</Button>
 					</Stack>

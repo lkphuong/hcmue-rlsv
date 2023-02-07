@@ -115,7 +115,11 @@ const DepartmentReportPage = () => {
 							}`}
 						</Typography>
 
-						<Button startIcon={<Print />} onClick={handlePrint}>
+						<Button
+							disabled={data.length === 0}
+							startIcon={<Print />}
+							onClick={handlePrint}
+						>
 							In thống kê
 						</Button>
 					</Stack>

@@ -104,7 +104,11 @@ const ReportPage = () => {
 							Thống kê phiếu chấm điểm rèn luyện
 						</Typography>
 
-						<Button startIcon={<Print />} onClick={handlePrint}>
+						<Button
+							disabled={data.length === 0}
+							startIcon={<Print />}
+							onClick={handlePrint}
+						>
 							In thống kê
 						</Button>
 					</Stack>

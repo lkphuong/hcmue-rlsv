@@ -1236,6 +1236,7 @@ export const generateUpdateSheet = async (
   //#endregion
 
   //#region Get level in mark range
+  sum_of_marks = sum_of_marks > 100 ? 100 : sum_of_marks < 0 ? 0 : sum_of_marks;
   const level = await getLevel(sum_of_marks, level_service, req);
   if (level instanceof HttpException) return level;
   //#endregion
@@ -1276,6 +1277,7 @@ export const getLevel = async (
 ) => {
   //#region convert mark when mark upper 100
   mark = mark > 100 ? 100 : mark < 0 ? 0 : mark;
+
   //#endregion
   const level = await level_service.getLevelByMark(mark);
   if (!level) {

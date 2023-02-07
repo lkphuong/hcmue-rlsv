@@ -37,8 +37,9 @@ export class CronService {
       const form = await this._formService.getFormInProgress();
 
       console.log('forms: ', form);
-
-      if (form && new Date() >= form.end) {
+      const end = new Date(form.end);
+      const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
+      if (form && new Date() >= deadline) {
         //#region Update form status: IN_PROGRESS -> DONE
         const success = await this._formService.updateForm(
           form.id,

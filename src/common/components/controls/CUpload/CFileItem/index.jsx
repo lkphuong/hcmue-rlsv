@@ -34,7 +34,7 @@ const FILE_IMAGE = {
 };
 
 export const CFileItem = ({ file, onDelete, isAllowed }) => {
-	const url = process.env.REACT_APP_API_URL.replace('/api', '') + file.url;
+	const url = process.env.REACT_APP_API_URL + file.url;
 
 	const type = useMemo(() => {
 		if (file?.extension) {

@@ -108,7 +108,7 @@ export class ItemService {
         .andWhere('title.deleted = :deleted', { deleted: false })
         .andWhere('item.deleted = :deleted', { deleted: false });
 
-      const items = await conditions.getMany();
+      const items = await conditions.orderBy('options.id', 'ASC').getMany();
       return items || null;
     } catch (e) {
       this._logger.writeLog(

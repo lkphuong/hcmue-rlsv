@@ -24,7 +24,7 @@ export enum ErrorMessage {
   SEMESTER_NOT_FOUND_ERROR = '[Học kì] không tồn tại (id: %s)',
 
   CHECKBOX_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] không hợp lệ. Giá trị [điểm đánh giá] phải bằng [%s].',
-  RANGE_MARK_INVALID_FORMAT = 'Giá trị [điểm đánh giá] tối thiểu [%s] & tối đa là [%s].',
+  RANGE_MARK_INVALID_FORMAT = '%s. Giá trị [điểm đánh giá] tối thiểu [%s] & tối đa là [%s].',
   PER_UNIT_INVALID_FORMAT = 'Giá trị [điểm đánh giá] %s không hợp lệ.',
 
   OUT_OF_EVALUATE_TIME_ERROR = 'Bạn đã quá hạn đánh giá.',

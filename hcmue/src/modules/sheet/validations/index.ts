@@ -204,6 +204,7 @@ export const validateMark = (item: ItemEntity, mark: number, req: Request) => {
         req.url,
         sprintf(
           ErrorMessage.RANGE_MARK_INVALID_FORMAT,
+          item.content,
           item.from_mark,
           item.to_mark,
         ),

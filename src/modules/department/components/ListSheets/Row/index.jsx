@@ -43,7 +43,9 @@ export const Row = ({ data, index, isSelected, isRemoved, onSelect, isHistory, i
 			<TableCell align='center'>{data?.sum_of_class_marks}</TableCell>
 			<TableCell align='center'>{data?.sum_of_adviser_marks}</TableCell>
 			<TableCell align='center'>{data?.sum_of_department_marks}</TableCell>
-			<TableCell align='center'>{data.level?.name || 'Chưa đánh giá'}</TableCell>
+			<TableCell align='center'>
+				{!data?.level?.name && data?.status === 5 ? 'Không xếp loại' : data?.level?.name}
+			</TableCell>
 			<TableCell align='center'>{status}</TableCell>
 			{!isReport && (
 				<TableCell align='center'>

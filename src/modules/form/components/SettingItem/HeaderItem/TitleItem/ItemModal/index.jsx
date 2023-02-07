@@ -75,6 +75,7 @@ const ItemModal = memo(
 
 		const toggleClose = () => {
 			reset();
+			setItemId(null);
 			setOpen(false);
 		};
 

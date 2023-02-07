@@ -31,7 +31,7 @@ const HistoryDepartmentPage = () => {
 	const [filter, setFilter] = useState({
 		page: 1,
 		pages: 0,
-		department_id: department_id,
+		department_id: Number(department_id),
 		academic_id: Number(academic?.id),
 		semester_id: Number(semester?.id),
 		status: -1,

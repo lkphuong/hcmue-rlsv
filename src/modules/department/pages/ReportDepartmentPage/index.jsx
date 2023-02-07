@@ -32,7 +32,7 @@ const ReportDepartmentPage = () => {
 	const [filter, setFilter] = useState({
 		academic_id: academic_years[0]?.id,
 		semester_id: '',
-		department_id: department_id,
+		department_id: Number(department_id),
 	});
 
 	const dispatch = useDispatch();

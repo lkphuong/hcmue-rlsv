@@ -21,6 +21,8 @@ export const SHEETS = {
 	SHEETS_GET_BY_CLASS_ID: '/sheets/class',
 	UPDATE_CLASS_SHEET: '/sheets/class',
 
+	GET_ALL_IN_CLASS: '/sheets/class/all',
+
 	UPDATE_ADVISER_SHEET: '/sheets/adviser',
 
 	SHEETS_GET_BY_DEPARTMENT_ID: '/sheets/department',

@@ -63,7 +63,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 
 	useImperativeHandle(ref, () => ({
 		open: (department_id) => {
-			department_id && reset({ ...initialValues, department_id: department_id });
+			department_id && reset({ ...initialValues, department_id: Number(department_id) });
 			setOpen(true);
 		},
 	}));

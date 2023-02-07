@@ -38,8 +38,12 @@ export const updateStudentSheets = (id, body = { role_id: 0, data: [] }) => {
 	return put(`${SHEETS.UPDATE_STUDENT_SHEET}/${id}`, body);
 };
 
-export const getClassSheets = (id, body = { semester_id: 0, academic_id: 0 }) => {
+export const getClassSheets = (id, body) => {
 	return post(`${SHEETS.SHEETS_GET_BY_CLASS_ID}/${id}`, { status: -1, ...body });
+};
+
+export const getWholeClass = (body) => {
+	return post(`${SHEETS.GET_ALL_IN_CLASS}`, body);
 };
 
 export const updateClassSheets = (id, body = { role_id: 0, data: [] }) => {

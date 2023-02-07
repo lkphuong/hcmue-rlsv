@@ -5,3 +5,4 @@ export * from './ListStudentsTable';
 export * from './MClassFilter';
 export * from './MSearch';
 export * from './MReportPrint';
+export * from './MClassPrint';

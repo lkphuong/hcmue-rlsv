@@ -16,7 +16,7 @@ import { alert } from '_func/alert';
 
 import { actions } from '_slices/mark.slice';
 
-import { CPrintComponent } from '_others/';
+import { CLoadingSpinner, CPrintComponent } from '_others/';
 
 import { useResolver, useFocusError } from '_hooks/';
 
@@ -29,6 +29,8 @@ const DepartmentDetailPage = () => {
 
 	//#region Data
 	const { sheet_id } = useParams();
+
+	const [loading, setLoading] = useState(false);
 
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
@@ -54,21 +56,29 @@ const DepartmentDetailPage = () => {
 	const getForm = useCallback(async () => {
 		if (!sheet_id) return;
 
-		const res = await getSheetById(sheet_id);
+		setLoading(true);
 
-		if (isSuccess(res)) {
-			if (res.data === null) {
-				alert.fail({
-					text: 'Tài khoản này không thuộc sinh viên để chấm điểm cá nhân.',
-				});
-				navigate(-1);
+		try {
+			const res = await getSheetById(sheet_id);
+
+			if (isSuccess(res)) {
+				if (res.data === null) {
+					alert.fail({
+						text: 'Tài khoản này không thuộc sinh viên để chấm điểm cá nhân.',
+					});
+					navigate(-1);
+				}
+
+				// const { status, success } = res.data;
+
+				// if (success || status > 3) dispatch(actions.setAvailable(false));
+
+				setData(res.data);
 			}
-
-			// const { status, success } = res.data;
-
-			// if (success || status > 3) dispatch(actions.setAvailable(false));
-
-			setData(res.data);
+		} catch (error) {
+			throw error;
+		} finally {
+			setLoading(false);
 		}
 	}, [sheet_id]);
 
@@ -123,7 +133,11 @@ const DepartmentDetailPage = () => {
 	}, [location]);
 
 	//#region Render
-	return data ? (
+	return loading ? (
+		<Box height='100%' display='flex' alignItems='center' justifyContent='center'>
+			<CLoadingSpinner />
+		</Box>
+	) : data ? (
 		<Box>
 			<FormProvider {...methods}>
 				<DepartmentMarksContext.Provider value={{ itemsMark, status: data?.status }}>

@@ -15,6 +15,11 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 
 	//#region Event
 	const onChangeSelect = (CallbackFunc) => (option) => {
+		if (option === null) {
+			CallbackFunc(0);
+			changeOption(null);
+			return;
+		}
 		CallbackFunc(option?.mark);
 		changeOption(Number(option?.id));
 	};

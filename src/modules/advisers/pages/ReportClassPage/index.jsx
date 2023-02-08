@@ -23,7 +23,10 @@ const ReportClassPage = () => {
 	//#region Data
 	const printRef = useRef();
 
-	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
+	const { academic, semester, classData } = useSelector(
+		(state) => state.currentInfo,
+		shallowEqual
+	);
 	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const { class_id } = useParams();
@@ -113,6 +116,7 @@ const ReportClassPage = () => {
 	return (
 		<Box>
 			<MClassFilter filter={filter} onFilterChange={setFilter} />
+
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
 				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
 					semester?.end
@@ -128,7 +132,7 @@ const ReportClassPage = () => {
 						alignItems='center'
 					>
 						<Typography fontSize={20} fontWeight={600}>
-							{'Thống kê của lớp'}
+							Thống kê của lớp {classData?.name} - {classData?.code}
 						</Typography>
 						<Button
 							disabled={listData.length === 0}

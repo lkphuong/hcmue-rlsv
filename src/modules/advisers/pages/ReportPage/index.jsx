@@ -54,11 +54,12 @@ const ReportPage = () => {
 		else setSemesters([]);
 	};
 
-	const handleSetCurrent = () => {
+	const handleSetCurrent = (classData) => {
 		const info = {
 			academic: data?.academic,
 			semester: data?.semester,
 			department: data?.department,
+			...classData,
 		};
 
 		dispatch(actions.setInfo(info));

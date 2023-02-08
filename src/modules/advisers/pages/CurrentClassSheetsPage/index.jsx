@@ -31,10 +31,11 @@ const CurrentClassSheetsPage = () => {
 		if (isSuccess(res)) setData(res.data);
 	};
 
-	const handleSetCurrent = () => {
+	const handleSetCurrent = (classData) => {
 		const info = {
 			academic: data?.academic,
 			semester: data?.semester,
+			...classData,
 		};
 
 		dispatch(actions.setInfo(info));

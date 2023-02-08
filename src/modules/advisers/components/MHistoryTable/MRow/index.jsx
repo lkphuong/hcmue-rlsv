@@ -28,6 +28,7 @@ export const MRow = ({ data }) => {
 		const info = {
 			academic: data?.academic,
 			semester: data?.semester,
+			classData: data,
 		};
 
 		dispatch(actions.setInfo(info));

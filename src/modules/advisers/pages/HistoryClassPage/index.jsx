@@ -14,7 +14,10 @@ import { ListStudentsTable, MClassFilter, MSearch } from '_modules/advisers/comp
 
 const HistoryClassPage = () => {
 	//#region Data
-	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
+	const { academic, semester, classData } = useSelector(
+		(state) => state.currentInfo,
+		shallowEqual
+	);
 	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const { class_id } = useParams();
@@ -86,7 +89,7 @@ const HistoryClassPage = () => {
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						Lớp
+						Lớp {classData?.name} - {classData?.code}
 					</Typography>
 				</Paper>
 			</Box>

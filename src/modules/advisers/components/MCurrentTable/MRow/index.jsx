@@ -18,13 +18,14 @@ export const MRow = ({ data, onSetCurrent }) => {
 	//#endregion
 
 	//#region Event
+	const onClick = () => onSetCurrent({ classData: data });
 	//#endregion
 
 	//#region Render
 	return (
 		<TableRow>
 			<TableCell align='center'>
-				<CLink underline='hover' to={`${data?.id}`} onClick={onSetCurrent}>
+				<CLink underline='hover' to={`${data?.id}`} onClick={onClick}>
 					{data?.name + ' - ' + data?.code}
 				</CLink>
 			</TableCell>

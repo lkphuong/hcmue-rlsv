@@ -5,6 +5,7 @@ import { Chip, TableCell, TableRow, Link } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
 export const Row = ({ data, index, onSetCurrent }) => {
+	//#region Data
 	const status = useMemo(
 		() =>
 			data?.status?.toString() === 'true' ? (
@@ -14,7 +15,13 @@ export const Row = ({ data, index, onSetCurrent }) => {
 			),
 		[data?.status]
 	);
+	//#endregion
 
+	//#region Event
+	const onClick = () => onSetCurrent({ classData: data });
+	//#endregion
+
+	//#region Render
 	return (
 		<TableRow>
 			<TableCell align='center'>{index}</TableCell>
@@ -24,7 +31,7 @@ export const Row = ({ data, index, onSetCurrent }) => {
 					textTransform='uppercase'
 					component={RouterLink}
 					to={`${data?.id}`}
-					onClick={onSetCurrent}
+					onClick={onClick}
 				>
 					{(data?.name ?? '') + ' - ' + data?.code}
 				</Link>
@@ -32,4 +39,5 @@ export const Row = ({ data, index, onSetCurrent }) => {
 			<TableCell align='center'>{status}</TableCell>
 		</TableRow>
 	);
+	//#endregion
 };

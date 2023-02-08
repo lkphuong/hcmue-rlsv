@@ -7,6 +7,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { ROUTES } from '_constants/routes';
 
 export const Row = ({ data, index, onSetCurrent }) => {
+	//#region Data
 	const status = useMemo(
 		() =>
 			data?.status?.toString() === 'true' ? (
@@ -16,7 +17,13 @@ export const Row = ({ data, index, onSetCurrent }) => {
 			),
 		[data?.status]
 	);
+	//#endregion
 
+	//#region Event
+	const onClick = () => onSetCurrent({ classData: data });
+	//#endregion
+
+	//#region Render
 	return (
 		<TableRow>
 			<TableCell align='center'>{index}</TableCell>
@@ -26,7 +33,7 @@ export const Row = ({ data, index, onSetCurrent }) => {
 					textTransform='uppercase'
 					component={RouterLink}
 					to={`${ROUTES.DEPARTMENT.SHEETS}/${data?.id}`}
-					onClick={onSetCurrent}
+					onClick={onClick}
 				>
 					{(data?.name ?? '') + ' - ' + data?.code}
 				</Link>
@@ -34,4 +41,5 @@ export const Row = ({ data, index, onSetCurrent }) => {
 			<TableCell align='center'>{status}</TableCell>
 		</TableRow>
 	);
+	//#endregion
 };

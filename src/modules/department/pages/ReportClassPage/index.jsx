@@ -23,7 +23,10 @@ const ReportClassPage = () => {
 	//#region Data
 	const printRef = useRef();
 
-	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
+	const { academic, semester, classData } = useSelector(
+		(state) => state.currentInfo,
+		shallowEqual
+	);
 	const { fullname: departmentName, department_id } = useSelector(
 		(state) => state.auth.profile,
 		shallowEqual
@@ -132,7 +135,7 @@ const ReportClassPage = () => {
 						alignItems='center'
 					>
 						<Typography fontSize={20} fontWeight={600}>
-							{departmentName}
+							{departmentName} - Lớp {classData?.name} - {classData?.code}
 						</Typography>
 						<Button
 							disabled={listData.length === 0}

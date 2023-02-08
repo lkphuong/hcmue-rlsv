@@ -56,10 +56,11 @@ const HistorySheetsPage = () => {
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
 
-	const handleSetCurrent = () => {
+	const handleSetCurrent = (classData) => {
 		const info = {
 			academic: data?.data?.academic,
 			semester: data?.data?.semester,
+			...classData,
 		};
 
 		dispatch(actions.setInfo(info));

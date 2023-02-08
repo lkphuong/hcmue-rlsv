@@ -9,6 +9,7 @@ const MRow = ({ data, index, onSetCurrent }) => {
 	//#endregion
 
 	//#region Event
+	const onClick = () => onSetCurrent({ classData: data });
 	//#endregion
 
 	//#region Render
@@ -16,7 +17,7 @@ const MRow = ({ data, index, onSetCurrent }) => {
 		<TableRow className='statistic-row'>
 			<TableCell align='center'>{index + 1}</TableCell>
 			<TableCell align='center' sx={{ fontWeight: 600 }}>
-				<CLink underline='hover' to={`${data?.id}`} onClick={onSetCurrent}>
+				<CLink underline='hover' to={`${data?.id}`} onClick={onClick}>
 					{(data?.name ?? '') + ' - ' + data?.code}
 				</CLink>
 			</TableCell>

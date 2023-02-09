@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import { Box, Typography } from '@mui/material';
-
-import dayjs from 'dayjs';
 
 import { CPagination } from '_controls/';
 
@@ -10,11 +9,9 @@ import { ListDepartments, MFilter } from '_modules/sheets/components';
 
 import { getAdminSheets } from '_api/sheets.api';
 
-import { isSuccess, cleanObjValue } from '_func/';
-import { useDispatch } from 'react-redux';
-import { actions } from '_slices/currentInfo.slice';
+import { isSuccess, cleanObjValue, formatTimeSemester } from '_func/';
 
-const formatDate = (date) => dayjs(date).format('DD/MM/YYYY');
+import { actions } from '_slices/currentInfo.slice';
 
 const SheetsManagementPage = () => {
 	//#region Data
@@ -80,9 +77,9 @@ const SheetsManagementPage = () => {
 						textAlign='center'
 						mb={4}
 					>
-						{`Học kỳ ${data?.data?.semester?.name} (${formatDate(
+						{`${data?.data?.semester?.name} (${formatTimeSemester(
 							data?.data?.semester?.start
-						)} - ${formatDate(data?.data?.semester?.end)}) - Năm học ${
+						)} - ${formatTimeSemester(data?.data?.semester?.end)}) - Năm học ${
 							data?.data?.academic?.name
 						}`}
 					</Typography>

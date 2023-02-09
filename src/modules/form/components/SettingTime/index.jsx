@@ -200,7 +200,7 @@ const SettingTime = memo(() => {
 						</Grid>
 						<Grid item xs={12} md={6} lg={3}>
 							<Typography mb={0.8} fontWeight={500}>
-								Thời gian bắt đầu
+								Thời gian bắt đầu chấm điểm
 							</Typography>
 							<Controller
 								control={control}
@@ -229,7 +229,7 @@ const SettingTime = memo(() => {
 
 						<Grid item xs={12} md={6} lg={3}>
 							<Typography mb={0.8} fontWeight={500}>
-								Thời gian kết thúc
+								Thời gian kết thúc chấm điểm
 							</Typography>
 							<Controller
 								control={control}

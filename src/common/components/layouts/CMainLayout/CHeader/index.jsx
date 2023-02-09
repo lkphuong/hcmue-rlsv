@@ -1,5 +1,5 @@
 import { useTheme } from '@mui/material/styles';
-import { Avatar, Box, ButtonBase } from '@mui/material';
+import { Avatar, Box, ButtonBase, Typography } from '@mui/material';
 import { List } from '@mui/icons-material';
 
 import PropTypes from 'prop-types';
@@ -12,7 +12,6 @@ const Header = ({ handleLeftDrawerToggle }) => {
 
 	return (
 		<>
-			{/* logo & toggler button */}
 			<Box
 				sx={{
 					width: 228,
@@ -51,11 +50,28 @@ const Header = ({ handleLeftDrawerToggle }) => {
 				</ButtonBase>
 			</Box>
 
-			{/* header search */}
-			<Box sx={{ flexGrow: 1 }} />
-			<Box sx={{ flexGrow: 1 }} />
+			<Box sx={{ flexGrow: 1 }} textAlign='center'>
+				<Typography
+					fontWeight={700}
+					textAlign='center'
+					color='#2A61A2'
+					fontSize='1.15rem'
+					lineHeight={1.5}
+					letterSpacing={2}
+				>
+					CHUYÊN TRANG ĐÁNH GIÁ ĐIỂM RÈN LUYỆN SINH VIÊN
+				</Typography>
+				<Typography
+					textAlign='center'
+					color='#2A61A2'
+					fontSize='1.1rem'
+					lineHeight={1.4}
+					letterSpacing={2}
+				>
+					TRƯỜNG ĐẠI HỌC SƯ PHẠM THÀNH PHỐ HỒ CHÍ MINH
+				</Typography>
+			</Box>
 
-			{/* notification & profile */}
 			<CProfile />
 		</>
 	);

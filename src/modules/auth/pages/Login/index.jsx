@@ -10,6 +10,7 @@ import {
 	Radio,
 	RadioGroup,
 	Stack,
+	Typography,
 } from '@mui/material';
 
 import { useResolver } from '_hooks/';
@@ -34,8 +35,8 @@ import './index.scss';
 const ROLES = [
 	{ id: 1, value: 1, label: 'Sinh viên/Cán bộ lớp' },
 	{ id: 2, value: 2, label: 'Cố vấn học tập' },
-	{ id: 3, value: 3, label: 'Khoa' },
-	{ id: 4, value: 4, label: 'Admin' },
+	{ id: 3, value: 3, label: 'Quản lý cấp Khoa' },
+	{ id: 4, value: 4, label: 'Quản lý cấp Trường' },
 ];
 
 export const LoginPage = () => {
@@ -81,6 +82,26 @@ export const LoginPage = () => {
 	//#region Render
 	return (
 		<Box className='login-background'>
+			<Box
+				position='absolute'
+				top='15%'
+				left='50%'
+				sx={{ transform: 'translate(-50% , -15%)' }}
+			>
+				<Typography
+					fontWeight={700}
+					textAlign='center'
+					color='#2A61A2'
+					fontSize='1.25rem'
+					lineHeight={1.6}
+				>
+					CHUYÊN TRANG ĐÁNH GIÁ ĐIỂM RÈN LUYỆN SINH VIÊN
+				</Typography>
+				<Typography textAlign='center' color='#2A61A2' fontSize='1.2rem' lineHeight={1.6}>
+					TRƯỜNG ĐẠI HỌC SƯ PHẠM THÀNH PHỐ HỒ CHÍ MINH
+				</Typography>
+			</Box>
+
 			<Box
 				position='absolute'
 				top='50%'

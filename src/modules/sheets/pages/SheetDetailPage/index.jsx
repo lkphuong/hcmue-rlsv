@@ -92,7 +92,7 @@ const SheetDetailPage = () => {
 	const handlePrint = useReactToPrint({
 		content: () => ref.current,
 		onBeforePrint: () => (document.title = data?.user?.std_code),
-		onAfterPrint: () => (document.title = 'Rèn luyện SV'),
+		onAfterPrint: () => (document.title = 'Rèn luyện sinh viên'),
 	});
 	//#endregion
 

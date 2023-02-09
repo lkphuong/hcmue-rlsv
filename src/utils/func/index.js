@@ -175,3 +175,47 @@ export const checkValidFile = (file) => {
 
 	return true;
 };
+
+export const convertMarkValues = (values) => {
+	const titles = {};
+
+	Object.keys(values).forEach((title) => {
+		const id = title.split('_')[1];
+
+		const key = 'title_' + id;
+
+		if (!titles[key]) {
+			titles[key] = [values[title]];
+		} else {
+			titles[key].push(values[title]);
+		}
+	});
+
+	const marks = Object.values(titles).flat();
+
+	const _data = marks.map((e) => {
+		const obj = { ...e, item_id: Number(e.item_id) };
+		if (obj?.files) {
+			const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
+			return { ...obj, files };
+		} else return obj;
+	});
+
+	return _data;
+};
+
+export const validateMark = (item, value) => {
+	if (item?.control === 0) {
+		if (item?.required && !value && value !== 0) {
+			return false;
+		}
+		if (item?.category === 1) {
+			if (value < item?.from_mark || value > item?.to_mark) return false;
+		} else if (item?.category === 2) {
+			if (value % item?.mark !== 0) return false;
+		}
+	} else if (item?.control === 2) {
+	}
+
+	return true;
+};

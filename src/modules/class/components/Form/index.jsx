@@ -18,7 +18,7 @@ import LoadingButton from '@mui/lab/LoadingButton';
 
 import { alert } from '_func/alert';
 
-import { isSuccess } from '_func/';
+import { isSuccess, convertMarkValues } from '_func/';
 
 import { updateClassSheets } from '_api/sheets.api';
 
@@ -45,17 +45,7 @@ export const Form = ({ data }) => {
 
 	//#region Event
 	const onSubmit = async (values) => {
-		const marks = Object.values(values).flat();
-
-		const _data = marks.map((e) => {
-			const obj = { ...e, item_id: Number(e.item_id) };
-
-			if (obj?.files) {
-				const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
-
-				return { ...obj, files };
-			} else return obj;
-		});
+		const _data = convertMarkValues(values);
 
 		const body = {
 			role_id,

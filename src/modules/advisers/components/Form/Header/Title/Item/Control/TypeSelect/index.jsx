@@ -4,13 +4,13 @@ import { CAutocomplete } from '_controls/';
 
 import { Controller, useController, useFormContext } from 'react-hook-form';
 
-const TypeSelect = ({ initialMark, currentMark, options, required, available, titleId, index }) => {
+const TypeSelect = ({ initialMark, currentMark, options, required, available, titleId, id }) => {
 	//#region Data
 	const { control } = useFormContext();
 
 	const {
 		field: { onChange: changeOption },
-	} = useController({ control, name: `title_${titleId}.${index}.option_id` });
+	} = useController({ control, name: `title_${titleId}_${id}.option_id` });
 	//#endregion
 
 	//#region Event
@@ -39,7 +39,7 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}[${index}].adviser_mark_level`}
+						name={`title_${titleId}_${id}.adviser_mark_level`}
 						defaultValue={initialMark}
 						render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
 							<CAutocomplete

@@ -59,12 +59,12 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 
 			<TableCell sx={{ display: 'none' }}>
 				<Controller
-					name={`title_${titleId}.${index}.header_id`}
+					name={`title_${titleId}_${data?.id}.header_id`}
 					defaultValue={headerId}
 					render={({ field }) => <input type='hidden' {...field} />}
 				/>
 				<Controller
-					name={`title_${titleId}.${index}.item_id`}
+					name={`title_${titleId}_${data?.id}.item_id`}
 					defaultValue={Number(data?.id)}
 					render={({ field }) => <input type='hidden' {...field} />}
 				/>
@@ -80,7 +80,7 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 
 			<CFileModal
 				ref={fileRef}
-				name={`title_${titleId}.${index}.files`}
+				name={`title_${titleId}_${data?.id}.files`}
 				itemData={itemsMark[indexMark]}
 			/>
 		</TableRow>

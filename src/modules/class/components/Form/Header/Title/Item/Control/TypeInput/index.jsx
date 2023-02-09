@@ -5,16 +5,16 @@ import { TableCell, Typography } from '@mui/material';
 import { CInput } from '_controls/';
 
 const TypeInput = ({
-	min,
-	max,
-	mark,
-	category,
-	unit,
-	initialMark,
-	currentMark,
-	titleId,
-	index,
 	available,
+	category,
+	currentMark,
+	id,
+	initialMark,
+	mark,
+	max,
+	min,
+	titleId,
+	unit,
 }) => {
 	//#region Data
 	const { control, trigger } = useFormContext();
@@ -24,11 +24,11 @@ const TypeInput = ({
 	const handleChange = (CallbackFunc) => (e) => {
 		if (e.target.value === '') {
 			CallbackFunc('');
-			trigger(`title_${titleId}[${index}].class_mark_level`);
+			trigger(`title_${titleId}_${id}.class_mark_level`);
 			return;
 		}
 		CallbackFunc(Number(e.target.value));
-		trigger(`title_${titleId}[${index}].class_mark_level`);
+		trigger(`title_${titleId}_${id}.class_mark_level`);
 	};
 	//#endregion
 
@@ -49,7 +49,7 @@ const TypeInput = ({
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}[${index}].class_mark_level`}
+						name={`title_${titleId}_${id}.class_mark_level`}
 						defaultValue={initialMark}
 						render={({
 							field: { name, onChange, ref, value },
@@ -58,7 +58,6 @@ const TypeInput = ({
 							<CInput
 								fullWidth
 								type='number'
-								// inputProps={{ min, max, style: { textAlign: 'center' } }}
 								name={name}
 								inputRef={ref}
 								value={value}

@@ -2,7 +2,7 @@ import { Checkbox, TableCell, Typography } from '@mui/material';
 
 import { Controller, useFormContext } from 'react-hook-form';
 
-const TypeCheckbox = ({ mark, unit, initialMark, currentMark, available, titleId, index }) => {
+const TypeCheckbox = ({ mark, unit, initialMark, currentMark, available, titleId, id }) => {
 	//#region Data
 	const { control } = useFormContext();
 	//#endregion
@@ -28,7 +28,7 @@ const TypeCheckbox = ({ mark, unit, initialMark, currentMark, available, titleId
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}[${index}].personal_mark_level`}
+						name={`title_${titleId}_${id}.personal_mark_level`}
 						defaultValue={initialMark}
 						render={({ field: { name, ref, value, onChange } }) => (
 							<Checkbox

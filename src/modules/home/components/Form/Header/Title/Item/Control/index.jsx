@@ -52,8 +52,8 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 	}, [currentMark?.option_id]);
 
 	useEffect(() => {
-		resetField(`title_${titleId}[${index}].personal_mark_level`, { defaultValue: initialMark });
-		resetField(`title_${titleId}[${index}].option_id`, { defaultValue: optionId });
+		resetField(`title_${titleId}_${id}.personal_mark_level`, { defaultValue: initialMark });
+		resetField(`title_${titleId}_${id}.option_id`, { defaultValue: optionId });
 	}, [initialMark, titleId, index, optionId]);
 
 	const renderControl = useMemo(() => {
@@ -64,11 +64,10 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 					category={category}
 					currentMark={currentMark}
 					id={id}
-					index={index}
 					initialMark={initialMark}
 					mark={mark}
-					min={from_mark}
 					max={to_mark}
+					min={from_mark}
 					titleId={titleId}
 					unit={unit}
 				/>
@@ -78,7 +77,6 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 					available={available}
 					currentMark={currentMark}
 					id={id}
-					index={index}
 					initialMark={initialMark}
 					mark={mark}
 					titleId={titleId}
@@ -89,9 +87,8 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 				<TypeSelect
 					available={available}
 					currentMark={currentMark}
-					index={index}
+					id={id}
 					initialMark={initialMark}
-					item_id={id}
 					options={options || []}
 					required={required}
 					titleId={titleId}

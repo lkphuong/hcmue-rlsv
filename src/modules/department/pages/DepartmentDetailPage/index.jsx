@@ -18,9 +18,9 @@ import { actions } from '_slices/mark.slice';
 
 import { CLoadingSpinner, CPrintComponent } from '_others/';
 
-import { useFocusError } from '_hooks/';
+import { useFocusError, useResolver } from '_hooks/';
 
-// import { validationSchemaForm } from '_modules/department/form';
+import { validationSchemaForm } from '_modules/department/form';
 
 export const DepartmentMarksContext = createContext();
 
@@ -35,9 +35,9 @@ const DepartmentDetailPage = () => {
 	const [data, setData] = useState(null);
 	const [itemsMark, setItemsMark] = useState([]);
 
-	// const resolver = useResolver(validationSchemaForm(data?.headers));
+	const resolver = useResolver(validationSchemaForm(data?.headers));
 
-	const methods = useForm({ mode: 'all', shouldFocusError: true });
+	const methods = useForm({ resolver, mode: 'all', shouldFocusError: true });
 	const {
 		formState: { errors, isSubmitting },
 		setFocus,

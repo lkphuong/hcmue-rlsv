@@ -5,71 +5,30 @@ import { TableCell, Typography } from '@mui/material';
 import { CInput } from '_controls/';
 
 const TypeInput = ({
-	min,
-	max,
-	mark,
-	category,
-	unit,
-	initialMark,
-	currentMark,
-	titleId,
-	index,
 	available,
+	category,
+	currentMark,
+	id,
+	initialMark,
+	mark,
+	max,
+	min,
+	titleId,
+	unit,
 }) => {
 	//#region Data
 	const { control, trigger } = useFormContext();
 	//#endregion
 
 	//#region Event
-	// const onChangeRange = (item_id, min, max) => (e) => {
-	// 	if (e.target.value === '') {
-	// 		setScore('');
-	// 		return;
-	// 	} else {
-	// 		let value = Number(e.target.value);
-	// 		if (isNaN(value)) value = 0;
-	// 		if (value > max) value = max;
-	// 		if (value < min) value = min;
-
-	// 		const markObj = {
-	// 			item_id: Number(item_id),
-	// 			personal_mark_level: value,
-	// 			header_id,
-	// 		};
-
-	// 		setScore(value);
-	// 		dispatch(actions.updateMarks(markObj));
-	// 	}
-	// };
-
-	// const onChangeMark = (item_id, mark) => (e) => {
-	// 	if (e.target.value === '') {
-	// 		setScore('');
-	// 		return;
-	// 	} else {
-	// 		let value = Number(e.target.value);
-
-	// 		if (isNaN(value)) value = 0;
-
-	// 		const markObj = {
-	// 			item_id: Number(item_id),
-	// 			personal_mark_level: value,
-	// 			header_id,
-	// 		};
-
-	// 		setScore(value);
-	// 		dispatch(actions.updateMarks(markObj));
-	// 	}
-	// };
-
 	const handleChange = (CallbackFunc) => (e) => {
 		if (e.target.value === '') {
 			CallbackFunc('');
-			trigger(`title_${titleId}[${index}].personal_mark_level`);
+			trigger(`title_${titleId}_${id}.personal_mark_level`);
 			return;
 		}
 		CallbackFunc(Number(e.target.value));
-		trigger(`title_${titleId}[${index}].personal_mark_level`);
+		trigger(`title_${titleId}_${id}.personal_mark_level`);
 	};
 	//#endregion
 
@@ -87,7 +46,7 @@ const TypeInput = ({
 				{available ? (
 					<Controller
 						control={control}
-						name={`title_${titleId}[${index}].personal_mark_level`}
+						name={`title_${titleId}_${id}.personal_mark_level`}
 						defaultValue={initialMark}
 						render={({
 							field: { name, onChange, ref, value },
@@ -96,7 +55,6 @@ const TypeInput = ({
 							<CInput
 								fullWidth
 								type='number'
-								// inputProps={{ min, max, style: { textAlign: 'center' } }}
 								name={name}
 								inputRef={ref}
 								value={value}
@@ -124,27 +82,3 @@ const TypeInput = ({
 };
 
 export default TypeInput;
-
-// <TableCell align='center'>
-// 	{available ? (
-// 		category === 1 ? (
-// 			<CInput
-// 				fullWidth
-// 				type='number'
-// 				inputProps={{ min, max, style: { textAlign: 'center' } }}
-// 				onChange={onChangeRange(id, min, max)}
-// 				value={score}
-// 			/>
-// 		) : (
-// 			<CInput
-// 				fullWidth
-// 				type='number'
-// 				inputProps={{ step: mark, style: { textAlign: 'center' } }}
-// 				onChange={onChangeMark(id, mark)}
-// 				value={score}
-// 			/>
-// 		)
-// 	) : (
-// 		<Typography>{currentMark.personal_mark_level}</Typography>
-// 	)}
-// </TableCell>;

@@ -13,4 +13,6 @@ export enum ErrorMessage {
   INVALID_EXTENSION_ERROR = `[File] cố vấn học tập phải là file excel (extension: '.xlsx')`,
 
   ADVISER_OPERATOR_ERROR = 'Lưu thông tin [cố vấn học tập] thất bại.',
+
+  FILE_EXCEL_NO_CONTENT = 'File không có dữ liệu.',
 }

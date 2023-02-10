@@ -8,7 +8,10 @@ import * as xlsx from 'xlsx';
 import * as path from 'path';
 import * as md5 from 'md5';
 
-import { generateImportSuccessResponse } from '../utils';
+import {
+  generateFailedResponse,
+  generateImportSuccessResponse,
+} from '../utils';
 
 import { validateAcademic, validateFile } from '../validations';
 
@@ -101,6 +104,10 @@ export const generateImportAdviser = async (
     const data = await readDataFromFile(path.join(root, file.fileName));
     //#endregion
 
+    if (data.advisers.length === 0 || data.classes.length === 0) {
+      throw generateFailedResponse(req, ErrorMessage.FILE_EXCEL_NO_CONTENT);
+    }
+
     //#region Get role adviser
     const role_adviser = await role_service.getRoleByCode(RoleCode.ADVISER);
     //#endregion
@@ -151,17 +158,15 @@ export const generateImportAdviser = async (
         }
       }
       //#endregion
+      throw new HandlerException(
+        DATABASE_EXIT_CODE.OPERATOR_ERROR,
+        req.method,
+        req.url,
+        ErrorMessage.ADVISER_OPERATOR_ERROR,
+        HttpStatus.EXPECTATION_FAILED,
+      );
     }
-
-    throw new HandlerException(
-      DATABASE_EXIT_CODE.OPERATOR_ERROR,
-      req.method,
-      req.url,
-      ErrorMessage.ADVISER_OPERATOR_ERROR,
-      HttpStatus.EXPECTATION_FAILED,
-    );
   } catch (err) {
-    console.log(err);
     // Rollback transaction
     await query_runner.rollbackTransaction();
 

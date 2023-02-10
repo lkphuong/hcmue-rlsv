@@ -154,11 +154,7 @@ export const validateTime = async (form_service: FormService, req: Request) => {
       VALIDATION_EXIT_CODE.NO_MATCHING,
       req.method,
       req.url,
-      sprintf(
-        ErrorMessage.IMPORT_USERS_NO_MATCHING_TIME_ERROR,
-        form.start,
-        form.end,
-      ),
+      sprintf(ErrorMessage.IMPORT_USERS_NO_MATCHING_TIME_ERROR),
       HttpStatus.BAD_REQUEST,
     );
   }

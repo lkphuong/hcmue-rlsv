@@ -10,6 +10,7 @@ export const APP_PREFIX = 'hcmue';
 export const UPLOAD_DEST = 'uploads';
 
 export const LOG_PATH = './logs';
+export const RESOURCE_FOLDER = '../services/export-service/resources/';
 export const LOG_RETENTION_DURATION = 31;
 
 export const SPECIAL_ALPHABEL_REGEX = /[ `!@#$%^&*()+=\[\]{};':"\\|,.<>\/?~]/;

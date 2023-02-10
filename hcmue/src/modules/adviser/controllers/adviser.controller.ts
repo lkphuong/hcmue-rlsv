@@ -166,10 +166,11 @@ export class AdviserController {
    * @return status ? true : false
    * @page advisers
    */
-  @HttpCode(HttpStatus.OK)
+
   @Post('import')
   @UseGuards(JwtAuthGuard)
   @Roles(Role.ADMIN)
+  @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async importAdvisers(@Body() params: ImportAdviserDto, @Req() req: Request) {
     try {
@@ -191,7 +192,7 @@ export class AdviserController {
 
       const root = this._configurationService.get(Configuration.MULTER_DEST);
 
-      const data = generateImportAdviser(
+      const data = await generateImportAdviser(
         params,
         root,
         this._academicYearService,
@@ -209,7 +210,6 @@ export class AdviserController {
       if (data instanceof HttpException) throw data;
       else return data;
     } catch (err) {
-      console.log(err);
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
       if (err instanceof HttpException) throw err;

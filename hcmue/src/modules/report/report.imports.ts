@@ -1,4 +1,5 @@
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { HttpModule } from '@nestjs/axios';
 
 import { CacheClassEntity } from '../../entities/cache_class.entity';
 
@@ -17,6 +18,7 @@ import { UserModule } from '../user/user.module';
 import { CacheClassService } from './services/cache-class.service';
 
 export const modules = [
+  HttpModule,
   SharedModule,
   TypeOrmModule.forFeature([CacheClassEntity]),
   LogModule,

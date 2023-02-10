@@ -20,6 +20,7 @@ import { Methods } from '../../../constants/enums/method.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
+import { ReportResponse } from '../interfaces/sheet_response.interface';
 
 @Injectable()
 export class SheetService {
@@ -78,7 +79,6 @@ export class SheetService {
     academic_id: number,
     semester_id: number,
     status: number,
-    role: number,
     user_ids?: string[],
   ): Promise<SheetEntity[] | null> {
     try {
@@ -129,13 +129,6 @@ export class SheetService {
         );
       }
 
-      // if (role) {
-      //   const sheet_status = this.generateStatus(role);
-      //   conditions = conditions.andWhere('sheet.status >= :status', {
-      //     status: sheet_status,
-      //   });
-      // }
-
       const sheets = await conditions
         .orderBy('sheet.created_at', 'DESC')
         .getMany();
@@ -160,7 +153,6 @@ export class SheetService {
     academic_id: number,
     semester_id: number,
     status: number,
-    role: number,
     user_ids?: string[],
   ): Promise<SheetEntity[] | null> {
     try {
@@ -435,6 +427,7 @@ export class SheetService {
         .addOrderBy('item.id', 'ASC')
         .addOrderBy('options.id', 'ASC')
         .getOne();
+
       return sheet || null;
     } catch (e) {
       this._logger.writeLog(
@@ -447,13 +440,71 @@ export class SheetService {
     }
   }
 
+  async getSheetsReport(
+    academic_id: number,
+    semester_id: number,
+    department_id?: number,
+    class_id?: number,
+  ): Promise<ReportResponse[] | null> {
+    try {
+      let conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .select(
+          `user.std_code, 
+          user.fullname, 
+          user.birthday, 
+          sheet.sum_of_personal_marks, 
+          sheet.sum_of_class_marks, 
+          sheet.sum_of_adviser_marks, 
+          sheet.sum_of_department_marks`,
+        )
+        .innerJoin(
+          UserEntity,
+          'user',
+          `user.std_code = sheet.std_code 
+          AND user.deleted = 0 
+          AND sheet.academic_id = user.academic_id 
+          AND sheet.semester_id = user.semester_id`,
+        )
+        .where('sheet.academic_id = :academic_id', { academic_id })
+        .andWhere('sheet.semester_id = :semester_id', { semester_id })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      if (class_id && class_id != null) {
+        conditions = conditions.andWhere('sheet.class_id = :class_id', {
+          class_id,
+        });
+      }
+
+      if (department_id && department_id != 0) {
+        conditions = conditions.andWhere(
+          'sheet.department_id = :department_id',
+          {
+            department_id,
+          },
+        );
+      }
+
+      const results = await conditions.getRawMany<ReportResponse>();
+
+      return results || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.getSheetsReport()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async countSheets(
     academic_id: number,
     class_id: number,
     department_id: number,
     semester_id: number,
     status: SheetStatus,
-    role?: number,
     user_ids?: string[],
   ): Promise<number> {
     try {
@@ -486,14 +537,8 @@ export class SheetService {
         );
       }
 
-      // if (role) {
-      //   const sheet_status = this.generateStatus(role);
-      //   conditions = conditions.andWhere('sheet.status >= :status', {
-      //     status: sheet_status,
-      //   });
-      // }
+      const count = await conditions.getRawOne();
 
-      const { count } = await conditions.getRawOne();
       return count;
     } catch (e) {
       this._logger.writeLog(

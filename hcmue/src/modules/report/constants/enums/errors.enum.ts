@@ -8,4 +8,6 @@ export enum ErrorMessage {
   SEMESTER_NOT_FOUND_ERROR = '[Học kì] không tồn tại (id: %s)',
 
   ROLE_INVALID_ERROR = 'Bạn không thể xem [thống kế phiếu] của khoa khác (khoa: %s).',
+
+  EXPORT_FILE_OPERATOR = 'Export file thất bại.',
 }

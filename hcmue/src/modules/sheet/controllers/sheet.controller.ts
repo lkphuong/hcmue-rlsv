@@ -445,10 +445,6 @@ export class SheetController {
       let user_ids: string[] = null;
       //#endregion
 
-      //#region Get Jwt Payload
-      const { role } = req.user as JwtPayload;
-      //#endregion
-
       //#region Validation
       //#region Validate class
       const $class = validateClass(class_id, this._classService, req);
@@ -500,7 +496,6 @@ export class SheetController {
         academic_id,
         semester_id,
         status,
-        role,
         user_ids,
       );
       //#endregion
@@ -633,7 +628,6 @@ export class SheetController {
           department_id,
           semester_id,
           status,
-          null,
           user_ids,
         );
 
@@ -651,7 +645,6 @@ export class SheetController {
         academic_id,
         semester_id,
         status,
-        null,
         user_ids,
       );
       //#endregion
@@ -1202,7 +1195,6 @@ export class SheetController {
           department_id,
           semester_id,
           status,
-          role,
           user_ids,
         );
 
@@ -1220,7 +1212,6 @@ export class SheetController {
         academic_id,
         semester_id,
         status,
-        role,
         user_ids,
       );
       //#endregion

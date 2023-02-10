@@ -46,6 +46,16 @@ export interface ClassSheetsResponse extends MarkResponse {
   status: number;
 }
 
+export interface ReportResponse extends MarkResponse {
+  std_code: string;
+  fullname: string;
+  birthday: string;
+  sum_of_personal_marks: number;
+  sum_of_class_marks: number;
+  sum_of_adviser_marks: number;
+  sum_of_department_marks: number;
+}
+
 export interface ItemsResponse {
   id: number;
   item: ItemResponse;

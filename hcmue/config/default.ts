@@ -47,6 +47,11 @@ export default {
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
   ],
 
-  STATIC_PATH: '../../../static',
+  STATIC_PATH: './static',
   MULTER_DEST: './static/uploads',
+  RESOURCE_FOLDER: '../services/export-service/resources/',
+
+  URL_EXPORT_TEMPLATE_1: 'http://localhost:3001/export/template1',
+  URL_EXPORT_TEMPLATE_2: 'http://localhost:3001/export/template2',
+  URL_EXPORT_TEMPLATE_3: 'http://localhost:3001/export/template3',
 };

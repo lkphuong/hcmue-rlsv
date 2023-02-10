@@ -1,7 +1,10 @@
+import { removeDuplicates } from '../../../utils';
+
 import { ClassEntity } from '../../../entities/class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
 import { EvaluationEntity } from '../../../entities/evaluation.entity';
 import { FormEntity } from '../../../entities/form.entity';
+import { FileEntity } from '../../../entities/file.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 import { AcademicYearEntity } from '../../../entities/academic_year.entity';
@@ -9,6 +12,8 @@ import { SemesterEntity } from '../../../entities/semester.entity';
 
 import { FilesService } from '../../file/services/files.service';
 import { SheetService } from '../services/sheet.service';
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
+import { SemesterService } from '../../semester/services/semester.service';
 
 import { GetClassStatusAdviserHistoryDto } from '../dtos/get_classes_status_adviser_history.dto';
 
@@ -34,10 +39,6 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
 import { PDF_EXTENSION } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
-import { AcademicYearService } from '../../academic-year/services/academic_year.service';
-import { SemesterService } from '../../semester/services/semester.service';
-import { removeDuplicates } from '../../../utils';
-import { FileEntity } from '../../../entities/file.entity';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
   if (sheets && sheets.length > 0) {

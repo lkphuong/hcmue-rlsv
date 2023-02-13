@@ -219,3 +219,5 @@ export const validateMark = (item, value) => {
 
 	return true;
 };
+
+export const convertToASCIIChar = (num) => String.fromCharCode(num);

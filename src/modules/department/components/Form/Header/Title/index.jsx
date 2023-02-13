@@ -2,9 +2,11 @@ import { memo } from 'react';
 
 import { TableCell, TableRow, Typography } from '@mui/material';
 
+import { convertToASCIIChar } from '_func/';
+
 import Item from './Item';
 
-const Title = memo(({ data, headerId }) => {
+const Title = memo(({ data, headerId, index }) => {
 	//#region Data
 	//#endregion
 
@@ -15,7 +17,7 @@ const Title = memo(({ data, headerId }) => {
 	return (
 		<>
 			<TableRow>
-				<TableCell />
+				<TableCell align='center'>{convertToASCIIChar(index + 65)}</TableCell>
 				<TableCell colSpan='100%'>
 					<Typography fontWeight={500} fontSize={17}>
 						{data?.name}

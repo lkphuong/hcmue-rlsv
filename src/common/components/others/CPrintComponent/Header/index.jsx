@@ -32,7 +32,8 @@ const Header = memo(({ data, index }) => {
 				</TableCell>
 			</TableRow>
 
-			{data?.titles?.length > 0 && data.titles.map((e, i) => <Title key={i} data={e} />)}
+			{data?.titles?.length > 0 &&
+				data.titles.map((e, i) => <Title key={i} data={e} index={i} />)}
 		</>
 	);
 	//#endregion

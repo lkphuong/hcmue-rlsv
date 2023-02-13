@@ -158,8 +158,8 @@ export const exportWordTemplateAdmin = async (
         DATABASE_EXIT_CODE.NO_CONTENT,
         req.method,
         req.url,
-        ErrorMessage.NO_CONTENT,
-        HttpStatus.NOT_FOUND,
+        ErrorMessage.EXPORT_FILE_OPERATOR,
+        HttpStatus.EXPECTATION_FAILED,
       );
       //#endregion
     }
@@ -294,8 +294,8 @@ export const exportWordTemplateDepartment = async (
         DATABASE_EXIT_CODE.NO_CONTENT,
         req.method,
         req.url,
-        ErrorMessage.NO_CONTENT,
-        HttpStatus.NOT_FOUND,
+        ErrorMessage.EXPORT_FILE_OPERATOR,
+        HttpStatus.EXPECTATION_FAILED,
       );
       //#endregion
     }
@@ -389,8 +389,8 @@ export const exportWordTemplateClass = async (
         DATABASE_EXIT_CODE.NO_CONTENT,
         req.method,
         req.url,
-        ErrorMessage.NO_CONTENT,
-        HttpStatus.NOT_FOUND,
+        ErrorMessage.EXPORT_FILE_OPERATOR,
+        HttpStatus.EXPECTATION_FAILED,
       );
       //#endregion
     }
@@ -410,39 +410,344 @@ export const exportWordTemplateClass = async (
 
 export const exportExcelTemplateClass = async (
   params: ExportReportsDto,
+  academic_year: AcademicYearEntity,
+  department: DepartmentEntity,
+  semester: SemesterEntity,
+  cache_classes: CacheClassEntity[],
+  levels: LevelEntity[],
+  class_service: ClassService,
   sheet_service: SheetService,
   req: Request,
 ) => {
   try {
     const { academic_id, class_id, department_id, semester_id } = params;
+    const take = 0,
+      offset = 0;
 
     const sheets = await sheet_service.getSheetsReport(
+      offset,
+      take,
       academic_id,
       semester_id,
       department_id,
       class_id,
     );
 
-    if (sheets && sheets.length > 0) {
+    const payload = await generateCacheClassesResponse(
+      academic_year,
+      department,
+      semester,
+      academic_id,
+      class_id,
+      department_id,
+      semester_id,
+      cache_classes,
+      levels,
+      class_service,
+      sheet_service,
+    );
+
+    if (payload) {
+      //#region insert table ranking
+      const ranking_length = payload.sum_of_levels.length;
+      const { sum_of_std_in_classes } = payload;
+      //#region Insert total student
+
       const workbook = new exceljs.Workbook();
-      workbook.xlsx.readFile(PATH_FILE_EXCEL.TEMPLATE_1A).then(() => {
-        const worksheet = workbook.getWorksheet('Sheet1');
-        const length = sheets.length;
-        for (let i = 0; i < length; i++) {
-          const rowValues = [];
-          rowValues[2] = length - i;
-          rowValues[3] = sheets[i].std_code;
-          rowValues[4] = sheets[i].fullname;
-          rowValues[5] = sheets[i].birthday;
-          rowValues[6] = sheets[i].sum_of_personal_marks;
-          rowValues[7] = sheets[i].sum_of_class_marks;
-          rowValues[8] = sheets[i].sum_of_adviser_marks;
-          worksheet.insertRow(12, rowValues);
+
+      await workbook.xlsx.readFile(PATH_FILE_EXCEL.TEMPLATE_1A);
+
+      const worksheet = workbook.getWorksheet('Sheet1');
+
+      worksheet.getCell('E14').value = sum_of_std_in_classes + ' SV';
+      //#endregion
+
+      for (let i = ranking_length - 1; i >= 0; i--) {
+        const { name, count } = payload.sum_of_levels[i];
+        const rowValues = [];
+        rowValues[4] = name;
+        rowValues[5] = count;
+        rowValues[6] = ((count / sum_of_std_in_classes) * 100).toFixed(2) + '%';
+        worksheet.insertRow(16, rowValues);
+
+        //#region border table raking
+        const ranking_rows = ['D16', 'E16', 'F16'];
+        for (let i = 0; i < 3; i++) {
+          worksheet.getCell(`${ranking_rows[i]}`).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
         }
-        workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_1A).then(() => {
-          console.log('File is written');
-        });
-      });
+        //#endregion
+      }
+      //#endregion
+
+      const length = sheets.length,
+        rows = [];
+      for (let i = 0; i < length; i++) {
+        const row_values = [];
+        row_values[2] = i + 1;
+        row_values[3] = sheets[i].std_code;
+        row_values[4] = sheets[i].fullname;
+        row_values[5] = sheets[i].birthday;
+        row_values[6] = sheets[i].sum_of_personal_marks;
+        row_values[7] = sheets[i].sum_of_class_marks;
+        row_values[8] = sheets[i].sum_of_adviser_marks;
+        rows.push(row_values);
+      }
+      worksheet.insertRows(12, rows, 'i');
+      await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_1A);
+
+      return true;
+    } else {
+      //#region throw HandlerException
+      throw new HandlerException(
+        DATABASE_EXIT_CODE.NO_CONTENT,
+        req.method,
+        req.url,
+        ErrorMessage.EXPORT_FILE_OPERATOR,
+        HttpStatus.EXPECTATION_FAILED,
+      );
+      //#endregion
+    }
+  } catch (err) {
+    console.log('err: ', err);
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  }
+};
+
+export const exportExcelTemplateDepartment = async (
+  params: ExportReportsDto,
+  academic_year: AcademicYearEntity,
+  department: DepartmentEntity,
+  semester: SemesterEntity,
+  cache_classes: CacheClassEntity[],
+  levels: LevelEntity[],
+  class_service: ClassService,
+  sheet_service: SheetService,
+  req: Request,
+) => {
+  try {
+    const { academic_id, class_id, department_id, semester_id } = params;
+    const offset = 0,
+      take = 0;
+    const sheets = await sheet_service.getSheetsReport(
+      offset,
+      take,
+      academic_id,
+      semester_id,
+      department_id,
+    );
+
+    const payload = await generateCacheClassesResponse(
+      academic_year,
+      department,
+      semester,
+      academic_id,
+      class_id,
+      department_id,
+      semester_id,
+      cache_classes,
+      levels,
+      class_service,
+      sheet_service,
+    );
+
+    if (payload) {
+      const workbook = new exceljs.Workbook();
+      await workbook.xlsx.readFile(PATH_FILE_EXCEL.TEMPLATE_2A);
+
+      const worksheet = workbook.getWorksheet('Sheet1');
+      //#region insert table ranking
+      const ranking_length = payload.sum_of_levels.length;
+      const { sum_of_std_in_classes } = payload;
+      //#region Insert total student
+      worksheet.getCell('E13').value = sum_of_std_in_classes + ' SV';
+      //#endregion
+
+      for (let i = ranking_length - 1; i >= 0; i--) {
+        const { name, count } = payload.sum_of_levels[i];
+        const rowValues = [];
+        rowValues[4] = name;
+        rowValues[5] = count;
+        rowValues[6] = ((count / sum_of_std_in_classes) * 100).toFixed(2) + '%';
+        worksheet.insertRow(15, rowValues);
+
+        //#region border table raking
+        const ranking_rows = ['D15', 'E15', 'F15'];
+        for (let i = 0; i < 3; i++) {
+          worksheet.getCell(`${ranking_rows[i]}`).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
+        }
+        //#endregion
+      }
+      //#endregion
+      const rows = [];
+      const length = sheets.length;
+      for (let i = 0; i < length; i++) {
+        const row_values = [];
+        row_values[1] = i + 1;
+        row_values[2] = sheets[i].std_code;
+        row_values[3] = sheets[i].fullname;
+        row_values[4] = sheets[i].birthday;
+        row_values[5] = sheets[i].class;
+        row_values[6] = sheets[i].sum_of_personal_marks;
+        row_values[7] = sheets[i].sum_of_class_marks;
+        row_values[8] = sheets[i].sum_of_adviser_marks;
+        row_values[9] = sheets[i].sum_of_department_marks;
+        row_values[10] = sheets[i]?.level ?? 'Không xếp loại';
+        rows.push(row_values);
+      }
+      worksheet.insertRows(12, rows, 'i');
+      await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_2A);
+
+      return true;
+    } else {
+      //#region throw HandlerException
+      throw new HandlerException(
+        DATABASE_EXIT_CODE.NO_CONTENT,
+        req.method,
+        req.url,
+        ErrorMessage.EXPORT_FILE_OPERATOR,
+        HttpStatus.EXPECTATION_FAILED,
+      );
+      //#endregion
+    }
+  } catch (err) {
+    console.log('err: ', err);
+    if (err instanceof HttpException) return err;
+    else {
+      //#region throw HandlerException
+      return new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+      //#endregion
+    }
+  }
+};
+
+export const exportExcelTemplateAdmin = async (
+  params: ExportReportsDto,
+  academic_year: AcademicYearEntity,
+  department: DepartmentEntity,
+  semester: SemesterEntity,
+  cache_classes: CacheClassEntity[],
+  levels: LevelEntity[],
+  department_service: DepartmentService,
+  sheet_service: SheetService,
+  cache_class_service: CacheClassService,
+  req: Request,
+) => {
+  try {
+    const { academic_id, semester_id } = params;
+
+    const count_sheets = await sheet_service.countSheetsReport(
+      academic_id,
+      semester_id,
+    );
+
+    const payload = await generateCacheDepartmentsResponse(
+      academic_year,
+      department,
+      semester,
+      academic_id,
+      semester_id,
+      cache_classes,
+      levels,
+      department_service,
+      sheet_service,
+      cache_class_service,
+    );
+
+    if (payload) {
+      const workbook = new exceljs.Workbook();
+      await workbook.xlsx.readFile(PATH_FILE_EXCEL.TEMPLATE_3A);
+
+      const worksheet = workbook.getWorksheet('Sheet1');
+      //#region insert table ranking
+      const ranking_length = payload.sum_of_levels.length;
+      const { sum_of_std_in_departments } = payload;
+      //#region Insert total student
+      worksheet.getCell('E13').value = sum_of_std_in_departments + ' SV';
+      //#endregion
+
+      for (let i = ranking_length - 1; i >= 0; i--) {
+        const { name, count } = payload.sum_of_levels[i];
+        const rowValues = [];
+        rowValues[4] = name;
+        rowValues[5] = count;
+        rowValues[6] =
+          ((count / sum_of_std_in_departments) * 100).toFixed(2) + '%';
+        worksheet.insertRow(15, rowValues);
+
+        //#region border table raking
+        const ranking_rows = ['D15', 'E15', 'F15'];
+        for (let i = 0; i < 3; i++) {
+          worksheet.getCell(`${ranking_rows[i]}`).border = {
+            top: { style: 'thin' },
+            left: { style: 'thin' },
+            bottom: { style: 'thin' },
+            right: { style: 'thin' },
+          };
+        }
+        //#endregion
+      }
+      //#endregion
+      const pages = Math.ceil(count_sheets / 1000);
+      for (let i = 0; i < pages; i++) {
+        const sheets = await sheet_service.getSheetsReport(
+          i * 1000,
+          1000,
+          academic_id,
+          semester_id,
+        );
+        const rows = [];
+        const lenth = sheets.length;
+        for (let i = 0; i < lenth; i++) {
+          const row_values = [];
+          row_values[2] = i + 1;
+          row_values[3] = sheets[i].std_code;
+          row_values[4] = sheets[i].fullname;
+          row_values[5] = sheets[i].birthday;
+          row_values[6] = sheets[i].class;
+          row_values[7] = sheets[i].department;
+          row_values[8] = sheets[i].sum_of_department_marks;
+          row_values[9] = sheets[i]?.level ?? 'Không xếp loại';
+          rows.push(row_values);
+        }
+        worksheet.insertRows(12, rows, 'i');
+
+        await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A);
+
+        return true;
+      }
+    } else {
+      //#region throw HandlerException
+      throw new HandlerException(
+        DATABASE_EXIT_CODE.NO_CONTENT,
+        req.method,
+        req.url,
+        ErrorMessage.EXPORT_FILE_OPERATOR,
+        HttpStatus.EXPECTATION_FAILED,
+      );
+      //#endregion
     }
   } catch (err) {
     console.log('err: ', err);

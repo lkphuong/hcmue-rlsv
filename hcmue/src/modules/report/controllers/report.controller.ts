@@ -18,7 +18,9 @@ import * as fs from 'fs';
 import { join } from 'path';
 
 import {
+  exportExcelTemplateAdmin,
   exportExcelTemplateClass,
+  exportExcelTemplateDepartment,
   exportWordTemplateAdmin,
   exportWordTemplateClass,
   exportWordTemplateDepartment,
@@ -79,7 +81,6 @@ import {
   FILE_NAME_TEMPLATE,
   PATH_FILE_EXCEL,
 } from '../constants/enums/template.enum';
-import { runInThisContext } from 'vm';
 
 @Controller('reports')
 export class ReportController {
@@ -920,39 +921,437 @@ export class ReportController {
     @Res({ passthrough: true }) res: Response,
   ) {
     try {
-      const result = await exportExcelTemplateClass(
-        params,
-        this._sheetService,
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify(params),
+      );
+
+      //#region Get params
+      const { academic_id, semester_id, department_id, class_id } = params;
+      //#endregion
+
+      //#region Get Jwt Payload
+      const { role, user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Validation
+      //#region Validate academic-year
+      const academic = await validateAcademicYear(
+        academic_id,
+        this._academicYearService,
         req,
       );
-      res.set({
-        'Content-Type': 'application/json',
-        'Content-Disposition': `attachment; filename=report.xlsx`,
-        'Access-Control-Expose-Headers': '*',
-      });
-      if (result) {
-        const file = fs.createReadStream(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_1A);
 
-        console.log(
-          fs.existsSync(
-            join(
-              process.cwd(),
-              RESOURCE_FOLDER + FILE_NAME_TEMPLATE.TEMPLATE_3,
-            ),
-          ),
+      if (academic instanceof HttpException) throw academic;
+      //#endregion
+
+      //#region Validate department
+      const department = await validateDepartment(
+        department_id,
+        this._departmentService,
+        req,
+      );
+
+      if (department instanceof HttpException) throw department;
+      //#endregion
+
+      //#region Validate class
+      const classes = await validateClass(class_id, this._classService, req);
+
+      if (classes instanceof HttpException) throw classes;
+      //#endregion
+
+      //#region Validate semester
+      const semester = await validateSemester(
+        semester_id,
+        this._semesterService,
+        req,
+      );
+
+      if (semester instanceof HttpException) throw semester;
+      //#endregion
+
+      //#region Validate role
+      const valid = await validateRole(
+        department_id,
+        role,
+        user_id,
+        this._userService,
+        req,
+      );
+
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Get levels
+      const levels = await this._levelService.getLevels();
+      //#endregion
+
+      //#region Get reports
+      const cache_classes = await this._cacheClassService.getCacheClasses(
+        academic_id,
+        department_id,
+        semester_id,
+        class_id,
+      );
+      //#endregion
+
+      if (cache_classes && cache_classes.length > 0) {
+        const result = await exportExcelTemplateClass(
+          params,
+          academic,
+          department,
+          semester,
+          cache_classes,
+          levels,
+          this._classService,
+          this._sheetService,
+          req,
         );
 
-        res.set({
-          'Content-Type': 'application/json',
-          'Content-Disposition': `attachment; filename=report.xlsx`,
-          'Access-Control-Expose-Headers': '*',
-        });
+        if (result) {
+          const file = fs.createReadStream(
+            join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_1A),
+          );
 
-        const file_2 = new StreamableFile(file);
+          console.log(
+            'file: ',
+            fs.existsSync(
+              join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_1A),
+            ),
+          );
+          res.set({
+            'Content-Type': 'application/json',
+            'Content-Disposition': `attachment; filename=report.xlsx`,
+            'Access-Control-Expose-Headers': '*',
+          });
 
-        //console.log(file_2);
+          return new StreamableFile(file);
+        }
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
-        return file_2;
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/reports
+   * @param academic_id
+   * @param semester_id
+   * @param department_id?
+   * @descripion Export excel thống kế phiếu của khoa
+   * @return File excel
+   * @page reports page
+   */
+  @Post('/department/export/excel')
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async exportExcelReportByDepartment(
+    @Body() params: ExportReportsDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify(params),
+      );
+
+      //#region Get params
+      const { academic_id, semester_id, department_id, class_id } = params;
+      //#endregion
+
+      //#region Get Jwt Payload
+      const { role, user_id } = req.user as JwtPayload;
+      //#endregion
+
+      //#region Validation
+      //#region Validate academic-year
+      const academic = await validateAcademicYear(
+        academic_id,
+        this._academicYearService,
+        req,
+      );
+
+      if (academic instanceof HttpException) throw academic;
+      //#endregion
+
+      //#region Validate department
+      const department = await validateDepartment(
+        department_id,
+        this._departmentService,
+        req,
+      );
+
+      if (department instanceof HttpException) throw department;
+      //#endregion
+
+      //#region Validate class
+      const classes = await validateClass(class_id, this._classService, req);
+
+      if (classes instanceof HttpException) throw classes;
+      //#endregion
+
+      //#region Validate semester
+      const semester = await validateSemester(
+        semester_id,
+        this._semesterService,
+        req,
+      );
+
+      if (semester instanceof HttpException) throw semester;
+      //#endregion
+
+      //#region Validate role
+      const valid = await validateRole(
+        department_id,
+        role,
+        user_id,
+        this._userService,
+        req,
+      );
+
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+      //#endregion
+
+      //#region Get levels
+      const levels = await this._levelService.getLevels();
+      //#endregion
+
+      //#region Get reports
+      const cache_classes = await this._cacheClassService.getCacheClasses(
+        academic_id,
+        department_id,
+        semester_id,
+        class_id,
+      );
+      //#endregion
+
+      if (cache_classes && cache_classes.length > 0) {
+        const result = await exportExcelTemplateDepartment(
+          params,
+          academic,
+          department,
+          semester,
+          cache_classes,
+          levels,
+          this._classService,
+          this._sheetService,
+          req,
+        );
+        if (result) {
+          // const file = createReadStream(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_2A);
+          const file = fs.createReadStream(
+            join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_2A),
+          );
+
+          console.log(
+            'file: ',
+            fs.existsSync(
+              join(
+                process.cwd(),
+                RESOURCE_FOLDER + PATH_FILE_EXCEL.OUTPUT_TEMPLATE_2A,
+              ),
+            ),
+          );
+
+          res.set({
+            'Content-Type': 'application/json',
+            'Content-Disposition': `attachment; filename=report.xlsx`,
+            'Access-Control-Expose-Headers': '*',
+          });
+
+          const file_2 = new StreamableFile(file);
+
+          //console.log(file_2);
+
+          return file_2;
+        }
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/reports/admin/export/excel
+   * @param academic_id
+   * @param semester_id
+   * @param department_id?
+   * @descripion Export excel thống kế phiếu của khoa
+   * @return File excel
+   * @page reports page
+   */
+  @Post('/admin/export/excel')
+  @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async exportExcelReportByAdmin(
+    @Body() params: ExportReportsDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(params));
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify(params),
+      );
+
+      //#region Get params
+      const { academic_id, department_id, semester_id } = params;
+      //#endregion
+
+      //#region Validation
+      //#region  Validate academic year
+      const academic = await validateAcademicYear(
+        academic_id,
+        this._academicYearService,
+        req,
+      );
+      if (academic instanceof HttpException) throw academic;
+      //#endregion
+
+      //#region Validate semester
+      const semester = await validateSemester(
+        semester_id,
+        this._semesterService,
+        req,
+      );
+      if (semester instanceof HttpException) throw semester;
+      //#endregion
+
+      //#region Validate department
+      const department = await validateDepartment(
+        department_id,
+        this._departmentService,
+        req,
+      );
+      if (department instanceof HttpException) throw department;
+      //#endregion
+      //#endregion
+
+      //#region Get levels
+      const levels = await this._levelService.getLevels();
+      //#endregion
+
+      //#region Get reports
+      const cache_classes = await this._cacheClassService.getCacheDepartmes(
+        academic_id,
+        semester_id,
+        department_id,
+      );
+      //#endregion
+
+      if (cache_classes && cache_classes.length > 0) {
+        const result = await exportExcelTemplateAdmin(
+          params,
+          academic,
+          department,
+          semester,
+          cache_classes,
+          levels,
+          this._departmentService,
+          this._sheetService,
+          this._cacheClassService,
+          req,
+        );
+        if (result) {
+          // const file = createReadStream(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_2A);
+          const file = fs.createReadStream(
+            join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A),
+          );
+
+          console.log(
+            'file: ',
+            fs.existsSync(
+              join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A),
+            ),
+          );
+
+          res.set({
+            'Content-Type': 'application/json',
+            'Content-Disposition': `attachment; filename=report.xlsx`,
+            'Access-Control-Expose-Headers': '*',
+          });
+
+          const file_2 = new StreamableFile(file);
+
+          //console.log(file_2);
+
+          return file_2;
+        }
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
       }
     } catch (err) {
       console.log('----------------------------------------------------------');

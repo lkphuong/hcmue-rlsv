@@ -21,6 +21,7 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { ReportResponse } from '../interfaces/sheet_response.interface';
+import { LevelEntity } from '../../../entities/level.entity';
 
 @Injectable()
 export class SheetService {
@@ -441,6 +442,8 @@ export class SheetService {
   }
 
   async getSheetsReport(
+    offset: number,
+    length: number,
     academic_id: number,
     semester_id: number,
     department_id?: number,
@@ -456,7 +459,13 @@ export class SheetService {
           sheet.sum_of_personal_marks, 
           sheet.sum_of_class_marks, 
           sheet.sum_of_adviser_marks, 
-          sheet.sum_of_department_marks`,
+          sheet.sum_of_department_marks,
+          class.code AS class,
+          class.id AS class_id,
+          department.name as department,
+          department.id as department_id,
+          level.name AS level,
+          k.name AS k`,
         )
         .innerJoin(
           UserEntity,
@@ -465,6 +474,23 @@ export class SheetService {
           AND user.deleted = 0 
           AND sheet.academic_id = user.academic_id 
           AND sheet.semester_id = user.semester_id`,
+        )
+        .innerJoin(
+          ClassEntity,
+          'class',
+          `class.id = sheet.class_id AND class.deleted = 0`,
+        )
+        .innerJoin(
+          DepartmentEntity,
+          'department',
+          `department.id = sheet.department_id AND department.deleted = 0`,
+        )
+        .innerJoin(KEntity, 'k', `k.id = sheet.k AND k.deleted = 0`)
+        .leftJoin(
+          LevelEntity,
+          'level',
+          `level.id = sheet.level_id
+        AND (level.deleted = 0 OR level.deleted is null)`,
         )
         .where('sheet.academic_id = :academic_id', { academic_id })
         .andWhere('sheet.semester_id = :semester_id', { semester_id })
@@ -485,7 +511,15 @@ export class SheetService {
         );
       }
 
-      const results = await conditions.getRawMany<ReportResponse>();
+      if (length !== 0) {
+        conditions.take(length).skip(offset);
+      }
+
+      const results = await conditions
+        .orderBy('department_id', 'ASC')
+        .addOrderBy('k', 'ASC')
+        .addOrderBy('class_id', 'ASC')
+        .getRawMany<ReportResponse>();
 
       return results || null;
     } catch (e) {
@@ -493,6 +527,73 @@ export class SheetService {
         Levels.ERROR,
         Methods.SELECT,
         'SheetService.getSheetsReport()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async countSheetsReport(
+    academic_id: number,
+    semester_id: number,
+    department_id?: number,
+    class_id?: number,
+  ): Promise<number> {
+    try {
+      let conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .select(`COUNT(sheet.id)`, 'count')
+        .innerJoin(
+          UserEntity,
+          'user',
+          `user.std_code = sheet.std_code 
+          AND user.deleted = 0 
+          AND sheet.academic_id = user.academic_id 
+          AND sheet.semester_id = user.semester_id`,
+        )
+        .innerJoin(
+          ClassEntity,
+          'class',
+          `class.id = sheet.class_id AND class.deleted = 0`,
+        )
+        .innerJoin(
+          DepartmentEntity,
+          'department',
+          `department.id = sheet.department_id AND department.deleted = 0`,
+        )
+        .leftJoin(
+          LevelEntity,
+          'level',
+          `level.id = sheet.level_id
+        AND (level.deleted = 0 OR level.deleted is null)`,
+        )
+        .where('sheet.academic_id = :academic_id', { academic_id })
+        .andWhere('sheet.semester_id = :semester_id', { semester_id })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      if (class_id && class_id != null) {
+        conditions = conditions.andWhere('sheet.class_id = :class_id', {
+          class_id,
+        });
+      }
+
+      if (department_id && department_id != 0) {
+        conditions = conditions.andWhere(
+          'sheet.department_id = :department_id',
+          {
+            department_id,
+          },
+        );
+      }
+
+      const { count } = await conditions.getRawOne();
+
+      return count;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.countSheetsReport()',
         e,
       );
       return null;
@@ -537,7 +638,7 @@ export class SheetService {
         );
       }
 
-      const count = await conditions.getRawOne();
+      const { count } = await conditions.getRawOne();
 
       return count;
     } catch (e) {

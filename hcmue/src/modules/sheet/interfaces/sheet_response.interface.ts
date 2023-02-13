@@ -50,10 +50,13 @@ export interface ReportResponse extends MarkResponse {
   std_code: string;
   fullname: string;
   birthday: string;
+  class: string;
+  department: string;
   sum_of_personal_marks: number;
   sum_of_class_marks: number;
   sum_of_adviser_marks: number;
   sum_of_department_marks: number;
+  level: string;
 }
 
 export interface ItemsResponse {

@@ -474,8 +474,6 @@ export class UserService {
         .where('user.id = :id', { id })
         .andWhere('user.deleted = :deleted', { deleted: 0 });
 
-      console.log('sql: ', conditions.getSql());
-
       const user = await conditions.orderBy('user.created_at', 'DESC').getOne();
 
       return user || null;
@@ -505,6 +503,46 @@ export class UserService {
           `class.id = user.class_id AND class.delete_flag = 0`,
         )
         .where('user.std_code = :std_code', { std_code })
+        .andWhere('user.active = :active', { active: true })
+        .andWhere('user.deleted = :deleted', { deleted: 0 });
+
+      if (academic_id && academic_id !== 0) {
+        conditions.andWhere('user.academic_id = :academic_id', { academic_id });
+      }
+
+      if (semester_id && semester_id !== 0) {
+        conditions.andWhere('user.semester_id = :semester_id', { semester_id });
+      }
+
+      const user = await conditions.orderBy('user.created_at', 'DESC').getOne();
+
+      return user || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'UserService.getUserByCode()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getUserByEmail(
+    email: string,
+    academic_id?: number,
+    semester_id?: number,
+  ): Promise<UserEntity | null> {
+    try {
+      const conditions = this._userRepository
+        .createQueryBuilder('user')
+        .innerJoinAndMapOne(
+          'user.class',
+          ClassEntity,
+          'class',
+          `class.id = user.class_id AND class.delete_flag = 0`,
+        )
+        .where('user.email = :email', { email })
         .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: 0 });
 

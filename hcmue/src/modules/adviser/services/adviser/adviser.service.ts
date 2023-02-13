@@ -213,6 +213,28 @@ export class AdviserService {
     }
   }
 
+  async getAdviserById(id: number): Promise<AdviserEntity | null> {
+    try {
+      const conditions = this._adviserRepository
+        .createQueryBuilder('adviser')
+        .where('adviser.id = :id', { id })
+        .andWhere('adviser.deleted = :deleted', { deleted: false })
+        .andWhere('adviser.active = :active', { active: true })
+        .orderBy('adviser.created_at', 'DESC');
+
+      const adviser = await conditions.getOne();
+
+      return adviser || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AdviserService.getOneAdviser()',
+        e,
+      );
+    }
+  }
+
   async bulkAdd(
     advisers: AdviserEntity[],
     manager?: EntityManager,

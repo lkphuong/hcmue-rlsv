@@ -10,7 +10,7 @@ import { InvalidTokenException } from '../exceptions/InvalidTokenException';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
 import { LogService } from '../../log/services/log.service';
 
-import { JwtPayload } from '../interfaces/payloads/jwt-payload.interface';
+import { VerifyTokenResponse } from '../interfaces/auth-response.interface';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
@@ -46,26 +46,43 @@ export const validateToken = (
 ) => {
   if (token) {
     //#region Decode token
-    let std_code;
-    const decoded = jsonwebtoken.verify(
+    let payload:
+      | VerifyTokenResponse
+      | ExpiredTokenException
+      | InvalidTokenException
+      | null = null;
+    jsonwebtoken.verify(
       token,
       configuration_service.get(Configuration.ACCESS_SECRET_KEY),
       (err, result) => {
         if (err) {
           if (err.message == JWT_ERROR.JWT_EXPIRED) {
-            return new ExpiredTokenException(token, 1003, req.method, req.url);
+            payload = new ExpiredTokenException(
+              token,
+              1003,
+              req.method,
+              req.url,
+            );
           } else {
-            return new InvalidTokenException(token, 1002, req.method, req.url);
+            payload = new InvalidTokenException(
+              token,
+              1002,
+              req.method,
+              req.url,
+            );
           }
         } else {
-          const { username } = result as JwtPayload;
-          std_code = username;
+          const { email, type } = result as VerifyTokenResponse;
+          const tmp: VerifyTokenResponse = {
+            email,
+            type,
+          };
+          payload = tmp;
         }
       },
     );
     //#endregion
-
-    return std_code;
+    return payload;
     //#endregion
   } else {
     //#region Invalid Token

@@ -14,7 +14,6 @@ import { JwtPayload } from '../interfaces/payloads/jwt-payload.interface';
 
 import { GetUserResponse } from '../interfaces/user-response.interface';
 import { LoginResponse } from '../interfaces/login-response.interface';
-import { UserEntity } from '../../../entities/user.entity';
 
 export const generateAccessToken = (
   jwtService: JwtService,
@@ -79,14 +78,14 @@ export const generateResponse = async (
   });
 };
 
-export const forgotPasswordSuccess = (user: UserEntity, req: Request) => {
+export const forgotPasswordSuccess = (email: string, req: Request) => {
   console.log('------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', user);
+  console.log('email: ', email);
 
   // Returns object
   return {
-    data: user.std_code,
+    data: email,
     errorCode: 0,
     message: null,
     errors: null,

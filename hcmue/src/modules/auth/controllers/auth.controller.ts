@@ -2,12 +2,14 @@ import {
   Controller,
   Body,
   Req,
+  Param,
   HttpException,
   HttpStatus,
   ValidationPipe,
   HttpCode,
   Post,
   Get,
+  Put,
   UsePipes,
   UseGuards,
   Query,
@@ -21,7 +23,6 @@ import * as md5 from 'md5';
 import { returnObjects, sprintf } from '../../../utils';
 
 import {
-  forgotPasswordSuccess,
   generateAccessToken,
   generateRefreshToken,
   generateResponse,
@@ -76,6 +77,7 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { LoginType } from '../constants/enums/login_type.enum';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -636,7 +638,7 @@ export class AuthController {
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
       //#region Get Request
-      const { username: request_code, role, user_id } = req.user as JwtPayload;
+      const { username: request_code, role } = req.user as JwtPayload;
       //#endregion
 
       switch (role) {
@@ -1092,37 +1094,97 @@ export class AuthController {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url);
 
-      this._logger.writeLog(Levels.LOG, req.method, req.url, params.std_code);
+      this._logger.writeLog(Levels.LOG, req.method, req.url, params.email);
 
       //#region Get params
-      const { std_code } = params;
+      const { email, type } = params;
       //#endregion
 
-      //#region Get student by std_code
-      const user = await this._userService.getUserByCode(std_code);
-      if (user) {
-        //#region Send message to service
-        const success = await sendEmail(
-          std_code,
-          this._configurationService,
-          this._jwtService,
-          this._userService,
-          req,
-        );
-        if (success instanceof HttpException) throw success;
-        else return success;
+      switch (type) {
+        case LoginType.ADVISER:
+          //#region Get Adviser by email
+          const adviser = await this._adviserService.getAdviserByEmail(email);
+          if (adviser) {
+            //#region Send message to service
+            const success = await sendEmail(
+              email,
+              type,
+              this._configurationService,
+              this._jwtService,
+
+              req,
+            );
+            if (success instanceof HttpException) throw success;
+            else return success;
+            //#endregion
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              email,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              sprintf(ErrorMessage.EMAIL_NOT_FOUND_ERROR, email),
+            );
+            //#endregion
+          }
         //#endregion
-      } else {
-        //#region throw HandlerException
-        throw new UnknownException(
-          std_code,
-          VALIDATION_EXIT_CODE.NOT_FOUND,
-          req.method,
-          req.url,
-          sprintf(ErrorMessage.ACCOUNT_NOT_FOUND_ERROR, std_code),
-        );
+        case LoginType.DEPARTMENT:
+        case LoginType.ADMIN:
+          //#region Get Adviser by email
+          const other = await this._otherService.getOtherByUsername(email);
+          if (other) {
+            //#region Send message to service
+            const success = await sendEmail(
+              email,
+              type,
+              this._configurationService,
+              this._jwtService,
+              req,
+            );
+            if (success instanceof HttpException) throw success;
+            else return success;
+            //#endregion
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              email,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              sprintf(ErrorMessage.EMAIL_NOT_FOUND_ERROR, email),
+            );
+            //#endregion
+          }
+        //#endregion
+        default:
+          //#region Get student by email
+          const user = await this._userService.getUserByEmail(email);
+          if (user) {
+            //#region Send message to service
+            const success = await sendEmail(
+              email,
+              type,
+              this._configurationService,
+              this._jwtService,
+              req,
+            );
+            //#endregion
+            if (success instanceof HttpException) throw success;
+            else return success;
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              email,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              sprintf(ErrorMessage.EMAIL_NOT_FOUND_ERROR, email),
+            );
+            //#endregion
+          }
+        //#endregion
       }
-      //#endregion
     } catch (err) {
       console.log(err);
       console.log('----------------------------------------------------------');
@@ -1163,6 +1225,7 @@ export class AuthController {
         this._logger,
         req,
       );
+      console.log('valid: ', valid);
       if (valid instanceof HttpException) throw valid;
       //#endregion
 
@@ -1196,6 +1259,7 @@ export class AuthController {
    * @page auth page
    */
   @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
   @UsePipes(ValidationPipe)
   async resetPassword(@Body() params: ConfirmPasswordDto, @Req() req: Request) {
     try {
@@ -1229,29 +1293,197 @@ export class AuthController {
       //#endregion
       //#endregion
 
-      //#region Update password
-      let user = await this._userService.getUserByCode(valid_token);
-      if (user) {
-        user.password = md5(new_password);
-        user.is_change = true;
-        user.updated_at = new Date();
-        user.updated_by = 'system';
+      const { email, type } = valid_token;
 
-        user = await this._userService.update(user);
+      switch (type) {
+        case LoginType.ADVISER:
+          let adviser = await this._adviserService.getAdviserByEmail(email);
+          if (adviser) {
+            adviser.password = md5(new_password);
+            adviser.is_change = true;
+            adviser.updated_at = new Date();
+            adviser.updated_by = email;
 
-        return forgotPasswordSuccess(user, req);
-      } else {
-        //#region throw HandlerException
-        throw new UnknownException(
-          valid_token,
-          VALIDATION_EXIT_CODE.NOT_FOUND,
-          req.method,
-          req.url,
-          ErrorMessage.OPERATOR_PASSWORD_ERROR,
-          HttpStatus.BAD_REQUEST,
-        );
+            adviser = await this._adviserService.update(adviser);
+            break;
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              email,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              ErrorMessage.OPERATOR_PASSWORD_ERROR,
+              HttpStatus.BAD_REQUEST,
+            );
+            //#endregion
+          }
+        case LoginType.DEPARTMENT:
+        case LoginType.ADMIN:
+          let other = await this._otherService.getOtherByUsername(email);
+          if (other) {
+            other.password = md5(new_password);
+            other.updated_at = new Date();
+            other.updated_by = email;
+            other = await this._otherService.update(other);
+            break;
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              email,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              ErrorMessage.OPERATOR_PASSWORD_ERROR,
+              HttpStatus.BAD_REQUEST,
+            );
+            //#endregion
+          }
+        default:
+          let user = await this._userService.getUserByEmail(email);
+          if (user) {
+            user.password = md5(new_password);
+            user.is_change = true;
+            user.updated_at = new Date();
+            user.updated_by = email;
+            user = await this._userService.update(user);
+            break;
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              email,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              ErrorMessage.OPERATOR_PASSWORD_ERROR,
+              HttpStatus.BAD_REQUEST,
+            );
+            //#endregion
+          }
       }
 
+      //#region Generate response
+      return returnObjects({
+        email: email,
+      });
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method POST
+   * @url api/auth/return-password
+   * @access public
+   * @return
+   * @description Cập nhật mật khẩu về mật khẩu mặc định
+   * @page auth page
+   */
+  @Put('reset-password/:id')
+  @HttpCode(HttpStatus.OK)
+  @UsePipes(ValidationPipe)
+  async passwordDefault(
+    @Param('id') id: number,
+    @Body() params: ResetPasswordDto,
+    @Req() req: Request,
+  ) {
+    console.log('----------------------------------------------------------');
+    console.log(req.method + ' - ' + req.url);
+
+    this._logger.writeLog(
+      Levels.LOG,
+      req.method,
+      req.url,
+      JSON.stringify({ params: params }),
+    );
+
+    //#region get params
+    const { type } = params;
+    //#endregion
+
+    try {
+      switch (type) {
+        case LoginType.ADVISER:
+          let adviser = await this._adviserService.getAdviserById(id);
+          if (adviser) {
+            adviser.password = md5(adviser.phone_number);
+            adviser.updated_at = new Date();
+            adviser.updated_by = 'system';
+
+            adviser = await this._adviserService.update(adviser);
+            break;
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              id,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              ErrorMessage.OPERATOR_PASSWORD_ERROR,
+              HttpStatus.BAD_REQUEST,
+            );
+            //#endregion
+          }
+
+        case LoginType.DEPARTMENT:
+        case LoginType.ADMIN:
+          let other = await this._otherService.getOtherById(id);
+          if (other) {
+            other.password = md5(other.username);
+            other.updated_at = new Date();
+            other.updated_by = 'system';
+
+            other = await this._otherService.update(other);
+            break;
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              id,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              ErrorMessage.OPERATOR_PASSWORD_ERROR,
+              HttpStatus.BAD_REQUEST,
+            );
+            //#endregion
+          }
+        default:
+          let user = await this._userService.getUserById(id);
+          if (user) {
+            user.password = md5(user.birthday);
+            user.updated_at = new Date();
+            user.updated_by = 'system';
+
+            user = await this._userService.update(user);
+            break;
+          } else {
+            //#region throw HandlerException
+            throw new UnknownException(
+              id,
+              VALIDATION_EXIT_CODE.NOT_FOUND,
+              req.method,
+              req.url,
+              ErrorMessage.OPERATOR_PASSWORD_ERROR,
+              HttpStatus.BAD_REQUEST,
+            );
+            //#endregion
+          }
+      }
+      //#region Generate response
+      return returnObjects({
+        id: id,
+      });
       //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');

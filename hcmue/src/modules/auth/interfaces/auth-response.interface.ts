@@ -23,3 +23,8 @@ export interface AuthResponse {
   payload: UserResponse | null;
   error?: string;
 }
+
+export interface VerifyTokenResponse {
+  email: string;
+  type: number;
+}

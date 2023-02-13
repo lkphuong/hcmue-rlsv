@@ -5,23 +5,21 @@ import { Request } from 'express';
 import * as nodemailer from 'nodemailer';
 
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
-import { UserService } from '../../user/services/user.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
-import {
-  DATABASE_EXIT_CODE,
-  UNKNOW_EXIT_CODE,
-} from '../../../constants/enums/error-code.enum';
+import { UNKNOW_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 import { forgotPasswordSuccess } from '../utils';
+import { sprintf } from '../../../utils';
+import { EMAIL_CONTENT } from '../constants';
 
 export const sendEmail = async (
-  std_code: string,
+  email: string,
+  type: number,
   configuration_service: ConfigurationService,
   jwt_service: JwtService,
-  user_service: UserService,
   req: Request,
 ) => {
   const transporter = nodemailer.createTransport({
@@ -35,24 +33,10 @@ export const sendEmail = async (
     },
   });
 
-  //#region Get user by std_code
-  const user = await user_service.getUserByCode(std_code);
-  if (!user) {
-    //#region throw HandlerException
-    return new HandlerException(
-      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-      req.method,
-      req.url,
-      ErrorMessage.ACCOUNT_NOT_FOUND_ERROR,
-      HttpStatus.NOT_FOUND,
-    );
-    //#endregion
-  }
-  //#endregion
-
   //#region Generate token
   const payload = {
-    username: user.std_code,
+    email: email,
+    type: type,
   };
 
   const token = jwt_service.sign(payload, {
@@ -70,10 +54,10 @@ export const sendEmail = async (
 
   const mailOptions = {
     from: 'Hỗ trợ sinh viên',
-    to: `${user.email}`,
-    subject: 'Cấp lại mật khẩu',
-    text: 'Email content',
-    html: `Nhập vào đường link để được cấp lại mật khẩu: <a href="${url}">${url}</a>`,
+    to: `${email}`,
+    subject: 'LẤY LẠI MẬT KHẨU',
+    text: 'Thông báo về việc yêu câu lấy lại mật khẩu.',
+    html: sprintf(EMAIL_CONTENT, url, url),
   };
 
   let flag = true;
@@ -86,7 +70,7 @@ export const sendEmail = async (
     }
   });
   if (flag) {
-    return forgotPasswordSuccess(user, req);
+    return forgotPasswordSuccess(email, req);
   } else {
     //#region throw HandlerException
     return new HandlerException(

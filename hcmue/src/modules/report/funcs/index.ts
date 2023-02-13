@@ -3,7 +3,6 @@ import { Request } from 'express';
 import axios from 'axios';
 
 import * as exceljs from 'exceljs';
-import * as fs from 'fs';
 
 import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
@@ -11,6 +10,8 @@ import { SemesterEntity } from '../../../entities/semester.entity';
 
 import { CacheClassEntity } from '../../../entities/cache_class.entity';
 import { LevelEntity } from '../../../entities/level.entity';
+
+import { ExportReportsDto } from '../dtos/export_excel.dto';
 
 import { CacheClassService } from '../services/cache-class.service';
 import { ClassService } from '../../class/services/class.service';
@@ -40,8 +41,8 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
-import { ExportReportsDto } from '../dtos/export_excel.dto';
 import { PATH_FILE_EXCEL } from '../constants/enums/template.enum';
+import { LENGTH } from '../constants';
 
 export const exportWordTemplateAdmin = async (
   academic_year: AcademicYearEntity,
@@ -710,11 +711,11 @@ export const exportExcelTemplateAdmin = async (
         //#endregion
       }
       //#endregion
-      const pages = Math.ceil(count_sheets / 1000);
+      const pages = Math.ceil(count_sheets / LENGTH);
       for (let i = 0; i < pages; i++) {
         const sheets = await sheet_service.getSheetsReport(
-          i * 1000,
-          1000,
+          i * LENGTH,
+          LENGTH,
           academic_id,
           semester_id,
         );

@@ -3,17 +3,17 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Controller } from 'react-hook-form';
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
-import { ImageSearch } from '@mui/icons-material';
+import { Folder } from '@mui/icons-material';
 
 import { DepartmentMarksContext } from '_modules/sheets/pages/SheetDetailPage';
 
 import { actions } from '_slices/mark.slice';
 
-import { CFileModal } from '_others/';
+import { CFilePreviewModal } from '_others/';
 
 import Control from './Control';
 
-const Item = memo(({ data, headerId, titleId, index }) => {
+const Item = memo(({ data, headerId, titleId }) => {
 	//#region Data
 	const fileRef = useRef();
 
@@ -51,8 +51,13 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 				<Typography ml={2}>- {data.content}</Typography>
 
 				{data?.is_file && (
-					<Button size='small' endIcon={<ImageSearch />} onClick={openModal}>
-						Minh chứng
+					<Button
+						variant='contained'
+						sx={{ p: 0, minWidth: '45px' }}
+						endIcon={<Folder />}
+						onClick={openModal}
+					>
+						{itemsMark[indexMark]?.files?.length ?? 0}
 					</Button>
 				)}
 			</TableCell>
@@ -70,19 +75,9 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 				/>
 			</TableCell>
 
-			<Control
-				data={data}
-				id={Number(data.id)}
-				titleId={titleId}
-				index={index}
-				available={available}
-			/>
+			<Control data={data} id={Number(data.id)} titleId={titleId} available={available} />
 
-			<CFileModal
-				ref={fileRef}
-				name={`title_${titleId}_${data?.id}.files`}
-				itemData={itemsMark[indexMark]}
-			/>
+			<CFilePreviewModal ref={fileRef} itemData={itemsMark[indexMark]} />
 		</TableRow>
 	);
 	//#endregion

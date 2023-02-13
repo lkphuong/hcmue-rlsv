@@ -13,7 +13,7 @@ import { CFileModal } from '_others/';
 
 import Control from './Control';
 
-const Item = memo(({ data, headerId, titleId, index }) => {
+const Item = memo(({ data, headerId, titleId }) => {
 	//#region Data
 	const fileRef = useRef();
 
@@ -70,13 +70,7 @@ const Item = memo(({ data, headerId, titleId, index }) => {
 				/>
 			</TableCell>
 
-			<Control
-				data={data}
-				id={Number(data.id)}
-				titleId={titleId}
-				index={index}
-				available={available}
-			/>
+			<Control data={data} id={Number(data.id)} titleId={titleId} available={available} />
 
 			<CFileModal
 				ref={fileRef}

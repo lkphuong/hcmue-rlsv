@@ -25,13 +25,7 @@ const Title = memo(({ data, headerId }) => {
 
 			{data?.items?.length > 0 &&
 				data.items.map((e, i) => (
-					<Item
-						key={i}
-						data={e}
-						headerId={headerId}
-						titleId={Number(data.id)}
-						index={i}
-					/>
+					<Item key={i} data={e} headerId={headerId} titleId={Number(data.id)} />
 				))}
 		</>
 	);

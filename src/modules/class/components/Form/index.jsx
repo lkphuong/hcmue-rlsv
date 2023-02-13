@@ -142,9 +142,7 @@ export const Form = ({ data }) => {
 					</TableHead>
 					<TableBody>
 						{data?.headers?.length > 0 &&
-							data.headers.map((e, i) => (
-								<Header key={i} data={e} sheetId={Number(data?.id)} index={i + 1} />
-							))}
+							data.headers.map((e, i) => <Header key={i} data={e} index={i + 1} />)}
 					</TableBody>
 				</Table>
 			</TableContainer>

@@ -6,7 +6,7 @@ import { intToRoman } from '_func/';
 
 import Title from './Title';
 
-const Header = memo(({ data, index, sheetId }) => {
+const Header = memo(({ data, index }) => {
 	//#region Data
 	//#endregion
 
@@ -33,15 +33,7 @@ const Header = memo(({ data, index, sheetId }) => {
 			</TableRow>
 
 			{data?.titles?.length > 0 &&
-				data.titles.map((e, i) => (
-					<Title
-						key={i}
-						data={e}
-						sheetId={sheetId}
-						index={i + 1}
-						headerId={Number(data.id)}
-					/>
-				))}
+				data.titles.map((e, i) => <Title key={i} data={e} headerId={Number(data.id)} />)}
 		</>
 	);
 	//#endregion

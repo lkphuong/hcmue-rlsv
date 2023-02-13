@@ -9,12 +9,6 @@ import image from '_assets/images/file-image.png';
 
 import './index.scss';
 
-// const FILE_IMAGE = {
-// 	image: image,
-// 	application: pdf,
-// 	other: blank,
-// };
-
 const FILE_IMAGE = {
 	apng: image,
 	avif: image,

@@ -82,34 +82,33 @@ export const LoginPage = () => {
 	//#region Render
 	return (
 		<Box className='login-background'>
-			<Box
-				position='absolute'
-				top='15%'
-				left='50%'
-				sx={{ transform: 'translate(-50% , -15%)' }}
-			>
-				<Typography
-					fontWeight={700}
-					textAlign='center'
-					color='#2A61A2'
-					fontSize='1.25rem'
-					lineHeight={1.6}
+			<Container maxWidth='xl'>
+				<Box
+					position='absolute'
+					top='50%'
+					left='50%'
+					sx={{ transform: 'translate(-50% , -50%)' }}
 				>
-					CHUYÊN TRANG ĐÁNH GIÁ ĐIỂM RÈN LUYỆN SINH VIÊN
-				</Typography>
-				<Typography textAlign='center' color='#2A61A2' fontSize='1.2rem' lineHeight={1.6}>
-					TRƯỜNG ĐẠI HỌC SƯ PHẠM THÀNH PHỐ HỒ CHÍ MINH
-				</Typography>
-			</Box>
+					<Typography
+						fontWeight={700}
+						textAlign='center'
+						color='#2A61A2'
+						fontSize='1.25rem'
+						lineHeight={1.6}
+					>
+						CHUYÊN TRANG ĐÁNH GIÁ ĐIỂM RÈN LUYỆN SINH VIÊN
+					</Typography>
+					<Typography
+						textAlign='center'
+						color='#2A61A2'
+						fontSize='1.2rem'
+						lineHeight={1.6}
+						mb={1.4}
+					>
+						TRƯỜNG ĐẠI HỌC SƯ PHẠM THÀNH PHỐ HỒ CHÍ MINH
+					</Typography>
 
-			<Box
-				position='absolute'
-				top='50%'
-				left='50%'
-				sx={{ transform: 'translate(-50% , -50%)' }}
-			>
-				<Container maxWidth='xl'>
-					<Paper className='paper-form'>
+					<Paper className='paper-form' sx={{ maxWidth: '342px', margin: 'auto' }}>
 						<Stack direction='column'>
 							<Box align='center'>
 								<img src={logo} alt='' />
@@ -199,8 +198,8 @@ export const LoginPage = () => {
 							</form>
 						</Stack>
 					</Paper>
-				</Container>
-			</Box>
+				</Box>
+			</Container>
 		</Box>
 	);
 	//#endregion

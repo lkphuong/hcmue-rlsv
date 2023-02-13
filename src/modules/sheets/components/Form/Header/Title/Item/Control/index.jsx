@@ -7,7 +7,7 @@ import TypeInput from './TypeInput';
 import TypeCheckbox from './TypeCheckbox';
 import TypeSelect from './TypeSelect';
 
-const Control = memo(({ data, id, titleId, index, available }) => {
+const Control = memo(({ data, id, titleId, available }) => {
 	//#region Data
 	const { itemsMark, status } = useContext(DepartmentMarksContext);
 
@@ -60,7 +60,7 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 			defaultValue: initialMark,
 		});
 		resetField(`title_${titleId}_${id}.option_id`, { defaultValue: optionId });
-	}, [initialMark, titleId, index, optionId]);
+	}, [initialMark, titleId, optionId]);
 
 	const renderControl = useMemo(() => {
 		return {
@@ -101,7 +101,7 @@ const Control = memo(({ data, id, titleId, index, available }) => {
 				/>
 			),
 		};
-	}, [data, id, titleId, index, available, currentMark, initialMark]);
+	}, [data, id, titleId, available, currentMark, initialMark]);
 	//#endregion
 
 	//#region Event

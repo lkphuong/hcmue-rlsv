@@ -94,7 +94,7 @@ export const alert = {
 			showCancelButton: true,
 			icon: 'success',
 			confirmButtonText: 'Xong',
-			cancelButtonText: 'Điều chỉnh',
+			cancelButtonText: 'Chấm lại',
 			customClass: {
 				container: 'my-swal',
 			},

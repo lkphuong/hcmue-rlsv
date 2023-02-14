@@ -44,6 +44,20 @@ ENV BASE_URL='http://localhost:9091/'
 ENV MULTER_DEST='./static/uploads'
 ENV IMAGE_PATH='./static/resources'
 
+ENV STATIC_PATH: './static',
+ENV MULTER_DEST: './static/uploads',
+ENV RESOURCE_FOLDER: '../services/export-service/resources/',
+
+ENV EMAIL_USERNAME: 'hopthusinhvien@hcmue.edu.vn',
+ENV EMAIL_PASSWORD: 'nbjnkclaystlvkje',
+
+ENV FORGOT_PASSWORD_URL: 'http://hcmue.vtcode.vn:9093/reset-password/?token=',
+ENV FORGOT_PASSWORD_TOKEN_EXPIRESIN: '600s',
+
+ENV URL_EXPORT_TEMPLATE_1: 'http://hcmue.vtcode.vn:9093/export/template1',
+ENV URL_EXPORT_TEMPLATE_2: 'http://hcmue.vtcode.vn:9093/export/template2',
+ENV URL_EXPORT_TEMPLATE_3: 'http://hcmue.vtcode.vn:9093/export/template3',
+
 EXPOSE 3000
 
 RUN npm i npm -g

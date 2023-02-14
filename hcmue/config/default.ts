@@ -29,8 +29,7 @@ export default {
 
   BASE_URL: 'http://103.154.176.80:3020/uploads/',
 
-  FORGOT_PASSWORD_URL:
-    'http://103.154.176.80:3020/api/auth/reset-password/?token=',
+  FORGOT_PASSWORD_URL: 'http://103.154.176.80:3020/reset-password/?token=',
 
   FORGOT_PASSWORD_TOKEN_EXPIRESIN: '600s',
 

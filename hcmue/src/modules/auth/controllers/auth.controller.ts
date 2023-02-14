@@ -127,12 +127,12 @@ export class AuthController {
       //#region get params
       const { password, username, type } = params;
       //#endregion
+
       switch (type) {
         case LoginType.ADVISER:
           const adviser = await this._adviserService.getAdviserByEmail(
             username,
           );
-
           if (adviser) {
             const isMatch = await validatePassword(password, adviser.password);
 
@@ -219,6 +219,7 @@ export class AuthController {
         case LoginType.DEPARTMENT:
         case LoginType.ADMIN:
           const other = await this._otherService.getOtherByUsername(username);
+
           if (other) {
             const isMatch = await validatePassword(password, other.password);
 
@@ -1201,54 +1202,54 @@ export class AuthController {
     }
   }
 
-  /**
-   * @method GET
-   * @url api/auth/reset-password
-   * @access public
-   * @return
-   * @description xác thực url
-   * @page auth page
-   */
-  @Get('reset-password')
-  @UsePipes(ValidationPipe)
-  async confirmUrl(@Query('token') token: string, @Req() req: Request) {
-    try {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url);
+  // /**
+  //  * @method GET
+  //  * @url api/auth/reset-password
+  //  * @access public
+  //  * @return
+  //  * @description xác thực url
+  //  * @page auth page
+  //  */
+  // @Get('reset-password')
+  // @UsePipes(ValidationPipe)
+  // async confirmUrl(@Query('token') token: string, @Req() req: Request) {
+  //   try {
+  //     console.log('----------------------------------------------------------');
+  //     console.log(req.method + ' - ' + req.url);
 
-      this._logger.writeLog(Levels.LOG, req.method, req.url, token);
+  //     this._logger.writeLog(Levels.LOG, req.method, req.url, token);
 
-      //#region Validation
-      const valid = await validateToken(
-        token,
-        this._configurationService,
-        this._logger,
-        req,
-      );
-      console.log('valid: ', valid);
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
+  //     //#region Validation
+  //     const valid = await validateToken(
+  //       token,
+  //       this._configurationService,
+  //       this._logger,
+  //       req,
+  //     );
+  //     console.log('valid: ', valid);
+  //     if (valid instanceof HttpException) throw valid;
+  //     //#endregion
 
-      return {
-        data: token,
-        errorCode: 0,
-        message: null,
-        errors: null,
-      };
-    } catch (err) {
-      console.log('----------------------------------------------------------');
-      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+  //     return {
+  //       data: token,
+  //       errorCode: 0,
+  //       message: null,
+  //       errors: null,
+  //     };
+  //   } catch (err) {
+  //     console.log('----------------------------------------------------------');
+  //     console.log(req.method + ' - ' + req.url + ': ' + err.message);
 
-      if (err instanceof HttpException) throw err;
-      else {
-        throw new HandlerException(
-          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-          req.method,
-          req.url,
-        );
-      }
-    }
-  }
+  //     if (err instanceof HttpException) throw err;
+  //     else {
+  //       throw new HandlerException(
+  //         SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+  //         req.method,
+  //         req.url,
+  //       );
+  //     }
+  //   }
+  // }
 
   /**
    * @method POST

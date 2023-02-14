@@ -6,12 +6,12 @@ const path = require("path");
 
 
 const FILE_NAME = {
-    TEMPLATE_1: '../resources/template_1.docx',
-    OUTPUT_TEMPLATE_1: '../resources/output_template_1.docx',
-    TEMPLATE_2: '../resources/template_2.docx',
-    OUTPUT_TEMPLATE_2: '../resources/output_template_2.docx',
-    TEMPLATE_3: '../resources/template_3.docx',
-    OUTPUT_TEMPLATE_3: '../resources/output_template_3.docx'
+    TEMPLATE_1: 'template_1.docx',
+    OUTPUT_TEMPLATE_1: 'output_template_1.docx',
+    TEMPLATE_2: 'template_2.docx',
+    OUTPUT_TEMPLATE_2: 'output_template_2.docx',
+    TEMPLATE_3: 'template_3.docx',
+    OUTPUT_TEMPLATE_3: 'output_template_3.docx'
 }
 
 // This route handles a POST request to export a template1 docx file
@@ -25,7 +25,7 @@ router.post("/template1", (req, res) => {
   // Read the docx file as binary content
   try {
     const content = fs.readFileSync(
-      path.resolve(__dirname, FILE_NAME.TEMPLATE_1),
+      path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_1),
       "binary"
     );
 
@@ -50,7 +50,7 @@ router.post("/template1", (req, res) => {
     });
 
     // Write the buffer to a file in the server
-    fs.writeFileSync(path.resolve(__dirname, FILE_NAME.OUTPUT_TEMPLATE_1), buf);
+    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_1), buf);
 
     // Send a success response to the client
     res.send("success");
@@ -72,7 +72,7 @@ router.post("/template2", (req, res) => {
   // Read the docx file as binary content
   try {
     const content = fs.readFileSync(
-      path.resolve(__dirname, FILE_NAME.TEMPLATE_2),
+      path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_2),
       "binary"
     );
 
@@ -97,7 +97,7 @@ router.post("/template2", (req, res) => {
     });
 
     // Write the buffer to a file in the server
-    fs.writeFileSync(path.resolve(__dirname, FILE_NAME.OUTPUT_TEMPLATE_2), buf);
+    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_2), buf);
 
     // Send a success response to the client
     res.send("success");
@@ -119,7 +119,7 @@ router.post("/template3", (req, res) => {
   // Read the docx file as binary content
   try {
     const content = fs.readFileSync(
-      path.resolve(__dirname, FILE_NAME.TEMPLATE_3),
+      path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_3),
       "binary"
     );
 
@@ -144,7 +144,7 @@ router.post("/template3", (req, res) => {
     });
 
     // Write the buffer to a file in the server
-    fs.writeFileSync(path.resolve(__dirname, FILE_NAME.OUTPUT_TEMPLATE_3), buf);
+    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_3), buf);
     // Send a success response to the client
     res.send("success");
   } catch (err) {

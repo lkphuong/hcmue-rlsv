@@ -10,13 +10,12 @@ dotenv.config()
 const cors = require('cors')
 app.use(cors())
 
-const DEFAULT = require('./config/default')
 
 //#region export router
 const export_controller = require('./controllers/export')
 app.use('/export', export_controller)
 //#endregion
 
-app.listen(process.env.PORT || DEFAULT.PORT, () => {
-  console.log(`Example app listening on port ${process.env.PORT || DEFAULT.PORT}`);
+app.listen(process.env.PORT, () => {
+  console.log(`Hcmue export service listening on port ${process.env.PORT}`);
 });

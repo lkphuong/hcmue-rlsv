@@ -1,22 +1,11 @@
 import { Controller, useForm } from 'react-hook-form';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import {
-	Box,
-	Button,
-	Container,
-	FormControlLabel,
-	Paper,
-	Radio,
-	RadioGroup,
-	Stack,
-	Typography,
-} from '@mui/material';
+import { Box, Button, Container, Paper, Stack, Typography } from '@mui/material';
 
 import { useResolver } from '_hooks/';
 
-import { initialValues, validationSchema } from '_modules/auth/form';
+import { validationSchemaResetPassword } from '_modules/auth/form';
 
 import { CInput } from '_controls/';
 
@@ -25,60 +14,45 @@ import logo from '_assets/images/logo.png';
 import { alert } from '_func/alert';
 import { isSuccess } from '_func/';
 
-import { login } from '_api/auth.api';
-
-import { actions } from '_slices/auth.slice';
-
-import { getProfile } from '_axios/';
+import { resetPassword } from '_api/auth.api';
 
 import './index.scss';
 
-const ROLES = [
-	{ id: 1, value: 1, label: 'Sinh viên/Cán bộ lớp' },
-	{ id: 2, value: 2, label: 'Cố vấn học tập' },
-	{ id: 3, value: 3, label: 'Quản lý cấp Khoa' },
-	{ id: 4, value: 4, label: 'Quản lý cấp Trường' },
-];
-
-export const LoginPage = () => {
+const ResetPasswordPage = () => {
 	//#region Data
-	const resolver = useResolver(validationSchema);
+	const resolver = useResolver(validationSchemaResetPassword);
 
-	const dispatch = useDispatch();
+	const navigate = useNavigate();
+
+	const [searchParams] = useSearchParams();
+
+	const token = searchParams.get('token');
 
 	const { control, handleSubmit } = useForm({
-		defaultValues: initialValues,
+		defaultValues: { new_password: '', confirm_password: '', token },
 		mode: 'all',
 		resolver,
 	});
 
-	const navigate = useNavigate();
+	if (!token) navigate('/login');
 	//#endregion
 
 	//#region Event
 	const onSubmit = async (values) => {
 		alert.loading();
 
-		const res = await login(values);
+		const res = await resetPassword(values);
 
 		if (isSuccess(res)) {
-			const { access_token, refresh_token } = res.data;
-
-			localStorage.setItem('access_token', access_token);
-			localStorage.setItem('refresh_token', refresh_token);
-
-			dispatch(actions.setToken({ access_token, refresh_token }));
-
-			await getProfile(access_token);
-
-			alert.success({ title: 'Đăng nhập thành công!' });
+			alert.success({
+				title: 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại',
+				onOkConfirm: () => {
+					navigate('/login');
+				},
+			});
 		} else {
-			alert.fail({ text: res?.message || 'Đăng nhập không thành công!' });
+			alert.fail({ text: res?.message || 'Đổi mật khẩu không thành công!' });
 		}
-	};
-
-	const onTypeChange = (CallbackFunc) => (event, newValue) => {
-		CallbackFunc(Number(newValue));
 	};
 	//#endregion
 
@@ -118,59 +92,21 @@ export const LoginPage = () => {
 							</Box>
 							<form onSubmit={handleSubmit(onSubmit)}>
 								<Stack direction='column'>
+									<Typography
+										fontSize={18}
+										fontWeight={600}
+										textAlign='center'
+										textTransform='uppercase'
+										my={1.5}
+									>
+										Đổi mật khẩu
+									</Typography>
+
 									<Box my={1}>
+										<Typography mb={1}>Nhập mật khẩu mới</Typography>
 										<Controller
 											control={control}
-											name='type'
-											render={({ field: { name, ref, value, onChange } }) => (
-												<RadioGroup
-													name={name}
-													ref={ref}
-													value={value}
-													onChange={onTypeChange(onChange)}
-												>
-													{ROLES.map((e) => (
-														<FormControlLabel
-															key={e.id}
-															value={e.value}
-															label={e.label}
-															control={
-																<Radio
-																	checked={value === e.value}
-																/>
-															}
-														/>
-													))}
-												</RadioGroup>
-											)}
-										/>
-									</Box>
-									<Box my={1}>
-										<Controller
-											control={control}
-											name='username'
-											render={({
-												field: { onChange, onBlur, value, name, ref },
-												fieldState: { error },
-											}) => (
-												<CInput
-													fullWidth
-													placeholder='Nhập tên đăng nhập'
-													onChange={onChange}
-													onBlur={onBlur}
-													value={value}
-													name={name}
-													inputRef={ref}
-													error={!!error}
-													helperText={error?.message}
-												/>
-											)}
-										/>
-									</Box>
-									<Box my={1}>
-										<Controller
-											control={control}
-											name='password'
+											name='new_password'
 											render={({
 												field: { onChange, onBlur, value, name, ref },
 												fieldState: { error },
@@ -178,7 +114,31 @@ export const LoginPage = () => {
 												<CInput
 													fullWidth
 													isPassword
-													placeholder='Nhập mật khẩu...'
+													placeholder='Nhập mật khẩu mói'
+													onChange={onChange}
+													onBlur={onBlur}
+													value={value}
+													name={name}
+													inputRef={ref}
+													error={!!error}
+													helperText={error?.message}
+												/>
+											)}
+										/>
+									</Box>
+									<Box my={1}>
+										<Typography mb={1}>Xác nhận mật khẩu mới</Typography>
+										<Controller
+											control={control}
+											name='confirm_password'
+											render={({
+												field: { onChange, onBlur, value, name, ref },
+												fieldState: { error },
+											}) => (
+												<CInput
+													fullWidth
+													isPassword
+													placeholder='Xác nhận mật khẩu mới'
 													onChange={onChange}
 													onBlur={onBlur}
 													value={value}
@@ -191,22 +151,12 @@ export const LoginPage = () => {
 										/>
 									</Box>
 
-									<Box textAlign='right'>
-										<Button
-											sx={{ fontWeight: 400 }}
-											onClick={() => navigate('/forgot-password')}
-											type='button'
-										>
-											Quên mật khẩu?
-										</Button>
-									</Box>
-
 									<Button
 										variant='contained'
 										type='submit'
 										sx={{ m: 'auto', maxWidth: '150px', my: 2, fontSize: 16 }}
 									>
-										Đăng nhập
+										Xác nhận
 									</Button>
 								</Stack>
 							</form>
@@ -218,3 +168,4 @@ export const LoginPage = () => {
 	);
 	//#endregion
 };
+export default ResetPasswordPage;

@@ -6,6 +6,7 @@ import { ReactComponent as Delete } from '_assets/icons/delete.svg';
 import { ReactComponent as Setting } from '_assets/icons/setting.svg';
 import { ReactComponent as Add } from '_assets/icons/add.svg';
 import { ReactComponent as View } from '_assets/icons/view.svg';
+import { ReactComponent as Reset } from '_assets/icons/reset.svg';
 
 export const CEditIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={Edit} />;
@@ -29,4 +30,8 @@ export const CAddIcon = ({ ...props }) => {
 
 export const CViewIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={View} />;
+};
+
+export const CResetIcon = ({ ...props }) => {
+	return <SvgIcon {...props} component={Reset} />;
 };

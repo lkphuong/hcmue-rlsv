@@ -52,6 +52,7 @@ export const MTable = ({ data, isLoading, onFilterChange }) => {
 						<TableCell align='center'>Mã lớp</TableCell>
 						<TableCell align='center'>Lớp</TableCell>
 						<TableCell align='center'>Phân quyền</TableCell>
+						<TableCell align='center'>Reset</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>

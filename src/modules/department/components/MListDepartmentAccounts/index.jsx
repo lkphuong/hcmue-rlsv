@@ -29,6 +29,7 @@ export const MListDepartmentAccounts = ({ data, refetch, onAdd }) => {
 							<TableCell align='left'>Tên khoa</TableCell>
 							<TableCell align='center'>Tên đăng nhập</TableCell>
 							<TableCell align='center'>Thao tác</TableCell>
+							<TableCell align='center'>Reset</TableCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>

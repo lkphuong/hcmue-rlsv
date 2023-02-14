@@ -71,5 +71,8 @@ export const ROUTES = {
 		DEPARTMENTS: '/admin/departments',
 		SETTING: '/admin/setting',
 	},
+
 	CHANGE_PASSWORD: '/change-password',
+	FORGOT_PASSWORD: '/forgot-password',
+	RESET_PASSWORD: '/reset-password', //     /?token=
 };

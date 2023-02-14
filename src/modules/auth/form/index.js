@@ -37,4 +37,21 @@ export const validationSchemaChangePassword = yup.object({
 		.required('Vui lòng nhập lại mật khẩu mới.')
 		.oneOf([yup.ref('new_password'), null], 'Mật khẩu không khớp.'),
 });
+
+export const validationSchemaForgotPassword = yup.object({
+	type: yup.number().required(),
+	email: yup
+		.string('Vui lòng nhập email.')
+		.email('Email không hợp lệ.')
+		.required('Vui lòng nhập email.'),
+});
+
+export const validationSchemaResetPassword = yup.object({
+	new_password: yup.string('Vui lòng nhập mật khẩu mới.').required('Vui lòng nhập mật khẩu mới.'),
+	confirm_password: yup
+		.string('Vui lòng nhập xác nhận mật khẩu mới.')
+		.required('Vui lòng nhập xác nhận mật khẩu mới.')
+		.oneOf([yup.ref('new_password'), null], 'Mật khẩu không khớp.'),
+	token: yup.string().required(),
+});
 //#endregion

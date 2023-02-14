@@ -1,7 +1,7 @@
 import Swal from 'sweetalert2';
 
 export const alert = {
-	success: ({ title, text } = {}) => {
+	success: ({ title, text, onOkConfirm = () => {} } = {}) => {
 		Swal.fire({
 			title: title || 'Thành công',
 			text,
@@ -9,7 +9,7 @@ export const alert = {
 			customClass: {
 				container: 'my-swal',
 			},
-		});
+		}).then(onOkConfirm);
 	},
 	fail: ({ title, text } = {}) => {
 		Swal.fire({
@@ -80,6 +80,7 @@ export const alert = {
 			customClass: {
 				container: 'my-swal',
 			},
+
 			...props,
 		}).then((result) => {
 			if (result.isConfirmed) {

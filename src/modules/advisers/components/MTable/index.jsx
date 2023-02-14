@@ -25,6 +25,7 @@ export const MTable = ({ data, isLoading }) => {
 						<TableCell align='center'>Học vị</TableCell>
 						<TableCell align='left'>Khoa</TableCell>
 						<TableCell align='center'>Lớp phụ trách</TableCell>
+						<TableCell align='center'>Reset</TableCell>
 					</TableRow>
 				</TableHead>
 				<TableBody>

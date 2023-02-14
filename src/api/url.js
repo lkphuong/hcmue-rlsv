@@ -4,6 +4,10 @@ export const AUTH = {
 	REFETCH_TOKEN: '/auth/renew-token',
 	LOGOUT: '/auth/logout',
 	CHANGE_PASSWORD: '/auth/change-password',
+
+	FORGOT_PASSWORD: '/auth/forgot-password',
+	RESET_PASSWORD: '/auth/reset-password',
+	RESTORE_PASSWORD: '/auth/reset-password', //:id
 };
 
 export const SHEETS = {

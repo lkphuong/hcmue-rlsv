@@ -1,4 +1,4 @@
-import { get, post } from '_axios/request';
+import { get, post, put } from '_axios/request';
 
 import { AUTH } from './url';
 
@@ -20,4 +20,16 @@ export const refreshToken = (refresh_token) => {
 
 export const changePassword = (body) => {
 	return post(AUTH.CHANGE_PASSWORD, body);
+};
+
+export const restorePassword = (id, body) => {
+	return put(`${AUTH.RESTORE_PASSWORD}/${id}`, body);
+};
+
+export const forgotPassword = (body) => {
+	return post(`${AUTH.FORGOT_PASSWORD}`, body);
+};
+
+export const resetPassword = (body) => {
+	return post(`${AUTH.RESET_PASSWORD}`, body);
 };

@@ -13,6 +13,8 @@ import { DEPARTMENT_ROUTES } from './department.routes';
 import { STUDENT_ROUTES } from './student.routes';
 
 const ChangePasswordPage = lazy(() => import('_modules/auth/pages/ChangePassword'));
+const ForgotPasswordPage = lazy(() => import('_modules/auth/pages/ForgotPasswordPage'));
+const ResetPasswordPage = lazy(() => import('_modules/auth/pages/ResetPasswordPage'));
 
 export const browserRouter = [
 	{
@@ -36,5 +38,15 @@ export const browserRouter = [
 		path: ROUTES.LOGIN,
 		errorElement: <CErrorPage />,
 		element: <CLoginLayout />,
+	},
+	{
+		path: ROUTES.FORGOT_PASSWORD,
+		errorElement: <CErrorPage />,
+		element: <ForgotPasswordPage />,
+	},
+	{
+		path: ROUTES.RESET_PASSWORD,
+		errorElement: <CErrorPage />,
+		element: <ResetPasswordPage />,
 	},
 ];

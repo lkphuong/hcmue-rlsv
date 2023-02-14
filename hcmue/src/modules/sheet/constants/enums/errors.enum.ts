@@ -42,6 +42,7 @@ export enum ErrorMessage {
   CANNOT_UPLOAD_FILE_ITEM_ERROR = 'Bạn không thể upload file [minh chứng]. Nội dung chấm điểm chưa được cấu hình upload file [minh chứng].',
   FILE_NOT_FOUND_ERROR = 'File [minh chứng] không tồn tại (id: %s).',
   MAXIMUM_FILE_ERROR = 'File [minh chứng] vượt quá giới hạn (size: %s).',
+  ITEM_NOT_FOUND_FILE_ERROR = 'Bạn vui lòng upload file [minh chứng] cho nội dung chấm điểm.',
 
   OPTION_EMPTY_ERROR = 'Bạn vui lòng chọn [tùy chọn] chấm điểm cho %s.',
   ITEM_NOT_CONFIG_OPTION_ERROR = '[Nội dung chấm điểm] không được cấu hình [tùy chọn] (id: %s).',

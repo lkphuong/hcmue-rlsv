@@ -590,6 +590,8 @@ export const validateUpdateEvaluationMaxFile = (
 
 export const validateCreateEvaluationMaxFile = (
   params: StudentFileDtos[],
+  mark: number,
+  item: ItemEntity,
   req: Request,
 ) => {
   const delete_file = params.filter((e) => e.deleted === 1).length;
@@ -605,7 +607,17 @@ export const validateCreateEvaluationMaxFile = (
       sprintf(ErrorMessage.MAXIMUM_FILE_ERROR, MAX_FILES),
       HttpStatus.BAD_REQUEST,
     );
+  } else if (!max_file && item.is_file && mark !== 0) {
+    return new HandlerException(
+      VALIDATION_EXIT_CODE.EMPTY,
+      req.method,
+      req.url,
+      ErrorMessage.ITEM_NOT_FOUND_FILE_ERROR,
+      HttpStatus.BAD_REQUEST,
+    );
   }
+
+  return null;
 };
 
 export const validateRequiredOption = (

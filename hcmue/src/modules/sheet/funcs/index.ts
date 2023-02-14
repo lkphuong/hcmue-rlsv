@@ -731,7 +731,12 @@ export const generateUpdateStudentEvaluation = async (
             //#region handle update file
             if (j.files) {
               //#region validate Max files
-              const valid = validateCreateEvaluationMaxFile(j.files, req);
+              const valid = validateCreateEvaluationMaxFile(
+                j.files,
+                j.personal_mark_level,
+                item,
+                req,
+              );
               if (valid instanceof HttpException) return valid;
               //#endregion
 

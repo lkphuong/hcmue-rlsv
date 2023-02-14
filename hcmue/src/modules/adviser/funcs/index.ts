@@ -289,22 +289,18 @@ export const generateCreateAdviserClasses = async (
   query_runner: QueryRunner,
 ) => {
   const adviser_classes: AdviserClassesEntity[] = [];
-  for await (const i of data) {
-    const adviser_id =
-      advisers.find((adviser) => adviser.email == i.email).id ?? null;
-    if (adviser_id) {
-      for await (const j of i.class) {
+  for await (const i of advisers) {
+    const adviser = data.find((e) => e.email == i.email) ?? null;
+    if (adviser) {
+      for await (const j of adviser.class) {
         const item = new AdviserClassesEntity();
         item.academic_id = academic_id;
-        item.adviser_id = adviser_id;
-        item.class_id =
-          classes.find(($class) => $class.code == j.trim())?.id ?? null;
-
+        item.adviser_id = i.id;
+        item.class_id = classes.find((e) => e.code == j.trim())?.id ?? null;
         adviser_classes.push(item);
       }
     }
   }
-
   //#region Add adviser classes
   const results = await adviser_classes_service.bulkAdd(
     adviser_classes,

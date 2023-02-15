@@ -3,29 +3,6 @@ import { TableCell, TableFooter, TableRow } from '@mui/material';
 const MFooter = ({ data }) => {
 	//#region Data
 
-	// 	return data?.reduce(
-	// 		(prev, cur) => ({
-	// 			total: prev.total + cur.count,
-	// 			perfect: prev.perfect + cur.perfect,
-	// 			well: prev.well + cur.well,
-	// 			good: prev.good + cur.good,
-	// 			medium: prev.medium + cur.medium,
-	// 			low: prev.low + cur.low,
-	// 			bad: prev.bad + cur.bad,
-	// 			underated: prev.underated + cur.underated,
-	// 		}),
-	// 		{
-	// 			perfect: 0,
-	// 			well: 0,
-	// 			good: 0,
-	// 			medium: 0,
-	// 			low: 0,
-	// 			bad: 0,
-	// 			underated: 0,
-	// 			total: 0,
-	// 		}
-	// 	);
-	// }, [data]);
 	//#endregion
 
 	//#region Event

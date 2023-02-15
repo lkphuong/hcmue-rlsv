@@ -76,11 +76,11 @@ import {
   UNKNOW_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
-import { RESOURCE_FOLDER } from '../../../constants';
 import {
   FILE_NAME_TEMPLATE,
   PATH_FILE_EXCEL,
 } from '../constants/enums/template.enum';
+import { Configuration } from '../../shared/constants/configuration.enum';
 
 @Controller('reports')
 export class ReportController {
@@ -468,7 +468,9 @@ export class ReportController {
         class_id,
       );
       //#endregion
-
+      const RESOURCE_FOLDER = this._configurationService.get(
+        Configuration.RESOURCE_FOLDER,
+      );
       if (cache_classes && cache_classes.length > 0) {
         //#region Generate response
         const result = await exportWordTemplateClass(
@@ -675,6 +677,10 @@ export class ReportController {
           req,
         );
 
+        const RESOURCE_FOLDER = this._configurationService.get(
+          Configuration.RESOURCE_FOLDER,
+        );
+
         if (result) {
           const file = fs.createReadStream(
             join(
@@ -834,20 +840,15 @@ export class ReportController {
           req,
         );
 
+        const RESOURCE_FOLDER = this._configurationService.get(
+          Configuration.RESOURCE_FOLDER,
+        );
+
         if (result) {
           const file = fs.createReadStream(
             join(
               process.cwd(),
               RESOURCE_FOLDER + FILE_NAME_TEMPLATE.TEMPLATE_3,
-            ),
-          );
-
-          console.log(
-            fs.existsSync(
-              join(
-                process.cwd(),
-                RESOURCE_FOLDER + FILE_NAME_TEMPLATE.TEMPLATE_3,
-              ),
             ),
           );
 
@@ -1178,6 +1179,10 @@ export class ReportController {
           // const file = createReadStream(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_2A);
           const file = fs.createReadStream(
             join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_2A),
+          );
+
+          const RESOURCE_FOLDER = this._configurationService.get(
+            Configuration.RESOURCE_FOLDER,
           );
 
           console.log(

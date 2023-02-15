@@ -1,4 +1,4 @@
-import { removeDuplicates } from '../../../utils';
+import { convertString2Date, removeDuplicates } from '../../../utils';
 
 import { ClassEntity } from '../../../entities/class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
@@ -180,7 +180,8 @@ export const generateData2Object = async (sheet: SheetEntity | null) => {
     const current = new Date();
     const end = new Date(sheet.form.end);
     const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
-    const success = current > deadline || sheet.graded == 0 ? true : false;
+    const success =
+      current > deadline || sheet.status == SheetStatus.SUCCESS ? true : false;
     const payload: SheetDetailsResponse = {
       id: sheet.id,
       department: sheet.department
@@ -228,8 +229,8 @@ export const generateData2Object = async (sheet: SheetEntity | null) => {
       sum_of_adviser_marks: sheet.sum_of_adviser_marks,
       sum_of_department_marks: sheet.sum_of_department_marks,
       headers: [],
-      start: sheet.form.start,
-      end: sheet.form.end,
+      start: convertString2Date(sheet.form.start.toString()),
+      end: convertString2Date(sheet.form.end.toString()),
     };
 
     //#region Get headers

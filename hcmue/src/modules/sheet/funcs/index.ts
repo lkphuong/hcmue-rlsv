@@ -510,55 +510,6 @@ export const generateDepartmentMarks = async (
   }
 };
 
-// export const generateClassStatus = async (
-//   params: GetClassStatusDto,
-//   from_service: FormService,
-//   sheet_service: SheetService,
-//   req: Request,
-// ) => {
-//   try {
-//     //#region Get params
-//     const { academic_id, class_id, department_id, semester_id, status } =
-//       params;
-//     //#endregion
-
-//     const form = await from_service.getFormInProgress();
-//     if (form) {
-//       if (class_id) {
-//         //#region count sheet by class
-//         //#endregion
-//       } else {
-//         //#region count sheet by department
-//         //#endregion
-//       }
-//     } else {
-//       //#region throw HandlerException
-//       throw new HandlerException(
-//         DATABASE_EXIT_CODE.NO_CONTENT,
-//         req.method,
-//         req.url,
-//         ErrorMessage.NO_CONTENT,
-//         HttpStatus.NOT_FOUND,
-//       );
-//       //#endregion
-//     }
-//   } catch (err) {
-//     console.log('--------------------------------------------------------');
-//     console.log(req.method + ' - ' + req.url + ': ' + err.message);
-
-//     if (err instanceof HttpException) return err;
-//     else {
-//       //#region throw HandlerException
-//       return new HandlerException(
-//         SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
-//         req.method,
-//         req.url,
-//       );
-//       //#endregion
-//     }
-//   }
-// };
-
 export const generateUngradeSheet = async (
   request_code: string,
   sheet: SheetEntity,
@@ -1213,10 +1164,6 @@ export const generateUpdateSheet = async (
         }
       }
 
-      // sum_of_mark_items =
-      //   header.max_mark > sum_of_mark_items
-      //     ? sum_of_mark_items
-      //     : header.max_mark;
       sum_of_mark_items = header.is_return
         ? header.max_mark > sum_of_mark_items
           ? sum_of_mark_items
@@ -1264,9 +1211,17 @@ export const generateUpdateSheet = async (
     sheet.sum_of_adviser_marks = sum_of_marks;
   else sheet.sum_of_department_marks = sum_of_marks;
 
-  sheet.status = sheet.status < status ? status : sheet.status;
+  //#region hoàn tác cho cbl là cvht
+  sheet.status =
+    sheet.status < status || sheet.status === SheetStatus.NOT_GRADED
+      ? status
+      : sheet.status;
   sheet.graded = 1;
-  sheet.level = sheet.status <= status ? new_level : sheet.level;
+  sheet.level =
+    sheet.status <= status || sheet.status === SheetStatus.NOT_GRADED
+      ? new_level
+      : sheet.level;
+  //#endregion
   sheet.updated_at = new Date();
   sheet.updated_by = request_code;
 

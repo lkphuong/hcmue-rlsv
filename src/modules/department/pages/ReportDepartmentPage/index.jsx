@@ -10,12 +10,15 @@ import { MReportDepartmentFilter, MReportDepartmentTable } from '_modules/depart
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 import { alert } from '_func/alert';
 
-import { adminExportExcel, adminExportWord, getClassReports } from '_api/reports.api';
+import { departmentExportExcel, departmentExportWord, getClassReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
 
 import { actions } from '_slices/currentInfo.slice';
 
 import { CReportButton } from '_others/';
+
+import { ERRORS, SUCCESS } from '_constants/messages';
+import { FILE_NAMES } from '_constants/variables';
 
 const ReportDepartmentPage = () => {
 	//#region Data
@@ -87,18 +90,27 @@ const ReportDepartmentPage = () => {
 
 		try {
 			const res =
-				type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+				type === 'word'
+					? await departmentExportWord(body)
+					: await departmentExportExcel(body);
 
 			if (isSuccess(res)) {
 				setNoti({
 					show: true,
 					status: 'success',
-					message:
-						type === 'word' ? 'Xuất biên bản thành công!' : 'Xuất thống kê thành công!',
+					message: type === 'word' ? SUCCESS.WORD : SUCCESS.EXCEL,
 				});
 
-				fileDownload(res.data, type === 'word' ? 'report.docx' : 'report.xlsx');
-			}
+				fileDownload(
+					res.data,
+					type === 'word' ? FILE_NAMES.DEPARTMENT_WORD : FILE_NAMES.DEPARTMENT_EXCEL
+				);
+			} else
+				setNoti({
+					show: true,
+					status: 'error',
+					message: type === 'word' ? ERRORS.WORD : ERRORS.EXCEL,
+				});
 		} catch (error) {
 			throw error;
 		} finally {

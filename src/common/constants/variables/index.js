@@ -64,3 +64,14 @@ export const SHEET_STATUS = [
 	{ id: 4, name: 'Hoàn thành' },
 	{ id: 5, name: 'Không đánh giá' },
 ];
+
+export const FILE_NAMES = {
+	ADMIN_WORD: 'BIÊN BẢN HỌP HỘI ĐỒNG ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN CẤP TRƯỜNG.docx',
+	ADMIN_EXCEL: 'BẢNG ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN CẤP TRƯỜNG.xlsx',
+
+	DEPARTMENT_WORD: 'BIÊN BẢN HỌP HỘI ĐỒNG ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN CẤP KHOA.docx',
+	DEPARTMENT_EXCEL: 'BẢNG ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN CẤP KHOA.xlsx',
+
+	CLASS_WORD: 'BIÊN BẢN HỌP LỚP.docx',
+	CLASS_EXCEL: 'BẢNG ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN CẤP LỚP.xlsx',
+};

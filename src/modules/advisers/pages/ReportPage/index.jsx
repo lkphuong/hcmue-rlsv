@@ -7,7 +7,7 @@ import fileDownload from 'js-file-download';
 
 import { MClassTable, MReportFilter } from '_modules/advisers/components';
 
-import { adminExportExcel, adminExportWord, getClassReports } from '_api/reports.api';
+import { classExportExcel, classExportWord, getClassReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
 
 import { cleanObjValue, isSuccess, isEmpty } from '_func/index';
@@ -16,6 +16,9 @@ import { alert } from '_func/alert';
 import { actions } from '_slices/currentInfo.slice';
 
 import { CReportButton } from '_others/';
+
+import { ERRORS, SUCCESS } from '_constants/messages';
+import { FILE_NAMES } from '_constants/variables';
 
 const ReportPage = () => {
 	//#region Data
@@ -90,18 +93,25 @@ const ReportPage = () => {
 
 		try {
 			const res =
-				type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+				type === 'word' ? await classExportWord(body) : await classExportExcel(body);
 
 			if (isSuccess(res)) {
 				setNoti({
 					show: true,
 					status: 'success',
-					message:
-						type === 'word' ? 'Xuất biên bản thành công!' : 'Xuất thống kê thành công!',
+					message: type === 'word' ? SUCCESS.WORD : SUCCESS.EXCEL,
 				});
 
-				fileDownload(res.data, type === 'word' ? 'report.docx' : 'report.xlsx');
-			}
+				fileDownload(
+					res.data,
+					type === 'word' ? FILE_NAMES.CLASS_WORD : FILE_NAMES.CLASS_EXCEL
+				);
+			} else
+				setNoti({
+					show: true,
+					status: 'error',
+					message: type === 'word' ? ERRORS.WORD : ERRORS.EXCEL,
+				});
 		} catch (error) {
 			throw error;
 		} finally {

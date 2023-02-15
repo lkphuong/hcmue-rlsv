@@ -17,6 +17,9 @@ import { actions } from '_slices/currentInfo.slice';
 
 import { CReportButton } from '_others/';
 
+import { ERRORS, SUCCESS } from '_constants/messages';
+import { FILE_NAMES } from '_constants/variables';
+
 const DepartmentReportPage = () => {
 	//#region Data
 	// const printRef = useRef();
@@ -101,12 +104,19 @@ const DepartmentReportPage = () => {
 				setNoti({
 					show: true,
 					status: 'success',
-					message:
-						type === 'word' ? 'Xuất biên bản thành công!' : 'Xuất thống kê thành công!',
+					message: type === 'word' ? SUCCESS.WORD : SUCCESS.EXCEL,
 				});
 
-				fileDownload(res.data, type === 'word' ? 'report.docx' : 'report.xlsx');
-			}
+				fileDownload(
+					res.data,
+					type === 'word' ? FILE_NAMES.ADMIN_WORD : FILE_NAMES.ADMIN_EXCEL
+				);
+			} else
+				setNoti({
+					show: true,
+					status: 'error',
+					message: type === 'word' ? ERRORS.WORD : ERRORS.EXCEL,
+				});
 		} catch (error) {
 			throw error;
 		} finally {

@@ -138,12 +138,23 @@ export const exportWordTemplateAdmin = async (
       //#endregion
 
       //#region call api
-      const url = configuration_service.get(
+      const EXPORT_SERVICE_URL = configuration_service.get(
+        Configuration.EXPORT_SERVICE_URL,
+      );
+
+      const EXPORT_SERVICE_PORT = configuration_service.get(
+        Configuration.EXPORT_SERVICE_PORT,
+      );
+
+      const URL_EXPORT_TEMPLATE_3 = configuration_service.get(
         Configuration.URL_EXPORT_TEMPLATE_3,
       );
 
       const response = await axios
-        .post(url, result)
+        .post(
+          `http://${EXPORT_SERVICE_URL}:${EXPORT_SERVICE_PORT}/${URL_EXPORT_TEMPLATE_3}`,
+          result,
+        )
         .then((res) => {
           return res.data;
         })
@@ -274,12 +285,24 @@ export const exportWordTemplateDepartment = async (
       //#endregion
 
       //#region call api
-      const url = configuration_service.get(
+      //#region call api
+      const EXPORT_SERVICE_URL = configuration_service.get(
+        Configuration.EXPORT_SERVICE_URL,
+      );
+
+      const EXPORT_SERVICE_PORT = configuration_service.get(
+        Configuration.EXPORT_SERVICE_PORT,
+      );
+
+      const URL_EXPORT_TEMPLATE_2 = configuration_service.get(
         Configuration.URL_EXPORT_TEMPLATE_2,
       );
 
       const response = await axios
-        .post(url, result)
+        .post(
+          `http://${EXPORT_SERVICE_URL}:${EXPORT_SERVICE_PORT}/${URL_EXPORT_TEMPLATE_2}`,
+          result,
+        )
         .then((res) => {
           return res.data;
         })
@@ -369,12 +392,24 @@ export const exportWordTemplateClass = async (
           ((sum_of_std / sum_of_std_in_classes) * 100).toFixed(2) + '%',
       });
       //#region call api
-      const url = configuration_service.get(
+      //#region call api
+      const EXPORT_SERVICE_URL = configuration_service.get(
+        Configuration.EXPORT_SERVICE_URL,
+      );
+
+      const EXPORT_SERVICE_PORT = configuration_service.get(
+        Configuration.EXPORT_SERVICE_PORT,
+      );
+
+      const URL_EXPORT_TEMPLATE_1 = configuration_service.get(
         Configuration.URL_EXPORT_TEMPLATE_1,
       );
 
       const response = await axios
-        .post(url, result)
+        .post(
+          `http://${EXPORT_SERVICE_URL}:${EXPORT_SERVICE_PORT}/${URL_EXPORT_TEMPLATE_1}`,
+          result,
+        )
         .then((res) => {
           return res.data;
         })

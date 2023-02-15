@@ -50,7 +50,14 @@ export default {
   MULTER_DEST: './static/uploads',
   RESOURCE_FOLDER: '../services/export-service/resources/',
 
-  URL_EXPORT_TEMPLATE_1: 'http://localhost:3001/export/template1',
-  URL_EXPORT_TEMPLATE_2: 'http://localhost:3001/export/template2',
-  URL_EXPORT_TEMPLATE_3: 'http://localhost:3001/export/template3',
+  EXPORT_SERVICE_URL: 'localhost',
+  EXPORT_SERVICE_PORT: 3001,
+
+  URL_EXPORT_TEMPLATE_1: 'export/template1',
+  URL_EXPORT_TEMPLATE_2: 'export/template2',
+  URL_EXPORT_TEMPLATE_3: 'export/template3',
+
+  API_EXPORT_TEMPLATE_1: 'http://hcmue.vtcode.vn:9093/export/template1',
+  API_EXPORT_TEMPLATE_2: 'http://hcmue.vtcode.vn:9093/export/template2',
+  API_EXPORT_TEMPLATE_3: 'http://hcmue.vtcode.vn:9093/export/template3',
 };

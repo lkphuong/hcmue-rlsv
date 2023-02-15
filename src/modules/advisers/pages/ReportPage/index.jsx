@@ -87,6 +87,8 @@ const ReportPage = () => {
 		const body = {
 			academic_id: filter?.academic_id,
 			semester_id: filter?.semester_id,
+			department_id: filter?.department_id,
+			class_id: filter?.class_id,
 		};
 
 		alert.loading();

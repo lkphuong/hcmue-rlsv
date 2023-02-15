@@ -392,5 +392,23 @@ export default function componentStyleOverrides(theme) {
 				},
 			},
 		},
+		MuiAlert: {
+			styleOverrides: {
+				standardSuccess: {
+					backgroundColor: 'rgb(107 255 132 / 48%)',
+					color: '#333333',
+					'& .MuiAlert-icon': {
+						color: '#00af31!important',
+					},
+				},
+				standardError: {
+					backgroundColor: 'rgb(255 173 173)',
+					color: '#333333',
+					'& .MuiAlert-icon': {
+						color: '#990101!important',
+					},
+				},
+			},
+		},
 	};
 }

@@ -105,4 +105,7 @@ export const alert = {
 			}
 		});
 	},
+	close: () => {
+		Swal.close();
+	},
 };

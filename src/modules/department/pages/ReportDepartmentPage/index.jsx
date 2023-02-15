@@ -1,28 +1,30 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Alert, Box, Paper, Snackbar, Stack, Typography } from '@mui/material';
 
-import {
-	MReportDepartmentFilter,
-	MReportDepartmentTable,
-	MReportPrint,
-} from '_modules/department/components';
+import fileDownload from 'js-file-download';
+
+import { MReportDepartmentFilter, MReportDepartmentTable } from '_modules/department/components';
 
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
+import { alert } from '_func/alert';
 
 import { adminExportExcel, adminExportWord, getClassReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
 
 import { actions } from '_slices/currentInfo.slice';
+
 import { CReportButton } from '_others/';
 
 const ReportDepartmentPage = () => {
 	//#region Data
-	const printRef = useRef();
+	// const printRef = useRef();
 
 	const { departments, academic_years } = useSelector((state) => state.options, shallowEqual);
 	const { department_id, fullname } = useSelector((state) => state.auth.profile, shallowEqual);
+
+	const [noti, setNoti] = useState({ show: false, status: 'success', message: '' });
 
 	const [semesters, setSemesters] = useState([]);
 
@@ -69,13 +71,39 @@ const ReportDepartmentPage = () => {
 	// 	content: () => printRef.current,
 	// });
 
+	const onNotiClose = (event, reason) => {
+		if (reason === 'clickaway') return;
+
+		setNoti({ show: false, status: 'success', message: '' });
+	};
+
 	const handleExport = (type) => async () => {
 		const body = {
 			academic_id: filter?.academic_id,
 			semester_id: filter?.semester_id,
 		};
 
-		const res = type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+		alert.loading();
+
+		try {
+			const res =
+				type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+
+			if (isSuccess(res)) {
+				setNoti({
+					show: true,
+					status: 'success',
+					message:
+						type === 'word' ? 'Xuất biên bản thành công!' : 'Xuất thống kê thành công!',
+				});
+
+				fileDownload(res.data, type === 'word' ? 'report.docx' : 'report.xlsx');
+			}
+		} catch (error) {
+			throw error;
+		} finally {
+			alert.close();
+		}
 	};
 	//#endregion
 
@@ -141,13 +169,17 @@ const ReportDepartmentPage = () => {
 
 			<MReportDepartmentTable data={data} onSetCurrent={handleSetCurrent} />
 
-			<MReportPrint
+			<Snackbar open={noti.show} autoHideDuration={4000} onClose={onNotiClose}>
+				<Alert severity={noti.status}>{noti.message}</Alert>
+			</Snackbar>
+
+			{/* <MReportPrint
 				data={data}
 				academic={data?.academic}
 				semester={data?.semester}
 				departmentName={fullname}
 				ref={printRef}
-			/>
+			/> */}
 		</Box>
 	);
 	//#endregion

@@ -1,16 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
-import { Box, Paper, Stack, Typography } from '@mui/material';
+import { Alert, Box, Paper, Snackbar, Stack, Typography } from '@mui/material';
+
+import fileDownload from 'js-file-download';
 
 import { Filter, MDepartmentTable } from '_modules/reports/components';
 
 import { isSuccess, isEmpty, cleanObjValue } from '_func/';
+import { alert } from '_func/alert';
 
 import { adminExportExcel, adminExportWord, getReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
 
 import { actions } from '_slices/currentInfo.slice';
+
 import { CReportButton } from '_others/';
 
 const DepartmentReportPage = () => {
@@ -20,6 +24,8 @@ const DepartmentReportPage = () => {
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const { role_id, department_id } = useSelector((state) => state.auth.profile, shallowEqual);
+
+	const [noti, setNoti] = useState({ show: false, status: 'success', message: '' });
 
 	const [semesters, setSemesters] = useState([]);
 
@@ -73,15 +79,39 @@ const DepartmentReportPage = () => {
 	// 	content: () => printRef.current,
 	// });
 
+	const onNotiClose = (event, reason) => {
+		if (reason === 'clickaway') return;
+
+		setNoti({ show: false, status: 'success', message: '' });
+	};
+
 	const handleExport = (type) => async () => {
 		const body = {
 			academic_id: filter?.academic_id,
 			semester_id: filter?.semester_id,
 		};
 
-		const res = type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+		alert.loading();
 
-		console.log(res);
+		try {
+			const res =
+				type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+
+			if (isSuccess(res)) {
+				setNoti({
+					show: true,
+					status: 'success',
+					message:
+						type === 'word' ? 'Xuất biên bản thành công!' : 'Xuất thống kê thành công!',
+				});
+
+				fileDownload(res.data, type === 'word' ? 'report.docx' : 'report.xlsx');
+			}
+		} catch (error) {
+			throw error;
+		} finally {
+			alert.close();
+		}
 	};
 	//#endregion
 
@@ -149,6 +179,10 @@ const DepartmentReportPage = () => {
 			</Box>
 
 			<MDepartmentTable data={data} onSetCurrent={handleSetCurrent} />
+
+			<Snackbar open={noti.show} autoHideDuration={4000} onClose={onNotiClose}>
+				<Alert severity={noti.status}>{noti.message}</Alert>
+			</Snackbar>
 
 			{/* <MReportPrint
 				data={data}

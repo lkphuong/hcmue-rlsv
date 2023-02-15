@@ -103,6 +103,15 @@ export const REPORTS = {
 	GET_REPORTS: '/reports',
 
 	GET_CLASS_REPORTS: '/reports/class',
+
+	ADMIN_WORD: '/reports/admin/export/word',
+	ADMIN_EXCEL: '/reports/admin/export/excel',
+
+	DEPARTMENT_WORD: '/reports/department/export/word',
+	DEPARTMENT_EXCEL: '/reports/department/export/excel',
+
+	CLASS_WORD: '/reports/class/export/word',
+	CLASS_EXCEL: '/reports/class/export/excel',
 };
 
 export const LEVELS = {

@@ -12,9 +12,10 @@ import { CLASS_ROUTES } from './class.routes';
 import { DEPARTMENT_ROUTES } from './department.routes';
 import { STUDENT_ROUTES } from './student.routes';
 
+import ForgotPasswordPage from '_modules/auth/pages/ForgotPasswordPage';
+import ResetPasswordPage from '_modules/auth/pages/ResetPasswordPage';
+
 const ChangePasswordPage = lazy(() => import('_modules/auth/pages/ChangePassword'));
-const ForgotPasswordPage = lazy(() => import('_modules/auth/pages/ForgotPasswordPage'));
-const ResetPasswordPage = lazy(() => import('_modules/auth/pages/ResetPasswordPage'));
 
 export const browserRouter = [
 	{

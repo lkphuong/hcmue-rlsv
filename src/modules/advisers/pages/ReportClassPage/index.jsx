@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
-import { useReactToPrint } from 'react-to-print';
 
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import { Print } from '@mui/icons-material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
@@ -96,9 +94,9 @@ const ReportClassPage = () => {
 		[isSelectedAll]
 	);
 
-	const handlePrint = useReactToPrint({
-		content: () => printRef.current,
-	});
+	// const handlePrint = useReactToPrint({
+	// 	content: () => printRef.current,
+	// });
 	//#endregion
 
 	useEffect(() => {
@@ -134,13 +132,13 @@ const ReportClassPage = () => {
 						<Typography fontSize={20} fontWeight={600}>
 							Thống kê của lớp {classData?.name} - {classData?.code}
 						</Typography>
-						<Button
+						{/* <Button
 							disabled={listData.length === 0}
 							startIcon={<Print />}
 							onClick={handlePrint}
 						>
 							In thống kê
-						</Button>
+						</Button> */}
 					</Stack>
 				</Paper>
 			</Box>

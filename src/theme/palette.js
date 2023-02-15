@@ -64,5 +64,13 @@ export default function themePalette(theme) {
 			paper: theme.paper,
 			default: theme.backgroundDefault,
 		},
+		word: {
+			main: '#2B7CD3',
+			contrastText: '#fff',
+		},
+		excel: {
+			main: '#21A366',
+			contrastText: '#fff',
+		},
 	};
 }

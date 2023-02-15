@@ -1,18 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { useReactToPrint } from 'react-to-print';
 
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
-import { Print } from '@mui/icons-material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { MClassTable, MReportFilter, MReportPrint } from '_modules/advisers/components';
 
-import { getClassReports } from '_api/reports.api';
+import { adminExportExcel, adminExportWord, getClassReports } from '_api/reports.api';
 import { getSemestersByYear } from '_api/options.api';
 
 import { cleanObjValue, isSuccess, isEmpty } from '_func/index';
 
 import { actions } from '_slices/currentInfo.slice';
+import { CReportButton } from '_others/';
 
 const ReportPage = () => {
 	//#region Data
@@ -65,9 +64,18 @@ const ReportPage = () => {
 		dispatch(actions.setInfo(info));
 	};
 
-	const handlePrint = useReactToPrint({
-		content: () => printRef.current,
-	});
+	// const handlePrint = useReactToPrint({
+	// 	content: () => printRef.current,
+	// });
+
+	const handleExport = (type) => async () => {
+		const body = {
+			academic_id: filter?.academic_id,
+			semester_id: filter?.semester_id,
+		};
+
+		const res = type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+	};
 	//#endregion
 
 	useEffect(() => {
@@ -105,13 +113,25 @@ const ReportPage = () => {
 							Thống kê phiếu chấm điểm rèn luyện
 						</Typography>
 
-						<Button
+						{/* <Button
 							disabled={data.length === 0}
 							startIcon={<Print />}
 							onClick={handlePrint}
 						>
 							In thống kê
-						</Button>
+						</Button> */}
+						<Stack direction='row' spacing={1}>
+							<CReportButton
+								type='word'
+								disabled={data.length === 0}
+								onClick={handleExport('word')}
+							/>
+							<CReportButton
+								type='excel'
+								disabled={data.length === 0}
+								onClick={handleExport('excel')}
+							/>
+						</Stack>
 					</Stack>
 				</Paper>
 			</Box>

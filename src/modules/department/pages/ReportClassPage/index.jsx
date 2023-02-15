@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { shallowEqual, useSelector } from 'react-redux';
 
-import { Box, Button, Paper, Stack, Typography } from '@mui/material';
+import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
@@ -16,8 +16,6 @@ import {
 import { getClassSheets } from '_api/sheets.api';
 
 import { cleanObjValue, formatTimeSemester, isEmpty, isSuccess } from '_func/index';
-import { Print } from '@mui/icons-material';
-import { useReactToPrint } from 'react-to-print';
 
 const ReportClassPage = () => {
 	//#region Data
@@ -99,9 +97,9 @@ const ReportClassPage = () => {
 		[isSelectedAll]
 	);
 
-	const handlePrint = useReactToPrint({
-		content: () => printRef.current,
-	});
+	// const handlePrint = useReactToPrint({
+	// 	content: () => printRef.current,
+	// });
 	//#endregion
 
 	useEffect(() => {
@@ -137,13 +135,13 @@ const ReportClassPage = () => {
 						<Typography fontSize={20} fontWeight={600}>
 							{departmentName} - Lớp {classData?.name} - {classData?.code}
 						</Typography>
-						<Button
+						{/* <Button
 							disabled={listData.length === 0}
 							startIcon={<Print />}
 							onClick={handlePrint}
 						>
 							In thống kê
-						</Button>
+						</Button> */}
 					</Stack>
 				</Paper>
 			</Box>

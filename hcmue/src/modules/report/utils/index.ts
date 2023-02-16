@@ -32,7 +32,7 @@ export const generateReportsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', cache_classes);
+  // console.log('data: ', cache_classes);
 
   // Transform CacheClassEntity class to ReportResponse class
   const payload = await generateCacheClassesResponse(

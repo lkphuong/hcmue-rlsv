@@ -55,10 +55,10 @@ export const generateCacheClassesResponse = async (
 
       if (data.has(cache_class.class_id)) {
         items = data.get(cache_class.class_id);
-        items = generateLocalLevelResponse(items, cache_class);
+        items = await generateLocalLevelResponse(items, cache_class);
       } else {
         items = generateLevelsResponse(levels);
-        items = generateLocalLevelResponse(items, cache_class);
+        items = await generateLocalLevelResponse(items, cache_class);
       }
 
       sum_of_levels = generateGlobalLevelResponse(sum_of_levels, cache_class);
@@ -82,7 +82,6 @@ export const generateCacheClassesResponse = async (
           SheetStatus.ALL,
         );
 
-        sum_of_std += convertString2Float(num_of_std.toString());
         //#endregion
 
         //#region Push data to class_response
@@ -96,6 +95,35 @@ export const generateCacheClassesResponse = async (
         //#endregion
       }
     }
+    //#endregion
+
+    //#region count not graded for class
+    for await (const $class of class_response) {
+      const length = $class.levels.length;
+      $class.levels[length - 1].count = await sheet_service.countSheetNotGraded(
+        academic_id,
+        semester_id,
+        department_id,
+        $class.id,
+      );
+    }
+    //#endregion
+
+    //#region sum not graded
+    sum_of_levels[sum_of_levels.length - 1].count =
+      await sheet_service.countSheetNotGraded(
+        academic_id,
+        semester_id,
+        department_id,
+      );
+    //#endregion
+
+    //#region sum_of_std
+    sum_of_std = await sheet_service.countSheetsReport(
+      academic_id,
+      semester_id,
+      department_id,
+    );
     //#endregion
     report_response.department = department
       ? {
@@ -185,6 +213,7 @@ export const generateCacheDepartmentsResponse = async (
           semester_id,
           key,
           cache_class_service,
+          sheet_service,
         );
         const department = departments.find((d) => d.id === key);
 
@@ -196,7 +225,6 @@ export const generateCacheDepartmentsResponse = async (
           SheetStatus.ALL,
         );
 
-        sum_of_std += convertString2Float(num_of_std.toString());
         //#endregion
 
         //#region Push data to department response
@@ -210,6 +238,26 @@ export const generateCacheDepartmentsResponse = async (
       }
     }
     //#endregion
+
+    //#region sum not graded for department
+    for await (const department of department_response) {
+      const length = department.levels.length;
+      department.levels[length - 1].count =
+        await sheet_service.countSheetNotGraded(
+          academic_id,
+          semester_id,
+          department.id,
+        );
+    }
+    //#endregion
+
+    //#region sum_of_std
+    sum_of_std = await sheet_service.countSheetsReport(
+      academic_id,
+      semester_id,
+    );
+    //#endregion
+
     report_response.department = department
       ? {
           id: department.id,
@@ -264,12 +312,13 @@ export const generateLevelsResponse = (levels: LevelEntity[]) => {
   return items;
 };
 
-export const generateLocalLevelResponse = (
+export const generateLocalLevelResponse = async (
   items: LevelResponse[],
   cache_class: CacheClassEntity,
 ) => {
   const level_id = cache_class.level ? cache_class.level.id.toString() : '0';
   const index = items.findIndex((item) => item.id.toString() === level_id);
+
   if (index !== -1) {
     items[index] = cache_class.level
       ? {
@@ -283,7 +332,6 @@ export const generateLocalLevelResponse = (
           count: cache_class.amount,
         };
   }
-
   return items;
 };
 
@@ -293,15 +341,25 @@ export const generateDepartmentLocalLevelResponse = async (
   semester_id: number,
   department_id: number,
   cache_class_service: CacheClassService,
+  sheet_service: SheetService,
 ) => {
   for await (const i of items) {
-    const amount = await cache_class_service.amountLevelCacheDepartment(
-      academic_id,
-      semester_id,
-      department_id,
-      i.id as number,
-    );
-    i.count = amount ? parseInt(amount.toString()) : 0;
+    if (i.id == 0) {
+      const amount = await sheet_service.countSheetNotGraded(
+        academic_id,
+        semester_id,
+        department_id,
+      );
+      i.count = amount ? parseInt(amount.toString()) : 0;
+    } else {
+      const amount = await cache_class_service.amountLevelCacheDepartment(
+        academic_id,
+        semester_id,
+        department_id,
+        i.id as number,
+      );
+      i.count = amount ? parseInt(amount.toString()) : 0;
+    }
   }
 
   return items;

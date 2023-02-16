@@ -91,9 +91,10 @@ export const exportWordTemplateAdmin = async (
         tk: 0,
         tkxl: 0,
       };
-
+      let index = 1;
       for (const i of payload.departments) {
         const department: ItemResponse = {
+          index: index++,
           name: i.name,
           ss: i.num_of_std,
           xs: i.levels[0]?.count ?? 0,
@@ -238,9 +239,10 @@ export const exportWordTemplateDepartment = async (
         tk: 0,
         tkxl: 0,
       };
-
+      let index = 1;
       for (const i of payload.classes) {
         const $class: ItemResponse = {
+          index: index++,
           name: i.code,
           ss: i.num_of_std,
           xs: i.levels[0]?.count ?? 0,
@@ -531,6 +533,7 @@ export const exportExcelTemplateClass = async (
         row_values[6] = sheets[i].sum_of_personal_marks;
         row_values[7] = sheets[i].sum_of_class_marks;
         row_values[8] = sheets[i].sum_of_adviser_marks;
+        row_values[9] = sheets[i].flag ? '' : sheets[i].status;
         rows.push(row_values);
       }
       worksheet.insertRows(12, rows, 'i');
@@ -647,6 +650,7 @@ export const exportExcelTemplateDepartment = async (
         row_values[8] = sheets[i].sum_of_adviser_marks;
         row_values[9] = sheets[i].sum_of_department_marks;
         row_values[10] = sheets[i]?.level ?? 'Không xếp loại';
+        row_values[11] = sheets[i].flag ? '' : sheets[i].status;
         rows.push(row_values);
       }
       worksheet.insertRows(12, rows, 'i');
@@ -766,6 +770,7 @@ export const exportExcelTemplateAdmin = async (
           row_values[7] = sheets[i].department;
           row_values[8] = sheets[i].sum_of_department_marks;
           row_values[9] = sheets[i]?.level ?? 'Không xếp loại';
+          row_values[10] = sheets[i].flag ? '' : sheets[i].status;
           rows.push(row_values);
         }
         worksheet.insertRows(12, rows, 'i');

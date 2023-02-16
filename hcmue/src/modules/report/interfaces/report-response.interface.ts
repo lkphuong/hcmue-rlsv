@@ -60,6 +60,7 @@ export interface ExportWordTemplateClass {
 //#endregion
 
 export interface ItemResponse {
+  index: number;
   name: string;
   ss: number;
   xs: number;

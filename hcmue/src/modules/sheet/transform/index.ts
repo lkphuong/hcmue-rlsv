@@ -181,7 +181,11 @@ export const generateData2Object = async (sheet: SheetEntity | null) => {
     const end = new Date(sheet.form.end);
     const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
     const success =
-      current > deadline || sheet.status == SheetStatus.SUCCESS ? true : false;
+      current > deadline ||
+      sheet.status == SheetStatus.SUCCESS ||
+      !sheet?.user?.status?.flag
+        ? true
+        : false;
     const payload: SheetDetailsResponse = {
       id: sheet.id,
       department: sheet.department

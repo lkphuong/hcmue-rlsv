@@ -22,6 +22,7 @@ import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { ReportResponse } from '../interfaces/sheet_response.interface';
 import { LevelEntity } from '../../../entities/level.entity';
+import { StatusEntity } from '../../../entities/status.entity';
 
 @Injectable()
 export class SheetService {
@@ -379,6 +380,12 @@ export class SheetService {
           'user',
           `user.std_code = sheet.std_code AND user.deleted = 0`,
         )
+        .innerJoinAndMapOne(
+          'user.status',
+          StatusEntity,
+          'status',
+          `status.id = user.status_id AND status.deleted = 0`,
+        )
         .leftJoinAndMapMany(
           'form.headers',
           HeaderEntity,
@@ -465,7 +472,9 @@ export class SheetService {
           department.name as department,
           department.id as department_id,
           level.name AS level,
-          k.name AS k`,
+          k.name AS k,
+          status.flag,
+          status.name AS status`,
         )
         .innerJoin(
           UserEntity,
@@ -484,6 +493,11 @@ export class SheetService {
           DepartmentEntity,
           'department',
           `department.id = sheet.department_id AND department.deleted = 0`,
+        )
+        .innerJoin(
+          StatusEntity,
+          'status',
+          `status.id = user.status_id AND status.deleted = 0`,
         )
         .innerJoin(KEntity, 'k', `k.id = sheet.k AND k.deleted = 0`)
         .leftJoin(
@@ -515,10 +529,13 @@ export class SheetService {
         conditions.take(length).skip(offset);
       }
 
+      console.log('sql: ', conditions.getSql());
+
       const results = await conditions
         .orderBy('department_id', 'ASC')
         .addOrderBy('k', 'ASC')
         .addOrderBy('class_id', 'ASC')
+        .addOrderBy('user.std_code', 'ASC')
         .getRawMany<ReportResponse>();
 
       return results || null;
@@ -751,6 +768,40 @@ export class SheetService {
         Levels.ERROR,
         Methods.SELECT,
         'SheetService.countSheetByStatus()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async countSheetNotGraded(
+    academic_id: number,
+    semester_id: number,
+    department_id: number,
+    class_id?: number,
+  ): Promise<number> {
+    try {
+      const conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .select('COUNT(sheet.id)', 'count')
+        .where('sheet.academic_id = :academic_id', { academic_id })
+        .andWhere('sheet.semester_id = :semester_id', { semester_id })
+        .andWhere('sheet.department_id = :department_id', { department_id })
+        .andWhere('sheet.status =:status', { status: SheetStatus.NOT_GRADED })
+        .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      if (class_id && class_id !== 0) {
+        conditions.andWhere('sheet.class_id = :class_id', { class_id });
+      }
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.countSheetNotGraded()',
         e,
       );
       return null;

@@ -201,7 +201,7 @@ export class SheetController {
         if (valid instanceof HttpException) throw valid;
         //#endregion
         //#region Generate response
-        return await generateSheet(sheet, req);
+        return await generateSheet(sheet, role, req);
         //#endregion
       } else {
         //#region throw HandlerException
@@ -1962,6 +1962,7 @@ export class SheetController {
         //#region Ungraded
         const result = await generateUngradeSheet(
           request_code,
+          role,
           sheet,
           this._sheetService,
           req,
@@ -2064,6 +2065,7 @@ export class SheetController {
         //#region Ungraded
         const result = await generateUngradeSheet(
           request_code,
+          role,
           sheet,
           this._sheetService,
           req,
@@ -2267,6 +2269,7 @@ export class SheetController {
         //#region Ungraded
         const result = await generateUngradeSheet(
           request_code,
+          role,
           sheet,
           this._sheetService,
           req,

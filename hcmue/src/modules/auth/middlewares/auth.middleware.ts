@@ -56,16 +56,16 @@ export class VerifyTokenMiddleware implements NestMiddleware {
 
             req.user = decoded as JwtPayload;
 
-            const auth = await this._authService.contains(decoded.username);
+            // const auth = await this._authService.contains(decoded.username);
 
-            if (!auth.access_token) {
-              throw new ExpiredTokenException(
-                access_token,
-                1003,
-                req.method,
-                req.url,
-              );
-            }
+            // if (!auth.access_token) {
+            //   throw new ExpiredTokenException(
+            //     access_token,
+            //     1003,
+            //     req.method,
+            //     req.url,
+            //   );
+            // }
             //#endregion
             next();
           } else {

@@ -121,6 +121,7 @@ export const generateFailedResponse = (req: Request, message?: string) => {
 
 export const generateSuccessResponse = async (
   sheet: SheetEntity,
+  role: number,
   query_runner: QueryRunner,
   req: Request,
 ) => {
@@ -128,7 +129,7 @@ export const generateSuccessResponse = async (
   console.log(req.method + ' - ' + req.url);
 
   // Transform SheetEntity class to SheetResponse class
-  const payload = await generateData2Object(sheet);
+  const payload = await generateData2Object(sheet, role);
 
   // Commit transaction
   if (query_runner) await query_runner.commitTransaction();
@@ -153,12 +154,16 @@ export const generateApproveAllResponse = (
   return returnObjects<ApproveAllResponse>(payload);
 };
 
-export const generateSheet = async (sheet: SheetEntity, req: Request) => {
+export const generateSheet = async (
+  sheet: SheetEntity,
+  role: number,
+  req: Request,
+) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', sheet);
 
-  const payload = await generateData2Object(sheet);
+  const payload = await generateData2Object(sheet, role);
 
   return returnObjects(payload);
 };

@@ -37,7 +37,7 @@ import {
 
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
-import { PDF_EXTENSION } from '../constants';
+import { PDF_EXTENSION, ROLE_ALLOW_RETURN } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
 
 export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
@@ -175,15 +175,25 @@ export const generateClasses2Array = async (classes: ClassEntity[]) => {
   return null;
 };
 
-export const generateData2Object = async (sheet: SheetEntity | null) => {
+export const generateData2Object = async (
+  sheet: SheetEntity | null,
+  role: number,
+) => {
   if (sheet) {
     const current = new Date();
     const end = new Date(sheet.form.end);
     const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
     const success =
       current > deadline ||
-      sheet.status == SheetStatus.SUCCESS ||
-      !sheet?.user?.status?.flag
+      sheet.status === SheetStatus.SUCCESS ||
+      sheet.status === SheetStatus.NOT_GRADED
+        ? true
+        : false;
+    const is_return =
+      current < deadline &&
+      sheet.status == SheetStatus.NOT_GRADED &&
+      sheet?.user?.status?.flag &&
+      ROLE_ALLOW_RETURN.includes(role)
         ? true
         : false;
     const payload: SheetDetailsResponse = {
@@ -228,6 +238,7 @@ export const generateData2Object = async (sheet: SheetEntity | null) => {
         : null,
       status: sheet.status,
       success: success,
+      is_return: is_return,
       sum_of_personal_marks: sheet.sum_of_personal_marks,
       sum_of_class_marks: sheet.sum_of_class_marks,
       sum_of_adviser_marks: sheet.sum_of_adviser_marks,

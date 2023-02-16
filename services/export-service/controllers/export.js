@@ -50,7 +50,7 @@ router.post("/template1", (req, res) => {
     });
 
     // Write the buffer to a file in the server
-    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_1), buf);
+    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.OUTPUT_TEMPLATE_1), buf);
 
     // Send a success response to the client
     res.send("success");
@@ -97,7 +97,7 @@ router.post("/template2", (req, res) => {
     });
 
     // Write the buffer to a file in the server
-    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_2), buf);
+    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.OUTPUT_TEMPLATE_2), buf);
 
     // Send a success response to the client
     res.send("success");
@@ -144,7 +144,7 @@ router.post("/template3", (req, res) => {
     });
 
     // Write the buffer to a file in the server
-    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.TEMPLATE_3), buf);
+    fs.writeFileSync(path.join(process.env.RESOURCE_FOLDER, FILE_NAME.OUTPUT_TEMPLATE_3), buf);
     // Send a success response to the client
     res.send("success");
   } catch (err) {

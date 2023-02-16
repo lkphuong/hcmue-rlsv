@@ -122,6 +122,7 @@ export interface SheetDetailsResponse extends MarkResponse {
   level?: BaseResponse;
   status: number;
   success: boolean;
+  is_return?: boolean;
   headers: BaseResponse[];
   start: Date;
   end: Date;

@@ -154,7 +154,7 @@ export const generatePersonalMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(sheet, query_runner, req);
+      return await generateSuccessResponse(sheet, role_id, query_runner, req);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -267,7 +267,7 @@ export const generateClassMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(result, query_runner, req);
+      return await generateSuccessResponse(result, role_id, query_runner, req);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -373,7 +373,7 @@ export const generateAdviserMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(result, query_runner, req);
+      return await generateSuccessResponse(result, role_id, query_runner, req);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -480,7 +480,7 @@ export const generateDepartmentMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(result, query_runner, req);
+      return await generateSuccessResponse(result, role_id, query_runner, req);
       //#endregion
     } else {
       //#region throw HandlerException
@@ -512,6 +512,7 @@ export const generateDepartmentMarks = async (
 
 export const generateUngradeSheet = async (
   request_code: string,
+  role_id: number,
   sheet: SheetEntity,
   sheet_service: SheetService,
   req: Request,
@@ -520,7 +521,7 @@ export const generateUngradeSheet = async (
   const result = await sheet_service.ungraded(sheet.id, request_code);
   if (result) {
     //#region Generate response
-    return await generateSuccessResponse(sheet, null, req);
+    return await generateSuccessResponse(sheet, role_id, null, req);
     //#endregion
   } else {
     //#region throw HandlerException

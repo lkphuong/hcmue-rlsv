@@ -777,7 +777,7 @@ export class SheetService {
   async countSheetNotGraded(
     academic_id: number,
     semester_id: number,
-    department_id: number,
+    department_id?: number,
     class_id?: number,
   ): Promise<number> {
     try {
@@ -786,9 +786,14 @@ export class SheetService {
         .select('COUNT(sheet.id)', 'count')
         .where('sheet.academic_id = :academic_id', { academic_id })
         .andWhere('sheet.semester_id = :semester_id', { semester_id })
-        .andWhere('sheet.department_id = :department_id', { department_id })
         .andWhere('sheet.status =:status', { status: SheetStatus.NOT_GRADED })
         .andWhere('sheet.deleted = :deleted', { deleted: false });
+
+      if (department_id && department_id !== 0) {
+        conditions.andWhere('sheet.department_id = :department_id', {
+          department_id,
+        });
+      }
 
       if (class_id && class_id !== 0) {
         conditions.andWhere('sheet.class_id = :class_id', { class_id });

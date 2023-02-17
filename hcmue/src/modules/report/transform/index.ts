@@ -251,6 +251,11 @@ export const generateCacheDepartmentsResponse = async (
     }
     //#endregion
 
+    //#region sum not graded
+    sum_of_levels[sum_of_levels.length - 1].count =
+      await sheet_service.countSheetNotGraded(academic_id, semester_id);
+    //#endregion
+
     //#region sum_of_std
     sum_of_std = await sheet_service.countSheetsReport(
       academic_id,

@@ -216,7 +216,6 @@ export const generateEvaluationsResponse = async (
 
 export const generateClassStatusAdviserResponse = async (
   role: number,
-  department_id: number,
   form: FormEntity,
   $class: ClassEntity[],
   sheet_service: SheetService,
@@ -228,7 +227,6 @@ export const generateClassStatusAdviserResponse = async (
 
   const payload = await generateClassStatusAdviser(
     role,
-    department_id,
     $class,
     form,
     sheet_service,

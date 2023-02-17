@@ -800,7 +800,6 @@ export const generateEvaluationsArray = async (
 
 export const generateClassStatusAdviser = async (
   role: number,
-  department_id: number,
   $class: ClassEntity[],
   form: FormEntity,
   sheet_service: SheetService,
@@ -826,7 +825,7 @@ export const generateClassStatusAdviser = async (
         form.academic_year.id,
         form.semester.id,
         SheetStatus.WAITING_ADVISER,
-        department_id,
+        i.department_id,
         i.id,
         form.id,
       );
@@ -835,7 +834,7 @@ export const generateClassStatusAdviser = async (
         form.academic_year.id,
         form.semester.id,
         SheetStatus.WAITING_CLASS,
-        department_id,
+        i.department_id,
         i.id,
         form.id,
       );
@@ -873,7 +872,7 @@ export const generateClassStatusAdviserHistory = async (
         academic_id,
         semester_id,
         SheetStatus.WAITING_ADVISER,
-        department_id,
+        $class.department_id,
         class_id,
         i.id,
       );
@@ -882,7 +881,7 @@ export const generateClassStatusAdviserHistory = async (
         academic_id,
         semester_id,
         SheetStatus.WAITING_CLASS,
-        department_id,
+        $class.department_id,
         class_id,
         i.id,
       );

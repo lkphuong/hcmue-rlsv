@@ -919,7 +919,7 @@ export class SheetController {
       //#endregion
 
       //#region Get params
-      const { class_ids, department_id } = params;
+      const { class_ids } = params;
       //#endregion
 
       //#region Get form in progress
@@ -934,7 +934,6 @@ export class SheetController {
         //#region Count sheet status < status waitting class
         return await generateClassStatusAdviserResponse(
           role,
-          department_id,
           form,
           $class,
           this._sheetService,

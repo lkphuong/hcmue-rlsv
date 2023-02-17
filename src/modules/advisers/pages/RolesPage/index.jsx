@@ -18,7 +18,7 @@ const RolesPage = memo(() => {
 	//#region Data
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
-	const { department_id, classes } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { classes } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const [data, setData] = useState();
 
@@ -27,7 +27,7 @@ const RolesPage = memo(() => {
 	const [filter, setFilter] = useState({
 		academic_id: academic_years[0].id,
 		semester_id: null,
-		department_id,
+		department_id: Number(classes[0]?.department_id) || null,
 		class_id: classes[0]?.id || null,
 		input: '',
 		page: 1,

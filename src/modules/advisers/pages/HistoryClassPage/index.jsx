@@ -18,9 +18,17 @@ const HistoryClassPage = () => {
 		(state) => state.currentInfo,
 		shallowEqual
 	);
-	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const { classes } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const { class_id } = useParams();
+
+	const department_id = useMemo(() => {
+		let value = 0;
+		classes?.forEach((e) => {
+			if (e?.id?.toString() === class_id?.toString()) value = Number(e?.department_id);
+		});
+		return value;
+	}, [classes, class_id]);
 
 	const [loading, setLoading] = useState(false);
 

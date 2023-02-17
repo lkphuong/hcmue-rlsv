@@ -1,3 +1,5 @@
+import { shallowEqual, useSelector } from 'react-redux';
+
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
@@ -11,11 +13,26 @@ export const MRoleFilter = ({
 	semesters,
 }) => {
 	//#region Data
+	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	//#endregion
 
 	//#region Event
-	const handleChangeFilter = (key) => (value) =>
-		onFilterChange((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
+	const handleChangeFilter = (key) => (value) => {
+		key === 'class_id'
+			? onFilterChange((prev) => ({
+					...prev,
+					[key]: parseInt(value?.id),
+					department_id: parseInt(value?.department_id),
+					page: 1,
+					pages: 0,
+			  }))
+			: onFilterChange((prev) => ({
+					...prev,
+					[key]: parseInt(value?.id),
+					page: 1,
+					pages: 0,
+			  }));
+	};
 	//#endregion
 
 	//#region Render
@@ -32,7 +49,7 @@ export const MRoleFilter = ({
 									</Typography>
 									<CAutocomplete
 										disabled
-										value={filter.department_id}
+										value={department_id}
 										options={departments}
 										display='name'
 										placeholder='Tất cả'

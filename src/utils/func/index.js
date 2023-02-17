@@ -205,6 +205,7 @@ export const convertMarkValues = (values) => {
 };
 
 export const validateMark = (item, value) => {
+	console.log(item);
 	if (item?.control === 0) {
 		if (item?.required && !value && value !== 0) {
 			return false;
@@ -212,9 +213,10 @@ export const validateMark = (item, value) => {
 		if (item?.category === 1) {
 			if (value < item?.from_mark || value > item?.to_mark) return false;
 		} else if (item?.category === 2) {
-			if (value % item?.mark !== 0) return false;
+			if (value % item?.mark !== 0 || value * item?.mark < 0) return false;
 		}
-	} else if (item?.control === 2) {
+	} else if (item?.control === 2 && item?.required && !value) {
+		return false;
 	}
 
 	return true;

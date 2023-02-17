@@ -5,6 +5,7 @@ import { restorePassword } from '_api/auth.api';
 import { ERRORS } from '_constants/messages';
 
 import { isSuccess } from '_func/';
+import { alert } from '_func/alert';
 
 import { CResetIcon } from '_others/';
 
@@ -18,7 +19,7 @@ export const MRow = ({ data, index }) => {
 			onConfirm: async () => {
 				alert.loading();
 
-				const res = await restorePassword(data?.id, 2);
+				const res = await restorePassword(data?.id, { type: 2 });
 
 				if (isSuccess(res)) alert.success({ text: 'Reset mật khẩu cho CVHT thành công.' });
 				else alert.fail({ text: res?.message || ERRORS.FAIL });

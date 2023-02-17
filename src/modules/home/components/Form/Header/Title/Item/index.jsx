@@ -3,19 +3,20 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Controller } from 'react-hook-form';
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
-import { ImageSearch } from '@mui/icons-material';
+import { Folder } from '@mui/icons-material';
 
 import { StudentMarksContext } from '_modules/home/pages/StudentDetailPage';
 
 import { actions } from '_slices/mark.slice';
 
-import { CFileModal } from '_others/';
+import { CFileModal, CFilePreviewModal } from '_others/';
 
 import Control from './Control';
 
 const Item = memo(({ data, headerId, titleId }) => {
 	//#region Data
 	const fileRef = useRef();
+	const previewRef = useRef();
 
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
@@ -51,9 +52,19 @@ const Item = memo(({ data, headerId, titleId }) => {
 				<Typography ml={2}>- {data.content}</Typography>
 
 				{data?.is_file && (
-					<Button size='small' endIcon={<ImageSearch />} onClick={openModal}>
-						Minh chứng
-					</Button>
+					<>
+						<Button size='small' onClick={openModal}>
+							Minh chứng
+						</Button>
+						<Button
+							variant='contained'
+							sx={{ p: 0, minWidth: '45px' }}
+							endIcon={<Folder />}
+							onClick={() => previewRef.current.open()}
+						>
+							{itemsMark[indexMark]?.files?.length ?? 0}
+						</Button>
+					</>
 				)}
 			</TableCell>
 
@@ -68,6 +79,16 @@ const Item = memo(({ data, headerId, titleId }) => {
 					defaultValue={Number(data?.id)}
 					render={({ field }) => <input type='hidden' {...field} />}
 				/>
+				<Controller
+					name={`title_${titleId}_${data?.id}.is_file`}
+					defaultValue={data?.is_file}
+					render={({ field }) => <input type='hidden' {...field} />}
+				/>
+				{/* <Controller
+					name={`title_${titleId}_${data?.id}.files`}
+					defaultValue={data?.is_file}
+					render={({ field }) => <input type='hidden' {...field} />}
+				/> */}
 			</TableCell>
 
 			<Control data={data} id={Number(data.id)} titleId={titleId} available={available} />
@@ -77,6 +98,7 @@ const Item = memo(({ data, headerId, titleId }) => {
 				name={`title_${titleId}_${data?.id}.files`}
 				itemData={itemsMark[indexMark]}
 			/>
+			<CFilePreviewModal ref={previewRef} itemData={itemsMark[indexMark]} />
 		</TableRow>
 	);
 	//#endregion

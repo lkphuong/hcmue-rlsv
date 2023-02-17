@@ -32,7 +32,7 @@ export const MRow = ({ data, index }) => {
 			onConfirm: async () => {
 				alert.loading();
 
-				const res = await restorePassword(data?.id, 1);
+				const res = await restorePassword(data?.id, { type: 1 });
 
 				if (isSuccess(res))
 					alert.success({ text: 'Reset mật khẩu cho sinh viên thành công.' });

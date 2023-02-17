@@ -44,7 +44,7 @@ export const Row = ({ data, index, refetch, onAdd }) => {
 			onConfirm: async () => {
 				alert.loading();
 
-				const res = await restorePassword(data?.id, 3);
+				const res = await restorePassword(data?.id, { type: 3 });
 
 				if (isSuccess(res)) alert.success({ text: 'Reset mật khẩu cho khoa thành công.' });
 				else alert.fail({ text: res?.message || ERRORS.FAIL });

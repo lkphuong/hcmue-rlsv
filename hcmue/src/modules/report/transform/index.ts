@@ -115,6 +115,7 @@ export const generateCacheClassesResponse = async (
         academic_id,
         semester_id,
         department_id,
+        class_id,
       );
     //#endregion
 
@@ -123,6 +124,7 @@ export const generateCacheClassesResponse = async (
       academic_id,
       semester_id,
       department_id,
+      class_id,
     );
     //#endregion
     report_response.department = department

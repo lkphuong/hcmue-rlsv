@@ -12,7 +12,7 @@ import {
 	TableHead,
 	TableRow,
 } from '@mui/material';
-import { Save } from '@mui/icons-material';
+import { Restore, Save } from '@mui/icons-material';
 
 import LoadingButton from '@mui/lab/LoadingButton';
 
@@ -88,6 +88,8 @@ export const Form = ({ data }) => {
 			text: 'Bạn chắc chắn điều chỉnh sinh viên này thành không xếp loại.',
 		});
 	};
+
+	const onUndo = () => dispatch(actions.setAvailable(true));
 	//#endregion
 
 	//#region Render
@@ -148,15 +150,27 @@ export const Form = ({ data }) => {
 			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
-				<Button
-					variant='contained'
-					onClick={handleDeny}
-					color='error'
-					sx={{ mr: 1, mb: 2 }}
-					disabled={!available || isSubmitting}
-				>
-					Không xếp loại
-				</Button>
+				{data?.is_return && !available ? (
+					<Button
+						variant='contained'
+						onClick={onUndo}
+						color='success'
+						sx={{ mr: 1, mb: 2, color: 'white', backgroundColor: '#3EAE42' }}
+						startIcon={<Restore />}
+					>
+						Hoàn tác
+					</Button>
+				) : (
+					<Button
+						variant='contained'
+						onClick={handleDeny}
+						color='error'
+						sx={{ mr: 1, mb: 2 }}
+						disabled={!available || isSubmitting}
+					>
+						Không xếp loại
+					</Button>
+				)}
 				<LoadingButton
 					sx={{ mb: 2 }}
 					variant='contained'

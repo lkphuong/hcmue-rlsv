@@ -649,7 +649,12 @@ export const exportExcelTemplateDepartment = async (
         row_values[7] = sheets[i].sum_of_class_marks;
         row_values[8] = sheets[i].sum_of_adviser_marks;
         row_values[9] = sheets[i].sum_of_department_marks;
-        row_values[10] = sheets[i]?.level ?? 'Không xếp loại';
+        row_values[10] =
+          sheets[i]?.graded == 0
+            ? 'Không xếp loại'
+            : sheets[i]?.level
+            ? sheets[i]?.level
+            : '';
         row_values[11] = sheets[i].flag ? '' : sheets[i].status;
         rows.push(row_values);
       }
@@ -769,7 +774,12 @@ export const exportExcelTemplateAdmin = async (
           row_values[6] = sheets[i].class;
           row_values[7] = sheets[i].department;
           row_values[8] = sheets[i].sum_of_department_marks;
-          row_values[9] = sheets[i]?.level ?? 'Không xếp loại';
+          row_values[9] =
+            sheets[i]?.graded == 0
+              ? 'Không xếp loại'
+              : sheets[i]?.level
+              ? sheets[i]?.level
+              : '';
           row_values[10] = sheets[i].flag ? '' : sheets[i].status;
           rows.push(row_values);
         }

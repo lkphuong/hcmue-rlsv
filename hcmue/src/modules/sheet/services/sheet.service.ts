@@ -467,6 +467,7 @@ export class SheetService {
           sheet.sum_of_class_marks, 
           sheet.sum_of_adviser_marks, 
           sheet.sum_of_department_marks,
+          sheet.graded,
           class.code AS class,
           class.id AS class_id,
           department.name as department,

@@ -56,6 +56,7 @@ export interface ReportResponse extends MarkResponse {
   sum_of_class_marks: number;
   sum_of_adviser_marks: number;
   sum_of_department_marks: number;
+  graded: number;
   level: string;
   status: string;
   flag: number;

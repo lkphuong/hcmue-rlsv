@@ -82,14 +82,14 @@ export const exportWordTemplateAdmin = async (
       };
 
       const total: TotalItemResponse = {
-        tss: 0,
+        tss: payload.sum_of_std_in_departments,
         txs: 0,
         tt: 0,
         tkh: 0,
         ttb: 0,
         ty: 0,
         tk: 0,
-        tkxl: 0,
+        tkxl: payload.sum_of_levels[payload.sum_of_levels.length - 1].count,
       };
       let index = 1;
       for (const i of payload.departments) {
@@ -108,14 +108,12 @@ export const exportWordTemplateAdmin = async (
         result.department.push(department);
 
         //#region sum total
-        total.tss += parseInt(i.num_of_std.toString());
         total.txs += i.levels[0].count;
         total.tt += i.levels[1].count;
         total.tkh += i.levels[2].count;
         total.ttb += i.levels[3].count;
         total.ty += i.levels[4].count;
         total.tk += i.levels[5].count;
-        total.tkxl += i.levels[6].count;
         //#endregion
       }
 
@@ -230,14 +228,14 @@ export const exportWordTemplateDepartment = async (
       };
 
       const total: TotalItemResponse = {
-        tss: 0,
+        tss: payload.sum_of_std_in_classes,
         txs: 0,
         tt: 0,
         tkh: 0,
         ttb: 0,
         ty: 0,
         tk: 0,
-        tkxl: 0,
+        tkxl: payload.sum_of_levels[payload.sum_of_levels.length - 1].count,
       };
       let index = 1;
       for (const i of payload.classes) {
@@ -256,14 +254,12 @@ export const exportWordTemplateDepartment = async (
         result.class.push($class);
 
         //#region sum total
-        total.tss += parseInt(i.num_of_std.toString());
         total.txs += i.levels[0].count;
         total.tt += i.levels[1].count;
         total.tkh += i.levels[2].count;
         total.ttb += i.levels[3].count;
         total.ty += i.levels[4].count;
         total.tk += i.levels[5].count;
-        total.tkxl += i.levels[6].count;
         //#endregion
       }
 
@@ -385,7 +381,7 @@ export const exportWordTemplateClass = async (
           count: i.count,
           point: ((i.count / sum_of_std_in_classes) * 100).toFixed(2) + '%',
         };
-        sum_of_std += i.count;
+        sum_of_std += parseInt(i.count.toString());
         result.type.push(type);
       }
       result.result.push({

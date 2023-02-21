@@ -26,7 +26,7 @@ export const EMAIL_CONTENT = `
                     TRƯỜNG ĐẠI HỌC SƯ PHẠM THÀNH PHỐ HỒ CHÍ MINH
                 </p>
                 <p style="margin-bottom: 1.5rem">
-                    Thông báo về việc yêu câu lấy lại
+                    Thông báo về việc yêu cầu lấy lại
                     mật khẩu.
                 </p>
                 <p style="margin-bottom: 1rem">

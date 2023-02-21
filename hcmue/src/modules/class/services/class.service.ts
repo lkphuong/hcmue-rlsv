@@ -72,7 +72,7 @@ export class ClassService {
         .where('class.department_id = :department_id', { department_id })
         .andWhere('class.deleted = :deleted', { deleted: false });
 
-      if (class_id && class_id == 0) {
+      if (class_id && class_id !== 0) {
         conditions = conditions.andWhere('class.id = :class_id', { class_id });
       }
 

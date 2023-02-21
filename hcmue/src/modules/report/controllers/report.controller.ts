@@ -205,34 +205,22 @@ export class ReportController {
       );
       //#endregion
 
-      if (cache_classes && cache_classes.length > 0) {
-        //#region Generate response
-        return await generateReportsResponse(
-          academic,
-          department,
-          semester,
-          academic_id,
-          class_id,
-          department_id,
-          semester_id,
-          cache_classes,
-          levels,
-          this._classService,
-          this._sheetService,
-          req,
-        );
-        //#endregion
-      } else {
-        //#region throw HandlerException
-        throw new HandlerException(
-          DATABASE_EXIT_CODE.NO_CONTENT,
-          req.method,
-          req.url,
-          ErrorMessage.NO_CONTENT,
-          HttpStatus.NOT_FOUND,
-        );
-        //#endregion
-      }
+      //#region Generate response
+      return await generateReportsResponse(
+        academic,
+        department,
+        semester,
+        academic_id,
+        class_id,
+        department_id,
+        semester_id,
+        cache_classes,
+        levels,
+        this._classService,
+        this._sheetService,
+        req,
+      );
+      //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

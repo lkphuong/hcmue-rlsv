@@ -567,8 +567,10 @@ export const validateStatusApproval = async (
 };
 
 export const validateUpdateEvaluationMaxFile = (
+  mark: number,
   files: number,
   params: StudentFileDtos[],
+  item: ItemEntity,
   req: Request,
 ) => {
   if (files && params) {
@@ -577,13 +579,20 @@ export const validateUpdateEvaluationMaxFile = (
     const new_file = params.filter((e) => e.id === 0).length;
 
     const max_file = files - delete_file + new_file;
-
     if (max_file > MAX_FILES) {
       return new HandlerException(
         FILE_EXIT_CODE.MAXIMUM_FILE,
         req.method,
         req.url,
         sprintf(ErrorMessage.MAXIMUM_FILE_ERROR, MAX_FILES),
+        HttpStatus.BAD_REQUEST,
+      );
+    } else if (!max_file && item.is_file && mark !== 0) {
+      return new HandlerException(
+        VALIDATION_EXIT_CODE.EMPTY,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.ITEM_NOT_FOUND_FILE_ERROR, item.content),
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -602,7 +611,7 @@ export const validateCreateEvaluationMaxFile = (
   const new_file = params.length - delete_file;
 
   const max_file = new_file - delete_file;
-
+  console.log('check: ', max_file, item.is_file, mark);
   if (max_file > MAX_FILES) {
     return new HandlerException(
       FILE_EXIT_CODE.MAXIMUM_FILE,
@@ -616,7 +625,7 @@ export const validateCreateEvaluationMaxFile = (
       VALIDATION_EXIT_CODE.EMPTY,
       req.method,
       req.url,
-      ErrorMessage.ITEM_NOT_FOUND_FILE_ERROR,
+      sprintf(ErrorMessage.ITEM_NOT_FOUND_FILE_ERROR, item.content),
       HttpStatus.BAD_REQUEST,
     );
   }

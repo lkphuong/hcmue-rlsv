@@ -95,6 +95,7 @@ export interface EvaluationsResponse {
 export interface FileResponse {
   id: number;
   name: string;
+  exist?: boolean;
   url: string;
   type: number;
 }

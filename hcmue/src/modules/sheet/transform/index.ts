@@ -776,6 +776,7 @@ export const generateEvaluationsArray = async (
                         id: file.id,
                         url: '/' + file.url,
                         name: file.originalName,
+                        exist: true,
                         type: file.extension == PDF_EXTENSION ? 0 : 1,
                       };
                     })
@@ -863,7 +864,7 @@ export const generateClassStatusAdviserHistory = async (
   const payload: ClassResponse[] = [];
 
   //#region Get params
-  const { class_id, department_id, academic_id, semester_id } = params;
+  const { class_id, academic_id, semester_id } = params;
   //#endregion
   for (const i of forms) {
     let count = 0;

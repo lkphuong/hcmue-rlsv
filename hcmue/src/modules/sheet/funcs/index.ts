@@ -620,7 +620,7 @@ export const generateUpdateStudentEvaluation = async (
                       file.drafted = true;
                       file.deleted_at = new Date();
                       file.deleted_by = request_code;
-                      file.drafted = true;
+                      file.deleted = true;
 
                       files.push(file);
                       //#endregion

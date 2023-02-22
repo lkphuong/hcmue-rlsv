@@ -576,9 +576,8 @@ export const validateUpdateEvaluationMaxFile = (
   if (files && params) {
     const delete_file = params.filter((e) => e.deleted === 1).length;
 
-    const new_file = params.filter((e) => e.id === 0).length;
+    const max_file = params.length - delete_file;
 
-    const max_file = files - delete_file + new_file;
     if (max_file > MAX_FILES) {
       return new HandlerException(
         FILE_EXIT_CODE.MAXIMUM_FILE,
@@ -608,10 +607,9 @@ export const validateCreateEvaluationMaxFile = (
   req: Request,
 ) => {
   const delete_file = params.filter((e) => e.deleted === 1).length;
-  const new_file = params.length - delete_file;
 
-  const max_file = new_file - delete_file;
-  console.log('check: ', max_file, item.is_file, mark);
+  const max_file = params.length - delete_file;
+
   if (max_file > MAX_FILES) {
     return new HandlerException(
       FILE_EXIT_CODE.MAXIMUM_FILE,

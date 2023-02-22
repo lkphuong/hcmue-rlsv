@@ -1,19 +1,11 @@
 import { Transform, Type } from 'class-transformer';
-import {
-  ArrayMaxSize,
-  ArrayNotEmpty,
-  IsNotEmpty,
-  IsOptional,
-  ValidateNested,
-} from 'class-validator';
+import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 
 import { generateValidationMessage } from '../../../utils';
 
 import { BetweenValidator } from '../../../validators/between.validator';
 import { IsNumberValidator } from '../../../validators/number.validator';
 import { MinValidator } from '../../../validators/min.validator';
-
-import { MAX_FILES } from '../../../constants';
 
 export class StudentFileDtos {
   @IsNotEmpty({
@@ -92,13 +84,6 @@ export class StudentMarkDtos {
   personal_mark_level: number;
 
   @IsOptional()
-  @ArrayMaxSize(MAX_FILES, {
-    message: (arg) =>
-      generateValidationMessage(
-        arg,
-        `File [minh chứng] vượt quá giới hạn (size: ${MAX_FILES})`,
-      ),
-  })
   @ValidateNested({ each: true })
   @Type(() => StudentFileDtos)
   files: StudentFileDtos[];

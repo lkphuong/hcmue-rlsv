@@ -22,7 +22,7 @@ const MAX_FILES = 5;
 
 const MAX_FILE_SIZE = 10485760;
 
-export const CUpload = ({ name, itemData }) => {
+export const CUpload = ({ name, files }) => {
 	//#region Data
 	const available = useSelector((state) => state.mark.available, shallowEqual);
 	const { role_id } = useSelector((state) => state.auth.profile, shallowEqual);
@@ -40,7 +40,7 @@ export const CUpload = ({ name, itemData }) => {
 
 	const { control } = useFormContext();
 
-	const { fields, append, remove, replace } = useFieldArray({ control, name });
+	const { fields, append, remove, replace, update } = useFieldArray({ control, name });
 	//#endregion
 
 	//#region Event
@@ -89,7 +89,7 @@ export const CUpload = ({ name, itemData }) => {
 	};
 
 	const onChange = (e) => {
-		if (fields.length >= MAX_FILES) {
+		if (fields.filter((e) => !e?.deleted).length >= MAX_FILES) {
 			alert.fail({ text: `Tối đa ${MAX_FILES} files minh chứng.` });
 			return;
 		}
@@ -105,7 +105,7 @@ export const CUpload = ({ name, itemData }) => {
 
 		wrapperRef.current.classList.remove('dragover');
 
-		if (fields.length >= MAX_FILES) {
+		if (fields.filter((e) => !e?.deleted).length >= MAX_FILES) {
 			alert.fail({ text: `Tối đa ${MAX_FILES} files minh chứng.` });
 			return;
 		}
@@ -115,14 +115,16 @@ export const CUpload = ({ name, itemData }) => {
 		checkFile(newFile);
 	};
 
-	const onDelete = (index) => () => remove(index);
+	const onDelete = (index) => () => {
+		fields[index]?.exist ? update(index, { ...fields[index], deleted: 1 }) : remove(index);
+	};
 	//#endregion
 
 	useEffect(() => {
-		if (itemData?.files) {
-			replace(itemData.files.map((e) => ({ ...e, file_id: Number(e.id) })));
+		if (files?.length > 0 && fields.length < 1) {
+			replace(files.map((e) => ({ ...e, file_id: Number(e.id) })));
 		}
-	}, [itemData]);
+	}, [files]);
 
 	//#region Render
 	return (
@@ -186,7 +188,7 @@ export const CUpload = ({ name, itemData }) => {
 					<TransitionGroup>
 						{fields.map((file, index) => (
 							<Grow key={file.id}>
-								<div>
+								<div style={{ display: file?.deleted === 1 ? 'none' : 'block' }}>
 									<CFileItem
 										file={file}
 										onDelete={onDelete(index)}

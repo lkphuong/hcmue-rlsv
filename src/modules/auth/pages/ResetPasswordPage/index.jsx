@@ -114,7 +114,7 @@ const ResetPasswordPage = () => {
 												<CInput
 													fullWidth
 													isPassword
-													placeholder='Nhập mật khẩu mói'
+													placeholder='Nhập mật khẩu mới'
 													onChange={onChange}
 													onBlur={onBlur}
 													value={value}

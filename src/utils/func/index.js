@@ -195,9 +195,11 @@ export const convertMarkValues = (values) => {
 
 	const _data = marks.map((e) => {
 		const obj = { ...e, item_id: Number(e.item_id) };
-		if (obj?.files) {
-			const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
-			return { ...obj, files };
+		if (obj?.is_file) {
+			if (obj?.files) {
+				const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
+				return { ...obj, files };
+			} else return { ...obj, files: [] };
 		} else return obj;
 	});
 
@@ -205,7 +207,6 @@ export const convertMarkValues = (values) => {
 };
 
 export const validateMark = (item, value) => {
-	console.log(item);
 	if (item?.control === 0) {
 		if (item?.required && !value && value !== 0) {
 			return false;

@@ -8,7 +8,16 @@ import { SHEET_STATUS } from '_constants/variables';
 
 import { CEditIcon, CViewIcon } from '_others/';
 
-export const Row = ({ data, index, isSelected, isRemoved, onSelect, isHistory, isReport }) => {
+export const Row = ({
+	data,
+	index,
+	isSelected,
+	isRemoved,
+	onSelect,
+	isHistory,
+	isReport,
+	saveFilter,
+}) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -19,7 +28,11 @@ export const Row = ({ data, index, isSelected, isRemoved, onSelect, isHistory, i
 	//#endregion
 
 	//#region Event
-	const onClick = () => navigate(`detail/${data.id}`);
+	const onClick = () => {
+		saveFilter();
+
+		navigate(`detail/${data.id}`);
+	};
 
 	const handleSelect = (e) => {
 		e.stopPropagation();

@@ -1,4 +1,4 @@
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
@@ -51,6 +51,8 @@ export const LoginPage = () => {
 		mode: 'all',
 		resolver,
 	});
+
+	const type = useWatch({ control, name: 'type' });
 
 	const navigate = useNavigate();
 	//#endregion
@@ -194,7 +196,7 @@ export const LoginPage = () => {
 									<Box textAlign='right'>
 										<Button
 											sx={{ fontWeight: 400 }}
-											onClick={() => navigate('/forgot-password')}
+											onClick={() => navigate(`/forgot-password/${type}`)}
 											type='button'
 										>
 											Quên mật khẩu?

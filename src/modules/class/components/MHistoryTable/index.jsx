@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { MRow } from './MRow';
 
-export const MHistoryTable = ({ data }) => {
+export const MHistoryTable = ({ data, saveFilter }) => {
 	//#region Data
 	//#endregion
 
@@ -30,7 +30,13 @@ export const MHistoryTable = ({ data }) => {
 				</TableHead>
 				<TableBody>
 					{data?.length > 0 ? (
-						data.map((row, i) => <MRow key={row?.id?.toString() + i} data={row} />)
+						data.map((row, i) => (
+							<MRow
+								key={row?.id?.toString() + i}
+								data={row}
+								saveFilter={saveFilter}
+							/>
+						))
 					) : (
 						<TableRow>
 							<TableCell colSpan='100%'>

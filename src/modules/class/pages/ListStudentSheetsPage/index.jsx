@@ -20,6 +20,7 @@ const ListStudentSheetsPage = () => {
 	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const { department_id } = useSelector((state) => state.auth.profile, shallowEqual);
+	const filters = useSelector((state) => state.filter.filters, shallowEqual);
 
 	const { class_id } = useParams();
 
@@ -29,14 +30,16 @@ const ListStudentSheetsPage = () => {
 
 	const listData = useMemo(() => data?.data || [], [data]);
 
-	const [filter, setFilter] = useState({
-		page: 1,
-		pages: 0,
-		department_id,
-		academic_id: Number(academic?.id),
-		semester_id: Number(semester?.id),
-		input: '',
-	});
+	const [filter, setFilter] = useState(
+		filters || {
+			page: 1,
+			pages: 0,
+			department_id,
+			academic_id: Number(academic?.id),
+			semester_id: Number(semester?.id),
+			input: '',
+		}
+	);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
 

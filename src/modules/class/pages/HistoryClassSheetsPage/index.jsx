@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box } from '@mui/material';
 
@@ -12,10 +12,13 @@ import { Filter, MHistoryTable } from '_modules/class/components';
 
 import { CPagination } from '_controls/';
 
+import { actions } from '_slices/filter.slice';
+
 const HistoryClassSheetsPage = () => {
 	//#region Data
 	const { department_id, class_ids } = useSelector((state) => state.auth.profile, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const filters = useSelector((state) => state.filter.filters, shallowEqual);
 
 	const [semesters, setSemesters] = useState([]);
 
@@ -23,16 +26,20 @@ const HistoryClassSheetsPage = () => {
 
 	const listData = useMemo(() => data?.data || [], [data]);
 
-	const [filter, setFilter] = useState({
-		page: 1,
-		pages: 0,
-		department_id,
-		class_id: class_ids[0] ?? null,
-		academic_id: null,
-		semester_id: null,
-	});
+	const [filter, setFilter] = useState(
+		filters || {
+			page: 1,
+			pages: 0,
+			department_id,
+			class_id: class_ids[0] ?? null,
+			academic_id: null,
+			semester_id: null,
+		}
+	);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -55,6 +62,8 @@ const HistoryClassSheetsPage = () => {
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
+
+	const saveFilter = () => dispatch(actions.setFilter(filter));
 	//#endregion
 
 	useEffect(() => {
@@ -80,7 +89,7 @@ const HistoryClassSheetsPage = () => {
 				semesters={semesters}
 			/>
 
-			<MHistoryTable data={listData} />
+			<MHistoryTable data={listData} saveFilter={saveFilter} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>

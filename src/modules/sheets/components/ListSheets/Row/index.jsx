@@ -8,7 +8,7 @@ import { SHEET_STATUS } from '_constants/variables';
 
 import { CEditIcon, CViewIcon } from '_others/';
 
-export const Row = ({ data, index, isHistory }) => {
+export const Row = ({ data, index, isHistory, saveFilter }) => {
 	//#region Data
 	const navigate = useNavigate();
 
@@ -17,7 +17,11 @@ export const Row = ({ data, index, isHistory }) => {
 		[data?.status]
 	);
 
-	const onClick = () => navigate(`detail/${data.id}`);
+	const onClick = () => {
+		saveFilter();
+
+		navigate(`detail/${data.id}`);
+	};
 	//#endregion
 
 	//#region Event

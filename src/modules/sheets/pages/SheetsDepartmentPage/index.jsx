@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
@@ -13,12 +13,15 @@ import { isSuccess, cleanObjValue, isEmpty, formatTimeSemester } from '_func/';
 import { getClassesByDepartment } from '_api/classes.api';
 import { getAdminClassSheetsByDepartment } from '_api/sheets.api';
 
+import { actions } from '_slices/filter.slice';
+
 const SheetsDepartmentPage = () => {
 	//#region Data
 	const { academic, semester, department } = useSelector(
 		(state) => state.currentInfo,
 		shallowEqual
 	);
+	const filters = useSelector((state) => state.filter.filters, shallowEqual);
 
 	const { department_id } = useParams();
 
@@ -30,18 +33,22 @@ const SheetsDepartmentPage = () => {
 
 	const [classes, setClasses] = useState([]);
 
-	const [filter, setFilter] = useState({
-		page: 1,
-		pages: 0,
-		department_id: Number(department_id),
-		academic_id: Number(academic?.id),
-		semester_id: Number(semester?.id),
-		class_id: '',
-		status: -1,
-		input: '',
-	});
+	const [filter, setFilter] = useState(
+		filters || {
+			page: 1,
+			pages: 0,
+			department_id: Number(department_id),
+			academic_id: Number(academic?.id),
+			semester_id: Number(semester?.id),
+			class_id: '',
+			status: -1,
+			input: '',
+		}
+	);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -72,6 +79,8 @@ const SheetsDepartmentPage = () => {
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
+
+	const saveFilter = () => dispatch(actions.setFilter(filter));
 	//#endregion
 
 	useEffect(() => {
@@ -117,7 +126,7 @@ const SheetsDepartmentPage = () => {
 				<MSearch onFilterChange={setFilter} />
 			</Stack>
 
-			<ListSheets data={listData} loading={loading} />
+			<ListSheets data={listData} loading={loading} saveFilter={saveFilter} />
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 		</Box>

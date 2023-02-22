@@ -36,6 +36,7 @@ export const ListSheets = ({
 	academic_id,
 	semester_id,
 	department_id,
+	saveFilter,
 }) => {
 	//#region Data
 	const { pathname } = useLocation();
@@ -142,6 +143,7 @@ export const ListSheets = ({
 									isRemoved={except?.includes(Number(row.id))}
 									isHistory={isHistory}
 									isReport={isReport}
+									saveFilter={saveFilter}
 								/>
 							))
 						) : (

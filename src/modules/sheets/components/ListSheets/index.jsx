@@ -15,7 +15,7 @@ import { CLoadingSpinner } from '_others/';
 
 import { Row } from './Row';
 
-export const ListSheets = ({ data, loading }) => {
+export const ListSheets = ({ data, loading, saveFilter }) => {
 	//#region Data
 	const { pathname } = useLocation();
 
@@ -54,7 +54,13 @@ export const ListSheets = ({ data, loading }) => {
 						</TableRow>
 					) : data?.length > 0 ? (
 						data.map((row, index) => (
-							<Row key={row?.id} data={row} index={index + 1} isHistory={isHistory} />
+							<Row
+								key={row?.id}
+								data={row}
+								index={index + 1}
+								isHistory={isHistory}
+								saveFilter={saveFilter}
+							/>
 						))
 					) : (
 						<TableRow>

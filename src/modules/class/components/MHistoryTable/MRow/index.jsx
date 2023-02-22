@@ -8,7 +8,7 @@ import { CLink } from '_controls/';
 
 import { actions } from '_slices/currentInfo.slice';
 
-export const MRow = ({ data }) => {
+export const MRow = ({ data, saveFilter }) => {
 	//#region Data
 	const dispatch = useDispatch();
 
@@ -31,6 +31,7 @@ export const MRow = ({ data }) => {
 		};
 
 		dispatch(actions.setInfo(info));
+		saveFilter();
 	};
 	//#endregion
 

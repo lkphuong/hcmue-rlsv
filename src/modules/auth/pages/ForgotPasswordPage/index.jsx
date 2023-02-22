@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
 	Box,
@@ -38,12 +38,14 @@ const ROLES = [
 
 const ForgotPasswordPage = () => {
 	//#region Data
+	const { type } = useParams();
+
 	const [isDone, setIsDone] = useState(false);
 
 	const resolver = useResolver(validationSchemaForgotPassword);
 
 	const { control, handleSubmit } = useForm({
-		defaultValues: { type: 1, email: '' },
+		defaultValues: { type: Number(type), email: '' },
 		mode: 'all',
 		resolver,
 	});

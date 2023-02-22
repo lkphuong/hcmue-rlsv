@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
@@ -12,6 +12,8 @@ import { getClassSheets } from '_api/sheets.api';
 
 import { cleanObjValue, formatTimeSemester, isEmpty, isSuccess } from '_func/index';
 
+import { actions } from '_slices/filter.slice';
+
 const SheetsDepartmentPage = () => {
 	//#region Data
 	const { academic, semester, classData } = useSelector(
@@ -22,6 +24,7 @@ const SheetsDepartmentPage = () => {
 		(state) => state.auth.profile,
 		shallowEqual
 	);
+	const filters = useSelector((state) => state.filter.filters, shallowEqual);
 
 	const { class_id } = useParams();
 
@@ -36,17 +39,21 @@ const SheetsDepartmentPage = () => {
 
 	const listData = useMemo(() => data?.data || [], [data]);
 
-	const [filter, setFilter] = useState({
-		page: 1,
-		pages: 0,
-		department_id: Number(department_id),
-		academic_id: Number(academic?.id),
-		semester_id: Number(semester?.id),
-		status: -1,
-		input: '',
-	});
+	const [filter, setFilter] = useState(
+		filters || {
+			page: 1,
+			pages: 0,
+			department_id: Number(department_id),
+			academic_id: Number(academic?.id),
+			semester_id: Number(semester?.id),
+			status: -1,
+			input: '',
+		}
+	);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
@@ -114,6 +121,8 @@ const SheetsDepartmentPage = () => {
 		setSelectedAll(false);
 		await getData();
 	};
+
+	const saveFilter = () => dispatch(actions.setFilter(filter));
 	//#endregion
 
 	useEffect(() => {
@@ -167,6 +176,7 @@ const SheetsDepartmentPage = () => {
 				academic_id={Number(academic?.id)}
 				semester_id={Number(semester?.id)}
 				department_id={department_id}
+				saveFilter={saveFilter}
 			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />

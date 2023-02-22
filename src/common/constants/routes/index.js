@@ -73,6 +73,6 @@ export const ROUTES = {
 	},
 
 	CHANGE_PASSWORD: '/change-password',
-	FORGOT_PASSWORD: '/forgot-password',
+	FORGOT_PASSWORD: '/forgot-password/:type',
 	RESET_PASSWORD: '/reset-password', //     /?token=
 };

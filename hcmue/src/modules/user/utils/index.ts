@@ -77,3 +77,14 @@ export const arrayObjectDifference = (
 export const arrayDifference = (array1: any[], array2: any[]) => {
   return array2.filter((x) => !array1.includes(x));
 };
+
+/**
+ *
+ * @param array
+ * @returns
+ */
+export const arrayDuplicate = async (array: any[]) => {
+  return array.filter((item, index) => {
+    return array.indexOf(item) !== index;
+  });
+};

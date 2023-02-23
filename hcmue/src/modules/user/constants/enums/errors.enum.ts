@@ -23,4 +23,6 @@ export enum ErrorMessage {
   DATE_INVALID_FORMAT_ERROR = '[Ngày sinh] không hợp lệ (date: %s).',
 
   IMPORT_USERS_NO_MATCHING_TIME_ERROR = 'Tải danh sách thất bại do đang trong thời gian phát hành phiếu chấm điểm rèn luyện.',
+
+  IMPORT_DUPLICATE_ERROR = 'Tải danh sách sinh viên thất bại. Có sinh viên đã trùng lặp [sinh viên: %s].',
 }

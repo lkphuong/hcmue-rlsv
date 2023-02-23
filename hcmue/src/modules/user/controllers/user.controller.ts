@@ -214,7 +214,7 @@ export class UserController {
 
       const root = this._configurationService.get(Configuration.MULTER_DEST);
 
-      const data = generateImportUsers(
+      const data = await generateImportUsers(
         params,
         root,
         this._academicYearService,

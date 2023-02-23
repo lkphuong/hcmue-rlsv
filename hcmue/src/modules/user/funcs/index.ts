@@ -8,9 +8,14 @@ import * as xlsx from 'xlsx';
 import * as path from 'path';
 import * as md5 from 'md5';
 
-import { removeDuplicates, removeDuplicatesObject } from '../../../utils';
+import {
+  removeDuplicates,
+  removeDuplicatesObject,
+  sprintf,
+} from '../../../utils';
 import {
   arrayDifference,
+  arrayDuplicate,
   arrayObjectDifference,
   generateImportSuccessResponse,
 } from '../utils';
@@ -63,6 +68,7 @@ import { StatusResponse } from '../../status/interfaces/status_response.interfac
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
+  VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { EventKey } from '../../shared/constants/event-key.enum';
@@ -139,6 +145,19 @@ export const generateImportUsers = async (
 
     //#region read file
     const data = await readDataFromFile(path.join(root, file.fileName));
+    //#endregion
+
+    //#region check duplicate std_code
+    const duplicate_std_codes = await arrayDuplicate(data.std_codes);
+    if (duplicate_std_codes.length > 0) {
+      throw new HandlerException(
+        VALIDATION_EXIT_CODE.UNIQUE_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.IMPORT_DUPLICATE_ERROR, duplicate_std_codes),
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     //#endregion
 
     //#region compare two array
@@ -410,9 +429,13 @@ export const readDataFromFile = async (path: string) => {
   let departments = [];
   let majors: ExcelMajorResponse[] = [];
   let classes: ExcelClassResponse[] = [];
+  const std_codes = [];
   for (let i = 1; i < range; i++) {
     if (data[i][1]) {
       statuses.push(data[i][1]);
+    }
+    if (data[i][0]) {
+      std_codes.push(data[i][0]);
     }
     if (data[i][5]) {
       k.push(data[i][5]);
@@ -452,6 +475,7 @@ export const readDataFromFile = async (path: string) => {
     majors: majors,
     classes: classes,
     statuses: statuses,
+    std_codes: std_codes,
   };
 
   return result;

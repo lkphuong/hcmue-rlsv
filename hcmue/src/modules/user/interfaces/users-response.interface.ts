@@ -31,6 +31,7 @@ export interface ExcelDataResponse {
   departments: string[];
   majors: ExcelMajorResponse[];
   statuses: string[];
+  std_codes: string[];
 }
 
 export interface ExcelMajorResponse {

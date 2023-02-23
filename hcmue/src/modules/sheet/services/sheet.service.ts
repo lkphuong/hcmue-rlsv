@@ -469,7 +469,7 @@ export class SheetService {
           status.flag,
           status.name AS status`,
         )
-        .innerJoin(
+        .leftJoin(
           UserEntity,
           'user',
           `user.std_code = sheet.std_code 
@@ -477,17 +477,17 @@ export class SheetService {
           AND sheet.academic_id = user.academic_id 
           AND sheet.semester_id = user.semester_id`,
         )
-        .innerJoin(
+        .leftJoin(
           ClassEntity,
           'class',
           `class.id = sheet.class_id AND class.deleted = 0`,
         )
-        .innerJoin(
+        .leftJoin(
           DepartmentEntity,
           'department',
           `department.id = sheet.department_id AND department.deleted = 0`,
         )
-        .innerJoin(
+        .leftJoin(
           StatusEntity,
           'status',
           `status.id = user.status_id AND status.deleted = 0`,
@@ -519,8 +519,6 @@ export class SheetService {
       if (length !== 0) {
         conditions.take(length).skip(offset);
       }
-
-      console.log('sql: ', conditions.getSql());
 
       const results = await conditions
         .orderBy('department_id', 'ASC')
@@ -558,12 +556,12 @@ export class SheetService {
           AND sheet.academic_id = user.academic_id 
           AND sheet.semester_id = user.semester_id`,
         )
-        .innerJoin(
+        .leftJoin(
           ClassEntity,
           'class',
           `class.id = sheet.class_id AND class.deleted = 0`,
         )
-        .innerJoin(
+        .leftJoin(
           DepartmentEntity,
           'department',
           `department.id = sheet.department_id AND department.deleted = 0`,

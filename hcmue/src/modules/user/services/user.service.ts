@@ -52,31 +52,31 @@ export class UserService {
           `semester.id = user.semester_id AND
            semester.deleted = 0`,
         )
-        .innerJoin(
+        .leftJoin(
           DepartmentEntity,
           'department',
           `department.id = user.department_id AND 
            department.deleted = 0`,
         )
-        .innerJoin(
+        .leftJoin(
           ClassEntity,
           'class',
           `class.id = user.class_id AND
            class.deleted = 0`,
         )
-        .innerJoin(
+        .leftJoin(
           StatusEntity,
           'status',
           `status.id = user.status_id AND
            status.deleted = 0`,
         )
-        .innerJoin(
+        .leftJoin(
           MajorEntity,
           'major',
           `major.id = user.major_id AND 
           major.deleted = 0`,
         )
-        .innerJoin(KEntity, 'k', `class.k = k.id AND k.deleted = 0`)
+        .leftJoin(KEntity, 'k', `class.k = k.id AND k.deleted = 0`)
         .where('semester.id = :semester_id', { semester_id })
         .andWhere('academic.id = :academic_id', { academic_id })
         .andWhere('user.deleted = :deleted', { deleted: false });
@@ -196,14 +196,14 @@ export class UserService {
           `semester.academic_id = user.academic_id AND
            semester.deleted = 0`,
         )
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'user.department',
           DepartmentEntity,
           'department',
           `department.id = user.department_id AND 
            department.deleted = 0`,
         )
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'user.class',
           ClassEntity,
           'class',
@@ -211,7 +211,7 @@ export class UserService {
            class.deleted = 0`,
         )
 
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'class.K',
           KEntity,
           'k',
@@ -231,14 +231,14 @@ export class UserService {
           `role.code = role_user.role_id AND
            role.deleted = 0`,
         )
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'user.status',
           StatusEntity,
           'status',
           `status.id = user.status_id AND
            status.deleted = 0`,
         )
-        .innerJoinAndMapOne(
+        .leftJoinAndMapOne(
           'user.major',
           MajorEntity,
           'major',

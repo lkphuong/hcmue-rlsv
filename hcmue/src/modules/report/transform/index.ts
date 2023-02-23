@@ -265,11 +265,13 @@ export const generateCacheDepartmentsResponse = async (
     //#endregion
 
     //#region sum_of_std
+    console.log('sum_of_std: ', sum_of_std);
     sum_of_std = await sheet_service.countSheetsReport(
       academic_id,
       semester_id,
     );
     //#endregion
+    console.log('sum_of_std: ', sum_of_std);
 
     report_response.department = department
       ? {

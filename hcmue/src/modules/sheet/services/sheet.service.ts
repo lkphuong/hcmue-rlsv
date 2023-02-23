@@ -6,12 +6,13 @@ import { ClassEntity } from '../../../entities/class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
 import { HeaderEntity } from '../../../entities/header.entity';
 import { ItemEntity } from '../../../entities/item.entity';
-import { KEntity } from '../../../entities/k.entity';
 import { OptionEntity } from '../../../entities/option.entity';
 import { SheetEntity } from '../../../entities/sheet.entity';
 import { TitleEntity } from '../../../entities/title.entity';
 import { UserEntity } from '../../../entities/user.entity';
 import { FormEntity } from '../../../entities/form.entity';
+import { LevelEntity } from '../../../entities/level.entity';
+import { StatusEntity } from '../../../entities/status.entity';
 
 import { LogService } from '../../log/services/log.service';
 
@@ -21,8 +22,6 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { ReportResponse } from '../interfaces/sheet_response.interface';
-import { LevelEntity } from '../../../entities/level.entity';
-import { StatusEntity } from '../../../entities/status.entity';
 
 @Injectable()
 export class SheetService {
@@ -369,12 +368,6 @@ export class SheetService {
           `department.id = sheet.department_id AND department.deleted = 0`,
         )
         .innerJoinAndMapOne(
-          'sheet.K',
-          KEntity,
-          'k',
-          `k.id = sheet.k AND k.deleted = 0`,
-        )
-        .innerJoinAndMapOne(
           'sheet.user',
           UserEntity,
           'user',
@@ -473,7 +466,6 @@ export class SheetService {
           department.name as department,
           department.id as department_id,
           level.name AS level,
-          k.name AS k,
           status.flag,
           status.name AS status`,
         )
@@ -500,12 +492,10 @@ export class SheetService {
           'status',
           `status.id = user.status_id AND status.deleted = 0`,
         )
-        .innerJoin(KEntity, 'k', `k.id = sheet.k AND k.deleted = 0`)
         .leftJoin(
           LevelEntity,
           'level',
-          `level.id = sheet.level_id
-        AND (level.deleted = 0 OR level.deleted is null)`,
+          `level.id = sheet.level_id AND (level.deleted = 0 OR level.deleted is null)`,
         )
         .where('sheet.academic_id = :academic_id', { academic_id })
         .andWhere('sheet.semester_id = :semester_id', { semester_id })
@@ -534,7 +524,6 @@ export class SheetService {
 
       const results = await conditions
         .orderBy('department_id', 'ASC')
-        .addOrderBy('k', 'ASC')
         .addOrderBy('class_id', 'ASC')
         .addOrderBy('user.std_code', 'ASC')
         .getRawMany<ReportResponse>();

@@ -179,17 +179,17 @@ export class ReportController {
       if (semester instanceof HttpException) throw semester;
       //#endregion
 
-      //#region Validate role
-      const valid = await validateRole(
-        department_id,
-        role,
-        user_id,
-        this._userService,
-        req,
-      );
+      // //#region Validate role
+      // const valid = await validateRole(
+      //   department_id,
+      //   role,
+      //   user_id,
+      //   this._userService,
+      //   req,
+      // );
 
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
+      // if (valid instanceof HttpException) throw valid;
+      // //#endregion
       //#endregion
 
       //#region Get levels
@@ -431,17 +431,17 @@ export class ReportController {
       if (semester instanceof HttpException) throw semester;
       //#endregion
 
-      //#region Validate role
-      const valid = await validateRole(
-        department_id,
-        role,
-        user_id,
-        this._userService,
-        req,
-      );
+      // //#region Validate role
+      // const valid = await validateRole(
+      //   department_id,
+      //   role,
+      //   user_id,
+      //   this._userService,
+      //   req,
+      // );
 
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
+      // if (valid instanceof HttpException) throw valid;
+      // //#endregion
       //#endregion
 
       //#region Get levels
@@ -621,17 +621,17 @@ export class ReportController {
       if (semester instanceof HttpException) throw semester;
       //#endregion
 
-      //#region Validate role
-      const valid = await validateRole(
-        department_id,
-        role,
-        user_id,
-        this._userService,
-        req,
-      );
+      // //#region Validate role
+      // const valid = await validateRole(
+      //   department_id,
+      //   role,
+      //   user_id,
+      //   this._userService,
+      //   req,
+      // );
 
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
+      // if (valid instanceof HttpException) throw valid;
+      // //#endregion
       //#endregion
 
       //#region Get levels
@@ -965,17 +965,17 @@ export class ReportController {
       if (semester instanceof HttpException) throw semester;
       //#endregion
 
-      //#region Validate role
-      const valid = await validateRole(
-        department_id,
-        role,
-        user_id,
-        this._userService,
-        req,
-      );
+      // //#region Validate role
+      // const valid = await validateRole(
+      //   department_id,
+      //   role,
+      //   user_id,
+      //   this._userService,
+      //   req,
+      // );
 
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
+      // if (valid instanceof HttpException) throw valid;
+      // //#endregion
       //#endregion
 
       //#region Get levels
@@ -1084,10 +1084,6 @@ export class ReportController {
       const { academic_id, semester_id, department_id, class_id } = params;
       //#endregion
 
-      //#region Get Jwt Payload
-      const { role, user_id } = req.user as JwtPayload;
-      //#endregion
-
       //#region Validation
       //#region Validate academic-year
       const academic = await validateAcademicYear(
@@ -1125,17 +1121,17 @@ export class ReportController {
       if (semester instanceof HttpException) throw semester;
       //#endregion
 
-      //#region Validate role
-      const valid = await validateRole(
-        department_id,
-        role,
-        user_id,
-        this._userService,
-        req,
-      );
+      // //#region Validate role
+      // const valid = await validateRole(
+      //   department_id,
+      //   role,
+      //   user_id,
+      //   this._userService,
+      //   req,
+      // );
 
-      if (valid instanceof HttpException) throw valid;
-      //#endregion
+      // if (valid instanceof HttpException) throw valid;
+      // //#endregion
       //#endregion
 
       //#region Get levels

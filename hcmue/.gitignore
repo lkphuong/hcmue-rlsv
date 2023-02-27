@@ -15,7 +15,7 @@ yarn-error.log*
 lerna-debug.log*
 
 #file
-/static/upload/*
+/static*
 
 # OS
 .DS_Store

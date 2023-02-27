@@ -4,7 +4,6 @@ import { Request } from 'express';
 import * as jsonwebtoken from 'jsonwebtoken';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
-import { ExpiredTokenException } from '../exceptions/ExpiredTokenException';
 import { InvalidTokenException } from '../exceptions/InvalidTokenException';
 
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
@@ -14,9 +13,11 @@ import { VerifyTokenResponse } from '../interfaces/auth-response.interface';
 
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
-import { VALIDATION_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import {
+  AUTHENTICATION_EXIT_CODE,
+  VALIDATION_EXIT_CODE,
+} from '../../../constants/enums/error-code.enum';
 import { Levels } from '../../../constants/enums/level.enum';
-import { JWT_ERROR } from '../../../constants/enums/jwt-error.enum';
 
 export const validateConfirmPassword = (
   password: string,
@@ -46,31 +47,18 @@ export const validateToken = (
 ) => {
   if (token) {
     //#region Decode token
-    let payload:
-      | VerifyTokenResponse
-      | ExpiredTokenException
-      | InvalidTokenException
-      | null = null;
+    let payload: VerifyTokenResponse | HandlerException | null = null;
     jsonwebtoken.verify(
       token,
       configuration_service.get(Configuration.ACCESS_SECRET_KEY),
       (err, result) => {
         if (err) {
-          if (err.message == JWT_ERROR.JWT_EXPIRED) {
-            payload = new ExpiredTokenException(
-              token,
-              1003,
-              req.method,
-              req.url,
-            );
-          } else {
-            payload = new InvalidTokenException(
-              token,
-              1002,
-              req.method,
-              req.url,
-            );
-          }
+          payload = new HandlerException(
+            AUTHENTICATION_EXIT_CODE.NO_TOKEN,
+            req.method,
+            req.url,
+            ErrorMessage.EMAIL_TOKEN_EXPIRED_ERROR,
+          );
         } else {
           const { email, type } = result as VerifyTokenResponse;
           const tmp: VerifyTokenResponse = {

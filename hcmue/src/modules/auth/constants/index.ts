@@ -37,6 +37,10 @@ export const EMAIL_CONTENT = `
                 <a href="%s"
                     >%s</a
                 >
+
+                <p style="margin-bottom: 1.5rem">
+                Lưu ý: Đường dẫn này chỉ có thời hạn trong 10 phút!
+                </p>
             </div>
         </div>
     </body>

@@ -11,4 +11,6 @@ export enum ErrorMessage {
   OPERATOR_PASSWORD_ERROR = 'Cập nhật mật khẩu thất bại.',
 
   OPERATOR_SEND_EMAIL_ERROR = 'Gửi email thất bại.',
+
+  EMAIL_TOKEN_EXPIRED_ERROR = 'Đã quá thời hạn đổi mật khẩu! Vui lòng thực hiện lại thao tác.',
 }

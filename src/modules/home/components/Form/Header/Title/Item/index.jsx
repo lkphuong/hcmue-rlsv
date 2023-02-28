@@ -61,7 +61,9 @@ const Item = memo(({ data, headerId, titleId }) => {
 		<TableRow>
 			<TableCell />
 			<TableCell>
-				<Typography ml={2}>- {data.content}</Typography>
+				<Typography ml={2} className={data?.required ? 'required' : ''}>
+					- {data.content}
+				</Typography>
 
 				{data?.is_file && (
 					<Button

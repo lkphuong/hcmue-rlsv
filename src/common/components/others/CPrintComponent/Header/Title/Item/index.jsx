@@ -17,7 +17,9 @@ const Item = memo(({ data }) => {
 			<TableRow>
 				<TableCell />
 				<TableCell>
-					<Typography ml={2}>- {data.content}</Typography>
+					<Typography ml={2} className={data?.required ? 'required' : ''}>
+						- {data.content}
+					</Typography>
 				</TableCell>
 
 				<Control data={data} id={Number(data.id)} />

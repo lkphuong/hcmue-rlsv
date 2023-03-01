@@ -26,17 +26,26 @@ export const MRow = ({ data, index }) => {
 		<>
 			<TableRow>
 				<TableCell align='center'>{index + 1}</TableCell>
-				<TableCell align='left'>{data?.name}</TableCell>
 				<TableCell align='center'>{data?.std_code}</TableCell>
+				<TableCell align='center'>{data?.status?.name}</TableCell>
+				<TableCell align='left'>{data?.name}</TableCell>
+				<TableCell align='center'>{data?.birthday}</TableCell>
+				<TableCell align='center'>{data?.k?.name}</TableCell>
+				<TableCell align='center'>{data?.department?.name}</TableCell>
+				<TableCell align='center'>{data?.major?.name}</TableCell>
+				<TableCell align='center'>{data?.classes?.code}</TableCell>
+				<TableCell align='center'>{data?.classes?.name}</TableCell>
 				<TableCell align='center'>
 					<Stack direction='row' spacing={1} alignItems='center' justifyContent='end'>
 						<Typography whiteSpace='nowrap' fontSize={12}>
 							{role}
 						</Typography>
 						<Tooltip title='Phân quyền'>
-							<IconButton onClick={onClick}>
-								<CSettingIcon />
-							</IconButton>
+							<span>
+								<IconButton disabled={!data?.status?.flag} onClick={onClick}>
+									<CSettingIcon />
+								</IconButton>
+							</span>
 						</Tooltip>
 					</Stack>
 				</TableCell>

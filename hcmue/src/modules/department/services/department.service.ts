@@ -20,12 +20,20 @@ export class DepartmentService {
     private _logger: LogService,
   ) {}
 
-  async getDepartments(): Promise<DepartmentResponse[] | null> {
+  async getDepartments(
+    department_id?: number,
+  ): Promise<DepartmentResponse[] | null> {
     try {
       const conditions = this._departmentRepository
         .createQueryBuilder('department')
         .select('department.id AS id, department.name AS name')
         .where('department.deleted = :deleted', { deleted: false });
+
+      if (department_id) {
+        conditions.andWhere('department.id = :department_id', {
+          department_id,
+        });
+      }
 
       const departments = await conditions.getRawMany<DepartmentResponse>();
 

@@ -34,7 +34,6 @@ import {
   validateAcademicYear,
   validateClass,
   validateDepartment,
-  validateRole,
   validateSemester,
 } from '../validations';
 

@@ -759,6 +759,7 @@ export const exportExcelTemplateAdmin = async (
           academic_id,
           semester_id,
         );
+
         const rows = [];
         const lenth = sheets.length;
         for (let i = 0; i < lenth; i++) {
@@ -776,9 +777,10 @@ export const exportExcelTemplateAdmin = async (
               : sheets[i]?.level
               ? sheets[i]?.level
               : '';
-          row_values[10] = sheets[i].flag ? '' : sheets[i].status;
+          row_values[10] = sheets[i].flag == 2 ? sheets[i].status : '';
           rows.push(row_values);
         }
+
         worksheet.insertRows(12, rows, 'i');
 
         await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A);

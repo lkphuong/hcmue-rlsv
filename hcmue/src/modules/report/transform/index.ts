@@ -205,7 +205,8 @@ export const generateCacheDepartmentsResponse = async (
     //#endregion
 
     //#region Generate response
-    const departments = await department_service.getDepartments();
+    const dept_id = department ? department.id : null;
+    const departments = await department_service.getDepartments(dept_id);
     if (departments && departments.length > 0) {
       for await (const department of departments) {
         const key = department.id;
@@ -248,7 +249,6 @@ export const generateCacheDepartmentsResponse = async (
 
     //#region sum not graded for department
     for await (const department of department_response) {
-      console.log('department: ', department);
       const length = department.levels.length;
       department.levels[length - 1].count =
         await sheet_service.countSheetNotGraded(
@@ -261,17 +261,20 @@ export const generateCacheDepartmentsResponse = async (
 
     //#region sum not graded
     sum_of_levels[sum_of_levels.length - 1].count =
-      await sheet_service.countSheetNotGraded(academic_id, semester_id);
+      await sheet_service.countSheetNotGraded(
+        academic_id,
+        semester_id,
+        dept_id,
+      );
     //#endregion
 
     //#region sum_of_std
-    console.log('sum_of_std: ', sum_of_std);
     sum_of_std = await sheet_service.countSheetsReport(
       academic_id,
       semester_id,
+      dept_id,
     );
     //#endregion
-    console.log('sum_of_std: ', sum_of_std);
 
     report_response.department = department
       ? {

@@ -529,7 +529,7 @@ export const exportExcelTemplateClass = async (
         row_values[6] = sheets[i].sum_of_personal_marks;
         row_values[7] = sheets[i].sum_of_class_marks;
         row_values[8] = sheets[i].sum_of_adviser_marks;
-        row_values[9] = sheets[i].flag ? '' : sheets[i].status;
+        row_values[9] = sheets[i].flag == 2 ? sheets[i].status : '';
         rows.push(row_values);
       }
       worksheet.insertRows(12, rows, 'i');
@@ -583,6 +583,7 @@ export const exportExcelTemplateDepartment = async (
       academic_id,
       semester_id,
       department_id,
+      class_id,
     );
 
     const payload = await generateCacheClassesResponse(
@@ -651,7 +652,7 @@ export const exportExcelTemplateDepartment = async (
             : sheets[i]?.level
             ? sheets[i]?.level
             : '';
-        row_values[11] = sheets[i].flag ? '' : sheets[i].status;
+        row_values[11] = sheets[i].flag == 2 ? sheets[i].status : '';
         rows.push(row_values);
       }
       worksheet.insertRows(12, rows, 'i');
@@ -697,11 +698,12 @@ export const exportExcelTemplateAdmin = async (
   req: Request,
 ) => {
   try {
-    const { academic_id, semester_id } = params;
+    const { academic_id, semester_id, department_id } = params;
 
     const count_sheets = await sheet_service.countSheetsReport(
       academic_id,
       semester_id,
+      department_id,
     );
 
     const payload = await generateCacheDepartmentsResponse(
@@ -758,6 +760,7 @@ export const exportExcelTemplateAdmin = async (
           LENGTH,
           academic_id,
           semester_id,
+          department_id,
         );
 
         const rows = [];

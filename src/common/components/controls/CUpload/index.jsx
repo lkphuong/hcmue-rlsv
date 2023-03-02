@@ -38,9 +38,16 @@ export const CUpload = ({ name, files }) => {
 
 	const wrapperRef = useRef();
 
-	const { control } = useFormContext();
+	const {
+		control,
+		trigger,
+		formState: { errors },
+	} = useFormContext();
 
-	const { fields, append, remove, replace, update } = useFieldArray({ control, name });
+	const { fields, append, remove, replace, update } = useFieldArray({
+		control,
+		name,
+	});
 	//#endregion
 
 	//#region Event
@@ -65,6 +72,10 @@ export const CUpload = ({ name, files }) => {
 					};
 
 					append(file);
+
+					if (Object.keys(errors)?.length > 0) {
+						trigger();
+					}
 				} else {
 					alert.fail({ text: res?.message || ERRORS.FAIL });
 				}

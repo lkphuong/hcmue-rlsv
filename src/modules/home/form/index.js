@@ -16,6 +16,22 @@ const rules = (headers = []) => {
 
 							return isValid;
 						}),
+					files: yup
+						.array()
+						.nullable()
+						.when('personal_mark_level', {
+							is: (value) => value !== 0,
+							then: yup
+								.array()
+								.nullable()
+								.when('is_file', {
+									is: true,
+									then: yup
+										.array()
+										.min(1, 'Cần tối thiểu 1 file minh chứng')
+										.required('Thiếu file minh chứng'),
+								}),
+						}),
 				});
 			});
 		});

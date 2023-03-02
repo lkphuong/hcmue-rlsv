@@ -200,7 +200,10 @@ export const convertMarkValues = (values) => {
 				const files = obj.files.map((el) => ({ ...el, id: el.file_id }));
 				return { ...obj, files };
 			} else return { ...obj, files: [] };
-		} else return obj;
+		} else {
+			delete obj.files;
+			return obj;
+		}
 	});
 
 	return _data;

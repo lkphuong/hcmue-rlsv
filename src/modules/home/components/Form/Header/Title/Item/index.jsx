@@ -1,6 +1,6 @@
 import { memo, useContext, useEffect, useMemo, useRef } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Controller, useFormContext, useWatch } from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext, useWatch } from 'react-hook-form';
 
 import { Button, TableCell, TableRow, Typography } from '@mui/material';
 import { Folder } from '@mui/icons-material';
@@ -34,6 +34,17 @@ const Item = memo(({ data, headerId, titleId }) => {
 
 	const filesValue = useWatch({ control, name: `title_${titleId}_${data?.id}.files` });
 
+	const { replace } = useFieldArray({
+		control,
+		name: `title_${titleId}_${data?.id}.files`,
+	});
+
+	useEffect(() => {
+		if (itemsMark?.length > 0 && itemsMark[indexMark] && itemsMark[indexMark]?.files) {
+			replace(itemsMark[indexMark]?.files?.map((e) => ({ ...e, file_id: Number(e.id) })));
+		}
+	}, [itemsMark, indexMark]);
+
 	const countFiles = useMemo(() => {
 		if (filesValue?.length > 0) {
 			return filesValue.filter((e) => e?.deleted !== 1)?.length;
@@ -66,14 +77,29 @@ const Item = memo(({ data, headerId, titleId }) => {
 				</Typography>
 
 				{data?.is_file && (
-					<Button
-						variant='contained'
-						sx={{ p: 0, minWidth: '45px' }}
-						endIcon={<Folder />}
-						onClick={openModal}
-					>
-						{countFiles}
-					</Button>
+					<Controller
+						name={`title_${titleId}_${data?.id}.files`}
+						defaultValue={itemsMark[indexMark]?.files || []}
+						render={({ field, fieldState: { error } }) => (
+							<>
+								<Button
+									variant='contained'
+									sx={{
+										p: 0,
+										mt: 0.6,
+										ml: 2,
+										minWidth: '45px',
+										backgroundColor: !!error ? 'red' : '#2196f3',
+									}}
+									endIcon={<Folder />}
+									onClick={openModal}
+								>
+									{countFiles}
+								</Button>
+								<input style={{ opacity: 0, userSelect: 'none' }} {...field} />
+							</>
+						)}
+					/>
 				)}
 			</TableCell>
 
@@ -93,13 +119,6 @@ const Item = memo(({ data, headerId, titleId }) => {
 					defaultValue={data?.is_file}
 					render={({ field }) => <input type='hidden' {...field} />}
 				/>
-				{data?.is_file && (
-					<Controller
-						name={`title_${titleId}_${data?.id}.files`}
-						defaultValue={itemsMark[indexMark]?.files || []}
-						render={({ field }) => <input type='hidden' {...field} />}
-					/>
-				)}
 			</TableCell>
 
 			<Control data={data} id={Number(data.id)} titleId={titleId} available={available} />

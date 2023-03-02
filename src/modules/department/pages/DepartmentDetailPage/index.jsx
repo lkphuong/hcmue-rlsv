@@ -18,7 +18,7 @@ import { actions } from '_slices/mark.slice';
 
 import { CLoadingSpinner, CPrintComponent } from '_others/';
 
-import { useFocusError, useResolver } from '_hooks/';
+import { useResolver } from '_hooks/';
 
 import { validationSchemaForm } from '_modules/department/form';
 
@@ -38,12 +38,6 @@ const DepartmentDetailPage = () => {
 	const resolver = useResolver(validationSchemaForm(data?.headers));
 
 	const methods = useForm({ resolver, mode: 'all', shouldFocusError: true });
-	const {
-		formState: { errors, isSubmitting },
-		setFocus,
-	} = methods;
-
-	useFocusError(isSubmitting, errors, setFocus);
 
 	const navigate = useNavigate();
 

@@ -93,6 +93,7 @@ export const LoginPage = () => {
 					top='50%'
 					left='50%'
 					sx={{ transform: 'translate(-50% , -50%)' }}
+					minWidth='60%'
 				>
 					<Typography
 						fontWeight={700}

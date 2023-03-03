@@ -31,11 +31,8 @@ export const CPrintComponent = forwardRef(({ data, marks }, ref) => {
 		<Box ref={ref} className='print-source' px={2} py={4}>
 			<Box component='section' className='info'>
 				<Typography ml={10}>TRƯỜNG ĐẠI HỌC SƯ PHẠM TP.HỒ CHÍ MINH</Typography>
-				<Typography ml={10} mb={2}>
-					KHOA:&nbsp;
-					<Typography component='span' fontWeight={600}>
-						{data?.department?.name}
-					</Typography>
+				<Typography ml={10} mb={2} fontWeight={600}>
+					{data?.department?.name}
 				</Typography>
 
 				<Box textAlign='center' mb={2}>
@@ -87,7 +84,7 @@ export const CPrintComponent = forwardRef(({ data, marks }, ref) => {
 							<Typography component='span'>
 								Khóa:
 								<Typography component='span' fontWeight={600}>
-									&nbsp;{data?.k?.name}&nbsp;
+									&nbsp;K{data?.user?.std_code?.slice(0, 2)}&nbsp;
 								</Typography>
 							</Typography>
 						</Grid>

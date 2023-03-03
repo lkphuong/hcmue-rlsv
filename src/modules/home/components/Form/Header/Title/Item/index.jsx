@@ -72,7 +72,7 @@ const Item = memo(({ data, headerId, titleId }) => {
 		<TableRow>
 			<TableCell />
 			<TableCell>
-				<Typography ml={2} className={data?.required ? 'required' : ''}>
+				<Typography ml={2} className={data?.required ? 'required' : ''} fontSize='1rem'>
 					- {data.content}
 				</Typography>
 

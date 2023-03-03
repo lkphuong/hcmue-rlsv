@@ -53,7 +53,7 @@ const TypeInput = ({
 							fieldState: { error },
 						}) => (
 							<CInput
-								fullWidth
+								sx={{ width: '70%' }}
 								type='number'
 								name={name}
 								inputRef={ref}
@@ -67,13 +67,13 @@ const TypeInput = ({
 					<Typography>{currentMark.personal_mark_level}</Typography>
 				)}
 			</TableCell>
-			<TableCell align='center'>
+			<TableCell align='center' sx={{ '& .MuiTypography-root': { fontSize: '1rem' } }}>
 				<Typography>{currentMark.class_mark_level}</Typography>
 			</TableCell>
-			<TableCell align='center'>
+			<TableCell align='center' sx={{ '& .MuiTypography-root': { fontSize: '1rem' } }}>
 				<Typography>{currentMark.adviser_mark_level}</Typography>
 			</TableCell>
-			<TableCell align='center'>
+			<TableCell align='center' sx={{ '& .MuiTypography-root': { fontSize: '1rem' } }}>
 				<Typography>{currentMark.department_mark_level}</Typography>
 			</TableCell>
 		</>

@@ -29,13 +29,13 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 	return (
 		<>
 			<TableCell />
-			<TableCell align='center'>
+			<TableCell align='center' sx={{ '& .MuiTypography-root': { fontSize: '1rem' } }}>
 				<Typography>{currentMark.personal_mark_level}</Typography>
 			</TableCell>
-			<TableCell align='center'>
+			<TableCell align='center' sx={{ '& .MuiTypography-root': { fontSize: '1rem' } }}>
 				<Typography>{currentMark.class_mark_level}</Typography>
 			</TableCell>
-			<TableCell align='center'>
+			<TableCell align='center' sx={{ '& .MuiTypography-root': { fontSize: '1rem' } }}>
 				<Typography>{currentMark.adviser_mark_level}</Typography>
 			</TableCell>
 			<TableCell align='center'>
@@ -46,6 +46,7 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 						defaultValue={initialMark}
 						render={({ field: { value, onChange, ref }, fieldState: { error } }) => (
 							<CAutocomplete
+								sx={{ width: '70%', m: 'auto' }}
 								ref={ref}
 								disableClearable={required}
 								options={options}

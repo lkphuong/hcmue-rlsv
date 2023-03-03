@@ -19,7 +19,7 @@ const Title = memo(({ data, headerId, index }) => {
 			<TableRow>
 				<TableCell align='center'>{convertToASCIIChar(index + 97)}</TableCell>
 				<TableCell colSpan='100%'>
-					<Typography fontWeight={500} fontSize={17}>
+					<Typography fontWeight={500} fontSize='1rem'>
 						{data?.name}
 					</Typography>
 				</TableCell>

@@ -108,19 +108,19 @@ export const Form = ({ data }) => {
 							<TableCell
 								align='center'
 								rowSpan={2}
-								width={80}
-								sx={{ minWidth: '80px' }}
+								width={60}
+								sx={{ minWidth: '60px' }}
 							>
 								Mục
 							</TableCell>
-							<TableCell rowSpan={2} sx={{ minWidth: '650px' }}>
+							<TableCell rowSpan={2} sx={{ minWidth: '257px' }}>
 								Nội dung đánh giá
 							</TableCell>
 							<TableCell
 								align='center'
 								rowSpan={2}
-								width={150}
-								sx={{ minWidth: '150px', maxWidth: '200px' }}
+								width={140}
+								sx={{ minWidth: '140px' }}
 							>
 								Khung điểm
 							</TableCell>
@@ -129,16 +129,16 @@ export const Form = ({ data }) => {
 							</TableCell>
 						</TableRow>
 						<TableRow>
-							<TableCell align='center' width={130}>
+							<TableCell align='center' width={85}>
 								Sinh viên
 							</TableCell>
-							<TableCell align='center' width={130}>
+							<TableCell align='center' width={85}>
 								Lớp
 							</TableCell>
-							<TableCell align='center' width={130}>
+							<TableCell align='center' width={85}>
 								CVHT
 							</TableCell>
-							<TableCell align='center' width={130}>
+							<TableCell align='center' width={85}>
 								Khoa
 							</TableCell>
 						</TableRow>

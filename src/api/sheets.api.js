@@ -81,3 +81,7 @@ export const getAdminHistorySheets = (body) => {
 export const approveAll = (body) => {
 	return put(SHEETS.APPROVE_ALL, body);
 };
+
+export const ratingWeak = (id) => {
+	return put(`${SHEETS.RATING_WEAK}/${id}`);
+};

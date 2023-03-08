@@ -40,6 +40,8 @@ export const SHEETS = {
 
 	APPROVE_ALL: '/sheets/approve-all',
 	GET_DETAIL_SHEET: '/sheets/detail',
+
+	RATING_WEAK: '/sheets/weak', // :id
 };
 
 export const FORMS = {

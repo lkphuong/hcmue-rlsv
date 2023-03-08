@@ -20,9 +20,11 @@ import { alert } from '_func/alert';
 
 import { isSuccess, convertMarkValues } from '_func/';
 
-import { updateClassSheets } from '_api/sheets.api';
+import { ratingWeak, updateClassSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
+
+import { ERRORS } from '_constants/messages';
 
 import Header from './Header';
 
@@ -90,6 +92,25 @@ export const Form = ({ data }) => {
 	};
 
 	const onUndo = () => dispatch(actions.setAvailable(true));
+
+	const onRatingBad = () => {
+		alert.question({
+			onConfirm: async () => {
+				try {
+					await ratingWeak(data.id);
+
+					dispatch(actions.clearMarks());
+
+					alert.success({ text: 'Cập nhật đánh giá cho sinh viên thành công.' });
+
+					navigate(-1, { replace: true });
+				} catch (error) {
+					alert.fail({ text: error?.message || ERRORS.FAIL });
+				}
+			},
+			text: 'Bạn có chắc chắn muốn xếp loại sinh viên này là Kém.',
+		});
+	};
 	//#endregion
 
 	//#region Render
@@ -150,6 +171,9 @@ export const Form = ({ data }) => {
 			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
+				<Button variant='contained' sx={{ mr: 1, mb: 2 }} onClick={onRatingBad}>
+					Rèn luyện kém
+				</Button>
 				{data?.is_return && !available ? (
 					<Button
 						variant='contained'

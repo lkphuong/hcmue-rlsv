@@ -4,6 +4,7 @@ import { useFormContext } from 'react-hook-form';
 
 import {
 	Box,
+	Button,
 	Table,
 	TableBody,
 	TableCell,
@@ -19,9 +20,11 @@ import { alert } from '_func/alert';
 
 import { isSuccess, convertMarkValues } from '_func/';
 
-import { updateDepartmentSheets } from '_api/sheets.api';
+import { ratingWeak, updateDepartmentSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/mark.slice';
+
+import { ERRORS } from '_constants/messages';
 
 import Header from './Header';
 
@@ -69,6 +72,25 @@ export const Form = ({ data }) => {
 		} else {
 			alert.fail({ text: res?.message || 'Cập nhật điểm không thành công!' });
 		}
+	};
+
+	const onRatingBad = () => {
+		alert.question({
+			onConfirm: async () => {
+				try {
+					await ratingWeak(data.id);
+
+					dispatch(actions.clearMarks());
+
+					alert.success({ text: 'Cập nhật đánh giá cho sinh viên thành công.' });
+
+					navigate(-1, { replace: true });
+				} catch (error) {
+					alert.fail({ text: error?.message || ERRORS.FAIL });
+				}
+			},
+			text: 'Bạn có chắc chắn muốn xếp loại sinh viên này là Kém.',
+		});
 	};
 	//#endregion
 
@@ -130,6 +152,9 @@ export const Form = ({ data }) => {
 			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
+				<Button variant='contained' sx={{ mr: 1, mb: 2 }} onClick={onRatingBad}>
+					Rèn luyện kém
+				</Button>
 				<LoadingButton
 					sx={{ mb: 2 }}
 					variant='contained'

@@ -90,6 +90,13 @@ export class SheetEntity extends RootEntity {
   ])
   level: LevelEntity;
 
+  @Column('bigint', {
+    name: 'level_id',
+    nullable: false,
+    default: 0,
+  })
+  level_id: number;
+
   // 0. Chưa đánh giá, 1.Chờ lớp xét duyệt,2 Lớp quá hạn 3.Chờ khoa xét duyệt,
   // 4. Khoa quá hạn, 5. Hoàn thành , default: 0
   @Column('tinyint', {

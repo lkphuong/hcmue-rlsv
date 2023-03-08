@@ -835,7 +835,7 @@ export class SheetService {
 
   async update(
     sheet: SheetEntity,
-    manager: EntityManager,
+    manager?: EntityManager,
   ): Promise<SheetEntity | null> {
     try {
       if (!manager) {

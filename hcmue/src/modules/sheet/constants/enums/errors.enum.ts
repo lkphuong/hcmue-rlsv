@@ -46,4 +46,6 @@ export enum ErrorMessage {
 
   OPTION_EMPTY_ERROR = 'Bạn vui lòng chọn [tùy chọn] chấm điểm cho %s.',
   ITEM_NOT_CONFIG_OPTION_ERROR = '[Nội dung chấm điểm] không được cấu hình [tùy chọn] (id: %s).',
+
+  SHEET_NOT_GRADED_ERROR = 'Bạn không thể chấm điểm có phiếu đã được từ chối.',
 }

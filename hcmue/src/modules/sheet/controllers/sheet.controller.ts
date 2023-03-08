@@ -32,6 +32,7 @@ import {
   generateClassStatusDepartmentResponse,
   generateDepartmentStatusResponse,
   generateEvaluationsResponse,
+  generateFailedResponse,
   generateItemsResponse,
   generateObjectIdFromUsers,
   generateResponses,
@@ -121,8 +122,13 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
+  VALIDATION_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
+import { UnknownException } from '../../../exceptions/UnknownException';
+import { SheetLevel } from '../constants/enums/level.enum';
+import { SheetStatus } from '../constants/enums/status.enum';
+import { returnObjects } from '../../../utils';
 
 @Controller('sheets')
 export class SheetController {
@@ -2282,6 +2288,93 @@ export class SheetController {
       }
     } catch (err) {
       console.log(err);
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /**
+   * @method PUT
+   * @url api/sheets/weak/:id
+   * @access private
+   * @descript Cán bộ lớp và khoa đánh giá sinh viên xếp loại kém
+   * @return id
+   * @page sheets page
+   */
+  @Put('weak/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.CHAIRMAN, Role.SECRETARY, Role.MONITOR, Role.ADVISER)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async updateWeakMark(@Param('id') id: number, @Req() req: Request) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ sheet_id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ sheet_id: id }),
+      );
+
+      //#region Get payload
+      const { role, username: request_code } = req.user as JwtPayload;
+      //#endregion
+
+      //#region validate sheet
+        let sheet = await this._sheetService.getSheetById(id)
+        if(sheet.graded == 0) {
+          throw new HandlerException(VALIDATION_EXIT_CODE.NO_MATCHING, req.method, req.url, ErrorMessage.SHEET_NOT_GRADED_ERROR)
+        }
+        else if(sheet) {
+          //#region get level weak
+          const level = await this._levelService.getLevelBySortOrder(SheetLevel.WEAK)
+          if(level ) {
+            if(role == Role.ADVISER) {
+              sheet.sum_of_adviser_marks = 0;
+              sheet.level = sheet.status >= SheetStatus.WAITING_ADVISER ? level : sheet.level;
+              sheet.updated_at = new Date();
+              sheet.updated_by = request_code;
+              sheet.graded = 1;
+              sheet.status = SheetStatus.WAITING_DEPARTMENT;
+  
+              sheet = await this._sheetService.update(sheet)
+            } else {
+              sheet.sum_of_class_marks = 0;
+              sheet.level = sheet.status > SheetStatus.WAITING_CLASS ? sheet.level : level;
+              sheet.updated_at = new Date();
+              sheet.updated_by = request_code;
+              sheet.graded = 1;
+              sheet.status = sheet.status > SheetStatus.WAITING_ADVISER ? SheetStatus.WAITING_DEPARTMENT : SheetStatus.WAITING_ADVISER; 
+  
+              sheet = await this._sheetService.update(sheet)
+            }
+  
+            return returnObjects(sheet.id)
+          } else {
+            throw generateFailedResponse(req)
+          }
+          //#endregion
+        } else {
+          throw new UnknownException(id, DATABASE_EXIT_CODE.UNKNOW_VALUE, req.method, req.url, ErrorMessage.SHEET_NOT_FOUND_ERROR, HttpStatus.OK)
+        }
+      //#endregion
+    } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
 

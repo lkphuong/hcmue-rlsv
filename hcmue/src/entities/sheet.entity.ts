@@ -92,7 +92,7 @@ export class SheetEntity extends RootEntity {
 
   @Column('bigint', {
     name: 'level_id',
-    nullable: false,
+    nullable: true,
     default: 0,
   })
   level_id: number;

@@ -2318,11 +2318,7 @@ export class SheetController {
     try {
       console.log('----------------------------------------------------------');
       console.log(
-        req.method +
-          ' - ' +
-          req.url +
-          ': ' +
-          JSON.stringify({ sheet_id: id }),
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ sheet_id: id }),
       );
 
       this._logger.writeLog(
@@ -2337,42 +2333,65 @@ export class SheetController {
       //#endregion
 
       //#region validate sheet
-        let sheet = await this._sheetService.getSheetById(id)
-        if(sheet.graded == 0) {
-          throw new HandlerException(VALIDATION_EXIT_CODE.NO_MATCHING, req.method, req.url, ErrorMessage.SHEET_NOT_GRADED_ERROR)
-        }
-        else if(sheet) {
-          //#region get level weak
-          const level = await this._levelService.getLevelBySortOrder(SheetLevel.WEAK)
-          if(level ) {
-            if(role == Role.ADVISER) {
-              sheet.sum_of_adviser_marks = 0;
-              sheet.level = sheet.status >= SheetStatus.WAITING_ADVISER ? level : sheet.level;
-              sheet.updated_at = new Date();
-              sheet.updated_by = request_code;
-              sheet.graded = 1;
-              sheet.status = SheetStatus.WAITING_DEPARTMENT;
-  
-              sheet = await this._sheetService.update(sheet)
-            } else {
-              sheet.sum_of_class_marks = 0;
-              sheet.level = sheet.status > SheetStatus.WAITING_CLASS ? sheet.level : level;
-              sheet.updated_at = new Date();
-              sheet.updated_by = request_code;
-              sheet.graded = 1;
-              sheet.status = sheet.status > SheetStatus.WAITING_ADVISER ? SheetStatus.WAITING_DEPARTMENT : SheetStatus.WAITING_ADVISER; 
-  
-              sheet = await this._sheetService.update(sheet)
-            }
-  
-            return returnObjects(sheet.id)
+      let sheet = await this._sheetService.getSheetById(id);
+      if (sheet.graded == 0) {
+        throw new HandlerException(
+          VALIDATION_EXIT_CODE.NO_MATCHING,
+          req.method,
+          req.url,
+          ErrorMessage.SHEET_NOT_GRADED_ERROR,
+        );
+      } else if (sheet) {
+        //#region get level weak
+        const level = await this._levelService.getLevelBySortOrder(
+          SheetLevel.WEAK,
+        );
+        if (level) {
+          if (role == Role.ADVISER) {
+            sheet.sum_of_adviser_marks = 0;
+            sheet.level =
+              sheet.status > SheetStatus.WAITING_DEPARTMENT
+                ? sheet.level
+                : level;
+            sheet.updated_at = new Date();
+            sheet.updated_by = request_code;
+            sheet.graded = 1;
+            sheet.status =
+              sheet.status > SheetStatus.WAITING_ADVISER
+                ? sheet.status
+                : SheetStatus.WAITING_DEPARTMENT;
+
+            sheet = await this._sheetService.update(sheet);
           } else {
-            throw generateFailedResponse(req)
+            sheet.sum_of_class_marks = 0;
+            sheet.level =
+              sheet.status > SheetStatus.WAITING_ADVISER ? sheet.level : level;
+            sheet.updated_at = new Date();
+            sheet.updated_by = request_code;
+            sheet.graded = 1;
+            sheet.status =
+              sheet.status > SheetStatus.WAITING_ADVISER
+                ? sheet.status
+                : SheetStatus.WAITING_ADVISER;
+
+            sheet = await this._sheetService.update(sheet);
           }
-          //#endregion
+
+          return returnObjects({ id: sheet.id });
         } else {
-          throw new UnknownException(id, DATABASE_EXIT_CODE.UNKNOW_VALUE, req.method, req.url, ErrorMessage.SHEET_NOT_FOUND_ERROR, HttpStatus.OK)
+          throw generateFailedResponse(req);
         }
+        //#endregion
+      } else {
+        throw new UnknownException(
+          id,
+          DATABASE_EXIT_CODE.UNKNOW_VALUE,
+          req.method,
+          req.url,
+          ErrorMessage.SHEET_NOT_FOUND_ERROR,
+          HttpStatus.OK,
+        );
+      }
       //#endregion
     } catch (err) {
       console.log('----------------------------------------------------------');

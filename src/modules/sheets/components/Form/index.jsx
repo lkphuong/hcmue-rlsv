@@ -152,9 +152,11 @@ export const Form = ({ data }) => {
 			</TableContainer>
 
 			<Box textAlign='center' mt={3}>
-				<Button variant='contained' sx={{ mr: 1, mb: 2 }} onClick={onRatingBad}>
-					Rèn luyện kém
-				</Button>
+				{!data?.is_return && (
+					<Button variant='contained' sx={{ mr: 1, mb: 2 }} onClick={onRatingBad}>
+						Rèn luyện kém
+					</Button>
+				)}
 				<LoadingButton
 					sx={{ mb: 2 }}
 					variant='contained'

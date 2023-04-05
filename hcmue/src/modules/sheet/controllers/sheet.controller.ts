@@ -2312,7 +2312,14 @@ export class SheetController {
    */
   @Put('weak/:id')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.CHAIRMAN, Role.SECRETARY, Role.MONITOR, Role.ADVISER)
+  @Roles(
+    Role.CHAIRMAN,
+    Role.SECRETARY,
+    Role.MONITOR,
+    Role.ADVISER,
+    Role.DEPARTMENT,
+    Role.ADMIN,
+  )
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateWeakMark(@Param('id') id: number, @Req() req: Request) {
     try {
@@ -2347,35 +2354,33 @@ export class SheetController {
           SheetLevel.WEAK,
         );
         if (level) {
-          if (role == Role.ADVISER) {
+          sheet.updated_at = new Date();
+          sheet.updated_by = request_code;
+          sheet.graded = 1;
+          if (role === Role.ADVISER) {
             sheet.sum_of_adviser_marks = 0;
             sheet.level =
               sheet.status > SheetStatus.WAITING_DEPARTMENT
                 ? sheet.level
                 : level;
-            sheet.updated_at = new Date();
-            sheet.updated_by = request_code;
-            sheet.graded = 1;
             sheet.status =
-              sheet.status > SheetStatus.WAITING_ADVISER
+              sheet.status > SheetStatus.WAITING_DEPARTMENT
                 ? sheet.status
                 : SheetStatus.WAITING_DEPARTMENT;
-
-            sheet = await this._sheetService.update(sheet);
+          } else if (role === Role.DEPARTMENT || role === Role.ADMIN) {
+            sheet.sum_of_department_marks = 0;
+            sheet.level = level;
+            sheet.status = SheetStatus.SUCCESS;
           } else {
             sheet.sum_of_class_marks = 0;
             sheet.level =
               sheet.status > SheetStatus.WAITING_ADVISER ? sheet.level : level;
-            sheet.updated_at = new Date();
-            sheet.updated_by = request_code;
-            sheet.graded = 1;
             sheet.status =
               sheet.status > SheetStatus.WAITING_ADVISER
                 ? sheet.status
                 : SheetStatus.WAITING_ADVISER;
-
-            sheet = await this._sheetService.update(sheet);
           }
+          sheet = await this._sheetService.update(sheet);
 
           return returnObjects({ id: sheet.id });
         } else {

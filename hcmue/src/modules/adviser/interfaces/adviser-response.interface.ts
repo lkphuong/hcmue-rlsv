@@ -1,6 +1,7 @@
 export interface ExcelAdviserResponse {
   first_name: string;
   last_name: string;
+  code: string;
   phone_number: string;
   email: string;
   department: string;
@@ -30,6 +31,7 @@ export interface GetAdviserResponse {
   phone_number: string;
   email: string;
   degree: string;
+  code: string;
   department: string;
   classes: string[];
 }

@@ -169,11 +169,11 @@ export class AdviserService {
     }
   }
 
-  async getAdviserByEmail(email: string): Promise<AdviserEntity | null> {
+  async getAdviserByCode(code: string): Promise<AdviserEntity | null> {
     try {
       const conditions = this._adviserRepository
         .createQueryBuilder('adviser')
-        .where('adviser.email = :email', { email })
+        .where('adviser.code = :code', { code })
         .andWhere('adviser.deleted = :deleted', { deleted: false })
         .andWhere('adviser.active = :active', { active: true })
         .orderBy('adviser.created_at', 'DESC');

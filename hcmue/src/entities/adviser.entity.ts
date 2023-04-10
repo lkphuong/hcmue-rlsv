@@ -11,6 +11,13 @@ export class AdviserEntity extends RootEntity {
   id: number;
 
   @Column('varchar', {
+    name: 'code',
+    nullable: true,
+    length: 100,
+  })
+  code: string;
+
+  @Column('varchar', {
     name: 'email',
     nullable: false,
     length: 255,

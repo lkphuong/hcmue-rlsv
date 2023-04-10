@@ -226,18 +226,19 @@ export const readDataFromFile = async (path: string) => {
       advisers.push({
         last_name: data[i][1],
         first_name: data[i][2],
-        phone_number: data[i][4],
-        email: data[i][5],
-        department: data[i][7],
-        class: data[i][8],
-        degree: data[i][6],
+        code: data[i][3],
+        phone_number: data[i][5],
+        email: data[i][4],
+        department: data[i][6],
+        class: data[i][7],
+        degree: null,
       });
     }
 
-    if (data[i][8]) {
+    if (data[i][7]) {
       classes.push({
-        class: data[i][8].split('\r\n'),
-        email: data[i][5],
+        class: data[i][7].split('\r\n'),
+        email: data[i][4],
       });
     }
   }
@@ -262,8 +263,9 @@ export const generateCreateAdviser = async (
     const item = new AdviserEntity();
     item.academic_id = academic_id;
     item.email = i.email;
+    item.code = i.code;
     item.degree = i.degree;
-    item.password = md5(i.phone_number);
+    item.password = md5(i.email);
     item.fullname = i.last_name + ' ' + i.first_name;
     item.phone_number = i.phone_number;
     item.department_id =

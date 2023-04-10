@@ -10,6 +10,7 @@ export const generateResponse = (advisers: AdviserEntity[]) => {
       fullname: i.fullname,
       email: i.email,
       phone_number: i.phone_number,
+      code: i.code,
       degree: i.degree,
       department: i.department.name,
       classes: [],

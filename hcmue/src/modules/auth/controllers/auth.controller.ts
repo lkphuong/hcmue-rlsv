@@ -129,9 +129,7 @@ export class AuthController {
 
       switch (type) {
         case LoginType.ADVISER:
-          const adviser = await this._adviserService.getAdviserByEmail(
-            username,
-          );
+          const adviser = await this._adviserService.getAdviserByCode(username);
           if (adviser) {
             const isMatch = await validatePassword(password, adviser.password);
 
@@ -147,7 +145,7 @@ export class AuthController {
                 this._jwtService,
                 this._configurationService,
                 adviser.id,
-                adviser.email,
+                adviser.code,
                 role_user?.role?.code ?? 0,
               );
               //#endregion
@@ -156,7 +154,7 @@ export class AuthController {
               const refresh_token = generateRefreshToken(
                 this._jwtService,
                 this._configurationService,
-                adviser.email,
+                adviser.code,
               );
               //#endregion
 
@@ -166,7 +164,7 @@ export class AuthController {
               if (!session) {
                 session = await this._authService.add(
                   adviser.id,
-                  adviser.email,
+                  adviser.code,
                   adviser.fullname,
                   role_user?.role?.code ?? 0,
                   null,
@@ -448,7 +446,7 @@ export class AuthController {
       switch (role) {
         case RoleCode.ADVISER:
           //#region get table teachers
-          let adviser = await this._adviserService.getAdviserByEmail(
+          let adviser = await this._adviserService.getAdviserByCode(
             request_code,
           );
 
@@ -643,9 +641,11 @@ export class AuthController {
 
       switch (role) {
         case RoleCode.ADVISER:
-          const adviser_session = await this._adviserService.getAdviserByEmail(
+          const adviser_session = await this._adviserService.getAdviserByCode(
             request_code,
           );
+
+          console.log(request_code, adviser_session);
 
           //#region get class of adviser
           const adviser_classes =
@@ -835,7 +835,7 @@ export class AuthController {
           switch (session.role_id) {
             case RoleCode.ADVISER:
               //#region Get info adviser
-              const adviser = await this._adviserService.getAdviserByEmail(
+              const adviser = await this._adviserService.getAdviserByCode(
                 session.username,
               );
               if (adviser) {
@@ -1103,7 +1103,7 @@ export class AuthController {
       switch (type) {
         case LoginType.ADVISER:
           //#region Get Adviser by email
-          const adviser = await this._adviserService.getAdviserByEmail(email);
+          const adviser = await this._adviserService.getAdviserByCode(email);
           if (adviser) {
             //#region Send message to service
             const success = await sendEmail(
@@ -1248,7 +1248,7 @@ export class AuthController {
 
       switch (type) {
         case LoginType.ADVISER:
-          let adviser = await this._adviserService.getAdviserByEmail(email);
+          let adviser = await this._adviserService.getAdviserByCode(email);
           if (adviser) {
             adviser.password = md5(new_password);
             adviser.is_change = true;

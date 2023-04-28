@@ -89,6 +89,14 @@ const CNavCollapse = ({ menu, level, index }) => {
 						backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
 						py: level > 1 ? 1 : 1.25,
 						pl: `${level * 24}px`,
+						'&:hover': {
+							backgroundColor: '#FFF2F2!important',
+							left: '3%',
+							'& .MuiListItemText-root h5,& .MuiListItemIcon-root,.MuiSvgIcon-root': {
+								color: '#CF373D!important',
+								fontWeight: 600,
+							},
+						},
 					}}
 					selected={selected}
 					onClick={handleClick}

@@ -89,7 +89,7 @@ const Item = memo(({ data, headerId, titleId }) => {
 										mt: 0.6,
 										ml: 2,
 										minWidth: '45px',
-										backgroundColor: !!error ? 'red' : '#2196f3',
+										backgroundColor: !!error ? 'red' : '#124874',
 									}}
 									endIcon={<Folder />}
 									onClick={openModal}

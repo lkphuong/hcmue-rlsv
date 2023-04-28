@@ -43,14 +43,14 @@ export default function componentStyleOverrides(theme) {
 					backgroundImage: 'none',
 					'&.paper-wrapper': {
 						backgroundColor: '#ffffff',
-						color: '#616161',
+						color: '#124874',
 						transition: 'box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
 						boxShadow: 'none',
 						backgroundImage: 'none',
 						borderRadius: '12px',
 						overflow: 'hidden',
-						border: '1px solid',
-						borderColor: '#90caf975',
+						// border: '1px solid',
+						// borderColor: '#90caf975',
 					},
 					'&.paper-filter': {
 						background: 'rgba(255, 255, 255, 0.33)',
@@ -97,13 +97,13 @@ export default function componentStyleOverrides(theme) {
 					paddingTop: '10px',
 					paddingBottom: '10px',
 					'&.Mui-selected': {
-						color: theme.menuSelected,
+						color: '#CF373D',
 						backgroundColor: theme.menuSelectedBack,
 						'&:hover': {
 							backgroundColor: theme.menuSelectedBack,
 						},
 						'& .MuiListItemIcon-root': {
-							color: theme.menuSelected,
+							color: '#CF373D',
 						},
 					},
 					'&:hover': {
@@ -291,10 +291,10 @@ export default function componentStyleOverrides(theme) {
 					'& .MuiTableRow-root': {
 						'& .MuiTableCell-root': {
 							padding: '10px',
-							backgroundColor: 'rgb(243, 244, 246)',
+							backgroundColor: '#124874',
 							textTransform: 'uppercase',
 							fontWeight: 600,
-							color: 'rgba(34, 51, 84, 0.7)',
+							color: 'white',
 						},
 					},
 				},
@@ -316,7 +316,7 @@ export default function componentStyleOverrides(theme) {
 					'& .MuiTableCell-root': {
 						padding: '14px',
 						fontSize: '1rem',
-						color: '#616161',
+						color: '#124874',
 						backgroundColor: 'white',
 					},
 				},

@@ -84,9 +84,10 @@ const CNavItem = ({ item, level, index }) => {
 					py: level > 1 ? 1 : 1.25,
 					pl: `${level * 24}px`,
 					'&:hover': {
-						backgroundColor: 'rgb(151 171 224 / 27%)!important',
+						backgroundColor: '#FFF2F2!important',
 						left: '3%',
-						'& .MuiListItemText-root p': {
+						'& .MuiListItemText-root p,& .MuiListItemIcon-root': {
+							color: '#CF373D!important',
 							fontWeight: 600,
 						},
 					},

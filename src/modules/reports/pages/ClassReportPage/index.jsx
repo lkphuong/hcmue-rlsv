@@ -59,7 +59,7 @@ const ClassReportPage = () => {
 			<Box my={1.5}>
 				<Paper className='paper-wrapper'>
 					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${department?.name}`}
+						{`Danh sách thống kê phiếu chấm điểm rèn luyện của khoa  ${department?.name}`}
 					</Typography>
 				</Paper>
 			</Box>

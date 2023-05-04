@@ -154,7 +154,7 @@ const ReportDepartmentPage = () => {
 						alignItems='center'
 					>
 						<Typography fontSize={20} fontWeight={600}>
-							{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${fullname}`}
+							{`Danh sách thống kê phiếu chấm điểm rèn luyện của khoa  ${fullname}`}
 						</Typography>
 
 						{/* <Button

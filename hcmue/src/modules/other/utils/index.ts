@@ -28,7 +28,6 @@ export const generateSuccessResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', other);
 
   const payload: OtherResponse = { username: other.username };
 
@@ -55,7 +54,6 @@ export const generateDepartmentResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', department);
 
   const payload = await generateData2Object(department, other_service);
 
@@ -71,7 +69,6 @@ export const generateDepartmentsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', departments);
 
   const payload = await generateData2Array(departments, other_service);
 

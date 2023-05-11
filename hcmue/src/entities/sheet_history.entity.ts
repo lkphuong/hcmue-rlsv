@@ -10,7 +10,6 @@ import {
 import { AcademicYearEntity } from './academic_year.entity';
 import { ClassEntity } from './class.entity';
 import { DepartmentEntity } from './department.entity';
-import { EvaluationEntity } from './evaluation.entity';
 import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
 import { KEntity } from './k.entity';
@@ -18,14 +17,24 @@ import { LevelEntity } from './level.entity';
 import { RootEntity } from './root.entity';
 import { SemesterEntity } from './semester.entity';
 import { UserEntity } from './user.entity';
-import { SheetHistoryEntity } from './sheet_history.entity';
+import { SheetEntity } from './sheet.entity';
+import { EvaluationHistoryEntity } from './evaluation_history.entity';
 
-@Entity('sheets')
-export class SheetEntity extends RootEntity {
+@Entity('sheet_history')
+export class SheetHistoryEntity extends RootEntity {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
   })
   id: number;
+
+  @ManyToOne(() => SheetEntity, (sheet) => sheet.sheet_history)
+  @JoinColumn([
+    {
+      name: 'sheet_id',
+      referencedColumnName: 'id',
+    },
+  ])
+  sheet: SheetEntity;
 
   @ManyToOne(() => FormEntity, (form) => form.sheets)
   @JoinColumn([
@@ -36,12 +45,33 @@ export class SheetEntity extends RootEntity {
   ])
   form: FormEntity;
 
+  @Column('int', {
+    name: 'role',
+    nullable: true,
+    default: 0,
+  })
+  role: number;
+
+  @Column('int', {
+    name: 'sort_order',
+    nullable: true,
+    default: 0,
+  })
+  sort_order: number;
+
   @Column('bigint', {
     name: 'department_id',
     nullable: false,
     default: 0,
   })
   department_id: number;
+
+  @Column('bigint', {
+    name: 'sheet_id',
+    nullable: false,
+    default: 0,
+  })
+  sheet_id: number;
 
   @Column('varchar', {
     name: 'std_code',
@@ -151,12 +181,12 @@ export class SheetEntity extends RootEntity {
 
   K: KEntity | null;
 
-  @OneToMany(() => EvaluationEntity, (evaluation) => evaluation.sheet)
-  evaluations: EvaluationEntity[];
+  @OneToMany(
+    () => EvaluationHistoryEntity,
+    (evaluation_history) => evaluation_history.sheet_history,
+  )
+  evaluation_history: EvaluationHistoryEntity[];
 
   @OneToMany(() => FileEntity, (file) => file.sheet)
   files: FileEntity[];
-
-  @OneToMany(() => SheetHistoryEntity, (sheet_history) => sheet_history.sheet)
-  sheet_history: SheetHistoryEntity[];
 }

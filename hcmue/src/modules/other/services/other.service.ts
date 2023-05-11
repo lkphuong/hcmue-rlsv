@@ -124,6 +124,33 @@ export class OtherService {
     }
   }
 
+  async getOtherByIds(other_ids: number[]): Promise<OtherEntity[] | null> {
+    try {
+      const conditions = this._otherRepository
+        .createQueryBuilder('other')
+        .leftJoinAndMapOne(
+          'other.department',
+          DepartmentEntity,
+          'department',
+          `department.id = other.department_id AND department.deleted = 0`,
+        )
+        .whereInIds(other_ids)
+        .andWhere('other.deleted = :deleted', { deleted: false });
+
+      const others = await conditions.getMany();
+
+      return others || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'OtherService.getOtherById()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async add(
     other: OtherEntity,
     manager?: EntityManager,

@@ -446,6 +446,7 @@ export const validateDepartment = async (
 export const validateSheet = async (
   sheet_id: number,
   sheet_service: SheetService,
+  role: number,
   req: Request,
 ): Promise<SheetEntity | HttpException> => {
   if (isEmpty(sheet_id)) {
@@ -469,7 +470,7 @@ export const validateSheet = async (
     );
     //#endregion
   } else {
-    const sheet = await sheet_service.getSheetById(sheet_id);
+    const sheet = await sheet_service.getById(sheet_id);
     if (!sheet) {
       //#region throw HandlerException
       return new HandlerException(
@@ -480,8 +481,24 @@ export const validateSheet = async (
         HttpStatus.NOT_FOUND,
       );
       //#endregion
+    } else {
+      if (
+        role === RoleCode.STUDENT &&
+        (sheet.status > SheetStatus.WAITING_ADVISER ||
+          sheet.status === SheetStatus.NOT_GRADED)
+      ) {
+        //#region throw HandlerException
+        return new HandlerException(
+          VALIDATION_EXIT_CODE.NO_MATCHING,
+          req.method,
+          req.url,
+          ErrorMessage.STUDENT_MARK_HAS_TO_APPLY,
+          HttpStatus.BAD_REQUEST,
+        );
+        //#endregion
+      }
+      return sheet;
     }
-    return sheet;
   }
 };
 

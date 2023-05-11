@@ -20,7 +20,6 @@ export const generateAcademicsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', academics);
 
   const payload = await generateData2Array(academics);
   return returnObjects<AcademicYearResponse>(payload);
@@ -33,7 +32,6 @@ export const generateSuccessResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', academic);
 
   const payload = await generateData2Object(academic);
 

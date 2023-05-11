@@ -85,6 +85,26 @@ export class ItemService {
     }
   }
 
+  async getItemByIds(ids: number[]): Promise<ItemEntity[] | null> {
+    try {
+      const conditions = this._itemRepository
+        .createQueryBuilder('item')
+        .whereInIds(ids)
+        .andWhere('item.deleted = :deleted', { deleted: false });
+
+      const items = await conditions.getMany();
+      return items || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'ItemService.getItemByIds()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getItemsByTitleId(title_id: number): Promise<ItemEntity[] | null> {
     try {
       const conditions = this._itemRepository

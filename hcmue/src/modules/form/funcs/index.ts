@@ -683,8 +683,6 @@ export const updateItem = async (
       req,
     );
 
-    console.log('results: ', results);
-
     if (results instanceof HttpException) throw results;
     //#endregion
 

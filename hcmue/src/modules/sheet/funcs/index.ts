@@ -6,6 +6,9 @@ import { randomUUID } from 'crypto';
 import { sprintf } from '../../../utils';
 import {
   generateFailedResponse,
+  generateFileIds,
+  generateItemIds,
+  generateOptionIds,
   generateSuccessResponse,
   groupItemsByHeader,
 } from '../utils';
@@ -154,7 +157,13 @@ export const generatePersonalMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(sheet, role_id, query_runner, req);
+      return await generateSuccessResponse(
+        sheet,
+        role_id,
+        sheet_service,
+        query_runner,
+        req,
+      );
       //#endregion
     } else {
       //#region throw HandlerException
@@ -267,7 +276,13 @@ export const generateClassMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(result, role_id, query_runner, req);
+      return await generateSuccessResponse(
+        result,
+        role_id,
+        sheet_service,
+        query_runner,
+        req,
+      );
       //#endregion
     } else {
       //#region throw HandlerException
@@ -373,7 +388,13 @@ export const generateAdviserMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(result, role_id, query_runner, req);
+      return await generateSuccessResponse(
+        result,
+        role_id,
+        sheet_service,
+        query_runner,
+        req,
+      );
       //#endregion
     } else {
       //#region throw HandlerException
@@ -480,7 +501,13 @@ export const generateDepartmentMarks = async (
       //#endregion
 
       //#region Generate response
-      return await generateSuccessResponse(result, role_id, query_runner, req);
+      return await generateSuccessResponse(
+        result,
+        role_id,
+        sheet_service,
+        query_runner,
+        req,
+      );
       //#endregion
     } else {
       //#region throw HandlerException
@@ -521,7 +548,7 @@ export const generateUngradeSheet = async (
   const result = await sheet_service.ungraded(sheet.id, request_code);
   if (result) {
     //#region Generate response
-    return await generateSuccessResponse(sheet, role_id, null, req);
+    return await generateSuccessResponse(sheet, role_id, null, null, req);
     //#endregion
   } else {
     //#region throw HandlerException
@@ -544,7 +571,7 @@ export const generateUpdateStudentEvaluation = async (
   query_runner: QueryRunner,
   req: Request,
 ): Promise<EvaluationEntity[] | HttpException> => {
-  let evaluations: EvaluationEntity[] = [];
+  const evaluations: EvaluationEntity[] = [];
   let files: FileEntity[] = [];
 
   //#region Get params
@@ -552,12 +579,34 @@ export const generateUpdateStudentEvaluation = async (
   const arr_items = groupItemsByHeader(data, GROUP_KEY);
   //#endregion
 
+  //#region get id
+  const header_ids = arr_items.map((e) => {
+    return e[0];
+  });
+  const item_ids = generateItemIds(arr_items);
+  const option_ids = generateOptionIds(arr_items);
+  const file_ids = generateFileIds(arr_items);
+  //#endregion
+
+  const [headers, items, options, _files, student_evaluations] =
+    await Promise.all([
+      header_service.getHeaderByIds(header_ids),
+      item_service.getItemByIds(item_ids),
+      option_service.getOptionByIds(option_ids),
+      file_service.getFileByIds(file_ids),
+      evaluation_service.getEvaluationByItems(
+        sheet_id,
+        item_ids,
+        EvaluationCategory.STUDENT,
+      ),
+    ]);
+
   for await (const item of arr_items) {
     //#region Validate Header
-    const header = await header_service.getHeaderById(item[0]);
+    const header = headers.find((e) => e.id == item[0]);
     if (header) {
       for await (const j of item[1]) {
-        const item = await item_service.getItemById(j.item_id);
+        const item = items.find((e) => e.id == j.item_id);
         if (item) {
           //#region Validate option
           const valid_option = validateRequiredOption(item, j.option_id, req);
@@ -567,7 +616,7 @@ export const generateUpdateStudentEvaluation = async (
           //#region Get option
           let option: OptionEntity | null = null;
           if (j.option_id) {
-            option = await option_service.getOptionById(j.option_id);
+            option = options.find((e) => e.id == j.option_id);
           }
           //#endregion
 
@@ -577,11 +626,9 @@ export const generateUpdateStudentEvaluation = async (
           if (valid instanceof HttpException) return valid;
           //#endregion
 
-          const evaluation = await evaluation_service.contains(
-            sheet_id,
-            j.item_id,
-            EvaluationCategory.STUDENT,
-          );
+          const evaluation = student_evaluations.find((e) => {
+            j.item_id == e.item_id && e.category === EvaluationCategory.STUDENT;
+          });
           if (evaluation) {
             //#region handle update file
             if (j.files) {
@@ -613,7 +660,7 @@ export const generateUpdateStudentEvaluation = async (
                 //#endregion
 
                 for (const _item of j.files) {
-                  const file = await file_service.getFileById(_item.id);
+                  const file = _files.find((e) => e.id == _item.id);
                   if (file) {
                     if (_item.deleted) {
                       //#region Unlink file
@@ -704,7 +751,7 @@ export const generateUpdateStudentEvaluation = async (
                 );
               } else {
                 for (const _item of j.files) {
-                  const file = await file_service.getFileById(_item.id);
+                  const file = _files.find((e) => e.id == _item.id);
                   if (file) {
                     if (_item.deleted) {
                       //#region Unlink file
@@ -767,10 +814,21 @@ export const generateUpdateStudentEvaluation = async (
     //#endregion
   }
 
+  //#region delete file
+  await file_service.delete(sheet_id, query_runner.manager);
+  //#endregion
+
   files = await file_service.bulkUpdate(files, query_runner.manager);
   if (files) {
+    //#region delete
+    await evaluation_service.deleteEvaluation(
+      sheet_id,
+      EvaluationCategory.STUDENT,
+    );
+    //#endregion
+
     //#region Update evaluation
-    evaluations = await query_runner.manager.save(evaluations);
+    await query_runner.manager.insert(EvaluationEntity, evaluations);
     //#endregion
     return evaluations;
   } else {
@@ -796,24 +854,43 @@ export const generateUpdateClassEvaluation = async (
   query_runner: QueryRunner,
   req: Request,
 ) => {
-  let evaluations: EvaluationEntity[] = [];
+  const evaluations: EvaluationEntity[] = [];
 
   //#region Get params
   const { data } = params;
   const arr_items = groupItemsByHeader(data, GROUP_KEY);
   //#endregion
 
+  //#region get id
+  const header_ids = arr_items.map((e) => {
+    return e[0];
+  });
+  const item_ids = generateItemIds(arr_items);
+  const option_ids = generateOptionIds(arr_items);
+  //#endregion
+
+  const [headers, items, options, class_evaluations] = await Promise.all([
+    await header_service.getHeaderByIds(header_ids),
+    await item_service.getItemByIds(item_ids),
+    await option_service.getOptionByIds(option_ids),
+    await evaluation_service.getEvaluationByItems(
+      sheet_id,
+      item_ids,
+      EvaluationCategory.CLASS,
+    ),
+  ]);
+
   for await (const item of arr_items) {
     //#region Validate Header
-    const header = await header_service.getHeaderById(item[0]);
+    const header = headers.find((e) => e.id == item[0]);
     if (header) {
       for await (const j of item[1]) {
-        const item = await item_service.getItemById(j.item_id);
+        const item = items.find((e) => e.id == j.item_id);
         if (item) {
           //#region Get option
           let option: OptionEntity | null = null;
           if (j.option_id) {
-            option = await option_service.getOptionById(j.option_id ?? 0);
+            option = options.find((e) => e.id == j.option_id);
           }
           //#endregion
 
@@ -823,11 +900,9 @@ export const generateUpdateClassEvaluation = async (
           if (valid instanceof HttpException) return valid;
           //#endregion
 
-          const class_evaluation = await evaluation_service.contains(
-            sheet_id,
-            j.item_id,
-            EvaluationCategory.CLASS,
-          );
+          const class_evaluation = class_evaluations.find((e) => {
+            j.item_id == e.item_id && e.category === EvaluationCategory.CLASS;
+          });
 
           if (class_evaluation) {
             //#region Update evaluation
@@ -888,8 +963,15 @@ export const generateUpdateClassEvaluation = async (
     //#endregion
   }
 
+  //#region delete
+  await evaluation_service.deleteEvaluation(
+    sheet_id,
+    EvaluationCategory.ADVISER,
+  );
+  //#endregion
+
   //#region Update evaluation
-  evaluations = await query_runner.manager.save(evaluations);
+  await query_runner.manager.insert(EvaluationEntity, evaluations);
   //#endregion
 
   return evaluations;
@@ -907,24 +989,43 @@ export const generateUpdateAdviserEvaluation = async (
   query_runner: QueryRunner,
   req: Request,
 ) => {
-  let evaluations: EvaluationEntity[] = [];
+  const evaluations: EvaluationEntity[] = [];
 
   //#region Get params
   const { data } = params;
   const arr_items = groupItemsByHeader(data, GROUP_KEY);
   //#endregion
 
+  //#region get id
+  const header_ids = arr_items.map((e) => {
+    return e[0];
+  });
+  const item_ids = generateItemIds(arr_items);
+  const option_ids = generateOptionIds(arr_items);
+  //#endregion
+
+  const [headers, items, options, adviser_evaluations] = await Promise.all([
+    header_service.getHeaderByIds(header_ids),
+    item_service.getItemByIds(item_ids),
+    option_service.getOptionByIds(option_ids),
+    evaluation_service.getEvaluationByItems(
+      sheet_id,
+      item_ids,
+      EvaluationCategory.ADVISER,
+    ),
+  ]);
+
   for await (const item of arr_items) {
     //#region Validate Header
-    const header = await header_service.getHeaderById(item[0]);
+    const header = headers.find((e) => e.id == item[0]);
     if (header) {
       for await (const j of item[1]) {
-        const item = await item_service.getItemById(j.item_id);
+        const item = items.find((e) => e.id == j.item_id);
         if (item) {
           //#region Get option
           let option: OptionEntity | null = null;
           if (j.option_id) {
-            option = await option_service.getOptionById(j.option_id ?? 0);
+            option = options.find((e) => e.id == j.option_id);
           }
           //#endregion
 
@@ -934,11 +1035,9 @@ export const generateUpdateAdviserEvaluation = async (
           if (valid instanceof HttpException) return valid;
           //#endregion
 
-          const adviser_evaluation = await evaluation_service.contains(
-            sheet_id,
-            j.item_id,
-            EvaluationCategory.ADVISER,
-          );
+          const adviser_evaluation = adviser_evaluations.find((e) => {
+            j.item_id == e.item_id && e.category === EvaluationCategory.ADVISER;
+          });
 
           if (adviser_evaluation) {
             //#region Update evaluation
@@ -999,8 +1098,15 @@ export const generateUpdateAdviserEvaluation = async (
     //#endregion
   }
 
+  //#region delete
+  await evaluation_service.deleteEvaluation(
+    sheet_id,
+    EvaluationCategory.ADVISER,
+  );
+  //#endregion
+
   //#region Update evaluation
-  evaluations = await query_runner.manager.save(evaluations);
+  await query_runner.manager.insert(EvaluationEntity, evaluations);
   //#endregion
 
   return evaluations;
@@ -1018,24 +1124,43 @@ export const generateUpdateDepartmentEvaluation = async (
   query_runner: QueryRunner,
   req: Request,
 ) => {
-  let evaluations: EvaluationEntity[] = [];
+  const evaluations: EvaluationEntity[] = [];
 
   //#region Get params
   const { data } = params;
   const arr_items = groupItemsByHeader(data, GROUP_KEY);
   //#endregion
 
+  //#region get id
+  const header_ids = arr_items.map((e) => {
+    return e[0];
+  });
+  const item_ids = generateItemIds(arr_items);
+  const option_ids = generateOptionIds(arr_items);
+  //#endregion
+
+  const [headers, items, options, department_evaluations] = await Promise.all([
+    await header_service.getHeaderByIds(header_ids),
+    await item_service.getItemByIds(item_ids),
+    await option_service.getOptionByIds(option_ids),
+    await evaluation_service.getEvaluationByItems(
+      sheet_id,
+      item_ids,
+      EvaluationCategory.DEPARTMENT,
+    ),
+  ]);
+
   for await (const item of arr_items) {
     //#region Validate Header
-    const header = await header_service.getHeaderById(item[0]);
+    const header = headers.find((e) => e.id == item[0]);
     if (header) {
       for await (const j of item[1]) {
-        const item = await item_service.getItemById(j.item_id);
+        const item = items.find((e) => e.id == j.item_id);
         if (item) {
           //#region Get option
           let option: OptionEntity | null = null;
           if (j.option_id) {
-            option = await option_service.getOptionById(j.option_id ?? 0);
+            option = options.find((e) => e.id == j.option_id);
           }
           //#endregion
 
@@ -1045,11 +1170,9 @@ export const generateUpdateDepartmentEvaluation = async (
           if (valid instanceof HttpException) return valid;
           //#endregion
 
-          const department_evaluation = await evaluation_service.contains(
-            sheet_id,
-            j.item_id,
-            EvaluationCategory.DEPARTMENT,
-          );
+          const department_evaluation = department_evaluations.find((e) => {
+            j.item_id == e.item_id && e.category === EvaluationCategory.ADVISER;
+          });
 
           if (department_evaluation) {
             if (j.deleted) {
@@ -1111,8 +1234,15 @@ export const generateUpdateDepartmentEvaluation = async (
     //#endregion
   }
 
+  //#region delete
+  await evaluation_service.deleteEvaluation(
+    sheet_id,
+    EvaluationCategory.DEPARTMENT,
+  );
+  //#endregion
+
   //#region Update evaluation
-  evaluations = await query_runner.manager.save(evaluations);
+  await query_runner.manager.insert(EvaluationEntity, evaluations);
   //#endregion
 
   return evaluations;
@@ -1149,10 +1279,15 @@ export const generateUpdateSheet = async (
   }
   //#endregion
 
+  const header_ids = arr_items.map((e) => {
+    return e[0];
+  });
+  const headers = await header_service.getHeaderByIds(header_ids);
+
   //#region Calculate sum of marks
   let sum_of_marks = 0;
   for (const item of arr_items) {
-    const header = await header_service.getHeaderById(item[0]);
+    const header = headers.find((e) => e.id == item[0]);
     if (header) {
       let sum_of_mark_items = 0;
       for (const j of item[1]) {
@@ -1186,7 +1321,6 @@ export const generateUpdateSheet = async (
       //#endregion
     }
   }
-
   //#endregion
 
   //#region Get level in mark range

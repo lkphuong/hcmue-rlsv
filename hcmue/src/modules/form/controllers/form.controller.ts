@@ -17,7 +17,7 @@ import {
 import { Request } from 'express';
 import { DataSource } from 'typeorm';
 
-import { sprintf } from '../../../utils';
+import { convertString2Date, returnObjects, sprintf } from '../../../utils';
 
 import {
   generateDetailFormResponse,
@@ -126,6 +126,60 @@ export class FormController {
     // Due to transient scope, FormController has its own unique instance of LogService,
     // so setting context here will not affect other instances in other services
     this._logger.setContext(FormController.name);
+  }
+
+  /**
+   * @method GET
+   * @url /api/forms/timeline
+   * @access private
+   * @description Hiển thị thời gian chấm điểm
+   * @return HttpResponse<> | HttpException | null
+   * @page forms page
+   */
+  @Get('timeline')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async getTimeline(@Req() req: Request) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url);
+
+      this._logger.writeLog(Levels.LOG, req.method, req.url, null);
+
+      //#region Get form in progress
+      const form = await this._formService.getFormInProgress();
+      //#endregion
+
+      if (form) {
+        return returnObjects({
+          start: convertString2Date(form.start.toString()),
+          end: convertString2Date(form.end.toString()),
+        });
+      } else {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          ErrorMessage.NO_CONTENT,
+          HttpStatus.NOT_FOUND,
+        );
+        //#endregion
+      }
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
   }
 
   /**

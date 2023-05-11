@@ -23,7 +23,6 @@ export const generateSemestersResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', semesters);
 
   const payload = await generateData2Array(semesters);
   return returnObjects<SemesterResponse>(payload);
@@ -37,9 +36,6 @@ export const generateSemestersPagingResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('pages' + ' - ' + pages);
-  console.log('page' + ' - ' + page);
-  console.log('data: ', semesters);
 
   const payload = await generateData2Array(semesters);
 
@@ -54,7 +50,6 @@ export const generateSuccessResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', semester);
 
   const payload: CreateSemesterResponse = {
     id: semester.id,

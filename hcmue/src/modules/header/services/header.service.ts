@@ -60,6 +60,27 @@ export class HeaderService {
     }
   }
 
+  async getHeaderByIds(ids: number[]): Promise<HeaderEntity[] | null> {
+    try {
+      const conditions = this._headerRepository
+        .createQueryBuilder('header')
+        .whereInIds(ids)
+        .andWhere('header.deleted = false');
+
+      const headers = await conditions.getMany();
+
+      return headers || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'HeaderService.getHeaderByIds()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async sumMaxMarkHeaderByFormId(
     form_id: number,
     header_id?: number,
@@ -172,8 +193,6 @@ export class HeaderService {
       const results = (await manager.query(
         `CALL sp_generate_headers (${source_form_id}, ${target_form_id})`,
       )) as StoreProcedureResponse[];
-
-      console.log('results: ', results);
 
       if (results && results.length > 0) {
         success = results[0].success != 0;

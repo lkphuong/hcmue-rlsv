@@ -90,6 +90,7 @@ export interface EvaluationsResponse {
   class_mark_level: number;
   adviser_mark_level: number;
   department_mark_level: number;
+  flag?: boolean;
 }
 
 export interface FileResponse {

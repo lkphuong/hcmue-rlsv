@@ -111,7 +111,6 @@ export class AdviserController {
           department_id,
           input,
         );
-        console.log(count);
         if (count > 0) pages = Math.ceil(count / itemsPerPage);
       }
       //#endregion

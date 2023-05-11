@@ -484,15 +484,6 @@ export class ReportController {
             ),
           );
 
-          console.log(
-            fs.existsSync(
-              join(
-                process.cwd(),
-                RESOURCE_FOLDER + FILE_NAME_TEMPLATE.TEMPLATE_1,
-              ),
-            ),
-          );
-
           res.set({
             'Content-Type': 'application/json',
             'Content-Disposition': `attachment; filename=report.docx`,
@@ -500,8 +491,6 @@ export class ReportController {
           });
 
           const file_2 = new StreamableFile(file);
-
-          console.log(file_2);
 
           return file_2;
         } else {
@@ -693,8 +682,6 @@ export class ReportController {
 
           const file_2 = new StreamableFile(file);
 
-          //console.log(file_2);
-
           return file_2;
         } else {
           //#region throw HandlerException
@@ -846,8 +833,6 @@ export class ReportController {
           });
 
           const file_2 = new StreamableFile(file);
-
-          //console.log(file_2);
 
           return file_2;
         } else {
@@ -1186,8 +1171,6 @@ export class ReportController {
 
           const file_2 = new StreamableFile(file);
 
-          //console.log(file_2);
-
           return file_2;
         }
       } else {
@@ -1325,8 +1308,6 @@ export class ReportController {
           });
 
           const file_2 = new StreamableFile(file);
-
-          //console.log(file_2);
 
           return file_2;
         }

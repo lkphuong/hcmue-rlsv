@@ -441,6 +441,52 @@ export class SheetService {
     }
   }
 
+  async getById(id: number): Promise<SheetEntity | null> {
+    try {
+      const conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .innerJoinAndSelect('sheet.semester', 'semester')
+        .innerJoinAndSelect('sheet.academic_year', 'academic_year')
+        .leftJoinAndSelect('sheet.level', 'level')
+        .innerJoinAndSelect('sheet.form', 'form')
+        .innerJoinAndMapOne(
+          'sheet.class',
+          ClassEntity,
+          'class',
+          `class.id = sheet.class_id AND class.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.department',
+          DepartmentEntity,
+          'department',
+          `department.id = sheet.department_id AND department.deleted = 0`,
+        )
+        .innerJoinAndMapOne(
+          'sheet.user',
+          UserEntity,
+          'user',
+          `user.std_code = sheet.std_code AND user.deleted = 0`,
+        )
+        .where('sheet.id = :id', { id })
+        .andWhere('sheet.deleted = :deleted', { deleted: false })
+        .andWhere('semester.deleted = :deleted', { deleted: false })
+        .andWhere('academic_year.deleted = :deleted', { deleted: false })
+        .andWhere('form.deleted = :deleted', { deleted: false });
+
+      const sheet = await conditions.getOne();
+
+      return sheet || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.getSheetById()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getSheetsReport(
     offset: number,
     length: number,
@@ -883,6 +929,40 @@ export class SheetService {
         Levels.ERROR,
         Methods.UPDATE,
         'SheetService.unapproved()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async insertHistory(
+    sheet_id: number,
+    category: number,
+    author: number,
+    role: number,
+    manager?: EntityManager,
+  ): Promise<boolean> {
+    try {
+      let success = false;
+
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.query(
+        `CALL sp_insert_history (${sheet_id}, ${category}, ${author}, ${role})`,
+      );
+
+      if (results && results.length > 0) {
+        success = results[0].success != 0;
+      }
+
+      return success;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'SheetService.insertHistory()',
         e,
       );
       return null;

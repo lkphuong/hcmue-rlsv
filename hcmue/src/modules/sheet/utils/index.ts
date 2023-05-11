@@ -49,6 +49,9 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { HandlerException } from '../../../exceptions/HandlerException';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
+import { RoleCode } from '../../../constants/enums/role_enum';
+import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum';
+import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
 export const generateClassesResponse = async (
   data: ClassEntity[] | null,
@@ -56,7 +59,6 @@ export const generateClassesResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', data);
 
   const classes = await generateClasses2Array(data);
 
@@ -100,7 +102,6 @@ export const generateClassSheetsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  //console.log('data: ', sheets);
 
   // Transform SheetEntity to ClassSheetsResponse
   const payload = await generateClassSheets(sheets);
@@ -122,6 +123,7 @@ export const generateFailedResponse = (req: Request, message?: string) => {
 export const generateSuccessResponse = async (
   sheet: SheetEntity,
   role: number,
+  sheet_service: SheetService,
   query_runner: QueryRunner,
   req: Request,
 ) => {
@@ -130,6 +132,18 @@ export const generateSuccessResponse = async (
 
   // Transform SheetEntity class to SheetResponse class
   const payload = await generateData2Object(sheet, role);
+
+  if (sheet_service) {
+    const { user_id } = req.user as JwtPayload;
+
+    await sheet_service.insertHistory(
+      sheet.id,
+      generateCategoryByRole(role) ?? 1,
+      user_id,
+      role,
+      query_runner.manager,
+    );
+  }
 
   // Commit transaction
   if (query_runner) await query_runner.commitTransaction();
@@ -161,7 +175,6 @@ export const generateSheet = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', sheet);
 
   const payload = await generateData2Object(sheet, role);
 
@@ -177,7 +190,6 @@ export const generateItemsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', items);
 
   const payload = await generateItemsArray(role, items, base_url, file_service);
 
@@ -223,7 +235,6 @@ export const generateClassStatusAdviserResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', $class);
 
   const payload = await generateClassStatusAdviser(
     role,
@@ -252,8 +263,6 @@ export const generateClassStatusAdviserHistoryResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', $class);
-  console.log('forms: ', forms);
 
   const payload = await generateClassStatusAdviserHistory(
     role,
@@ -281,7 +290,6 @@ export const generateClassStatusDepartmentResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('classes: ', classes);
 
   const payload = await generateClassStatusDepartment(
     academic_id,
@@ -308,7 +316,6 @@ export const generateDepartmentStatusResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('departments: ', departments);
 
   const payload = await generateDepartStatus(
     academic,
@@ -352,7 +359,6 @@ export const generateResponses = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  //console.log('data: ', sheets);
 
   // Transform SheetEntity class to ClassSheetsResponse class
   const payload = await generateAdminSheets(sheets);
@@ -372,7 +378,6 @@ export const generateSheetsResponses = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', sheets);
 
   // Transform SheetEntity class to ClassSheetsResponse class
   const payload = await generateAdminSheets(sheets);
@@ -392,4 +397,54 @@ export const generateObjectIdFromUsers = (users: UserEntity[]) => {
   }
 
   return [...new Set(std_code)];
+};
+
+export const generateItemIds = (arr_items: any) => {
+  const item_ids = [];
+  for (const item of arr_items) {
+    if (item[1]?.length) {
+      for (const j of item[1]) {
+        item_ids.push(j.item_id);
+      }
+    }
+  }
+
+  return item_ids;
+};
+
+export const generateOptionIds = (arr_items: any) => {
+  const option_ids = [];
+  for (const item of arr_items) {
+    if (item[1]?.length) {
+      for (const j of item[1]) {
+        option_ids.push(j.option_id);
+      }
+    }
+  }
+
+  return option_ids;
+};
+
+export const generateFileIds = (arr_items: any) => {
+  const file_ids = arr_items.flatMap((item) => {
+    return item[1]?.flatMap((j) => j.files?.map((file) => file.id)) || [];
+  });
+
+  return file_ids;
+};
+
+export const generateCategoryByRole = (role: number) => {
+  switch (role) {
+    case RoleCode.ADMIN:
+    case RoleCode.DEPARTMENT:
+      return EvaluationCategory.DEPARTMENT;
+    case RoleCode.MONITOR:
+    case RoleCode.SECRETARY:
+    case RoleCode.CHAIRMAN:
+      return EvaluationCategory.CLASS;
+    case RoleCode.ADVISER:
+      return EvaluationCategory.ADVISER;
+    case RoleCode.STUDENT:
+      return EvaluationCategory.STUDENT;
+  }
 };

@@ -112,7 +112,6 @@ export class SemesterController {
         itemsPerPage,
       );
 
-      console.log('semesters: ', semesters);
       //#endregion
 
       if (semesters && semesters.length > 0) {

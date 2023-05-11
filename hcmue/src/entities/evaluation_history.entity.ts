@@ -9,23 +9,26 @@ import {
 import { ItemEntity } from './item.entity';
 import { OptionEntity } from './option.entity';
 import { RootEntity } from './root.entity';
-import { SheetEntity } from './sheet.entity';
+import { SheetHistoryEntity } from './sheet_history.entity';
 
-@Entity('evaluations')
-export class EvaluationEntity extends RootEntity {
+@Entity('evaluation_history')
+export class EvaluationHistoryEntity extends RootEntity {
   @PrimaryGeneratedColumn('increment', {
     type: 'bigint',
   })
   id: number;
 
-  @ManyToOne(() => SheetEntity, (sheet) => sheet.evaluations)
+  @ManyToOne(
+    () => SheetHistoryEntity,
+    (sheet_history) => sheet_history.evaluation_history,
+  )
   @JoinColumn([
     {
-      name: 'sheet_id',
+      name: 'sheet_history_id',
       referencedColumnName: 'id',
     },
   ])
-  sheet: SheetEntity;
+  sheet_history: SheetHistoryEntity;
 
   @ManyToOne(() => ItemEntity, (item) => item.evaluations)
   @JoinColumn([
@@ -50,12 +53,6 @@ export class EvaluationEntity extends RootEntity {
     nullable: true,
   })
   item_id: string;
-
-  @Column('bigint', {
-    name: 'sheet_id',
-    nullable: true,
-  })
-  sheet_id: string;
 
   @Column('varchar', {
     name: 'ref',

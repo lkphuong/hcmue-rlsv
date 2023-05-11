@@ -68,7 +68,6 @@ export const generateResponse = async (
 ) => {
   console.log('------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', session);
 
   // Returns object
   return returnObjects<LoginResponse>({
@@ -81,7 +80,6 @@ export const generateResponse = async (
 export const forgotPasswordSuccess = (email: string, req: Request) => {
   console.log('------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('email: ', email);
 
   // Returns object
   return {
@@ -98,7 +96,6 @@ export const generateUsersResponse = async (
 ) => {
   console.log('------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', users);
 
   // Returns object
   return returnObjects<GetUserResponse>(users);

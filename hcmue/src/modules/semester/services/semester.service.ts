@@ -123,8 +123,6 @@ export class SemesterService {
         .where('semester.active = :active', { active: 1 })
         .andWhere('semester.deleted = :deleted', { deleted: 0 });
 
-      console.log('sql: ', conditions.getSql());
-
       const { count } = await conditions.getRawOne();
 
       return count || null;

@@ -36,7 +36,6 @@ export const generateFormsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', forms);
 
   // Transform FormEntity class to FormResponse class
   const payload = await generateFormsArray(forms);
@@ -52,7 +51,6 @@ export const generateFormResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', form);
 
   // Transform FormEntity class to FormResponse class
   const payload = generateFormObject(form);
@@ -74,7 +72,6 @@ export const generateDetailFormResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', form);
 
   // Transform FormEntity class to DetailFormResponse class
   const payload = generateDetailFormObject(form);
@@ -95,7 +92,6 @@ export const generateHeadersResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', headers);
 
   // Transform HeaderEntity to HeaderResponse class
   const payload = await generateHeadersArray(headers);
@@ -116,7 +112,6 @@ export const generateHeaderResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', header);
 
   // Transform HeaderEntity class to HeaderResponse class
   const payload = await generateHeaderObject(header);
@@ -139,7 +134,6 @@ export const generateItemsResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', items);
 
   // Transform ItemEntity class to ItemResponse class
   const payload = await generateItemsArray(items);
@@ -160,7 +154,6 @@ export const generateItemResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', item);
 
   // Transform HeaderEntity class to ItemResponse class
   const payload = await generateItemObject(item);
@@ -181,7 +174,6 @@ export const generateTitlesResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', titles);
 
   // Transform TitleEntity class to TitleResponse class
   const payload = await generateTitlesArray(titles);
@@ -202,7 +194,6 @@ export const generateTitleResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', title);
 
   // Transform TitleEntity class to TitleResponse class
   const payload = generateTitleObject(title);

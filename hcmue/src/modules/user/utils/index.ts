@@ -25,7 +25,6 @@ export const generateResponses = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  //console.log('data: ', users);
 
   // Transform UserEntity class to UserResponse class
   const payload = await generateUsersArray(users);

@@ -39,6 +39,26 @@ export class OptionService {
     }
   }
 
+  async getOptionByIds(ids: number[]): Promise<OptionEntity[] | null> {
+    try {
+      const conditions = this._optionRepository
+        .createQueryBuilder('option')
+        .whereInIds(ids)
+        .andWhere('option.deleted = :deleted', { deleted: false });
+
+      const options = await conditions.getMany();
+      return options || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'OptionService.getOptionByIds()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getOptionsByItemId(
     form_id: number,
     item_id: number,
@@ -138,8 +158,6 @@ export class OptionService {
       const results = await manager.query(
         `CALL sp_generate_options (${source_form_id}, ${target_form_id})`,
       );
-
-      console.log('results: ', results);
 
       if (results && results.length > 0) {
         success = results[0].success != 0;

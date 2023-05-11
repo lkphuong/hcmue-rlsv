@@ -15,7 +15,6 @@ export const generateClassesResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', classes);
 
   const payload = await generateData2Array(classes);
 
@@ -29,7 +28,6 @@ export const generateSuccessResponse = (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', classes);
 
   const payload = generateData2Array(classes);
 

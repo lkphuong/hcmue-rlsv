@@ -28,6 +28,7 @@ import { TitleModule } from './modules/title/title.module';
 import { UserModule } from './modules/user/user.module';
 
 import { ConfigurationService } from './modules/shared/services/configuration/configuration.service';
+import { HistoryModule } from './modules/history/history.module';
 
 export const modules = [
   SharedModule,
@@ -55,6 +56,7 @@ export const modules = [
   FileModule,
   FormModule,
   HeaderModule,
+  HistoryModule,
   LevelModule,
   LogModule,
   OtherModule,

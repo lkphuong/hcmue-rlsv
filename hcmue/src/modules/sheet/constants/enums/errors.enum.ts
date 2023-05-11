@@ -36,6 +36,7 @@ export enum ErrorMessage {
   CLASS_ROLE_INVALID_ERROR = 'Bạn không thể xem [danh sách phiếu] của lớp khác (name: %s).',
   DEPARTMENT_ROLE_INVALID_ERROR = 'Bạn không thể xem [danh sách phiếu] của khoa khác (name: %s).',
   STUDENT_ROLE_INVALID_ERROR = 'Bạn không thể xem [danh sách phiếu] của sinh viên khác (name: %s).',
+  STUDENT_MARK_HAS_TO_APPLY = 'Bạn không thể cập nhật điểm khi cán sự lớp đã đánh giá',
 
   FORBIDDEN_ERROR = 'Bạn không có quyền thực hiện.',
 

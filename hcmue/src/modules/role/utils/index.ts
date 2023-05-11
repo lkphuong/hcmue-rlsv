@@ -20,7 +20,6 @@ export const generateSuccessResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', role);
 
   // Transform RoleEntity class to RoleResponse class
   const payload = await generateRoleUser(role);
@@ -43,8 +42,6 @@ export const generateCheckRoleUserSuccessResponse = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('role_user: ', role_user);
-  console.log('user: ', user);
 
   // Transform RoleEntity class to RoleResponse class
   const payload = await generateCheckRoleUser(role_user, user);

@@ -73,7 +73,6 @@ export class ClassController {
         department_id,
       );
 
-      console.log('class: ', classes);
       //#endregion
       if (classes && classes.length > 0) {
         //#region Generate response
@@ -146,7 +145,6 @@ export class ClassController {
         const count = await this._classService.count(department_id);
         if (count > 0) pages = Math.ceil(count / itemsPerPage);
         //#endregion
-        console.log('count: ', count);
       }
 
       //#region Get classes
@@ -156,7 +154,6 @@ export class ClassController {
         department_id,
       );
 
-      console.log('class: ', classes);
       //#endregion
       if (classes && classes.length > 0) {
         //#region Generate response

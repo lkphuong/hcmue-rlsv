@@ -235,6 +235,28 @@ export class AdviserService {
     }
   }
 
+  async getAdviserByIds(ids: number[]): Promise<AdviserEntity[] | null> {
+    try {
+      const conditions = this._adviserRepository
+        .createQueryBuilder('adviser')
+        .whereInIds(ids)
+        .andWhere('adviser.deleted = :deleted', { deleted: false })
+        .andWhere('adviser.active = :active', { active: true })
+        .orderBy('adviser.created_at', 'DESC');
+
+      const advisers = await conditions.getMany();
+
+      return advisers || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AdviserService.getAdviserByIds()',
+        e,
+      );
+    }
+  }
+
   async bulkAdd(
     advisers: AdviserEntity[],
     manager?: EntityManager,
@@ -293,8 +315,6 @@ export class AdviserService {
       const results =
         await manager.query(`call sp_update_advisers(${source_academic_id}, ${targer_academic_id});
       `);
-
-      console.log('results: ', results);
 
       if (results && results.length > 0) {
         success = results[0].success != 0;

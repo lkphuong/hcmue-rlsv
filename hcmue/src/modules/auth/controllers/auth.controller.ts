@@ -182,7 +182,6 @@ export class AuthController {
                 );
               }
 
-              console.log('session: ', session);
               //#region Generate response
               return await generateResponse(
                 session,
@@ -645,15 +644,12 @@ export class AuthController {
             request_code,
           );
 
-          console.log(request_code, adviser_session);
-
           //#region get class of adviser
           const adviser_classes =
             await this._adviserClassService.getClassByAdviserId(
               adviser_session.id,
             );
 
-          console.log(adviser_classes);
           //#endregion
           if (adviser_session) {
             //#region Generate response

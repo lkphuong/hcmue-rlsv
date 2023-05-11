@@ -49,6 +49,37 @@ export class EvaluationService {
     }
   }
 
+  async getEvaluationByItems(
+    sheet_id: number,
+    item_ids: number[],
+    category?: number,
+  ): Promise<EvaluationEntity[] | null> {
+    try {
+      let conditions = this._evaluationService
+        .createQueryBuilder('evaluation')
+        .where('evaluation.sheet_id = :sheet_id', { sheet_id })
+        .andWhere('evaluation.item_id IN (:...item_ids)', { item_ids })
+        .andWhere('evaluation.deleted = :deleted ', { deleted: false });
+
+      if (category) {
+        conditions = conditions.andWhere('evaluation.category = :category', {
+          category,
+        });
+      }
+
+      const evaluations = await conditions.getMany();
+      return evaluations || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'EvaluationService.getEvaluationByItems()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getEvaluationById(id: number): Promise<EvaluationEntity | null> {
     try {
       const conditions = this._evaluationService
@@ -163,6 +194,33 @@ export class EvaluationService {
         Levels.ERROR,
         Methods.UPDATE,
         'EvaluationService.bulkApprove()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async deleteEvaluation(
+    sheet_id: number,
+    category: number,
+    manager?: EntityManager,
+  ): Promise<boolean> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const result = await manager.delete(EvaluationEntity, {
+        sheet_id,
+        category,
+      });
+
+      return result.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'EvaluationService.deleteEvaluation()',
         e,
       );
       return null;

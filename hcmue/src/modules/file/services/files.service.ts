@@ -37,6 +37,26 @@ export class FilesService {
     }
   }
 
+  async getFileByIds(ids: number[]): Promise<FileEntity[] | null> {
+    try {
+      const conditions = this._fileRepository
+        .createQueryBuilder('file')
+        .whereInIds(ids)
+        .andWhere('file.deleted = :deleted', { deleted: false });
+
+      const files = await conditions.getMany();
+      return files || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FilesService.getFileByIds()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async countFilesByItem(
     item_id: number,
     sheet_id: number,
@@ -138,7 +158,7 @@ export class FilesService {
       if (manager) {
         manager = this._dataSource.manager;
       }
-      files = await manager.save(files);
+      await manager.insert(FileEntity, files);
 
       return files || null;
     } catch (e) {
@@ -194,6 +214,26 @@ export class FilesService {
         Levels.ERROR,
         Methods.DELETE,
         'FilesService.bulkUnlink()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async delete(sheet_id: number, manager?: EntityManager): Promise<boolean> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const result = await manager.delete(FileEntity, { sheet_id });
+
+      return result.affected > 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FilesService.delete()',
         e,
       );
       return null;

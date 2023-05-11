@@ -701,8 +701,6 @@ export class UserService {
         `call sp_update_users(${source_academic_id}, ${source_semester_id}, ${target_academic_id}, ${targer_semester_id});`,
       );
 
-      console.log('results: ', results);
-
       if (results && results.length > 0) {
         success = results[0].success != 0;
       }

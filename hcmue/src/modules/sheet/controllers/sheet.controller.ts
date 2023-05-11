@@ -846,8 +846,6 @@ export class SheetController {
       );
       //#endregion
 
-      //console.log('sheets: ', sheets);
-
       if (sheets && sheets.length > 0) {
         //#region Generate response
         return generateUserSheetsPagingResponse(pages, page, sheets, req);
@@ -1103,6 +1101,7 @@ export class SheetController {
     Role.SECRETARY,
     Role.CHAIRMAN,
     Role.ADVISER,
+    Role.STUDENT,
   )
   @HttpCode(HttpStatus.OK)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
@@ -1835,7 +1834,7 @@ export class SheetController {
 
       //#region Validation
       //#region Validate sheet
-      const sheet = await validateSheet(id, this._sheetService, req);
+      const sheet = await validateSheet(id, this._sheetService, role, req);
       if (sheet instanceof HttpException) throw sheet;
       //#endregion
 
@@ -1937,7 +1936,7 @@ export class SheetController {
       //#endregion
       //#region Validation
       //#region Validate sheet
-      const sheet = await validateSheet(id, this._sheetService, req);
+      const sheet = await validateSheet(id, this._sheetService, role, req);
       if (sheet instanceof HttpException) throw sheet;
       //#endregion
       //#endregion
@@ -2014,11 +2013,7 @@ export class SheetController {
     try {
       console.log('----------------------------------------------------------');
       console.log(
-        req.method +
-          ' - ' +
-          req.url +
-          ': ' +
-          JSON.stringify({ sheet_id: id, params }),
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ sheet_id: id }),
       );
 
       this._logger.writeLog(
@@ -2038,7 +2033,7 @@ export class SheetController {
 
       //#region Validation
       //#region Validate sheet
-      const sheet = await validateSheet(id, this._sheetService, req);
+      const sheet = await validateSheet(id, this._sheetService, role, req);
       if (sheet instanceof HttpException) throw sheet;
       //#endregion
 
@@ -2242,7 +2237,7 @@ export class SheetController {
 
       //#region Validation
       //#region Validate sheet
-      const sheet = await validateSheet(id, this._sheetService, req);
+      const sheet = await validateSheet(id, this._sheetService, role, req);
       if (sheet instanceof HttpException) throw sheet;
       //#endregion
 

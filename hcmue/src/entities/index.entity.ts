@@ -6,6 +6,7 @@ import { CacheClassEntity } from './cache_class.entity';
 import { ClassEntity } from './class.entity';
 import { DepartmentEntity } from './department.entity';
 import { EvaluationEntity } from './evaluation.entity';
+import { EvaluationHistoryEntity } from './evaluation_history.entity';
 import { FileEntity } from './file.entity';
 import { FormEntity } from './form.entity';
 import { HeaderEntity } from './header.entity';
@@ -20,19 +21,21 @@ import { RoleUsersEntity } from './role_users.entity';
 import { SemesterEntity } from './semester.entity';
 import { SessionEntity } from './session.entity';
 import { SheetEntity } from './sheet.entity';
+import { SheetHistoryEntity } from './sheet_history.entity';
 import { StatusEntity } from './status.entity';
 import { TitleEntity } from './title.entity';
 import { UserEntity } from './user.entity';
 
 const entities = [
   AcademicYearEntity,
-  ApprovalEntity,
-  AdviserEntity,
   AdviserClassesEntity,
+  AdviserEntity,
+  ApprovalEntity,
   CacheClassEntity,
   ClassEntity,
   DepartmentEntity,
   EvaluationEntity,
+  EvaluationHistoryEntity,
   FileEntity,
   FormEntity,
   HeaderEntity,
@@ -47,6 +50,7 @@ const entities = [
   SemesterEntity,
   SessionEntity,
   SheetEntity,
+  SheetHistoryEntity,
   StatusEntity,
   TitleEntity,
   UserEntity,

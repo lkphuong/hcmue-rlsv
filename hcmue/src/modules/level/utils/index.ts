@@ -12,7 +12,6 @@ export const generateResponses = async (
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
-  console.log('data: ', levels);
 
   // Transform LevelEntity class to LevelResponse class
   const payload = await generateLevelsArray(levels);

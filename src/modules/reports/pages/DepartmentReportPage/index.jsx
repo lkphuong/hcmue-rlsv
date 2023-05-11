@@ -160,7 +160,7 @@ const DepartmentReportPage = () => {
 						alignItems='center'
 					>
 						<Typography fontSize={20} fontWeight={600}>
-							{`Danh sách thống kê phiếu chấm điểm rèn luyện của khoa  ${
+							{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${
 								departmentName ? 'khoa ' + departmentName : 'tất cả các khoa'
 							}`}
 						</Typography>

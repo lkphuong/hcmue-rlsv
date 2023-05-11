@@ -13,7 +13,7 @@ export const AUTH = {
 export const SHEETS = {
 	GET_BY_ID: '/sheets',
 	GET_MARK: '/sheets', //  /sheets/:id/items/:title_id
-	GET_ITEMS_MARK: '/sheets/items',
+	GET_ITEMS_MARK: '/sheets/items', // :id
 
 	GET_BY_STD_CODE: '/sheets/student', // :std_code
 	STUDENT_GET_HISTORY: '/sheets/student/history',
@@ -42,7 +42,10 @@ export const SHEETS = {
 	GET_DETAIL_SHEET: '/sheets/detail',
 
 	RATING_WEAK: '/sheets/weak', // :id
-	GET_CHANGES: '/sheets/....',
+
+	GET_CHANGES: '/history/all',
+	GET_DETAIL_CHANGE: '/history', // :id
+	GET_MARKS_CHANGE: '/history/items', // :id
 };
 
 export const FORMS = {

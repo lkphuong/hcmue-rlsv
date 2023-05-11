@@ -89,3 +89,11 @@ export const ratingWeak = (id) => {
 export const getChangeHistory = (body) => {
 	return post(SHEETS.GET_CHANGES, body);
 };
+
+export const getDetailChange = (id) => {
+	return get(`${SHEETS.GET_DETAIL_CHANGE}/${id}`);
+};
+
+export const getMarksChange = (sheet_id) => {
+	return get(`${SHEETS.GET_MARKS_CHANGE}/${sheet_id}`);
+};

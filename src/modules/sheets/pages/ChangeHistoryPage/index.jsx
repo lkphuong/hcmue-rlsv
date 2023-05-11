@@ -15,44 +15,6 @@ import { getChangeHistory } from '_api/sheets.api';
 
 import { actions } from '_slices/filter.slice';
 
-const MOCK_DATA = [
-	{
-		id: 1,
-		fullname: 'Đặng Hoàng Phúc',
-		role: 4,
-		created_date: new Date(),
-		point: 1,
-	},
-	{
-		id: 2,
-		fullname: 'Lê Khánh Phương',
-		role: 2,
-		created_date: new Date(),
-		point: 55,
-	},
-	{
-		id: 3,
-		fullname: 'Trần Nguyên Khánh',
-		role: 1,
-		created_date: new Date(),
-		point: 40,
-	},
-	{
-		id: 4,
-		fullname: 'Lê Khánh Phương',
-		role: 2,
-		created_date: new Date(),
-		point: 60,
-	},
-	{
-		id: 5,
-		fullname: 'Trần Thị Cẩm Giang',
-		role: 0,
-		created_date: new Date(),
-		point: 90,
-	},
-];
-
 const ChangeHistoryPage = () => {
 	//#region Data
 	const filters = useSelector((state) => state.filter.filters, shallowEqual);
@@ -66,13 +28,15 @@ const ChangeHistoryPage = () => {
 	const listData = useMemo(() => data?.data || [], [data]);
 
 	const [filter, setFilter] = useState(
-		filters || {
-			page: 1,
-			pages: 0,
-			status: -1,
-			input: '',
-			sheet_id,
-		}
+		filters
+			? { ...filters, sheet_id }
+			: {
+					page: 1,
+					pages: 0,
+					status: -1,
+					input: '',
+					sheet_id,
+			  }
 	);
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
@@ -87,11 +51,10 @@ const ChangeHistoryPage = () => {
 		try {
 			const _filter = cleanObjValue(filter);
 
-			setData({ data: MOCK_DATA, page: 1, pages: 1 });
-			// const res = await getChangeHistory(_filter);
+			const res = await getChangeHistory(_filter);
 
-			// if (isSuccess(res)) setData(res.data);
-			// else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
+			if (isSuccess(res)) setData(res.data);
+			else if (isEmpty(res)) setData({ data: [], page: 1, pages: 0 });
 		} catch (error) {
 			throw error;
 		} finally {

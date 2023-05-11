@@ -8,6 +8,7 @@ import { updateHeaderIdInArr, updateObjInArr } from '_func/';
 const initialState = {
 	marks: [],
 	available: true,
+	changes: [],
 };
 
 export const markSlice = createSlice({
@@ -30,6 +31,9 @@ export const markSlice = createSlice({
 			);
 
 			state.marks = updatedValues;
+		},
+		setChanges: (state, action) => {
+			state.changes = action.payload || [];
 		},
 		setAvailable: (state, action) => {
 			state.available = action.payload;

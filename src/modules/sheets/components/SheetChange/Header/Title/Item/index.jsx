@@ -10,6 +10,7 @@ import Control from './Control';
 const Item = memo(({ data, headerId, titleId }) => {
 	//#region Data
 	const marks = useSelector((state) => state.mark.marks, shallowEqual);
+	const changes = useSelector((state) => state.mark.changes, shallowEqual);
 
 	const dispatch = useDispatch();
 	//#endregion
@@ -27,7 +28,10 @@ const Item = memo(({ data, headerId, titleId }) => {
 
 	//#region Render
 	return (
-		<TableRow>
+		<TableRow
+			id={changes.includes(Number(data.id)) && 'item-changed'}
+			sx={{ backgroundColor: changes.includes(Number(data.id)) && '#FFDE2562!important' }}
+		>
 			<TableCell />
 			<TableCell>
 				<Typography ml={2} className={data?.required ? 'required' : ''} fontSize='1rem'>

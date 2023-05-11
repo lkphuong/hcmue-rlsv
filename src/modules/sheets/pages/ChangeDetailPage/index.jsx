@@ -7,20 +7,19 @@ import { Box, Paper, Stack, Typography } from '@mui/material';
 
 import { SheetChange } from '_modules/sheets/components';
 
-import { getItemsMarks, getSheetById } from '_api/sheets.api';
-
 import { isSuccess } from '_func/';
 import { alert } from '_func/alert';
 
 import { actions } from '_slices/mark.slice';
 
 import { CLoadingSpinner } from '_others/';
+import { getDetailChange, getMarksChange } from '_api/sheets.api';
 
 export const NewContext = createContext();
 
 const ChangeDetailPage = () => {
 	//#region Data
-	const { sheet_id } = useParams();
+	const { change_id } = useParams();
 
 	const [loading, setLoading] = useState(false);
 
@@ -38,12 +37,12 @@ const ChangeDetailPage = () => {
 
 	//#region Event
 	const getForm = useCallback(async () => {
-		if (!sheet_id) return;
+		if (!change_id) return;
 
 		setLoading(true);
 
 		try {
-			const res = await getSheetById(sheet_id);
+			const res = await getDetailChange(change_id);
 
 			if (isSuccess(res)) {
 				if (res.data === null) {
@@ -60,12 +59,12 @@ const ChangeDetailPage = () => {
 		} finally {
 			setLoading(false);
 		}
-	}, [sheet_id]);
+	}, [change_id]);
 
 	const getMarks = useCallback(async () => {
 		if (!data?.id) return;
 
-		const res = await getItemsMarks(data.id);
+		const res = await getMarksChange(data.id);
 
 		if (isSuccess(res))
 			setItemsMark(() => {
@@ -83,21 +82,30 @@ const ChangeDetailPage = () => {
 	}, [getMarks]);
 
 	useEffect(() => {
+		let changes = [];
 		if (data?.status < 3) {
-			const payload = itemsMark.map((e) => ({
-				item_id: Number(e.item.id),
-				adviser_mark_level: e.class_mark_level,
-				option_id: Number(e.options?.id) || null,
-			}));
-
+			const payload = itemsMark.map((e) => {
+				if (e?.flag) changes.push(Number(e.item.id));
+				return {
+					item_id: Number(e.item.id),
+					adviser_mark_level: e.class_mark_level,
+					option_id: Number(e.options?.id) || null,
+					flag: e?.flag || false,
+				};
+			});
+			dispatch(actions.setChanges(changes));
 			dispatch(actions.renewMarks(payload));
 		} else {
-			const payload = itemsMark.map((e) => ({
-				item_id: Number(e.item.id),
-				adviser_mark_level: e.adviser_mark_level,
-				option_id: Number(e.options?.id) || null,
-			}));
-
+			const payload = itemsMark.map((e) => {
+				if (e?.flag) changes.push(Number(e.item.id));
+				return {
+					item_id: Number(e.item.id),
+					adviser_mark_level: e.adviser_mark_level,
+					option_id: Number(e.options?.id) || null,
+					flag: e?.flag || false,
+				};
+			});
+			dispatch(actions.setChanges(changes));
 			dispatch(actions.renewMarks(payload));
 		}
 	}, [data?.status, itemsMark]);
@@ -126,6 +134,7 @@ const ChangeDetailPage = () => {
 					</Box>
 
 					<Paper className='paper-wrapper'>
+						<a href='#something'>ASAS</a>
 						<Box p={1.5}>{data && <SheetChange data={data} />}</Box>
 					</Paper>
 				</NewContext.Provider>

@@ -6,7 +6,7 @@ import { IconButton, TableCell, TableRow, Tooltip } from '@mui/material';
 
 import { SHEET_STATUS } from '_constants/variables';
 
-import { CEditIcon, CViewIcon } from '_others/';
+import { CEditIcon, CTimeIcon, CViewIcon } from '_others/';
 
 export const Row = ({ data, index, isHistory, saveFilter }) => {
 	//#region Data
@@ -16,15 +16,19 @@ export const Row = ({ data, index, isHistory, saveFilter }) => {
 		() => SHEET_STATUS.find((e) => e.id.toString() === data?.status?.toString())?.name || null,
 		[data?.status]
 	);
+	//#endregion
 
+	//#region Event
 	const onClick = () => {
 		saveFilter();
 
 		navigate(`detail/${data.id}`);
 	};
-	//#endregion
 
-	//#region Event
+	const onViewChanges = () => {
+		saveFilter();
+		navigate(`changes/${data.id}`);
+	};
 	//#endregion
 
 	//#region Render
@@ -57,11 +61,18 @@ export const Row = ({ data, index, isHistory, saveFilter }) => {
 						</IconButton>
 					</Tooltip>
 				) : (
-					<Tooltip title='Điều chỉnh'>
-						<IconButton onClick={onClick}>
-							<CEditIcon />
-						</IconButton>
-					</Tooltip>
+					<>
+						<Tooltip title='Điều chỉnh'>
+							<IconButton onClick={onClick}>
+								<CEditIcon />
+							</IconButton>
+						</Tooltip>
+						<Tooltip title='Truy vết'>
+							<IconButton onClick={onViewChanges}>
+								<CTimeIcon />
+							</IconButton>
+						</Tooltip>
+					</>
 				)}
 			</TableCell>
 		</TableRow>

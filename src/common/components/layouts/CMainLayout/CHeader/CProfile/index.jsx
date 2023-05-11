@@ -25,7 +25,6 @@ import { CStudentCard } from './CStudentCard';
 const CProfile = () => {
 	//#region Data
 	const profile = useSelector((state) => state.auth.profile, shallowEqual);
-	console.log('🚀 ~ file: index.jsx:27 ~ CProfile ~ profile:', profile);
 
 	const theme = useTheme();
 

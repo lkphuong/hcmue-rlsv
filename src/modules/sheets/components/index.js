@@ -6,3 +6,5 @@ export * from './MSearch';
 export * from './MHistoryFilter';
 export * from './ListDepartmentsHistory';
 export * from './Form';
+export * from './ListChanges';
+export * from './SheetChange';

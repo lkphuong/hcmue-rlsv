@@ -7,6 +7,7 @@ import { ReactComponent as Setting } from '_assets/icons/setting.svg';
 import { ReactComponent as Add } from '_assets/icons/add.svg';
 import { ReactComponent as View } from '_assets/icons/view.svg';
 import { ReactComponent as Reset } from '_assets/icons/reset.svg';
+import { ReactComponent as Time } from '_assets/icons/time.svg';
 
 export const CEditIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={Edit} />;
@@ -34,4 +35,8 @@ export const CViewIcon = ({ ...props }) => {
 
 export const CResetIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={Reset} />;
+};
+
+export const CTimeIcon = ({ ...props }) => {
+	return <SvgIcon {...props} component={Time} />;
 };

@@ -42,6 +42,7 @@ export const SHEETS = {
 	GET_DETAIL_SHEET: '/sheets/detail',
 
 	RATING_WEAK: '/sheets/weak', // :id
+	GET_CHANGES: '/sheets/....',
 };
 
 export const FORMS = {

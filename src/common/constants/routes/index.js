@@ -57,6 +57,8 @@ export const ROUTES = {
 		SHEETS: '/admin/sheets',
 		SHEETS_DEPARTMENT: '/admin/sheets/:department_id',
 		SHEET_DETAIL: '/admin/sheets/:department_id/detail/:sheet_id',
+		SHEET_CHANGES: '/admin/sheets/:department_id/changes/:sheet_id',
+		SHEET_CHANGES_DETAIL: '/admin/sheets/:department_id/changes/:sheet_id/detail/:change_id',
 
 		HISTORY: '/admin/history',
 		HISTORY_DEPARTMENT: '/admin/history/:department_id',

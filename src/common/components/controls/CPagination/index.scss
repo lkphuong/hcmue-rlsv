@@ -6,6 +6,10 @@
 
 		.MuiPaginationItem-root {
 			background-color: white;
+			&.Mui-selected {
+				border-width: 2px;
+				font-weight: 700;
+			}
 		}
 	}
 }

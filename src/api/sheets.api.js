@@ -85,3 +85,7 @@ export const approveAll = (body) => {
 export const ratingWeak = (id) => {
 	return put(`${SHEETS.RATING_WEAK}/${id}`);
 };
+
+export const getChangeHistory = (body) => {
+	return post(SHEETS.GET_CHANGES, body);
+};

@@ -16,6 +16,8 @@ const SheetsManagementPage = lazy(() => import('_modules/sheets/pages/SheetsMana
 const HistorySheetsPage = lazy(() => import('_modules/sheets/pages/HistorySheetsPage'));
 const SheetsDepartmentPage = lazy(() => import('_modules/sheets/pages/SheetsDepartmentPage'));
 const SheetDetailPage = lazy(() => import('_modules/sheets/pages/SheetDetailPage'));
+const ChangeHistoryPage = lazy(() => import('_modules/sheets/pages/ChangeHistoryPage'));
+const ChangeDetailPage = lazy(() => import('_modules/sheets/pages/ChangeDetailPage'));
 
 const DepartmentReportPage = lazy(() => import('_modules/reports/pages/DepartmentReportPage'));
 const ClassReportPage = lazy(() => import('_modules/reports/pages/ClassReportPage'));
@@ -81,6 +83,24 @@ export const ADMIN_ROUTES = [
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
 				<SheetDetailPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADMIN.SHEET_CHANGES,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<ChangeHistoryPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADMIN.SHEET_CHANGES_DETAIL,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<ChangeDetailPage />
 			</CPermission>
 		),
 	},

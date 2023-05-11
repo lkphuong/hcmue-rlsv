@@ -20,10 +20,12 @@ import {
 import { Face4, Settings } from '@mui/icons-material';
 
 import { tryLogout } from '_axios/';
+import { CStudentCard } from './CStudentCard';
 
 const CProfile = () => {
 	//#region Data
 	const profile = useSelector((state) => state.auth.profile, shallowEqual);
+	console.log('🚀 ~ file: index.jsx:27 ~ CProfile ~ profile:', profile);
 
 	const theme = useTheme();
 
@@ -35,13 +37,6 @@ const CProfile = () => {
 	//#endregion
 
 	//#region Event
-
-	//#endregion
-
-	//#region Render
-
-	//#endregion
-
 	const handleClose = (event) => {
 		if (anchorRef.current && anchorRef.current.contains(event.target)) {
 			return;
@@ -54,6 +49,7 @@ const CProfile = () => {
 	const handleToggle = () => {
 		setOpen((prevOpen) => !prevOpen);
 	};
+	//#endregion
 
 	useEffect(() => {
 		if (prevOpen.current === true && open === false) {
@@ -63,6 +59,7 @@ const CProfile = () => {
 		prevOpen.current = open;
 	}, [open]);
 
+	//#region Render
 	return (
 		<>
 			<Chip
@@ -126,7 +123,7 @@ const CProfile = () => {
 			>
 				{({ TransitionProps }) => (
 					<Fade in={open} {...TransitionProps}>
-						<Paper sx={{ boxShadow: '0 0 4px 2px rgba(0 0 0 / 20%)' }}>
+						<Paper sx={{ boxShadow: '0 0 4px 2px rgba(0 0 0 / 20%)', width: 300 }}>
 							<ClickAwayListener onClickAway={handleClose}>
 								<Paper>
 									<Box sx={{ p: 2, pb: 0 }}>
@@ -138,17 +135,30 @@ const CProfile = () => {
 											>
 												Xin chào
 											</Typography>
-											<Typography component='span' variant='h4' mb={1}>
-												{profile?.fullname}
-											</Typography>
-											<Typography component='span' variant='h4' mb={2}>
-												{profile?.username}
-											</Typography>
+											{[0, 1, 2, 3].includes(profile?.role) ? (
+												<CStudentCard profile={profile} />
+											) : (
+												<>
+													<Typography
+														component='span'
+														variant='h4'
+														mb={1}
+													>
+														{profile?.fullname}
+													</Typography>
+													<Typography
+														component='span'
+														variant='h4'
+														mb={2}
+													>
+														{profile?.username}
+													</Typography>
+												</>
+											)}
+
 											<Divider />
 										</Stack>
-									</Box>
 
-									<Box sx={{ p: 2, pt: 0 }}>
 										<List
 											component='nav'
 											sx={{
@@ -203,6 +213,7 @@ const CProfile = () => {
 			</Popper>
 		</>
 	);
+	//#endregion
 };
 
 export default CProfile;

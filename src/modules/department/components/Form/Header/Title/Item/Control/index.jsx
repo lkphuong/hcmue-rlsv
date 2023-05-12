@@ -45,11 +45,21 @@ const Control = memo(({ data, id, titleId, available }) => {
 
 	const initialMark = useMemo(() => {
 		if (status < 4) {
-			return currentMark.adviser_mark_level;
+			return (
+				currentMark.adviser_mark_level ||
+				currentMark.class_mark_level ||
+				currentMark.personal_mark_level
+			);
 		} else {
 			return currentMark.department_mark_level;
 		}
-	}, [currentMark.adviser_mark_level, currentMark.department_mark_level, status]);
+	}, [
+		currentMark.adviser_mark_level,
+		currentMark.department_mark_level,
+		currentMark.class_mark_level,
+		currentMark.personal_mark_level,
+		status,
+	]);
 
 	const optionId = useMemo(() => {
 		return !currentMark?.option_id ? null : Number(currentMark.option_id);

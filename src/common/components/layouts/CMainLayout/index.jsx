@@ -1,9 +1,9 @@
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import { styled, useTheme } from '@mui/material/styles';
-import { AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material';
+import { Alert, AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material';
 
 import { drawerWidth } from '_store/constant';
 import { actions } from '_slices/menu.slice';
@@ -19,6 +19,8 @@ import { SuspenseLoading } from '_others/';
 
 import CHeader from './CHeader';
 import CSidebar from './CSidebar';
+import { getCurrentTimeline } from '_api/timeline.api';
+import dayjs from 'dayjs';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 	({ theme, open }) => ({
@@ -66,52 +68,62 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 );
 
 export const CMainLayout = () => {
+	//#region Data
 	const theme = useTheme();
-	const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'));
-	const isLogined = useSelector((state) => state.auth.isLogined);
 
-	// Handle left drawer
+	const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'));
+
+	const isLogined = useSelector((state) => state.auth.isLogined);
 	const leftDrawerOpened = useSelector((state) => state.menu.opened);
+
 	const dispatch = useDispatch();
+
+	const [timeline, setTimeline] = useState({ show: false, start: null, end: null });
+	//#endregion
+
+	//#region Event
 	const handleLeftDrawerToggle = () => {
 		dispatch(actions.setMenu(!leftDrawerOpened));
 	};
 
-	useEffect(() => {
-		const getOptions = async () => {
-			try {
-				const resAcademic = await getAcademicYears();
+	const initGetData = async () => {
+		try {
+			const resAcademic = await getAcademicYears();
 
-				if (isSuccess(resAcademic)) {
-					const academics = resAcademic.data.map((e) => ({ ...e, id: parseInt(e.id) }));
+			if (isSuccess(resAcademic)) {
+				const academics = resAcademic.data.map((e) => ({ ...e, id: parseInt(e.id) }));
 
-					dispatch(optionsAction.setAcademicYears(academics));
-				}
-
-				const resDepartment = await getAllDepartments();
-
-				if (isSuccess(resDepartment)) {
-					const departments = resDepartment.data.map((e) => ({
-						...e,
-						id: parseInt(e.id),
-					}));
-
-					dispatch(optionsAction.setDepartments(departments));
-				}
-			} catch (error) {
-				throw error;
+				dispatch(optionsAction.setAcademicYears(academics));
 			}
-		};
 
-		getOptions();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
+			const resDepartment = await getAllDepartments();
+
+			if (isSuccess(resDepartment)) {
+				const departments = resDepartment.data.map((e) => ({
+					...e,
+					id: parseInt(e.id),
+				}));
+
+				dispatch(optionsAction.setDepartments(departments));
+			}
+
+			const timelineResponse = await getCurrentTimeline();
+			if (isSuccess(timelineResponse)) setTimeline({ show: true, ...timelineResponse?.data });
+		} catch (error) {
+			throw error;
+		}
+	};
+	//#endregion
+
+	useEffect(() => {
+		initGetData();
 	}, []);
 
 	useEffect(() => {
 		dispatch(actions.setMenu(!matchDownMd));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [matchDownMd]);
 
+	//#region Render
 	return isLogined ? (
 		<Box sx={{ display: 'flex' }}>
 			<CssBaseline />
@@ -134,6 +146,18 @@ export const CMainLayout = () => {
 			<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
 			<Main theme={theme} open={leftDrawerOpened} style={{ position: 'relative' }}>
+				{timeline.show && (
+					<Alert
+						severity='info'
+						onClose={() => setTimeline((prev) => ({ ...prev, show: false }))}
+						sx={{ fontSize: '14px', py: 0 }}
+					>
+						Thời gian chấm điểm rèn luyện —&nbsp;
+						<strong>{`Từ ngày ${dayjs(timeline.start).format(
+							'DD/MM/YYYY'
+						)} - đến ngày ${dayjs(timeline.end).format('DD/MM/YYYY')}`}</strong>
+					</Alert>
+				)}
 				<Suspense fallback={<SuspenseLoading />}>
 					<Outlet />
 				</Suspense>
@@ -142,4 +166,5 @@ export const CMainLayout = () => {
 	) : (
 		<Navigate to={ROUTES.LOGIN} replace={true} />
 	);
+	//#endregion
 };

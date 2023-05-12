@@ -144,3 +144,7 @@ export const ADVISER = {
 export const STATUSES = {
 	GET_STUDENT_STATUSES: '/statuses',
 };
+
+export const TIMELINE = {
+	GET: '/forms/timeline',
+};

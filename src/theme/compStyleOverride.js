@@ -408,6 +408,13 @@ export default function componentStyleOverrides(theme) {
 						color: '#990101!important',
 					},
 				},
+				standardWarning: {
+					backgroundColor: '#fff4e5',
+					color: '#ad926b',
+					'& .MuiAlert-icon': {
+						color: '#ef7918!important',
+					},
+				},
 			},
 		},
 	};

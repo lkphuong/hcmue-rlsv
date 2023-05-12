@@ -53,6 +53,7 @@ import { ConfigurationService } from '../../shared/services/configuration/config
 import { LogService } from '../../log/services/log.service';
 import { OtherService } from '../../other/services/other.service';
 import { UserService } from '../../user/services/user.service';
+import { MajorService } from '../../major/services/major.service';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 import { InvalidTokenException } from '../exceptions/InvalidTokenException';
@@ -85,6 +86,7 @@ export class AuthController {
     private readonly _adviserService: AdviserService,
     private readonly _adviserClassService: AdviserClassesService,
     private readonly _classService: ClassService,
+    private readonly _majorService: MajorService,
     private readonly _otherService: OtherService,
     private readonly _userService: UserService,
     private readonly _configurationService: ConfigurationService,
@@ -722,6 +724,9 @@ export class AuthController {
             const $class = session.class
               ? await this._classService.getClassById(session.class)
               : null;
+            const major = await this._majorService.getMajorByUser(
+              session.user_id,
+            );
 
             //#region Generate response
             return returnObjects<ProfileResponse>({
@@ -729,6 +734,7 @@ export class AuthController {
               username: session.username,
               fullname: session.fullname,
               class_id: [session.class],
+              major: major,
               classes: $class
                 ? [
                     {

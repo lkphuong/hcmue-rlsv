@@ -355,13 +355,15 @@ export const generateResponses = async (
   page: number,
   count: number,
   sheets: SheetEntity[],
+  semester: SemesterEntity,
+  academic_year: AcademicYearEntity,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
 
   // Transform SheetEntity class to ClassSheetsResponse class
-  const payload = await generateAdminSheets(sheets);
+  const payload = await generateAdminSheets(sheets, semester, academic_year);
 
   // Returns objects
   return returnObjectsWithPaging<ClassSheetsResponse>(
@@ -380,7 +382,7 @@ export const generateSheetsResponses = async (
   console.log(req.method + ' - ' + req.url);
 
   // Transform SheetEntity class to ClassSheetsResponse class
-  const payload = await generateAdminSheets(sheets);
+  const payload = await generateAdminSheets(sheets, null, null);
 
   // Returns objects
   return returnObjects<ClassSheetsResponse>(payload);

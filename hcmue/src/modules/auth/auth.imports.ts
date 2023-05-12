@@ -10,6 +10,7 @@ import { SharedModule } from '../shared/shared.module';
 import { OtherModule } from '../other/other.module';
 import { RoleModule } from '../role/role.module';
 import { UserModule } from '../user/user.module';
+import { MajorModule } from '../major/major.module';
 
 import { AuthController } from './controllers/auth.controller';
 
@@ -32,6 +33,7 @@ export const modules = [
   AdviserModule,
   ClassModule,
   SharedModule,
+  MajorModule,
   TypeOrmModule.forFeature([
     RoleEntity,
     RoleUsersEntity,

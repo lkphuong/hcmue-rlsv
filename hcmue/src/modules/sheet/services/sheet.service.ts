@@ -22,6 +22,7 @@ import { RoleCode } from '../../../constants/enums/role_enum';
 import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { ReportResponse } from '../interfaces/sheet_response.interface';
+import { ReportCountSheetResponse } from '../interfaces/report_response.interface';
 
 @Injectable()
 export class SheetService {
@@ -697,6 +698,88 @@ export class SheetService {
         Levels.ERROR,
         Methods.SELECT,
         'SheetService.countSheets()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async reportCountSheet(
+    academic_id: number,
+    semester_id: number,
+    department_id?: number,
+    status?: SheetStatus,
+  ) {
+    try {
+      const manager = this._dataSource.manager;
+
+      let query = `
+          SELECT sheets.class_id, count(sheets.id) AS count
+          FROM sheets
+          WHERE sheets.semester_id = ${semester_id} AND
+            sheets.academic_id = ${academic_id} AND
+            sheets.delete_flag = false
+      `;
+
+      if (department_id) {
+        query += ` AND sheets.department_id = ${department_id}`;
+      }
+
+      if (status != SheetStatus.ALL) {
+        query += ` AND sheets.status = ${status}`;
+      }
+
+      query += ` GROUP BY sheets.class_id`;
+
+      const result = (await manager.query(query)) as ReportCountSheetResponse[];
+
+      return result;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.reportCountSheet()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async reportCountSheetAdmin(
+    academic_id: number,
+    semester_id: number,
+    department_id?: number,
+    status?: SheetStatus,
+  ) {
+    try {
+      const manager = this._dataSource.manager;
+
+      let query = `
+          SELECT sheets.department_id, count(sheets.id) AS count
+          FROM sheets
+          WHERE sheets.semester_id = ${semester_id} AND
+            sheets.academic_id = ${academic_id} AND
+            sheets.delete_flag = false
+      `;
+
+      if (department_id) {
+        query += ` AND sheets.department_id = ${department_id}`;
+      }
+
+      if (status != SheetStatus.ALL) {
+        query += ` AND sheets.status = ${status}`;
+      }
+
+      query += ` GROUP BY sheets.department_id`;
+
+      const result = (await manager.query(query)) as ReportCountSheetResponse[];
+
+      return result;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.reportCountSheet()',
         e,
       );
       return null;

@@ -44,7 +44,6 @@ import { ExportReportsDto } from '../dtos/export_excel.dto';
 import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 import { CacheClassService } from '../services/cache-class.service';
 import { ConfigurationService } from '../../shared/services/configuration/configuration.service';
-import { HttpService } from '@nestjs/axios/dist';
 import { ClassService } from '../../class/services/class.service';
 import { DepartmentService } from '../../department/services/department.service';
 import { LevelService } from '../../level/services/level.service';
@@ -60,7 +59,6 @@ import {
 } from '../interfaces/report-response.interface';
 
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
-import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
 import { HandlerException } from '../../../exceptions/HandlerException';
 
@@ -80,14 +78,15 @@ import {
   PATH_FILE_EXCEL,
 } from '../constants/enums/template.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
+import { AdviserService } from '../../adviser/services/adviser/adviser.service';
 
 @Controller('reports')
 export class ReportController {
   constructor(
     private readonly _academicYearService: AcademicYearService,
+    private readonly _adviserService: AdviserService,
     private readonly _cacheClassService: CacheClassService,
     private readonly _configurationService: ConfigurationService,
-    private readonly _httpService: HttpService,
     private readonly _classService: ClassService,
     private readonly _departmentService: DepartmentService,
     private readonly _levelService: LevelService,
@@ -135,10 +134,6 @@ export class ReportController {
 
       //#region Get params
       const { academic_id, semester_id, department_id, class_id } = params;
-      //#endregion
-
-      //#region Get Jwt Payload
-      const { role, user_id } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation
@@ -389,10 +384,6 @@ export class ReportController {
       const { academic_id, semester_id, department_id, class_id } = params;
       //#endregion
 
-      //#region Get Jwt Payload
-      const { role, user_id } = req.user as JwtPayload;
-      //#endregion
-
       //#region Validation
       //#region Validate academic-year
       const academic = await validateAcademicYear(
@@ -430,19 +421,6 @@ export class ReportController {
       if (semester instanceof HttpException) throw semester;
       //#endregion
 
-      // //#region Validate role
-      // const valid = await validateRole(
-      //   department_id,
-      //   role,
-      //   user_id,
-      //   this._userService,
-      //   req,
-      // );
-
-      // if (valid instanceof HttpException) throw valid;
-      // //#endregion
-      //#endregion
-
       //#region Get levels
       const levels = await this._levelService.getLevels();
       //#endregion
@@ -470,9 +448,11 @@ export class ReportController {
           semester_id,
           cache_classes,
           levels,
+          this._adviserService,
           this._classService,
           this._configurationService,
           this._sheetService,
+          this._userService,
           req,
         );
 
@@ -568,10 +548,6 @@ export class ReportController {
       const { academic_id, semester_id, department_id, class_id } = params;
       //#endregion
 
-      //#region Get Jwt Payload
-      const { role, user_id } = req.user as JwtPayload;
-      //#endregion
-
       //#region Validation
       //#region Validate academic-year
       const academic = await validateAcademicYear(
@@ -607,19 +583,6 @@ export class ReportController {
       );
 
       if (semester instanceof HttpException) throw semester;
-      //#endregion
-
-      // //#region Validate role
-      // const valid = await validateRole(
-      //   department_id,
-      //   role,
-      //   user_id,
-      //   this._userService,
-      //   req,
-      // );
-
-      // if (valid instanceof HttpException) throw valid;
-      // //#endregion
       //#endregion
 
       //#region Get levels
@@ -906,10 +869,6 @@ export class ReportController {
 
       //#region Get params
       const { academic_id, semester_id, department_id, class_id } = params;
-      //#endregion
-
-      //#region Get Jwt Payload
-      const { role, user_id } = req.user as JwtPayload;
       //#endregion
 
       //#region Validation

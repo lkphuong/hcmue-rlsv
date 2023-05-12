@@ -43,6 +43,10 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { PATH_FILE_EXCEL } from '../constants/enums/template.enum';
 import { LENGTH } from '../constants';
+import { UserService } from '../../user/services/user.service';
+import { getTime } from '../utils';
+import { AdviserService } from '../../adviser/services/adviser/adviser.service';
+import { RoleCode } from '../../../constants/enums/role_enum';
 
 export const exportWordTemplateAdmin = async (
   academic_year: AcademicYearEntity,
@@ -75,7 +79,15 @@ export const exportWordTemplateAdmin = async (
 
     if (payload) {
       const { sum_of_std_in_departments } = payload;
+      const { day, hour, minute, month, year } = getTime();
       const result: ExportWordTemplateAdmin = {
+        semester: semester.name,
+        academic_year: academic_year.start + ' - ' + academic_year.end,
+        day,
+        hour,
+        minute,
+        month,
+        year,
         department: [],
         total: [],
         percen: [],
@@ -219,14 +231,23 @@ export const exportWordTemplateDepartment = async (
       sheet_service,
     );
 
+    const { day, hour, minute, month, year } = getTime();
+
     if (payload) {
       const { sum_of_std_in_classes } = payload;
       const result: ExportWordTemplateDepartment = {
+        semester: semester.name,
+        academic_year: academic_year.start + ' - ' + academic_year.end,
+        department: department.name,
+        day,
+        hour,
+        minute,
+        month,
+        year,
         class: [],
         total: [],
         percen: [],
       };
-
       const total: TotalItemResponse = {
         tss: payload.sum_of_std_in_classes,
         txs: 0,
@@ -345,9 +366,11 @@ export const exportWordTemplateClass = async (
   semester_id: number,
   cache_classes: CacheClassEntity[],
   levels: LevelEntity[],
+  adviser_service: AdviserService,
   class_service: ClassService,
   configuration_service: ConfigurationService,
   sheet_service: SheetService,
+  user_service: UserService,
   req: Request,
 ) => {
   try {
@@ -365,12 +388,43 @@ export const exportWordTemplateClass = async (
       class_service,
       sheet_service,
     );
+    const [students, $class, adviser] = await Promise.all([
+      user_service.getUsersByClass(academic_id, semester_id, class_id),
+      class_service.getClassById(class_id),
+      adviser_service.getAdviserByClass(class_id),
+    ]);
+
+    const chairman = students?.find(
+      (e) => e?.role_user?.role_id == RoleCode.CHAIRMAN,
+    );
+
+    const monitor = students?.find(
+      (e) => e?.role_user?.role_id == RoleCode.MONITOR,
+    );
+
+    const secretary = students?.find(
+      (e) => e?.role_user?.role_id == RoleCode.SECRETARY,
+    );
 
     if (payload) {
       const { sum_of_std_in_classes } = payload;
+      const { day, hour, minute, month, year } = getTime();
       const result: ExportWordTemplateClass = {
         result: [],
         type: [],
+        department: department?.name,
+        class_code: $class.code,
+        semester: semester.name,
+        academic_year: academic_year.start + ' - ' + academic_year.end,
+        hour,
+        day,
+        minute,
+        month,
+        year,
+        adviser: adviser,
+        chairman: chairman?.fullname ?? '',
+        monitor: monitor?.fullname ?? '',
+        secretary: secretary?.fullname ?? '',
       };
 
       let sum_of_std = 0;

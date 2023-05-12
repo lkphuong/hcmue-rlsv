@@ -37,6 +37,13 @@ export class RoleUsersEntity extends RootEntity {
   })
   department_id: number;
 
+  @Column('bigint', {
+    name: 'role_id',
+    nullable: false,
+    default: 0,
+  })
+  role_id: number;
+
   @ManyToOne(() => RoleEntity, (role) => role.users)
   @JoinColumn([
     {

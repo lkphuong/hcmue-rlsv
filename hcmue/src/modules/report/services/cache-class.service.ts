@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DataSource, Repository } from 'typeorm';
 
 import { CacheClassEntity } from '../../../entities/cache_class.entity';
 
@@ -8,12 +8,14 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { AmountLevelCacheDepartment } from '../interfaces/report-response.interface';
 
 @Injectable()
 export class CacheClassService {
   constructor(
     @InjectRepository(CacheClassEntity)
     private readonly _cacheClassRepository: Repository<CacheClassEntity>,
+    private readonly _dataSource: DataSource,
     private readonly _logger: LogService,
   ) {}
 
@@ -109,24 +111,20 @@ export class CacheClassService {
   async amountLevelCacheDepartment(
     academic_id: number,
     semester_id: number,
-    department_id: number,
-    level_id: number,
-  ): Promise<number> {
+  ): Promise<AmountLevelCacheDepartment[]> {
     try {
-      const conditions = this._cacheClassRepository
-        .createQueryBuilder('cache_class')
-        .select('SUM(amount)', 'amount')
-        .where('cache_class.academic_id = :academic_id', { academic_id })
-        .andWhere('cache_class.semester_id = :semester_id', { semester_id })
-        .andWhere('cache_class.level_id = :level_id', { level_id })
-        .andWhere('cache_class.department_id = :department_id', {
-          department_id,
-        })
-        .andWhere('cache_class.deleted = :deleted', { deleted: false });
+      const manager = this._dataSource.manager;
 
-      const { amount } = await conditions.getRawOne();
+      const result = (await manager.query(
+        `
+        SELECT SUM(amount) as amount, department_id, level_id
+        FROM cache_classes
+        WHERE semester_id = ${semester_id} and academic_id = ${academic_id}
+        GROUP BY department_id, level_id 
+        `,
+      )) as AmountLevelCacheDepartment[];
 
-      return amount || null;
+      return result || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,

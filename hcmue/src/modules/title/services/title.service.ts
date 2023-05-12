@@ -149,8 +149,6 @@ export class TitleService {
         `CALL sp_generate_titles (${source_form_id}, ${target_form_id})`,
       );
 
-      console.log('results: ', results);
-
       if (results && results.length > 0) {
         success = results[0].success != 0;
       }

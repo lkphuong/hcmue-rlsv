@@ -44,6 +44,8 @@ export interface ClassSheetsResponse extends MarkResponse {
   user: UserResponse;
   level: BaseResponse;
   status: number;
+  semester?: string;
+  academic_year?: string;
 }
 
 export interface ReportResponse extends MarkResponse {

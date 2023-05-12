@@ -35,6 +35,12 @@ export class FileEntity extends RootEntity {
   ])
   sheet: SheetEntity;
 
+  @Column('bigint', {
+    name: 'sheet_id',
+    nullable: false,
+  })
+  sheet_id: number;
+
   @Column('varchar', {
     name: 'parent_ref',
     nullable: false,

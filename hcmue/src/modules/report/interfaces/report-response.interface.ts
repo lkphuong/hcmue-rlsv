@@ -54,7 +54,34 @@ export interface SumOfClass {
   sum_point: string;
 }
 export interface ExportWordTemplateClass {
+  department: string;
+
+  class_code: string;
+
+  semester: string;
+
+  academic_year: string;
+
+  hour: number;
+
+  minute: number;
+
+  day: number;
+
+  month: number;
+
+  year: number;
+
+  adviser: string;
+
+  monitor: string;
+
+  secretary: string;
+
+  chairman: string;
+
   type: LevelResponse[];
+
   result: SumOfClass[];
 }
 //#endregion
@@ -95,16 +122,58 @@ export interface PercenItemResponse {
 }
 //#region report department
 export interface ExportWordTemplateDepartment {
+  semester: string;
+
+  academic_year: string;
+
+  hour: number;
+
+  minute: number;
+
+  day: number;
+
+  month: number;
+
+  year: number;
+
+  department: string;
+
   class: ItemResponse[];
+
   total: TotalItemResponse[];
+
   percen: PercenItemResponse[];
 }
 //#endregion
 
 //#region report admin
 export interface ExportWordTemplateAdmin {
+  semester: string;
+
+  academic_year: string;
+
+  hour: number;
+
+  minute: number;
+
+  day: number;
+
+  month: number;
+
+  year: number;
+
   department: ItemResponse[];
+
   total: TotalItemResponse[];
+
   percen: PercenItemResponse[];
 }
 //#endregion
+
+export interface AmountLevelCacheDepartment {
+  level_id: number;
+
+  department_id: number;
+
+  amount: number;
+}

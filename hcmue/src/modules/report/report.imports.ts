@@ -7,6 +7,7 @@ import { LogModule } from '../log/log.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { AcademicYearModule } from '../academic-year/academic_year.module';
+import { AdviserModule } from '../adviser/adviser.module';
 import { ClassModule } from '../class/class.module';
 import { DepartmentModule } from '../department/department.module';
 import { LevelModule } from '../level/level.module';
@@ -29,6 +30,7 @@ export const modules = [
   SemesterModule,
   SheetModule,
   UserModule,
+  AdviserModule,
 ];
 
 export const controllers = [ReportController];

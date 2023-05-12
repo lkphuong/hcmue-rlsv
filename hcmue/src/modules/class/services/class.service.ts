@@ -76,9 +76,7 @@ export class ClassService {
         conditions = conditions.andWhere('class.id = :class_id', { class_id });
       }
 
-      const classes = await conditions
-        .orderBy('class.created_at', 'DESC')
-        .getMany();
+      const classes = await conditions.orderBy('class.id', 'DESC').getMany();
 
       return classes || null;
     } catch (e) {

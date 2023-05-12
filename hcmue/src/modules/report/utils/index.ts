@@ -97,3 +97,14 @@ export const generateReportsDepartmentResponse = async (
     errors: null,
   };
 };
+
+export const getTime = () => {
+  const date = new Date();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const day = date.getDate();
+  const month = date.getMonth() + 1; // Months are zero-based, so we add 1
+  const year = date.getFullYear();
+
+  return { hour, minute, day, month, year };
+};

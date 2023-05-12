@@ -6,6 +6,7 @@ export interface ProfileResponse {
   department_id?: number;
   role?: number;
   classes?: ClassResponse[];
+  major?: string;
 }
 
 export interface ClassResponse {

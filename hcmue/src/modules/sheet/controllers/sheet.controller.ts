@@ -560,7 +560,7 @@ export class SheetController {
   async getSheetsByAdmin(
     @Body() params: GetSheetsByAdminDto,
     @Req() req: Request,
-  ): Promise<HttpPagingResponse<ClassSheetsResponse> | HttpException> {
+  ) {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -657,7 +657,7 @@ export class SheetController {
 
       if (sheets && sheets.length > 0) {
         //#region Generate reponse
-        return generateResponses(pages, page, count, sheets, req);
+        return generateResponses(pages, page, count, sheets, null, null, req);
         //#endregion
       }
 
@@ -1109,7 +1109,7 @@ export class SheetController {
     @Param('class_id') class_id: number,
     @Body() params: GetSheetsByClassDto,
     @Req() req: Request,
-  ): Promise<HttpPagingResponse<ClassSheetsResponse> | HttpException> {
+  ) {
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -1145,6 +1145,24 @@ export class SheetController {
       const $class = validateClass(class_id, this._classService, req);
 
       if ($class instanceof HttpException) throw $class;
+      //#endregion
+
+      //#region Validate semester
+      const semester = await validateSemester(
+        semester_id,
+        this._semesterService,
+        req,
+      );
+      if (semester instanceof HttpException) throw semester;
+      //#endregion
+
+      //#region Validate academic year
+      const academic_year = await validateAcademic(
+        academic_id,
+        this._academicYearService,
+        req,
+      );
+      if (academic_year instanceof HttpException) throw academic_year;
       //#endregion
 
       //#region Validate department
@@ -1218,7 +1236,15 @@ export class SheetController {
 
       if (sheets && sheets.length > 0) {
         //#region Generate reponse
-        return generateResponses(pages, page, count, sheets, req);
+        return generateResponses(
+          pages,
+          page,
+          count,
+          sheets,
+          semester,
+          academic_year,
+          req,
+        );
         //#endregion
       }
 

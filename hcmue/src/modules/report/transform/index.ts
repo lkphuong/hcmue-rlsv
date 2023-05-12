@@ -1,5 +1,3 @@
-import { convertString2Float } from '../../../utils';
-
 import { AcademicYearEntity } from '../../../entities/academic_year.entity';
 import { CacheClassEntity } from '../../../entities/cache_class.entity';
 import { DepartmentEntity } from '../../../entities/department.entity';
@@ -12,6 +10,7 @@ import { DepartmentService } from '../../department/services/department.service'
 import { SheetService } from '../../sheet/services/sheet.service';
 
 import {
+  AmountLevelCacheDepartment,
   ClassResponse,
   LevelResponse,
   ReportDepartmentsResponse,
@@ -20,6 +19,7 @@ import {
 
 import { NO_LEVEL } from '../constants';
 import { SheetStatus } from '../../sheet/constants/enums/status.enum';
+import { ReportCountSheetResponse } from '../../sheet/interfaces/report_response.interface';
 
 export const generateCacheClassesResponse = async (
   academic_year: AcademicYearEntity,
@@ -64,26 +64,35 @@ export const generateCacheClassesResponse = async (
       sum_of_levels = generateGlobalLevelResponse(sum_of_levels, cache_class);
       data.set(cache_class.class_id, items);
     }
+
     //#endregion
 
     //#region Generate response
-    const classes = await class_service.getClassesByDepartmentId(
-      department_id,
-      class_id,
-    );
+
+    const [classes, count_sheets, count_sheet_not_graded] = await Promise.all([
+      class_service.getClassesByDepartmentId(department_id, class_id),
+      sheet_service.reportCountSheet(
+        academic_id,
+        semester_id,
+        department_id,
+        SheetStatus.ALL,
+      ),
+      sheet_service.reportCountSheet(
+        academic_id,
+        semester_id,
+        department_id,
+        SheetStatus.NOT_GRADED,
+      ),
+    ]);
+
     if (classes && classes.length > 0) {
       for await (const $class of classes) {
         const key = $class.id;
         const class_levels = data.get(key);
 
         //#region Get num_of_std by class
-        const num_of_std = await sheet_service.countSheets(
-          academic_id,
-          $class.id,
-          department_id,
-          semester_id,
-          SheetStatus.ALL,
-        );
+        const num_of_std =
+          count_sheets?.find((e) => e.class_id == $class.id)?.count ?? 0;
 
         //#endregion
 
@@ -103,12 +112,9 @@ export const generateCacheClassesResponse = async (
     //#region count not graded for class
     for await (const $class of class_response) {
       const length = $class.levels.length;
-      $class.levels[length - 1].count = await sheet_service.countSheetNotGraded(
-        academic_id,
-        semester_id,
-        department_id,
-        $class.id,
-      );
+      $class.levels[length - 1].count =
+        count_sheet_not_graded?.find((e) => e.class_id == $class.id)?.count ??
+        0;
     }
     //#endregion
 
@@ -206,7 +212,35 @@ export const generateCacheDepartmentsResponse = async (
 
     //#region Generate response
     const dept_id = department ? department.id : null;
-    const departments = await department_service.getDepartments(dept_id);
+
+    const [
+      departments,
+      department_not_grard,
+      amount_level_cache_department,
+      count_sheets,
+      count_sheet_not_graded,
+    ] = await Promise.all([
+      department_service.getDepartments(dept_id),
+      sheet_service.reportCountSheetAdmin(
+        academic_id,
+        semester_id,
+        null,
+        SheetStatus.NOT_GRADED,
+      ),
+      cache_class_service.amountLevelCacheDepartment(academic_id, semester_id),
+      sheet_service.reportCountSheetAdmin(
+        academic_id,
+        semester_id,
+        null,
+        SheetStatus.ALL,
+      ),
+      sheet_service.reportCountSheetAdmin(
+        academic_id,
+        semester_id,
+        null,
+        SheetStatus.NOT_GRADED,
+      ),
+    ]);
     if (departments && departments.length > 0) {
       for await (const department of departments) {
         const key = department.id;
@@ -219,20 +253,13 @@ export const generateCacheDepartmentsResponse = async (
         await generateDepartmentLocalLevelResponse(
           department_levels,
           new_levels,
-          academic_id,
-          semester_id,
           key,
-          cache_class_service,
-          sheet_service,
+          department_not_grard,
+          amount_level_cache_department,
         );
         //#region Get num_of_std by department
-        const num_of_std = await sheet_service.countSheetsByDepartment(
-          academic_id,
-          semester_id,
-          key,
-          SheetStatus.ALL,
-        );
-
+        const num_of_std =
+          count_sheets.find((e) => e.department_id == key).count ?? 0;
         //#endregion
 
         //#region Push data to department response
@@ -251,29 +278,19 @@ export const generateCacheDepartmentsResponse = async (
     for await (const department of department_response) {
       const length = department.levels.length;
       department.levels[length - 1].count =
-        await sheet_service.countSheetNotGraded(
-          academic_id,
-          semester_id,
-          department.id,
-        );
+        count_sheet_not_graded.find((e) => e.department_id == department.id)
+          ?.count ?? 0;
     }
     //#endregion
 
-    //#region sum not graded
-    sum_of_levels[sum_of_levels.length - 1].count =
-      await sheet_service.countSheetNotGraded(
-        academic_id,
-        semester_id,
-        dept_id,
-      );
-    //#endregion
+    //#region sum not graded and region sum_of_std
 
-    //#region sum_of_std
-    sum_of_std = await sheet_service.countSheetsReport(
-      academic_id,
-      semester_id,
-      dept_id,
-    );
+    [sum_of_levels[sum_of_levels.length - 1].count, sum_of_std] =
+      await Promise.all([
+        sheet_service.countSheetNotGraded(academic_id, semester_id, dept_id),
+        sheet_service.countSheetsReport(academic_id, semester_id, dept_id),
+      ]);
+
     //#endregion
 
     report_response.department = department
@@ -356,39 +373,33 @@ export const generateLocalLevelResponse = async (
 export const generateDepartmentLocalLevelResponse = async (
   levels: LevelResponse[],
   items: LevelResponse[],
-  academic_id: number,
-  semester_id: number,
   department_id: number,
-  cache_class_service: CacheClassService,
-  sheet_service: SheetService,
+  department_not_grard: ReportCountSheetResponse[],
+  cache_class_sheets: AmountLevelCacheDepartment[],
 ) => {
   if (levels) {
     for await (const i of items) {
       if (i.id == 0) {
-        const amount = await sheet_service.countSheetNotGraded(
-          academic_id,
-          semester_id,
-          department_id,
-        );
+        const amount =
+          department_not_grard.find((e) => e.department_id == department_id)
+            ?.count ?? null;
         i.count = amount ? parseInt(amount.toString()) : 0;
       } else {
-        const amount = await cache_class_service.amountLevelCacheDepartment(
-          academic_id,
-          semester_id,
-          department_id,
-          i.id as number,
-        );
+        const amount =
+          cache_class_sheets.find(
+            (e) =>
+              e.department_id == department_id &&
+              e.level_id == (i.id as number),
+          )?.amount ?? null;
         i.count = amount ? parseInt(amount.toString()) : 0;
       }
     }
   } else {
     for await (const i of items) {
       if (i.id == 0) {
-        const amount = await sheet_service.countSheetNotGraded(
-          academic_id,
-          semester_id,
-          department_id,
-        );
+        const amount =
+          department_not_grard.find((e) => e.department_id == department_id)
+            ?.count ?? null;
         i.count = amount ? parseInt(amount.toString()) : 0;
       } else {
         i.count = 0;

@@ -315,12 +315,6 @@ export class HistoryController {
             sheet.sort_order - 1,
           );
 
-          console.log(
-            'previous_sheet: ',
-            previous_sheet,
-            sheet.id,
-            sheet.sort_order,
-          );
           if (previous_sheet) {
             const previous_evaluations =
               await this._historyService.getEvaluationBySheetId(

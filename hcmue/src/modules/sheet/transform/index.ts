@@ -40,7 +40,11 @@ import { EvaluationCategory } from '../constants/enums/evaluation_catogory.enum'
 import { PDF_EXTENSION, ROLE_ALLOW_RETURN } from '../constants';
 import { SheetStatus } from '../constants/enums/status.enum';
 
-export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
+export const generateAdminSheets = async (
+  sheets: SheetEntity[] | null,
+  semester: SemesterEntity,
+  academic_year: AcademicYearEntity,
+) => {
   if (sheets && sheets.length > 0) {
     const payload: ClassSheetsResponse[] = [];
 
@@ -58,6 +62,10 @@ export const generateAdminSheets = async (sheets: SheetEntity[] | null) => {
         sum_of_adviser_marks: sheet.sum_of_adviser_marks,
         sum_of_department_marks: sheet.sum_of_department_marks,
         sum_of_personal_marks: sheet.sum_of_personal_marks,
+        semester: semester ? semester.name : null,
+        academic_year: academic_year
+          ? academic_year.start + ' -  ' + academic_year.end
+          : null,
         user: {
           fullname: sheet.user.fullname,
           std_code: sheet.user.std_code,

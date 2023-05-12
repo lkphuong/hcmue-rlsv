@@ -192,6 +192,37 @@ export class AdviserService {
     }
   }
 
+  async getAdviserByClass(
+    class_id: number,
+    manager?: EntityManager,
+  ): Promise<string | null> {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const result = await manager.query(
+        `
+        SELECT  advisers.fullname
+        FROM advisers 
+          JOIN adviser_classes ON advisers.id = adviser_classes.adviser_id
+        WHERE adviser_classes.class_id = ${class_id}
+        LIMIT 1
+      `,
+      );
+
+      return result[0]?.fullname || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AdviserService.getAdviserByClass()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async getOneAdviser(): Promise<AdviserEntity | null> {
     try {
       const conditions = this._adviserRepository

@@ -341,6 +341,13 @@ export class UserService {
           `class.id = user.class_id AND
            class.deleted = 0`,
         )
+        .leftJoinAndMapOne(
+          'user.role_user',
+          RoleUsersEntity,
+          'role_user',
+          `user.std_code = role_user.std_code AND 
+          role_user.deleted = 0`,
+        )
         .where('academic.id = :academic_id', { academic_id })
         .andWhere('semester.id = :semester_id', { semester_id })
         .andWhere('class.id = :class_id', { class_id });

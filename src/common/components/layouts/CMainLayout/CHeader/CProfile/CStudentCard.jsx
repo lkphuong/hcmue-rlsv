@@ -106,7 +106,7 @@ export const CStudentCard = ({ profile }) => {
 				{profile?.fullname}
 			</Typography>
 			<Typography color='#124874' fontWeight={500} fontSize={14} mb={1.5}>
-				{'Thông tin ngành học'}
+				{profile?.major?.name}
 			</Typography>
 			<Typography color='#124874' fontWeight={500} fontSize={14} mb={1.5}>
 				{profile?.classes[0]?.code}

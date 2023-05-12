@@ -6,6 +6,7 @@ import { StudentMarksContext } from '_modules/home/pages/StudentDetailPage';
 import TypeInput from './TypeInput';
 import TypeCheckbox from './TypeCheckbox';
 import TypeSelect from './TypeSelect';
+import TypeInputUnit from './TypeInputUnit';
 
 const Control = memo(({ data, id, titleId, available }) => {
 	//#region Data
@@ -58,20 +59,31 @@ const Control = memo(({ data, id, titleId, available }) => {
 
 	const renderControl = useMemo(() => {
 		return {
-			0: (
-				<TypeInput
-					available={available}
-					category={category}
-					currentMark={currentMark}
-					id={id}
-					initialMark={initialMark}
-					mark={mark}
-					max={to_mark}
-					min={from_mark}
-					titleId={titleId}
-					unit={unit}
-				/>
-			),
+			0:
+				category === 1 ? (
+					<TypeInput
+						available={available}
+						category={category}
+						currentMark={currentMark}
+						id={id}
+						initialMark={initialMark}
+						mark={mark}
+						min={from_mark}
+						max={to_mark}
+						titleId={titleId}
+						unit={unit}
+					/>
+				) : (
+					<TypeInputUnit
+						available={available}
+						currentMark={currentMark}
+						id={id}
+						initialMark={initialMark}
+						mark={mark}
+						titleId={titleId}
+						unit={unit}
+					/>
+				),
 			1: (
 				<TypeCheckbox
 					available={available}

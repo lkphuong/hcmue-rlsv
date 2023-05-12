@@ -15,24 +15,21 @@ export const CStudentCard = ({ profile }) => {
 			border='2px solid #124874'
 			sx={{ borderBottomWidth: 20 }}
 		>
-			<Stack
-				p={1}
-				direction='row'
-				alignItems='center'
-				bgcolor='#124874'
-				height={70}
-				gap={1.5}
-			>
+			<Stack p={1} direction='row' alignItems='center' bgcolor='#124874' height={70} gap={1}>
 				<img
 					src={logo}
 					alt='logo'
 					style={{
 						width: 'auto',
-						height: '40px',
+						height: '36px',
 						objectFit: 'cover',
 					}}
 				/>
-				<Box flex={1} textAlign='left'>
+				<Box
+					flex={1}
+					textAlign='justify'
+					sx={{ textJustify: 'inter-word', textAlignLast: 'center' }}
+				>
 					<Typography
 						textOverflow='ellipsis'
 						overflow='hidden'
@@ -40,8 +37,9 @@ export const CStudentCard = ({ profile }) => {
 						whiteSpace='nowrap'
 						fontSize={12}
 						color='white'
+						textTransform='uppercase'
 					>
-						Thông tin gì đó ở trên cùng
+						bộ giáo dục và đào tạo
 					</Typography>
 					<Typography
 						textOverflow='ellipsis'
@@ -50,8 +48,9 @@ export const CStudentCard = ({ profile }) => {
 						whiteSpace='nowrap'
 						fontSize={12}
 						color='white'
+						textTransform='uppercase'
 					>
-						Thông tin gì đó ở giữa
+						trường đại học sư phạm
 					</Typography>
 					<Typography
 						textOverflow='ellipsis'
@@ -60,8 +59,9 @@ export const CStudentCard = ({ profile }) => {
 						whiteSpace='nowrap'
 						fontSize={12}
 						color='white'
+						textTransform='uppercase'
 					>
-						Thông tin gì đó ở dưới cùng
+						thành phố hồ chí minh
 					</Typography>
 				</Box>
 			</Stack>
@@ -106,10 +106,10 @@ export const CStudentCard = ({ profile }) => {
 				{profile?.fullname}
 			</Typography>
 			<Typography color='#124874' fontWeight={500} fontSize={14} mb={1.5}>
-				{'Thông tin gì đó'}
+				{'Thông tin ngành học'}
 			</Typography>
 			<Typography color='#124874' fontWeight={500} fontSize={14} mb={1.5}>
-				{profile?.username}
+				{profile?.classes[0]?.code}
 			</Typography>
 		</Box>
 	);

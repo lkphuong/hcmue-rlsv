@@ -49,8 +49,16 @@ const TypeSelect = ({ initialMark, currentMark, options, required, available, ti
 								value={value}
 								onChange={onChangeSelect(onChange)}
 								renderOption={(props, option) => (
-									<Box component='li' {...props} key={option.id}>
-										{option.content} (<b>{option.mark} Điểm</b>)
+									<Box
+										component='li'
+										{...props}
+										key={option.id}
+										sx={{ display: 'block!important' }}
+									>
+										{option.content}&nbsp;
+										<b
+											style={{ whiteSpace: 'nowrap' }}
+										>{`(${option.mark} Điểm)`}</b>
 									</Box>
 								)}
 								error={!!error}

@@ -67,7 +67,7 @@ export const Row = ({ data, index, isHistory, saveFilter }) => {
 								<CEditIcon />
 							</IconButton>
 						</Tooltip>
-						<Tooltip title='Truy vết'>
+						<Tooltip title='Lịch sử chỉnh sửa'>
 							<IconButton onClick={onViewChanges}>
 								<CTimeIcon />
 							</IconButton>

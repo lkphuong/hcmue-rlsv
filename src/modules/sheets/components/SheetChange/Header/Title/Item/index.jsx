@@ -6,6 +6,7 @@ import { TableCell, TableRow, Typography } from '@mui/material';
 import { actions } from '_slices/mark.slice';
 
 import Control from './Control';
+import { useScroll } from '_hooks/';
 
 const Item = memo(({ data, headerId, titleId }) => {
 	//#region Data
@@ -26,10 +27,20 @@ const Item = memo(({ data, headerId, titleId }) => {
 		}
 	}, [marks.length]);
 
+	const [elRef, executeScroll] = useScroll();
+
+	useEffect(() => {
+		if (elRef.current && elRef.current?.id) {
+			const _id = elRef.current.id;
+			_id.includes(changes[0]) && executeScroll();
+		}
+	}, [data, changes]);
+
 	//#region Render
 	return (
 		<TableRow
-			id={changes.includes(Number(data.id)) && 'item-changed'}
+			ref={elRef}
+			id={changes.includes(Number(data.id)) ? `${data.id}-changed` : ''}
 			sx={{ backgroundColor: changes.includes(Number(data.id)) && '#FFDE2562!important' }}
 		>
 			<TableCell />

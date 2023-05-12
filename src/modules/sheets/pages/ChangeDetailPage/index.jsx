@@ -134,7 +134,6 @@ const ChangeDetailPage = () => {
 					</Box>
 
 					<Paper className='paper-wrapper'>
-						<a href='#something'>ASAS</a>
 						<Box p={1.5}>{data && <SheetChange data={data} />}</Box>
 					</Paper>
 				</NewContext.Provider>

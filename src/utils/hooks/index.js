@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useContext } from 'react';
+import { useCallback, useEffect, useContext, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import {
 	UNSAFE_NavigationContext as NavigationContext,
@@ -117,5 +117,14 @@ export const useFocusError = (isSubmitting, errors, setFocus) => {
 			setFocus(firstError);
 		}
 	}, [isSubmitting, errors, setFocus]);
+};
+//#endregion
+
+//#region Hook Element scroll into view
+export const useScroll = () => {
+	const elRef = useRef(null);
+	const executeScroll = () => elRef.current.scrollIntoView();
+
+	return [elRef, executeScroll];
 };
 //#endregion

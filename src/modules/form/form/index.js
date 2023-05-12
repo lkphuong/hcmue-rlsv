@@ -168,10 +168,10 @@ export const validationItem = yup.object({
 						mark: yup
 							.number('Giá trị điểm của tiêu chí phải là số.')
 							.typeError('Giá trị điểm của tiêu chí phải là số.')
-							.test('is-zero', 'Giá trị điểm phải khác 0.', (value) => {
-								if (value?.toString() === '0') return false;
-								return true;
-							})
+							// .test('is-zero', 'Giá trị điểm phải khác 0.', (value) => {
+							// 	if (value?.toString() === '0') return false;
+							// 	return true;
+							// })
 							.required('Vui lòng nhập điểm cho tiêu chí.'),
 					})
 				)

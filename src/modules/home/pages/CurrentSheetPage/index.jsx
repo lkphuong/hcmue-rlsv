@@ -72,13 +72,11 @@ const CurrentSheetPage = () => {
 	//#region Render
 	return listData?.length > 0 ? (
 		<Box>
-			<Box mb={1.5}>
-				<Paper className='paper-wrapper'>
-					<Typography fontSize={20} p={1.5} fontWeight={600}>
-						{`Phiếu chấm điểm rèn luyện ${listData[0]?.semester} - Năm học ${listData[0]?.academic_year}`}
-					</Typography>
-				</Paper>
-			</Box>
+			<Paper className='paper-wrapper'>
+				<Typography fontSize={20} p={1.5} fontWeight={600}>
+					{`Phiếu chấm điểm rèn luyện ${listData[0]?.semester} - Năm học ${listData[0]?.academic_year}`}
+				</Typography>
+			</Paper>
 
 			<Box mb={1.5}>
 				<MSearch onFilterChange={setFilter} />

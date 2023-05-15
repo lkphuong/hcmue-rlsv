@@ -1,9 +1,9 @@
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate, Outlet } from 'react-router-dom';
 
 import { styled, useTheme } from '@mui/material/styles';
-import { Alert, AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material';
+import { AppBar, Box, CssBaseline, Toolbar, useMediaQuery } from '@mui/material';
 
 import { drawerWidth } from '_store/constant';
 import { actions } from '_slices/menu.slice';
@@ -19,8 +19,7 @@ import { SuspenseLoading } from '_others/';
 
 import CHeader from './CHeader';
 import CSidebar from './CSidebar';
-import { getCurrentTimeline } from '_api/timeline.api';
-import dayjs from 'dayjs';
+import { CTimeline } from './CTimeline';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 	({ theme, open }) => ({
@@ -77,8 +76,6 @@ export const CMainLayout = () => {
 	const leftDrawerOpened = useSelector((state) => state.menu.opened);
 
 	const dispatch = useDispatch();
-
-	const [timeline, setTimeline] = useState({ show: false, start: null, end: null });
 	//#endregion
 
 	//#region Event
@@ -106,9 +103,6 @@ export const CMainLayout = () => {
 
 				dispatch(optionsAction.setDepartments(departments));
 			}
-
-			const timelineResponse = await getCurrentTimeline();
-			if (isSuccess(timelineResponse)) setTimeline({ show: true, ...timelineResponse?.data });
 		} catch (error) {
 			throw error;
 		}
@@ -146,18 +140,7 @@ export const CMainLayout = () => {
 			<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
 			<Main theme={theme} open={leftDrawerOpened} style={{ position: 'relative' }}>
-				{timeline.show && (
-					<Alert
-						severity='info'
-						onClose={() => setTimeline((prev) => ({ ...prev, show: false }))}
-						sx={{ fontSize: '14px', py: 0 }}
-					>
-						Thời gian chấm điểm rèn luyện —&nbsp;
-						<strong>{`Từ ngày ${dayjs(timeline.start).format(
-							'DD/MM/YYYY'
-						)} - đến ngày ${dayjs(timeline.end).format('DD/MM/YYYY')}`}</strong>
-					</Alert>
-				)}
+				<CTimeline />
 				<Suspense fallback={<SuspenseLoading />}>
 					<Outlet />
 				</Suspense>

@@ -160,8 +160,6 @@ const refresh = () => {
 };
 
 export const tryLogout = async () => {
-	await logout();
-
 	store.dispatch(actions.setProfile(null));
 	store.dispatch(actions.setToken(null));
 	store.dispatch(actionsForm.clearForm());
@@ -169,7 +167,9 @@ export const tryLogout = async () => {
 	window.localStorage.removeItem('access_token');
 	window.localStorage.removeItem('refresh_token');
 
-	return <Navigate to='/login' replace={true} />;
+	<Navigate to='/login' replace={true} />;
+
+	await logout();
 };
 
 export default apiInstance;

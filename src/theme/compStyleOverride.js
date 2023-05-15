@@ -415,6 +415,22 @@ export default function componentStyleOverrides(theme) {
 						color: '#ef7918!important',
 					},
 				},
+				standardInfo: {
+					color: '#03a9f4',
+					position: 'relative',
+					backgroundColor: 'unset',
+					'&:before': {
+						content: '""',
+						inset: 0,
+						position: 'absolute',
+						backgroundColor: 'currentColor',
+						opacity: '0.1',
+						borderRadius: 'inherit',
+					},
+					'.MuiAlert-message': {
+						color: theme.colors?.primaryMain,
+					},
+				},
 			},
 		},
 	};

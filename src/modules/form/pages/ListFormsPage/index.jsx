@@ -91,7 +91,15 @@ const ListFormsPage = () => {
 
 			<Box textAlign='right' my={2}>
 				<Link to={ROUTES.ADMIN.FORMS_CREATE}>
-					<Button variant='contained'>Thêm mới</Button>
+					<Button
+						variant='contained'
+						sx={{
+							transition: '200ms',
+							'&:hover': { transform: 'scale(1.1)' },
+						}}
+					>
+						Thêm mới
+					</Button>
 				</Link>
 			</Box>
 

@@ -28,6 +28,8 @@ const DepartmentReportPage = () => {
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const { role_id, department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
+	const [loading, setLoading] = useState(false);
+
 	const [noti, setNoti] = useState({ show: false, status: 'success', message: '' });
 
 	const [semesters, setSemesters] = useState([]);
@@ -52,12 +54,16 @@ const DepartmentReportPage = () => {
 
 	//#region Event
 	const getData = async () => {
+		setLoading(true);
+
 		const _filter = cleanObjValue(filter);
 
 		const res = await getReports(_filter);
 
 		if (isSuccess(res)) setData(res.data);
 		else if (isEmpty(res)) setData([]);
+
+		setLoading(false);
 	};
 
 	const getSemestersData = async () => {
@@ -149,6 +155,7 @@ const DepartmentReportPage = () => {
 				semesters={semesters}
 				academic_years={academic_years}
 				isDepartment={role_id === 5}
+				loading={loading}
 			/>
 
 			<Box my={1.5}>
@@ -188,7 +195,7 @@ const DepartmentReportPage = () => {
 				</Paper>
 			</Box>
 
-			<MDepartmentTable data={data} onSetCurrent={handleSetCurrent} />
+			<MDepartmentTable data={data} onSetCurrent={handleSetCurrent} loading={loading} />
 
 			<Snackbar open={noti.show} autoHideDuration={4000} onClose={onNotiClose}>
 				<Alert severity={noti.status}>{noti.message}</Alert>

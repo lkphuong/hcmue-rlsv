@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import {
+	Box,
 	Paper,
 	Table,
 	TableBody,
@@ -17,8 +18,9 @@ import { isSuccess, isEmpty } from '_func/';
 
 import MRow from './MRow';
 import MFooter from './MFooter';
+import { CLoadingSpinner } from '_others/';
 
-export const MDepartmentTable = ({ data, onSetCurrent }) => {
+export const MDepartmentTable = ({ data, onSetCurrent, loading }) => {
 	//#region Data
 	const [height, setHeight] = useState(0);
 
@@ -45,7 +47,7 @@ export const MDepartmentTable = ({ data, onSetCurrent }) => {
 	}, []);
 
 	//#region Render
-	return levels?.length > 0 && data?.departments?.length > 0 ? (
+	return levels?.length > 0 ? (
 		<TableContainer className='c-table'>
 			<Table stickyHeader className='statistic-table'>
 				<TableHead>
@@ -92,7 +94,16 @@ export const MDepartmentTable = ({ data, onSetCurrent }) => {
 					</TableRow>
 				</TableHead>
 				<TableBody>
-					{data?.departments?.length > 0 &&
+					{loading ? (
+						<TableRow>
+							<TableCell colSpan='100%' height={500}>
+								<Box display='flex' alignItems='center' justifyContent='center'>
+									<CLoadingSpinner />
+								</Box>
+							</TableCell>
+						</TableRow>
+					) : (
+						data?.departments?.length > 0 &&
 						data.departments.map((row, index) => (
 							<MRow
 								key={row.id}
@@ -100,7 +111,8 @@ export const MDepartmentTable = ({ data, onSetCurrent }) => {
 								data={row}
 								onSetCurrent={onSetCurrent}
 							/>
-						))}
+						))
+					)}
 				</TableBody>
 
 				<MFooter data={data} />

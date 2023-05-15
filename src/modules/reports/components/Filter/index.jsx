@@ -9,6 +9,7 @@ export const Filter = ({
 	semesters,
 	academic_years,
 	isDepartment,
+	loading,
 }) => {
 	//#region Data
 	//#endregion
@@ -32,7 +33,7 @@ export const Filter = ({
 											Khoa
 										</Typography>
 										<CAutocomplete
-											disabled={isDepartment}
+											disabled={loading || isDepartment}
 											value={filter.department_id}
 											onChange={handleChangeFilter('department_id')}
 											options={departments}
@@ -54,6 +55,7 @@ export const Filter = ({
 											Năm học
 										</Typography>
 										<CAutocomplete
+											disabled={loading}
 											disableClearable
 											value={filter.academic_id}
 											onChange={handleChangeFilter('academic_id')}
@@ -75,6 +77,7 @@ export const Filter = ({
 											Học kỳ
 										</Typography>
 										<CAutocomplete
+											disabled={loading}
 											disableClearable
 											value={filter.semester_id}
 											onChange={handleChangeFilter('semester_id')}

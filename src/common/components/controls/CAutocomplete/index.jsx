@@ -23,6 +23,7 @@ export const CAutocomplete = forwardRef(
 			error,
 			helperText,
 			// getOptionLabel,
+			disableTyping,
 			...props
 		},
 		ref
@@ -97,6 +98,7 @@ export const CAutocomplete = forwardRef(
 						error={error}
 						helperText={helperText}
 						inputRef={ref}
+						onKeyDown={disableTyping && ((e) => e.preventDefault())}
 					/>
 				)}
 				renderOption={renderOption}

@@ -12,7 +12,7 @@ const TypeInputUnit = ({ initialMark, currentMark, available, titleId, id, mark,
 	const options = useMemo(() => {
 		return Array(15)
 			.fill('')
-			.map((e, i) => ({ id: new Date() + i, content: mark * i }));
+			.map((e, i) => ({ id: new Date() + i, mark: mark * i }));
 	}, [mark]);
 	//#endregion
 
@@ -54,13 +54,13 @@ const TypeInputUnit = ({ initialMark, currentMark, available, titleId, id, mark,
 								ref={ref}
 								disableClearable
 								options={options}
-								display='content'
-								valueGet='content'
+								display='mark'
+								valueGet='mark'
 								value={value}
 								onChange={onChangeSelect(onChange)}
 								renderOption={(props, option) => (
 									<Box component='li' {...props} key={option.id}>
-										{option.content}&nbsp;Điểm
+										{option.mark}&nbsp;Điểm
 									</Box>
 								)}
 								error={!!error}

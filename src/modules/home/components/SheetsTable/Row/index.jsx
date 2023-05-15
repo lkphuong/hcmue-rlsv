@@ -32,7 +32,7 @@ const Row = memo(({ data, index, saveFilter }) => {
 	return (
 		<TableRow>
 			<TableCell align='center'>{index + 1}</TableCell>
-			<TableCell align='center'>{data.user.fullname}</TableCell>
+			<TableCell align='left'>{data.user.fullname}</TableCell>
 			<TableCell align='center'>{data.user.std_code}</TableCell>
 			<TableCell align='center'>{data.sum_of_personal_marks}</TableCell>
 			<TableCell align='center'>{data.sum_of_class_marks}</TableCell>

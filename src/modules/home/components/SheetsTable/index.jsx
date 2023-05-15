@@ -25,7 +25,7 @@ export const SheetsTable = ({ data, saveFilter, loading }) => {
 				<TableHead>
 					<TableRow>
 						<TableCell align='center'>STT</TableCell>
-						<TableCell align='center'>Họ và tên</TableCell>
+						<TableCell align='left'>Họ và tên</TableCell>
 						<TableCell align='center'>Mã số sinh viên</TableCell>
 						<TableCell align='center'>Điểm SV chấm</TableCell>
 						<TableCell align='center'>Điểm lớp chấm</TableCell>

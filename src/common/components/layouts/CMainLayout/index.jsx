@@ -138,7 +138,7 @@ export const CMainLayout = () => {
 					transition: leftDrawerOpened ? theme.transitions.create('width') : 'none',
 				}}
 			>
-				<Toolbar>
+				<Toolbar sx={{ justifyContent: 'space-between' }}>
 					<CHeader handleLeftDrawerToggle={handleLeftDrawerToggle} />
 				</Toolbar>
 			</AppBar>

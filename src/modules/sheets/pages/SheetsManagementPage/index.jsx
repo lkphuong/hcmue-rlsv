@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { Box, Typography } from '@mui/material';
+import { Box, Skeleton, Typography } from '@mui/material';
 
 import { CPagination } from '_controls/';
 
@@ -15,6 +15,8 @@ import { actions } from '_slices/currentInfo.slice';
 
 const SheetsManagementPage = () => {
 	//#region Data
+	const [loading, setLoading] = useState(false);
+
 	const [data, setData] = useState();
 
 	const listData = useMemo(() => data?.data?.department || [], [data]);
@@ -32,11 +34,15 @@ const SheetsManagementPage = () => {
 
 	//#region Event
 	const getData = async () => {
+		setLoading(true);
+
 		const _filter = cleanObjValue(filter);
 
 		const res = await getAdminSheets(_filter);
 
 		if (isSuccess(res)) setData(res.data);
+
+		setLoading(false);
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));
@@ -68,7 +74,21 @@ const SheetsManagementPage = () => {
 		<Box>
 			<MFilter filter={filter} onFilterChange={setFilter} />
 
-			{data && (
+			{loading ? (
+				<>
+					<Skeleton
+						animation='wave'
+						variant='rounded'
+						height={35}
+						sx={{
+							m: 'auto',
+							mb: 4,
+							maxWidth: 600,
+						}}
+					/>
+					<Skeleton animation='wave' variant='rounded' height={400} />
+				</>
+			) : (
 				<>
 					<Typography
 						fontWeight={700}

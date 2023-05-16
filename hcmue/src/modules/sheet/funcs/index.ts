@@ -630,72 +630,72 @@ export const generateUpdateStudentEvaluation = async (
             j.item_id == e.item_id && e.category === EvaluationCategory.STUDENT;
           });
           if (evaluation) {
-            //#region handle update file
-            if (j.files) {
-              if (!item.is_file) {
-                return new HandlerException(
-                  UNKNOW_EXIT_CODE.UNKNOW_ERROR,
-                  req.method,
-                  req.url,
-                  ErrorMessage.CANNOT_UPLOAD_FILE_ITEM_ERROR,
-                  HttpStatus.EXPECTATION_FAILED,
-                );
-              } else {
-                //#region Count files by evaluation_id and sheet_id
-                const count = await file_service.countFilesByItem(
-                  item.id,
-                  sheet.id,
-                  evaluation.ref,
-                );
-                //#region Maximun files
-                const valid = validateUpdateEvaluationMaxFile(
-                  j.personal_mark_level,
-                  count,
-                  j.files,
-                  item,
-                  req,
-                );
-                if (valid instanceof HttpException) return valid;
-                //#endregion
-                //#endregion
+            // //#region handle update file
+            // if (j.files) {
+            //   if (!item.is_file) {
+            //     return new HandlerException(
+            //       UNKNOW_EXIT_CODE.UNKNOW_ERROR,
+            //       req.method,
+            //       req.url,
+            //       ErrorMessage.CANNOT_UPLOAD_FILE_ITEM_ERROR,
+            //       HttpStatus.EXPECTATION_FAILED,
+            //     );
+            //   } else {
+            //     //#region Count files by evaluation_id and sheet_id
+            //     const count = await file_service.countFilesByItem(
+            //       item.id,
+            //       sheet.id,
+            //       evaluation.ref,
+            //     );
+            //     //#region Maximun files
+            //     const valid = validateUpdateEvaluationMaxFile(
+            //       j.personal_mark_level,
+            //       count,
+            //       j.files,
+            //       item,
+            //       req,
+            //     );
+            //     if (valid instanceof HttpException) return valid;
+            //     //#endregion
+            //     //#endregion
 
-                for (const _item of j.files) {
-                  const file = _files.find((e) => e.id == _item.id);
-                  if (file) {
-                    if (_item.deleted) {
-                      //#region Unlink file
-                      file.drafted = true;
-                      file.deleted_at = new Date();
-                      file.deleted_by = request_code;
-                      file.deleted = true;
+            //     for (const _item of j.files) {
+            //       const file = _files.find((e) => e.id == _item.id);
+            //       if (file) {
+            //         if (_item.deleted) {
+            //           //#region Unlink file
+            //           file.drafted = true;
+            //           file.deleted_at = new Date();
+            //           file.deleted_by = request_code;
+            //           file.deleted = true;
 
-                      files.push(file);
-                      //#endregion
-                    } else {
-                      //#region Update file
-                      file.sheet = sheet;
-                      file.parent_ref = evaluation.ref;
-                      file.item = item;
-                      file.drafted = false;
+            //           files.push(file);
+            //           //#endregion
+            //         } else {
+            //           //#region Update file
+            //           file.sheet = sheet;
+            //           file.parent_ref = evaluation.ref;
+            //           file.item = item;
+            //           file.drafted = false;
 
-                      files.push(file);
-                      //#endregion
-                    }
-                  } else {
-                    //#region throw HandlerException
-                    return new UnknownException(
-                      _item.id,
-                      DATABASE_EXIT_CODE.UNKNOW_VALUE,
-                      req.method,
-                      req.url,
-                      sprintf(ErrorMessage.FILE_NOT_FOUND_ERROR, _item.id),
-                    );
-                    //#endregion
-                  }
-                }
-              }
-            }
-            //#endregion
+            //           files.push(file);
+            //           //#endregion
+            //         }
+            //       } else {
+            //         //#region throw HandlerException
+            //         return new UnknownException(
+            //           _item.id,
+            //           DATABASE_EXIT_CODE.UNKNOW_VALUE,
+            //           req.method,
+            //           req.url,
+            //           sprintf(ErrorMessage.FILE_NOT_FOUND_ERROR, _item.id),
+            //         );
+            //         //#endregion
+            //       }
+            //     }
+            //   }
+            // }
+            // //#endregion
 
             if (j.deleted) {
               //#region Check deleted
@@ -753,16 +753,7 @@ export const generateUpdateStudentEvaluation = async (
                 for (const _item of j.files) {
                   const file = _files.find((e) => e.id == _item.id);
                   if (file) {
-                    if (_item.deleted) {
-                      //#region Unlink file
-                      file.drafted = true;
-                      file.deleted_at = new Date();
-                      file.deleted_by = request_code;
-                      file.drafted = true;
-
-                      files.push(file);
-                      //#endregion
-                    } else {
+                    if (!_item.deleted) {
                       //#region Update file
                       file.sheet = sheet;
                       file.parent_ref = evaluation.ref;
@@ -817,10 +808,10 @@ export const generateUpdateStudentEvaluation = async (
   //#region delete file
   await file_service.delete(sheet_id, query_runner.manager);
   //#endregion
-
   files = await file_service.bulkUpdate(files, query_runner.manager);
   if (files) {
     //#region delete
+
     await evaluation_service.deleteEvaluation(
       sheet_id,
       EvaluationCategory.STUDENT,
@@ -830,6 +821,7 @@ export const generateUpdateStudentEvaluation = async (
     //#region Update evaluation
     await query_runner.manager.insert(EvaluationEntity, evaluations);
     //#endregion
+
     return evaluations;
   } else {
     return new HandlerException(

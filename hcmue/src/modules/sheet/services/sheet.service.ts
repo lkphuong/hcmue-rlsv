@@ -489,8 +489,6 @@ export class SheetService {
   }
 
   async getSheetsReport(
-    offset: number,
-    length: number,
     academic_id: number,
     semester_id: number,
     department_id?: number,
@@ -563,15 +561,11 @@ export class SheetService {
         );
       }
 
-      if (length !== 0) {
-        conditions.take(length).skip(offset);
-      }
+      const results = await conditions.getRawMany<ReportResponse>();
 
-      const results = await conditions
-        .orderBy('department_id', 'ASC')
-        .addOrderBy('class_id', 'ASC')
-        .addOrderBy('user.std_code', 'ASC')
-        .getRawMany<ReportResponse>();
+      // .orderBy('department_id', 'ASC')
+      // .addOrderBy('class_id', 'ASC')
+      // .addOrderBy('user.std_code', 'ASC')
 
       return results || null;
     } catch (e) {

@@ -331,10 +331,11 @@ export const generateItemsArray = async (
             (e) => e.category == EvaluationCategory.STUDENT,
           );
           if (evaluation) {
-            const files = await file_service.getFileByEvaluation(
-              evaluation.ref,
-              evaluation.sheet.id,
-            );
+            // const files = null;
+            //  = await file_service.getFileByEvaluation(
+            //   evaluation.ref,
+            //   evaluation.sheet.id,
+            // );
             const result: EvaluationsResponse = {
               id: evaluation.id,
               item: {
@@ -347,17 +348,17 @@ export const generateItemsArray = async (
                     content: evaluation.option.content,
                   }
                 : null,
-              files:
-                files && files.length > 0
-                  ? files.map((file) => {
-                      return {
-                        id: file.id,
-                        url: '/' + file.url,
-                        name: file.originalName,
-                        type: file.extension == PDF_EXTENSION ? 0 : 1,
-                      };
-                    })
-                  : null,
+              // files:
+              //   files && files.length > 0
+              //     ? files.map((file) => {
+              //         return {
+              //           id: file.id,
+              //           url: '/' + file.url,
+              //           name: file.originalName,
+              //           type: file.extension == PDF_EXTENSION ? 0 : 1,
+              //         };
+              //       })
+              //     : null,
               personal_mark_level: evaluation.personal_mark_level,
               class_mark_level: evaluation.class_mark_level,
               adviser_mark_level: evaluation.adviser_mark_level,
@@ -380,10 +381,11 @@ export const generateItemsArray = async (
             (e) => e.category == EvaluationCategory.STUDENT,
           );
           if (student_evaluation) {
-            const files = await file_service.getFileByEvaluation(
-              student_evaluation.ref,
-              student_evaluation.sheet.id,
-            );
+            // const files = null;
+            //  = await file_service.getFileByEvaluation(
+            //   evaluation.ref,
+            //   evaluation.sheet.id,
+            // );
             const result: EvaluationsResponse = {
               id: class_evaluation.id,
               item: {
@@ -396,17 +398,17 @@ export const generateItemsArray = async (
                     content: class_evaluation.option.content,
                   }
                 : null,
-              files:
-                files && files.length > 0
-                  ? files.map((file) => {
-                      return {
-                        id: file.id,
-                        url: '/' + file.url,
-                        name: file.originalName,
-                        type: file.extension == PDF_EXTENSION ? 0 : 1,
-                      };
-                    })
-                  : null,
+              // files:
+              //   files && files.length > 0
+              //     ? files.map((file) => {
+              //         return {
+              //           id: file.id,
+              //           url: '/' + file.url,
+              //           name: file.originalName,
+              //           type: file.extension == PDF_EXTENSION ? 0 : 1,
+              //         };
+              //       })
+              //     : null,
               personal_mark_level: student_evaluation.personal_mark_level,
               class_mark_level: class_evaluation.class_mark_level,
               adviser_mark_level: class_evaluation.adviser_mark_level,
@@ -435,10 +437,11 @@ export const generateItemsArray = async (
           );
 
           if (student_evaluation) {
-            const files = await file_service.getFileByEvaluation(
-              student_evaluation.ref,
-              student_evaluation.sheet.id,
-            );
+            // const files = null;
+            //  = await file_service.getFileByEvaluation(
+            //   evaluation.ref,
+            //   evaluation.sheet.id,
+            // );
 
             const result: EvaluationsResponse = {
               id: department_evaluation.id,
@@ -452,17 +455,17 @@ export const generateItemsArray = async (
                     content: department_evaluation.option.content,
                   }
                 : null,
-              files:
-                files && files.length > 0
-                  ? files.map((file) => {
-                      return {
-                        id: file.id,
-                        url: '/' + file.url,
-                        name: file.originalName,
-                        type: file.extension == PDF_EXTENSION ? 0 : 1,
-                      };
-                    })
-                  : null,
+              // files:
+              //   files && files.length > 0
+              //     ? files.map((file) => {
+              //         return {
+              //           id: file.id,
+              //           url: '/' + file.url,
+              //           name: file.originalName,
+              //           type: file.extension == PDF_EXTENSION ? 0 : 1,
+              //         };
+              //       })
+              //     : null,
               personal_mark_level: student_evaluation.personal_mark_level ?? 0,
               class_mark_level: class_evaluation.class_mark_level ?? 0,
               adviser_mark_level: adviser_evaluation.adviser_mark_level ?? 0,
@@ -489,10 +492,11 @@ export const generateItemsArray = async (
             (e) => e.category == EvaluationCategory.STUDENT,
           );
           if (student_evaluation) {
-            const files = await file_service.getFileByEvaluation(
-              student_evaluation.ref,
-              student_evaluation.sheet.id,
-            );
+            // const files = null;
+            //  = await file_service.getFileByEvaluation(
+            //   evaluation.ref,
+            //   evaluation.sheet.id,
+            // );
             const result: EvaluationsResponse = {
               id: class_evaluation.id,
               item: {
@@ -505,17 +509,17 @@ export const generateItemsArray = async (
                     content: class_evaluation.option.content,
                   }
                 : null,
-              files:
-                files && files.length > 0
-                  ? files.map((file) => {
-                      return {
-                        id: file.id,
-                        url: '/' + file.url,
-                        name: file.originalName,
-                        type: file.extension == PDF_EXTENSION ? 0 : 1,
-                      };
-                    })
-                  : null,
+              // files:
+              //   files && files.length > 0
+              //     ? files.map((file) => {
+              //         return {
+              //           id: file.id,
+              //           url: '/' + file.url,
+              //           name: file.originalName,
+              //           type: file.extension == PDF_EXTENSION ? 0 : 1,
+              //         };
+              //       })
+              //     : null,
               personal_mark_level: student_evaluation.personal_mark_level,
               class_mark_level: class_evaluation.class_mark_level,
               adviser_mark_level: adviser_evaluation.adviser_mark_level,
@@ -542,6 +546,20 @@ export const generateEvaluationsArray = async (
     const ids = evaluations.map((i) => {
       return i.item.id;
     });
+
+    const evaluation_refs = evaluations
+      .filter((e) => e.category === EvaluationCategory.STUDENT)
+      .map(({ ref }) => ref);
+
+    const evaluation_sheet_ids = evaluations
+      .filter((e) => e.category === EvaluationCategory.STUDENT)
+      .map(({ sheet_id }) => Number(sheet_id));
+
+    const _files = await file_service.getFileByEvaluation(
+      evaluation_refs,
+      evaluation_sheet_ids,
+    );
+
     const results = removeDuplicates(ids);
     switch (role) {
       case RoleCode.ADMIN:
@@ -569,9 +587,10 @@ export const generateEvaluationsArray = async (
           let files: FileEntity[] | null = null;
 
           if (student_evaluation) {
-            files = await file_service.getFileByEvaluation(
-              student_evaluation.ref,
-              student_evaluation.sheet.id,
+            files = _files.filter(
+              (e) =>
+                e.sheet_id == student_evaluation.sheet_id &&
+                e.parent_ref === student_evaluation.ref,
             );
           }
 
@@ -632,12 +651,13 @@ export const generateEvaluationsArray = async (
 
           const evaluation = evaluations.find((e) => e.item.id == i);
 
-          let files: FileEntity[] | null = null;
+          const files: FileEntity[] | null = null;
           if (student_evaluation) {
-            files = await file_service.getFileByEvaluation(
-              student_evaluation.ref,
-              student_evaluation.sheet.id,
-            );
+            const files = null;
+            //  = await file_service.getFileByEvaluation(
+            //   evaluation.ref,
+            //   evaluation.sheet.id,
+            // );
           }
           if (evaluation) {
             const result: EvaluationsResponse = {
@@ -694,12 +714,13 @@ export const generateEvaluationsArray = async (
 
           const evaluation = evaluations.find((e) => e.item.id == i);
 
-          let files: FileEntity[] | null = null;
+          const files: FileEntity[] | null = null;
           if (student_evaluation) {
-            files = await file_service.getFileByEvaluation(
-              student_evaluation.ref,
-              student_evaluation.sheet.id,
-            );
+            const files = null;
+            //  = await file_service.getFileByEvaluation(
+            //   evaluation.ref,
+            //   evaluation.sheet.id,
+            // );
           }
 
           if (evaluation) {
@@ -756,12 +777,13 @@ export const generateEvaluationsArray = async (
 
           const evaluation = evaluations.find((e) => e.item.id == i);
 
-          let files: FileEntity[] | null = null;
+          const files: FileEntity[] | null = null;
           if (student_evaluation) {
-            files = await file_service.getFileByEvaluation(
-              student_evaluation.ref,
-              student_evaluation.sheet.id,
-            );
+            const files = null;
+            //  = await file_service.getFileByEvaluation(
+            //   evaluation.ref,
+            //   evaluation.sheet.id,
+            // );
           }
 
           if (evaluation) {

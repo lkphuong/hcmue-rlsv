@@ -85,14 +85,14 @@ export class FilesService {
   }
 
   async getFileByEvaluation(
-    ref: string,
-    sheet_id: number,
+    ref: string[],
+    sheet_id: number[],
   ): Promise<FileEntity[] | null> {
     try {
       const conditions = this._fileRepository
         .createQueryBuilder('file')
-        .where('file.parent_ref = :ref', { ref })
-        .andWhere('file.sheet_id = :sheet_id', { sheet_id })
+        .where('file.parent_ref IN (:...ref)', { ref })
+        .andWhere('file.sheet_id IN (:...sheet_id)', { sheet_id })
         .andWhere('file.deleted = :deleted', { deleted: false });
 
       const files = await conditions.getMany();
@@ -155,10 +155,10 @@ export class FilesService {
     manager?: EntityManager,
   ): Promise<FileEntity[] | null> {
     try {
-      if (manager) {
+      if (!manager) {
         manager = this._dataSource.manager;
       }
-      await manager.insert(FileEntity, files);
+      await manager.save(FileEntity, files);
 
       return files || null;
     } catch (e) {

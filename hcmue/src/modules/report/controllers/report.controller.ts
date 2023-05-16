@@ -1253,13 +1253,6 @@ export class ReportController {
             join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A),
           );
 
-          console.log(
-            'file: ',
-            fs.existsSync(
-              join(process.cwd(), PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A),
-            ),
-          );
-
           res.set({
             'Content-Type': 'application/json',
             'Content-Disposition': `attachment; filename=report.xlsx`,

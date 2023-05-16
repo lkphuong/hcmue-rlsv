@@ -42,7 +42,6 @@ import {
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { PATH_FILE_EXCEL } from '../constants/enums/template.enum';
-import { LENGTH } from '../constants';
 import { UserService } from '../../user/services/user.service';
 import { getTime } from '../utils';
 import { AdviserService } from '../../adviser/services/adviser/adviser.service';
@@ -509,12 +508,8 @@ export const exportExcelTemplateClass = async (
 ) => {
   try {
     const { academic_id, class_id, department_id, semester_id } = params;
-    const take = 0,
-      offset = 0;
 
     const sheets = await sheet_service.getSheetsReport(
-      offset,
-      take,
       academic_id,
       semester_id,
       department_id,
@@ -629,11 +624,7 @@ export const exportExcelTemplateDepartment = async (
 ) => {
   try {
     const { academic_id, class_id, department_id, semester_id } = params;
-    const offset = 0,
-      take = 0;
     const sheets = await sheet_service.getSheetsReport(
-      offset,
-      take,
       academic_id,
       semester_id,
       department_id,
@@ -753,13 +744,6 @@ export const exportExcelTemplateAdmin = async (
 ) => {
   try {
     const { academic_id, semester_id, department_id } = params;
-
-    const count_sheets = await sheet_service.countSheetsReport(
-      academic_id,
-      semester_id,
-      department_id,
-    );
-
     const payload = await generateCacheDepartmentsResponse(
       academic_year,
       department,
@@ -772,7 +756,6 @@ export const exportExcelTemplateAdmin = async (
       sheet_service,
       cache_class_service,
     );
-
     if (payload) {
       const workbook = new exceljs.Workbook();
       await workbook.xlsx.readFile(PATH_FILE_EXCEL.TEMPLATE_3A);
@@ -784,7 +767,6 @@ export const exportExcelTemplateAdmin = async (
       //#region Insert total student
       worksheet.getCell('E13').value = sum_of_std_in_departments + ' SV';
       //#endregion
-
       for (let i = ranking_length - 1; i >= 0; i--) {
         const { name, count } = payload.sum_of_levels[i];
         const rowValues = [];
@@ -807,43 +789,39 @@ export const exportExcelTemplateAdmin = async (
         //#endregion
       }
       //#endregion
-      const pages = Math.ceil(count_sheets / LENGTH);
-      for (let i = 0; i < pages; i++) {
-        const sheets = await sheet_service.getSheetsReport(
-          i * LENGTH,
-          LENGTH,
-          academic_id,
-          semester_id,
-          department_id,
-        );
-
-        const rows = [];
-        const lenth = sheets.length;
-        for (let i = 0; i < lenth; i++) {
-          const row_values = [];
-          row_values[2] = i + 1;
-          row_values[3] = sheets[i].std_code;
-          row_values[4] = sheets[i].fullname;
-          row_values[5] = sheets[i].birthday;
-          row_values[6] = sheets[i].class;
-          row_values[7] = sheets[i].department;
-          row_values[8] = sheets[i].sum_of_department_marks;
-          row_values[9] =
-            sheets[i]?.graded == 0
-              ? 'Không xếp loại'
-              : sheets[i]?.level
-              ? sheets[i]?.level
-              : '';
-          row_values[10] = sheets[i].flag == 2 ? sheets[i].status : '';
-          rows.push(row_values);
-        }
-
-        worksheet.insertRows(12, rows, 'i');
-
-        await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A);
-
-        return true;
+      const sheets = await sheet_service.getSheetsReport(
+        academic_id,
+        semester_id,
+        department_id,
+      );
+      const rows = [];
+      const lenth = sheets.length;
+      for (let i = 0; i < lenth; i++) {
+        const row_values = [];
+        row_values[2] = i + 1;
+        row_values[3] = sheets[i].std_code;
+        row_values[4] = sheets[i].fullname;
+        row_values[5] = sheets[i].birthday;
+        row_values[6] = sheets[i].class;
+        row_values[7] = sheets[i].department;
+        row_values[8] = sheets[i].sum_of_department_marks;
+        row_values[9] =
+          sheets[i]?.graded == 0
+            ? 'Không xếp loại'
+            : sheets[i]?.level
+            ? sheets[i]?.level
+            : '';
+        row_values[10] = sheets[i].flag == 2 ? sheets[i].status : '';
+        rows.push(row_values);
       }
+
+      console.log('sheets: ', sheets.length);
+
+      worksheet.insertRows(12, rows, 'i');
+
+      await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A);
+
+      return true;
     } else {
       //#region throw HandlerException
       throw new HandlerException(

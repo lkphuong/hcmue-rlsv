@@ -55,7 +55,7 @@ export class EvaluationEntity extends RootEntity {
     name: 'sheet_id',
     nullable: true,
   })
-  sheet_id: string;
+  sheet_id: number;
 
   @Column('varchar', {
     name: 'ref',

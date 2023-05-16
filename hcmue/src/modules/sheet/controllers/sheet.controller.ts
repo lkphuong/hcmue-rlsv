@@ -354,6 +354,7 @@ export class SheetController {
       const evaluations = await this._evaluationService.getEvaluationBySheetId(
         id,
       );
+
       //#endregion
 
       if (evaluations && evaluations.length > 0) {
@@ -1839,13 +1840,7 @@ export class SheetController {
   ): Promise<HttpResponse<SheetDetailsResponse> | HttpException> {
     try {
       console.log('----------------------------------------------------------');
-      console.log(
-        req.method +
-          ' - ' +
-          req.url +
-          ': ' +
-          JSON.stringify({ sheet_id: id, params }),
-      );
+      console.log(req.method + ' - ' + req.url);
 
       this._logger.writeLog(
         Levels.LOG,

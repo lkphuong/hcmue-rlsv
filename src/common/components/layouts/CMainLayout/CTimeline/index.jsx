@@ -29,7 +29,7 @@ export const CTimeline = () => {
 		timeline.show && (
 			<Alert
 				severity='info'
-				onClose={() => setTimeline((prev) => ({ ...prev, show: false }))}
+				// onClose={() => setTimeline((prev) => ({ ...prev, show: false }))}
 				sx={{ fontSize: '14px', py: 0, mb: 1 }}
 			>
 				Thời gian chấm điểm rèn luyện —&nbsp;

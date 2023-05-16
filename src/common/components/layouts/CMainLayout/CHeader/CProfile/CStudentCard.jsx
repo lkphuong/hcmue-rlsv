@@ -77,7 +77,13 @@ export const CStudentCard = ({ profile }) => {
 			</Typography>
 			<Box position='relative' sx={{ aspectRatio: '3/4' }} maxHeight={130} margin='auto'>
 				<img
-					src={profile?.avatar || ''}
+					src={
+						profile?.avatar
+							? profile.avatar
+									.replace('file/d/', 'uc?export=view&id=')
+									.replace('/view?usp=drivesdk', '')
+							: ''
+					}
 					onError={({ currentTarget }) => {
 						currentTarget.onerror = null; // Prevent looping
 						currentTarget.src = avatarPlaceholder;

@@ -8,6 +8,8 @@ const initialState = {
 	semester: null,
 	department: null,
 	classData: null,
+	academic_id: null,
+	semester_id: null,
 };
 
 export const currentInfoSlice = createSlice({
@@ -19,6 +21,8 @@ export const currentInfoSlice = createSlice({
 			state.semester = action.payload?.semester;
 			state.department = action.payload?.department;
 			state.classData = action.payload?.classData;
+			state.academic_id = action.payload?.academic_id;
+			state.semester_id = action.payload?.semester_id;
 		},
 	},
 });
@@ -29,7 +33,7 @@ const persistConfig = {
 	key: 'currentInfo',
 	version: 1,
 	storage,
-	whitelist: ['academic', 'semester', 'department', 'classData'],
+	whitelist: ['academic', 'semester', 'department', 'classData', 'academic_id', 'semester_id'],
 };
 
 export default persistReducer(persistConfig, currentInfoSlice.reducer);

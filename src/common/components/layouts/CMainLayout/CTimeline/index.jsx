@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 import dayjs from 'dayjs';
 
@@ -7,16 +8,27 @@ import { Alert } from '@mui/material';
 import { getCurrentTimeline } from '_api/timeline.api';
 
 import { isSuccess } from '_func/';
+import { actions } from '_slices/currentInfo.slice';
 
 export const CTimeline = () => {
 	//#region Data
 	const [timeline, setTimeline] = useState({ show: false, start: null, end: null });
+
+	const dispatch = useDispatch();
 	//#endregion
 
 	//#region Event
 	const getTimeline = async () => {
 		const res = await getCurrentTimeline();
-		if (isSuccess(res)) setTimeline({ show: true, ...res?.data });
+		if (isSuccess(res)) {
+			setTimeline({ show: true, ...res?.data });
+			dispatch(
+				actions.setInfo({
+					semester_id: Number(res?.data?.semester_id),
+					academic_id: Number(res?.data?.academic_id),
+				})
+			);
+		}
 	};
 	//#endregion
 

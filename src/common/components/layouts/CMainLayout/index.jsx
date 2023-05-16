@@ -141,6 +141,7 @@ export const CMainLayout = () => {
 
 			<Main theme={theme} open={leftDrawerOpened} style={{ position: 'relative' }}>
 				<CTimeline />
+
 				<Suspense fallback={<SuspenseLoading />}>
 					<Outlet />
 				</Suspense>

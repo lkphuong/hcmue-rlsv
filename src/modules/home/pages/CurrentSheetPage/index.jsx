@@ -16,7 +16,7 @@ import { CPagination } from '_controls/';
 
 const CurrentSheetPage = () => {
 	//#region Data
-	const { academic, semester } = useSelector((state) => state.currentInfo, shallowEqual);
+	const { academic_id, semester_id } = useSelector((state) => state.currentInfo, shallowEqual);
 	const { department_id, class_id } = useSelector((state) => state.auth.profile, shallowEqual);
 	const filters = useSelector((state) => state.filter.filters, shallowEqual);
 
@@ -30,8 +30,8 @@ const CurrentSheetPage = () => {
 			page: 1,
 			pages: 0,
 			department_id,
-			academic_id: Number(academic?.id),
-			semester_id: Number(semester?.id),
+			academic_id: academic_id,
+			semester_id: semester_id,
 			input: '',
 		}
 	);
@@ -59,7 +59,7 @@ const CurrentSheetPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		if (filter?.academic_id && filter?.semester_id) getData();
+		getData();
 	}, [filter]);
 
 	useEffect(() => {

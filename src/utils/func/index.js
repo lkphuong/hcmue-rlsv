@@ -219,8 +219,9 @@ export const validateMark = (item, value) => {
 		} else if (item?.category === 2) {
 			if (value % item?.mark !== 0 || value * item?.mark < 0) return false;
 		}
-	} else if (item?.control === 2 && item?.required && !value) {
-		return false;
+	} else if (item?.control === 2 && item?.required) {
+		if (value === 0 && item?.content?.includes('học tập')) return true;
+		else if (!value) return false;
 	}
 
 	return true;

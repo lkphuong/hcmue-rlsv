@@ -141,6 +141,7 @@ export const generateImportUsers = async (
       major_service,
       status_service,
     );
+
     //#endregion
 
     //#region read file
@@ -237,7 +238,6 @@ export const generateImportUsers = async (
     }
 
     //#endregion
-
     //#region Create department
     let new_cache_department: DepartmentResponse[] = [
       ...data_query.departments,
@@ -366,6 +366,7 @@ export const generateImportUsers = async (
       user_service,
       query_runner,
     );
+
     if (!result) {
       throw new HandlerException(
         DATABASE_EXIT_CODE.OPERATOR_ERROR,
@@ -488,11 +489,13 @@ export const generateData = async (
   major_service: MajorService,
   status_service: StatusService,
 ) => {
-  const $class = await class_service.getClasses();
-  const departments = await department_service.getDepartments();
-  const k = await k_service.getAll();
-  const majors = await major_service.getMajors();
-  const statuses = await status_service.getStatuses();
+  const [$class, departments, k, majors, statuses] = await Promise.all([
+    class_service.getClasses(),
+    department_service.getDepartments(),
+    k_service.getAll(),
+    major_service.getMajors(),
+    status_service.getStatuses(),
+  ]);
 
   return {
     classes: $class,
@@ -670,9 +673,10 @@ export const generateCreateUser = async (
       ? departments.find((department) => department.name == i[6]).id
       : null;
     item.major_id = i[7] ? majors.find((major) => major.name == i[7]).id : null;
+    item.avatar = i[10] ?? null;
     add_users.push(item);
     counter++;
-    if (counter % 1000 == 0) {
+    if (counter % 1000 === 0) {
       const result = await user_service.bulkAdd(
         add_users,
         query_runner.manager,

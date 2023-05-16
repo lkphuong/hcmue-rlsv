@@ -628,15 +628,12 @@ export class UserService {
 
   async getOneUser(): Promise<UserEntity | null> {
     try {
-      const conditions = this._userRepository
-        .createQueryBuilder('user')
-        .where('user.deleted = :deleted', { deleted: false })
-        .andWhere('user.active = :active', { active: true })
-        .orderBy('user.created_at', 'DESC');
+      const result = await this._dataSource.manager.query(`
+      SELECT * 
+      FROM users 
+      WHERE users.delete_flag = false AND users.active = true ORDER BY users.id DESC LIMIT 1`);
 
-      const user = await conditions.getOne();
-
-      return user || null;
+      return (result[0] as UserEntity) || null;
     } catch (e) {
       this._logger.writeLog(
         Levels.ERROR,
@@ -654,7 +651,24 @@ export class UserService {
         manager = this._dataSource.manager;
       }
 
-      const results = await manager.insert(UserEntity, users);
+      // Use the /*+ APPEND*/ hint in the raw SQL query
+      // const query = `
+      // INSERT /*+ APPEND*/ INTO your_table_name (name)
+      // VALUES ${data.map((item) => `('${item.name}')`).join(',')}`;
+
+      const query = `
+      INSERT /*+ APPEND*/ INTO users (std_code, password, status_id, fullname, email, birthday, class_id, department_id, major_id, academic_id, semester_id, avatar)
+      VALUES ${users
+        .map(
+          (
+            item,
+          ) => `('${item.std_code}', '${item.password}', ${item.status_id}, "${item.fullname}", '${item.email}', '${item.birthday}', ${item.class_id},
+        ${item.department_id}, ${item.major_id}, ${item.academic_id}, ${item.semester_id}, '${item.avatar}')`,
+        )
+        .join(',')}
+    `;
+
+      const results = await manager.query(query);
 
       return results || null;
     } catch (e) {

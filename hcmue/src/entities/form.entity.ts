@@ -53,6 +53,18 @@ export class FormEntity extends RootEntity {
   })
   end: Date;
 
+  @Column('bigint', {
+    name: 'semester_id',
+    nullable: false,
+  })
+  semester_id: number;
+
+  @Column('bigint', {
+    name: 'academic_id',
+    nullable: false,
+  })
+  academic_id: number;
+
   // Trạng thái của biểu mẫu (0: drafted, 1: published, 2: in-progress, 3: done)
   // 0: Allow delete & update the form
   // 1: Allow ub-publish the form

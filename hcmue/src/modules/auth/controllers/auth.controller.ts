@@ -724,9 +724,11 @@ export class AuthController {
             const $class = session.class
               ? await this._classService.getClassById(session.class)
               : null;
-            const major = await this._majorService.getMajorByUser(
-              session.user_id,
-            );
+
+            const [major, user] = await Promise.all([
+              this._majorService.getMajorByUser(session.user_id),
+              this._userService.getUserByCode(session.username),
+            ]);
 
             //#region Generate response
             return returnObjects<ProfileResponse>({
@@ -735,6 +737,7 @@ export class AuthController {
               fullname: session.fullname,
               class_id: [session.class],
               major: major,
+              avatar: user?.avatar,
               classes: $class
                 ? [
                     {

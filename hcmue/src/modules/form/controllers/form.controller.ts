@@ -155,6 +155,8 @@ export class FormController {
         return returnObjects({
           start: convertString2Date(form.start.toString()),
           end: convertString2Date(form.end.toString()),
+          semester_id: form.semester_id,
+          academic_id: form.academic_id
         });
       } else {
         //#region throw HandlerException

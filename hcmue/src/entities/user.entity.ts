@@ -44,6 +44,13 @@ export class UserEntity extends RootEntity {
   email: string;
 
   @Column('varchar', {
+    name: 'avatar',
+    nullable: true,
+    length: 500,
+  })
+  avatar: string;
+
+  @Column('varchar', {
     name: 'birthday',
     nullable: true,
     length: 20,

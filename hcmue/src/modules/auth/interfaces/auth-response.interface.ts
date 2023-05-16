@@ -7,6 +7,7 @@ export interface ProfileResponse {
   role?: number;
   classes?: ClassResponse[];
   major?: string;
+  avatar?: string;
 }
 
 export interface ClassResponse {

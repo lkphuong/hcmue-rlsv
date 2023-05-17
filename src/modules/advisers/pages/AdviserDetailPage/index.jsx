@@ -71,8 +71,6 @@ const AdviserDetailPage = () => {
 			}
 		} catch (error) {
 			throw error;
-		} finally {
-			setLoading(false);
 		}
 	}, [sheet_id]);
 
@@ -85,6 +83,7 @@ const AdviserDetailPage = () => {
 			setItemsMark(() => {
 				return res.data.map((e) => ({ ...e, id: Number(e.id) }));
 			});
+		setLoading(false);
 	}, [data?.id]);
 
 	const handlePrint = useReactToPrint({

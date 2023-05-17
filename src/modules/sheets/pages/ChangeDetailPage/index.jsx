@@ -56,8 +56,6 @@ const ChangeDetailPage = () => {
 			}
 		} catch (error) {
 			throw error;
-		} finally {
-			setLoading(false);
 		}
 	}, [change_id]);
 
@@ -70,6 +68,7 @@ const ChangeDetailPage = () => {
 			setItemsMark(() => {
 				return res.data.map((e) => ({ ...e, id: Number(e.id) }));
 			});
+		setLoading(false);
 	}, [data?.id]);
 	//#endregion
 

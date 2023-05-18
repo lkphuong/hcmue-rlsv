@@ -59,8 +59,8 @@ const CurrentSheetPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		getData();
-	}, [filter]);
+		if (filter?.department_id && filter?.semester_id && filter?.academic_id) getData();
+	}, [filter, department_id, semester_id, academic_id]);
 
 	useEffect(() => {
 		setPaginate({

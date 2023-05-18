@@ -9,6 +9,7 @@ import { store } from '_store';
 
 import { actions } from '_slices/auth.slice';
 import { actions as actionsForm } from '_slices/form.slice';
+import { actions as actionsFilter } from '_slices/filter.slice';
 
 import { updateAbility } from '_func/permissions';
 import { isSuccess } from '_func/';
@@ -162,6 +163,7 @@ const refresh = () => {
 export const tryLogout = async () => {
 	store.dispatch(actions.setProfile(null));
 	store.dispatch(actions.setToken(null));
+	store.dispatch(actionsFilter.setFilter(null));
 	store.dispatch(actionsForm.clearForm());
 
 	window.localStorage.removeItem('access_token');

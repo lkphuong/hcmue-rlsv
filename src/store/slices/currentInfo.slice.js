@@ -21,6 +21,8 @@ export const currentInfoSlice = createSlice({
 			state.semester = action.payload?.semester;
 			state.department = action.payload?.department;
 			state.classData = action.payload?.classData;
+		},
+		setTimeId: (state, action) => {
 			state.academic_id = action.payload?.academic_id;
 			state.semester_id = action.payload?.semester_id;
 		},

@@ -23,7 +23,7 @@ export const CTimeline = () => {
 		if (isSuccess(res)) {
 			setTimeline({ show: true, ...res?.data });
 			dispatch(
-				actions.setInfo({
+				actions.setTimeId({
 					semester_id: Number(res?.data?.semester_id),
 					academic_id: Number(res?.data?.academic_id),
 				})

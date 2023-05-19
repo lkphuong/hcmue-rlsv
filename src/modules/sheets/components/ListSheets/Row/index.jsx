@@ -61,19 +61,17 @@ export const Row = ({ data, index, isHistory, saveFilter }) => {
 						</IconButton>
 					</Tooltip>
 				) : (
-					<>
-						<Tooltip title='Điều chỉnh'>
-							<IconButton onClick={onClick}>
-								<CEditIcon />
-							</IconButton>
-						</Tooltip>
-						<Tooltip title='Lịch sử chỉnh sửa'>
-							<IconButton onClick={onViewChanges}>
-								<CTimeIcon />
-							</IconButton>
-						</Tooltip>
-					</>
+					<Tooltip title='Điều chỉnh'>
+						<IconButton onClick={onClick}>
+							<CEditIcon />
+						</IconButton>
+					</Tooltip>
 				)}
+				<Tooltip title='Lịch sử chỉnh sửa'>
+					<IconButton onClick={onViewChanges}>
+						<CTimeIcon />
+					</IconButton>
+				</Tooltip>
 			</TableCell>
 		</TableRow>
 	);

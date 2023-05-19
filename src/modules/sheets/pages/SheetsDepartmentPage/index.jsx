@@ -74,7 +74,9 @@ const SheetsDepartmentPage = () => {
 
 		if (isSuccess(res)) {
 			setClasses(res.data);
-			setFilter((prev) => ({ ...prev, class_id: Number(res.data[0]?.id) }));
+
+			!filter?.class_id &&
+				setFilter((prev) => ({ ...prev, class_id: Number(res.data[0]?.id) }));
 		}
 	};
 
@@ -84,8 +86,8 @@ const SheetsDepartmentPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		if (department_id) getClassesData();
-	}, [department_id]);
+		if (department_id && classes?.length === 0) getClassesData();
+	}, [department_id, classes]);
 
 	useEffect(() => {
 		if (filter?.class_id) getData();

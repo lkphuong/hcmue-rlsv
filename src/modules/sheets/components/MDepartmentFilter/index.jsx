@@ -10,7 +10,7 @@ export const MDepartmentFilter = ({ filter, onFilterChange, classes }) => {
 
 	//#region Event
 	const onSelectChange = (key) => (value) =>
-		onFilterChange((prev) => ({ ...prev, [key]: value?.id, page: 1, pages: 0 }));
+		onFilterChange((prev) => ({ ...prev, [key]: Number(value?.id), page: 1, pages: 0 }));
 	//#endregion
 
 	//#region Render

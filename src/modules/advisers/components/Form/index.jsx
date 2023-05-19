@@ -172,7 +172,12 @@ export const Form = ({ data }) => {
 
 			<Box textAlign='center' mt={3}>
 				{!data?.is_return && (
-					<Button variant='contained' sx={{ mr: 1, mb: 2 }} onClick={onRatingBad}>
+					<Button
+						disabled={isSubmitting || !available}
+						variant='contained'
+						sx={{ mr: 1, mb: 2 }}
+						onClick={onRatingBad}
+					>
 						Rèn luyện kém
 					</Button>
 				)}
@@ -192,7 +197,7 @@ export const Form = ({ data }) => {
 						onClick={handleDeny}
 						color='error'
 						sx={{ mr: 1, mb: 2 }}
-						disabled={!available || isSubmitting}
+						disabled={isSubmitting || !available}
 					>
 						Không xếp loại
 					</Button>

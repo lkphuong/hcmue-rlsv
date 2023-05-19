@@ -19,7 +19,13 @@ export const CSearch = ({ onFilterChange, defaultInput, placeholder }) => {
 	//#region Render
 	return (
 		<Stack spacing={1.5} alignItems='center' direction='row'>
-			<CInput isSearch value={currentInput} onChange={onChange} placeholder={placeholder} />
+			<CInput
+				isSearch
+				value={currentInput}
+				onChange={onChange}
+				placeholder={placeholder}
+				onEnter={updateFilter}
+			/>
 
 			<Button variant='contained' onClick={updateFilter}>
 				Tìm kiếm

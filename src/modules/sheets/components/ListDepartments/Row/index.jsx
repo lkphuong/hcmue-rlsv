@@ -1,12 +1,17 @@
 import { useMemo } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 
 import { Chip, TableCell, TableRow, Link } from '@mui/material';
 
-import { Link as RouterLink } from 'react-router-dom';
+import { actions as filterActions } from '_slices/filter.slice';
 
 export const Row = ({ data, index, onSetCurrent }) => {
+	const dispatch = useDispatch();
+
 	const onClick = () => {
 		onSetCurrent({ department: data });
+		dispatch(filterActions.setFilter(null));
 	};
 
 	const status = useMemo(

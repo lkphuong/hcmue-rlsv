@@ -20,6 +20,7 @@ export const CInput = forwardRef(
 			isPassword,
 			isSearch,
 			inputRef,
+			onEnter,
 			...props
 		},
 		ref
@@ -43,6 +44,9 @@ export const CInput = forwardRef(
 				onFocus={handleFocus}
 				error={error}
 				helperText={helperText}
+				onKeyDown={(e) => {
+					e.key === 'Enter' && onEnter && onEnter();
+				}}
 				InputProps={
 					isPassword
 						? {

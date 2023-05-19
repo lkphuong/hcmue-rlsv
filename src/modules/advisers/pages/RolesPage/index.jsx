@@ -3,9 +3,9 @@ import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Stack } from '@mui/material';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
-import { MRoleFilter, MRoleTable, MSearch } from '_modules/advisers/components';
+import { MRoleFilter, MRoleTable } from '_modules/advisers/components';
 
 import { getStudentsRole } from '_api/user.api';
 import { getSemestersByYear } from '_api/options.api';
@@ -97,7 +97,11 @@ const RolesPage = memo(() => {
 					classes={classes}
 				/>
 
-				<MSearch onFilterChange={setFilter} />
+				<CSearch
+					onFilterChange={setFilter}
+					defaultInput={filter?.input}
+					placeholder='Nhập tên để tìm kiếm'
+				/>
 
 				<Stack direction='column' justifyContent='space-between' mt={1.5}>
 					<MRoleTable data={dataTable} onFilterChange={setFilter} />

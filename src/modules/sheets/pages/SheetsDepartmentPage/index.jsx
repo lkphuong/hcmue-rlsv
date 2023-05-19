@@ -4,9 +4,9 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
-import { ListSheets, MDepartmentFilter, MSearch } from '_modules/sheets/components';
+import { ListSheets, MDepartmentFilter } from '_modules/sheets/components';
 
 import { isSuccess, cleanObjValue, isEmpty, formatTimeSemester } from '_func/';
 
@@ -123,7 +123,11 @@ const SheetsDepartmentPage = () => {
 				alignItems='center'
 				mb={2}
 			>
-				<MSearch onFilterChange={setFilter} />
+				<CSearch
+					onFilterChange={setFilter}
+					defaultInput={filter?.input}
+					placeholder='Nhập MSSV hoặc tên'
+				/>
 			</Stack>
 
 			<ListSheets data={listData} loading={loading} saveFilter={saveFilter} />

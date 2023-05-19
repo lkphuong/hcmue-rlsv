@@ -2,11 +2,11 @@ import { useState } from 'react';
 
 import { Button, Stack } from '@mui/material';
 
-import { CInput } from '_controls/';
+import { CInput } from '..';
 
-export const MSearch = ({ onFilterChange }) => {
+export const CSearch = ({ onFilterChange, defaultInput, placeholder }) => {
 	//#region Data
-	const [currentInput, setCurrentInput] = useState('');
+	const [currentInput, setCurrentInput] = useState(defaultInput || '');
 	//#endregion
 
 	//#region Event
@@ -19,12 +19,7 @@ export const MSearch = ({ onFilterChange }) => {
 	//#region Render
 	return (
 		<Stack spacing={1.5} alignItems='center' direction='row'>
-			<CInput
-				isSearch
-				value={currentInput}
-				onChange={onChange}
-				placeholder='Nhập MSSV hoặc tên'
-			/>
+			<CInput isSearch value={currentInput} onChange={onChange} placeholder={placeholder} />
 
 			<Button variant='contained' onClick={updateFilter}>
 				Tìm kiếm

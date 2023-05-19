@@ -4,9 +4,9 @@ import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
-import { ListStudentsTable, MClassFilter, MClassPrint, MSearch } from '_modules/reports/components';
+import { ListStudentsTable, MClassFilter, MClassPrint } from '_modules/reports/components';
 
 import { getClassSheets } from '_api/sheets.api';
 
@@ -117,7 +117,11 @@ const ReportStudentsPage = () => {
 				alignItems='center'
 				mb={2}
 			>
-				<MSearch onFilterChange={setFilter} placeholder='Nhập MSSV hoặc tên' />
+				<CSearch
+					onFilterChange={setFilter}
+					defaultInput={filter?.input}
+					placeholder='Nhập MSSV hoặc tên'
+				/>
 			</Stack>
 
 			<ListStudentsTable data={listData} loading={loading} />

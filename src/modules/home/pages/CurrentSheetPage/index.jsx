@@ -4,7 +4,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Paper, Typography } from '@mui/material';
 
-import { MSearch, SheetsTable } from '_modules/home/components';
+import { SheetsTable } from '_modules/home/components';
 
 import { isSuccess, cleanObjValue, isEmpty } from '_func/';
 
@@ -12,7 +12,7 @@ import { getClassSheets } from '_api/sheets.api';
 
 import { actions } from '_slices/filter.slice';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
 const CurrentSheetPage = () => {
 	//#region Data
@@ -79,7 +79,11 @@ const CurrentSheetPage = () => {
 			</Paper>
 
 			<Box mb={1.5}>
-				<MSearch onFilterChange={setFilter} />
+				<CSearch
+					onFilterChange={setFilter}
+					defaultInput={filter?.input}
+					placeholder='Nhập tên để tìm kiếm'
+				/>
 			</Box>
 
 			<SheetsTable data={listData} saveFilter={saveFilter} loading={loading} />

@@ -7,11 +7,11 @@ import { Box } from '@mui/material';
 import { getSemestersByYear } from '_api/options.api';
 import { getClassSheets } from '_api/sheets.api';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
 import { cleanObjValue, isEmpty, isSuccess } from '_func/index';
 
-import { ListStudentsTable, MClassFilter, MSearch } from '_modules/class/components';
+import { ListStudentsTable, MClassFilter } from '_modules/class/components';
 
 import { actions } from '_slices/filter.slice';
 
@@ -100,7 +100,11 @@ const ListStudentSheetsPage = () => {
 			/>
 
 			<Box mb={1.5}>
-				<MSearch onFilterChange={setFilter} />
+				<CSearch
+					onFilterChange={setFilter}
+					defaultInput={filter?.input}
+					placeholder='Nhập tên để tìm kiếm'
+				/>
 			</Box>
 
 			<ListStudentsTable data={listData} saveFilter={saveFilter} />

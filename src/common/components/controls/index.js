@@ -7,3 +7,4 @@ export * from './CDatePicker';
 export * from './CUpload';
 export * from './CAutocompleteLoadMore';
 export * from './CLink';
+export * from './CSearch';

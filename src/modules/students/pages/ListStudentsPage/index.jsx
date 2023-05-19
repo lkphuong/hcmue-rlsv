@@ -4,9 +4,9 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { Box, Button, Stack } from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
-import { MFilter, MTable, MSearch } from '_modules/students/components';
+import { MFilter, MTable } from '_modules/students/components';
 
 import { getClassesByDepartment } from '_api/classes.api';
 import { getStudentsRole, importUsers } from '_api/user.api';
@@ -193,7 +193,11 @@ const ListStudentsPage = memo(() => {
 					alignItems='center'
 					mb={2}
 				>
-					<MSearch onFilterChange={setFilter} />
+					<CSearch
+						onFilterChange={setFilter}
+						defaultInput={filter?.input}
+						placeholder='Nhập MSSV hoặc tên'
+					/>
 
 					<Button
 						variant='contained'

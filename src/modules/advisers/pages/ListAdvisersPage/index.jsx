@@ -4,9 +4,9 @@ import { shallowEqual, useSelector } from 'react-redux';
 import { Box, Button, Stack } from '@mui/material';
 import { UploadFile } from '@mui/icons-material';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
-import { MFilter, MTable, MSearch } from '_modules/advisers/components';
+import { MFilter, MTable } from '_modules/advisers/components';
 
 import { getClassesByDepartment } from '_api/classes.api';
 import { getAllAdvisers, importAdvisers } from '_api/adviser.api';
@@ -161,7 +161,11 @@ const ListAdvisersPage = memo(() => {
 				alignItems='center'
 				mb={2}
 			>
-				<MSearch onFilterChange={setFilter} />
+				<CSearch
+					onFilterChange={setFilter}
+					defaultInput={filter?.input}
+					placeholder='Nhập tên để tìm kiếm'
+				/>
 
 				<Button
 					variant='contained'

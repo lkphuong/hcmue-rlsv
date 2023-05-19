@@ -4,9 +4,9 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Paper, Stack, Typography } from '@mui/material';
 
-import { CPagination } from '_controls/';
+import { CPagination, CSearch } from '_controls/';
 
-import { ListSheets, MDepartmentFilter, MSearch } from '_modules/department/components';
+import { ListSheets, MDepartmentFilter } from '_modules/department/components';
 
 import { getClassSheets } from '_api/sheets.api';
 
@@ -162,7 +162,11 @@ const SheetsDepartmentPage = () => {
 				alignItems='center'
 				mb={2}
 			>
-				<MSearch onFilterChange={setFilter} placeholder='Nhập MSSV hoặc tên' />
+				<CSearch
+					onFilterChange={setFilter}
+					defaultInput={filter?.input}
+					placeholder='Nhập MSSV hoặc tên'
+				/>
 			</Stack>
 
 			<ListSheets

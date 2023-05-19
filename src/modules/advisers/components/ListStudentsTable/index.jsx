@@ -37,6 +37,7 @@ export const ListStudentsTable = ({
 	semester_id,
 	department_id,
 	saveFilter,
+	class_id,
 }) => {
 	//#region Data
 	const { pathname } = useLocation();
@@ -63,6 +64,7 @@ export const ListStudentsTable = ({
 					academic_id,
 					semester_id,
 					department_id,
+					class_id,
 				};
 
 				const res = await approveAll(body);
@@ -108,6 +110,11 @@ export const ListStudentsTable = ({
 										}
 										onChange={onSelect(-1)}
 										checked={isSelectedAll || isSelected}
+										sx={{
+											'& .MuiSvgIcon-root': {
+												color: 'white',
+											},
+										}}
 									/>
 								</TableCell>
 							)}

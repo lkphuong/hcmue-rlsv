@@ -46,8 +46,10 @@ const Control = memo(({ data, id, titleId, available }) => {
 
 	const initialMark = useMemo(() => {
 		if (status < 4) {
-			if (currentMark.adviser_mark_level === 0) return 0;
-			else if (currentMark.class_mark_level === 0) return 0;
+			if (currentMark.adviser_mark_level || currentMark.adviser_mark_level === 0)
+				return currentMark.adviser_mark_level;
+			else if (currentMark.class_mark_level || currentMark.class_mark_level === 0)
+				return currentMark.class_mark_level;
 			return (
 				currentMark.adviser_mark_level ||
 				currentMark.class_mark_level ||

@@ -18,6 +18,7 @@ import { Request } from 'express';
 
 import {
   generateAdviserMarks,
+  generateCategoryByRole,
   generateClassMarks,
   generateDepartmentMarks,
   generatePersonalMarks,
@@ -41,6 +42,7 @@ import {
   generateUserSheetsPagingResponse,
   generateUserSheetsResponse,
 } from '../utils';
+import { returnObjects } from '../../../utils';
 
 import {
   validateAcademic,
@@ -90,6 +92,7 @@ import { LogService } from '../../log/services/log.service';
 import { OptionService } from '../../option/services/option.service';
 import { SemesterService } from '../../semester/services/semester.service';
 import { SheetService } from '../services/sheet.service';
+import { HistoryService } from '../../history/services/history.service';
 import { UserService } from '../../user/services/user.service';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
@@ -128,7 +131,6 @@ import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { UnknownException } from '../../../exceptions/UnknownException';
 import { SheetLevel } from '../constants/enums/level.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
-import { returnObjects } from '../../../utils';
 
 @Controller('sheets')
 export class SheetController {
@@ -145,6 +147,7 @@ export class SheetController {
     private readonly _levelService: LevelService,
     private readonly _optionService: OptionService,
     private readonly _sheetService: SheetService,
+    private readonly _historyService: HistoryService,
     private readonly _semesterService: SemesterService,
     private readonly _userService: UserService,
     private readonly _dataSource: DataSource,
@@ -351,13 +354,14 @@ export class SheetController {
       //#endregion
 
       //#region Get evaluations by sheet_id
-      const evaluations = await this._evaluationService.getEvaluationBySheetId(
-        id,
-      );
+      const [evaluations, sheet] = await Promise.all([
+        this._evaluationService.getEvaluationBySheetId(id),
+        this._sheetService.getSheet(id),
+      ]);
 
       //#endregion
 
-      if (evaluations && evaluations.length > 0) {
+      if (evaluations && evaluations.length > 0 && sheet) {
         const base_url = this._configurationService.get(
           Configuration.BASE_URL,
         ) as string;
@@ -365,6 +369,7 @@ export class SheetController {
         return await generateEvaluationsResponse(
           role,
           evaluations,
+          sheet,
           base_url,
           this._fileService,
           req,
@@ -1924,7 +1929,7 @@ export class SheetController {
    */
   @Put('class/:id')
   @UseGuards(JwtAuthGuard)
-  @Roles(Role.MONITOR, Role.SECRETARY, Role.CHAIRMAN)
+  // @Roles(Role.MONITOR, Role.SECRETARY, Role.CHAIRMAN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkClass(
     @Param('id') id: number,
@@ -2175,16 +2180,41 @@ export class SheetController {
           role,
           class_id,
         );
-        include_ids = results.map((e) => e.id);
+        include_ids = results.map((e) => Number(e.id));
       }
 
       include_ids = include_ids.filter((item) => !except_ids.includes(item));
 
-      const success = await this._evaluationService.bulkApprove(
+      //#region validate sheet success and not graded
+      const count_sheet =
+        await this._sheetService.countSheetSuccessAndNotGraded(include_ids);
+
+      if (count_sheet != 0) {
+        //#region throw HandlerException
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.OPERATOR_ERROR,
+          req.method,
+          req.url,
+          ErrorMessage.HAS_SHEET_SUCCESS_OR_NOT_GARDED_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
+        //#endregion
+      }
+      //#endregion
+
+      let success = await this._evaluationService.bulkApprove(
         include_ids,
         role,
       );
       if (success) {
+        //#region Insert sheet history
+        success = await this._historyService.multipleInsertSheetHistory(
+          include_ids,
+          user_id,
+          role,
+        );
+        //#endregion
+
         //#region Generate response
         return generateApproveAllResponse(include_ids, success);
         //#endregion
@@ -2338,6 +2368,9 @@ export class SheetController {
   )
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateWeakMark(@Param('id') id: number, @Req() req: Request) {
+    const query_runner = this._dataSource.createQueryRunner();
+    await query_runner.connect();
+
     try {
       console.log('----------------------------------------------------------');
       console.log(
@@ -2351,12 +2384,16 @@ export class SheetController {
         JSON.stringify({ sheet_id: id }),
       );
 
+      // Start transaction
+      await query_runner.startTransaction();
+
       //#region Get payload
       const { role, username: request_code } = req.user as JwtPayload;
       //#endregion
 
       //#region validate sheet
       let sheet = await this._sheetService.getSheetById(id);
+
       if (sheet.graded == 0) {
         throw new HandlerException(
           VALIDATION_EXIT_CODE.NO_MATCHING,
@@ -2396,7 +2433,19 @@ export class SheetController {
                 ? sheet.status
                 : SheetStatus.WAITING_ADVISER;
           }
-          sheet = await this._sheetService.update(sheet);
+          sheet = await this._sheetService.update(sheet, query_runner.manager);
+
+          const { user_id } = req.user as JwtPayload;
+
+          await this._sheetService.insertHistory(
+            sheet.id,
+            generateCategoryByRole(role) ?? 1,
+            user_id,
+            role,
+            query_runner.manager,
+          );
+
+          await query_runner.commitTransaction();
 
           return returnObjects({ id: sheet.id });
         } else {
@@ -2417,6 +2466,8 @@ export class SheetController {
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
+      // Rollback transaction
+      await query_runner.rollbackTransaction();
 
       if (err instanceof HttpException) throw err;
       else {
@@ -2426,6 +2477,9 @@ export class SheetController {
           req.url,
         );
       }
+    } finally {
+      // Release transaction
+      await query_runner.release();
     }
   }
 }

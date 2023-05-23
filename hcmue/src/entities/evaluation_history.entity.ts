@@ -52,7 +52,7 @@ export class EvaluationHistoryEntity extends RootEntity {
     name: 'item_id',
     nullable: true,
   })
-  item_id: string;
+  item_id: number;
 
   @Column('varchar', {
     name: 'ref',

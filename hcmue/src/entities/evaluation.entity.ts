@@ -49,7 +49,7 @@ export class EvaluationEntity extends RootEntity {
     name: 'item_id',
     nullable: true,
   })
-  item_id: string;
+  item_id: number;
 
   @Column('bigint', {
     name: 'sheet_id',

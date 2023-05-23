@@ -133,18 +133,6 @@ export const generateSuccessResponse = async (
   // Transform SheetEntity class to SheetResponse class
   const payload = await generateData2Object(sheet, role);
 
-  if (sheet_service) {
-    const { user_id } = req.user as JwtPayload;
-
-    await sheet_service.insertHistory(
-      sheet.id,
-      generateCategoryByRole(role) ?? 1,
-      user_id,
-      role,
-      query_runner.manager,
-    );
-  }
-
   // Commit transaction
   if (query_runner) await query_runner.commitTransaction();
 
@@ -204,6 +192,7 @@ export const generateItemsResponse = async (
 export const generateEvaluationsResponse = async (
   role: number,
   evaluations: EvaluationEntity[],
+  sheet: SheetEntity,
   base_url: string,
   file_service: FilesService,
   req: Request,
@@ -214,6 +203,7 @@ export const generateEvaluationsResponse = async (
   const payload = await generateEvaluationsArray(
     role,
     evaluations,
+    sheet,
     base_url,
     file_service,
   );
@@ -433,20 +423,4 @@ export const generateFileIds = (arr_items: any) => {
   });
 
   return file_ids;
-};
-
-export const generateCategoryByRole = (role: number) => {
-  switch (role) {
-    case RoleCode.ADMIN:
-    case RoleCode.DEPARTMENT:
-      return EvaluationCategory.DEPARTMENT;
-    case RoleCode.MONITOR:
-    case RoleCode.SECRETARY:
-    case RoleCode.CHAIRMAN:
-      return EvaluationCategory.CLASS;
-    case RoleCode.ADVISER:
-      return EvaluationCategory.ADVISER;
-    case RoleCode.STUDENT:
-      return EvaluationCategory.STUDENT;
-  }
 };

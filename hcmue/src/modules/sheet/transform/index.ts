@@ -538,6 +538,7 @@ export const generateItemsArray = async (
 export const generateEvaluationsArray = async (
   role: number,
   evaluations: EvaluationEntity[] | null,
+  sheet: SheetEntity,
   base_url: string,
   file_service: FilesService,
 ) => {
@@ -569,7 +570,7 @@ export const generateEvaluationsArray = async (
             (e) => e.category === EvaluationCategory.CLASS && e.item.id == i,
           );
 
-          const addviser_evaluation = evaluations.find(
+          const adviser_evaluation = evaluations.find(
             (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
           );
 
@@ -595,6 +596,17 @@ export const generateEvaluationsArray = async (
           }
 
           if (evaluation) {
+            const {
+              department_mark_level,
+              adviser_mark_level,
+              class_mark_level,
+              personal_mark_level,
+            } = generateMark(
+              student_evaluation,
+              class_evaluation,
+              adviser_evaluation,
+              department_evaluation,
+            );
             const result: EvaluationsResponse = {
               id: department_evaluation?.id ?? 0,
               item: {
@@ -618,11 +630,16 @@ export const generateEvaluationsArray = async (
                       };
                     })
                   : null,
-              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
-              class_mark_level: class_evaluation?.class_mark_level ?? 0,
-              adviser_mark_level: addviser_evaluation?.adviser_mark_level ?? 0,
-              department_mark_level:
-                department_evaluation?.department_mark_level ?? 0,
+              personal_mark_level: sheet?.sum_of_personal_marks
+                ? personal_mark_level
+                : student_evaluation?.personal_mark_level ?? null,
+              class_mark_level: sheet?.sum_of_class_marks
+                ? class_mark_level
+                : class_evaluation?.class_mark_level ?? null,
+              adviser_mark_level: sheet?.sum_of_adviser_marks
+                ? adviser_mark_level
+                : adviser_evaluation?.adviser_mark_level ?? null,
+              department_mark_level: department_mark_level,
             };
             payload.push(result);
           }
@@ -645,21 +662,32 @@ export const generateEvaluationsArray = async (
               e.category === EvaluationCategory.DEPARTMENT && e.item.id == i,
           );
 
-          const addviser_evaluation = evaluations.find(
+          const adviser_evaluation = evaluations.find(
             (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
           );
 
           const evaluation = evaluations.find((e) => e.item.id == i);
 
-          const files: FileEntity[] | null = null;
+          let files: FileEntity[] | null = null;
           if (student_evaluation) {
-            const files = null;
-            //  = await file_service.getFileByEvaluation(
-            //   evaluation.ref,
-            //   evaluation.sheet.id,
-            // );
+            files = _files.filter(
+              (e) =>
+                e.sheet_id == student_evaluation.sheet_id &&
+                e.parent_ref === student_evaluation.ref,
+            );
           }
           if (evaluation) {
+            const {
+              class_mark_level,
+              adviser_mark_level,
+              department_mark_level,
+              personal_mark_level,
+            } = generateMark(
+              student_evaluation,
+              class_evaluation,
+              adviser_evaluation,
+              department_evaluation,
+            );
             const result: EvaluationsResponse = {
               id: class_evaluation?.id ?? 0,
               item: {
@@ -683,11 +711,16 @@ export const generateEvaluationsArray = async (
                       };
                     })
                   : null,
-              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
-              class_mark_level: class_evaluation?.class_mark_level ?? 0,
-              adviser_mark_level: addviser_evaluation?.adviser_mark_level ?? 0,
-              department_mark_level:
-                department_evaluation?.department_mark_level ?? 0,
+              personal_mark_level: sheet?.sum_of_personal_marks
+                ? personal_mark_level
+                : student_evaluation?.personal_mark_level ?? null,
+              class_mark_level: class_mark_level,
+              adviser_mark_level: sheet?.sum_of_adviser_marks
+                ? adviser_mark_level
+                : adviser_evaluation?.adviser_mark_level ?? null,
+              department_mark_level: sheet?.sum_of_department_marks
+                ? department_mark_level
+                : department_evaluation?.department_mark_level ?? null,
             };
             payload.push(result);
           }
@@ -714,16 +747,27 @@ export const generateEvaluationsArray = async (
 
           const evaluation = evaluations.find((e) => e.item.id == i);
 
-          const files: FileEntity[] | null = null;
+          let files: FileEntity[] | null = null;
           if (student_evaluation) {
-            const files = null;
-            //  = await file_service.getFileByEvaluation(
-            //   evaluation.ref,
-            //   evaluation.sheet.id,
-            // );
+            files = _files.filter(
+              (e) =>
+                e.sheet_id == student_evaluation.sheet_id &&
+                e.parent_ref === student_evaluation.ref,
+            );
           }
 
           if (evaluation) {
+            const {
+              adviser_mark_level,
+              class_mark_level,
+              department_mark_level,
+              personal_mark_level,
+            } = generateMark(
+              student_evaluation,
+              class_evaluation,
+              adviser_evaluation,
+              department_evaluation,
+            );
             const result: EvaluationsResponse = {
               id: adviser_evaluation?.id ?? 0,
               item: {
@@ -747,11 +791,16 @@ export const generateEvaluationsArray = async (
                       };
                     })
                   : null,
-              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
-              class_mark_level: class_evaluation?.class_mark_level ?? 0,
-              adviser_mark_level: adviser_evaluation?.adviser_mark_level ?? 0,
-              department_mark_level:
-                department_evaluation?.department_mark_level ?? 0,
+              personal_mark_level: sheet?.sum_of_personal_marks
+                ? personal_mark_level
+                : student_evaluation?.personal_mark_level ?? null,
+              class_mark_level: sheet?.sum_of_class_marks
+                ? class_mark_level
+                : class_evaluation?.class_mark_level ?? null,
+              adviser_mark_level: adviser_mark_level,
+              department_mark_level: sheet?.sum_of_department_marks
+                ? department_mark_level
+                : department_evaluation?.department_mark_level ?? null,
             };
             payload.push(result);
           }
@@ -771,22 +820,33 @@ export const generateEvaluationsArray = async (
               e.category === EvaluationCategory.DEPARTMENT && e.item.id == i,
           );
 
-          const addviser_evaluation = evaluations.find(
+          const adviser_evaluation = evaluations.find(
             (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
           );
 
           const evaluation = evaluations.find((e) => e.item.id == i);
 
-          const files: FileEntity[] | null = null;
+          let files: FileEntity[] | null = null;
           if (student_evaluation) {
-            const files = null;
-            //  = await file_service.getFileByEvaluation(
-            //   evaluation.ref,
-            //   evaluation.sheet.id,
-            // );
+            files = _files.filter(
+              (e) =>
+                e.sheet_id == student_evaluation.sheet_id &&
+                e.parent_ref === student_evaluation.ref,
+            );
           }
 
           if (evaluation) {
+            const {
+              personal_mark_level,
+              adviser_mark_level,
+              class_mark_level,
+              department_mark_level,
+            } = generateMark(
+              student_evaluation,
+              class_evaluation,
+              adviser_evaluation,
+              department_evaluation,
+            );
             const result: EvaluationsResponse = {
               id: student_evaluation?.id ?? 0,
               item: {
@@ -811,11 +871,16 @@ export const generateEvaluationsArray = async (
                       };
                     })
                   : null,
-              personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
-              class_mark_level: class_evaluation?.class_mark_level ?? 0,
-              adviser_mark_level: addviser_evaluation?.adviser_mark_level ?? 0,
-              department_mark_level:
-                department_evaluation?.department_mark_level ?? 0,
+              personal_mark_level: personal_mark_level,
+              class_mark_level: sheet?.sum_of_class_marks
+                ? class_mark_level
+                : class_evaluation?.class_mark_level ?? 0,
+              adviser_mark_level: sheet?.sum_of_adviser_marks
+                ? adviser_mark_level
+                : adviser_evaluation?.adviser_mark_level ?? 0,
+              department_mark_level: sheet?.sum_of_department_marks
+                ? department_mark_level
+                : department_evaluation?.department_mark_level ?? 0,
             };
             payload.push(result);
           }
@@ -1027,4 +1092,34 @@ export const generateDepartStatus = async (
   }
 
   return payload;
+};
+
+export const generateMark = (
+  student_evaluation: EvaluationEntity,
+  class_evaluation: EvaluationEntity,
+  adviser_evaluation: EvaluationEntity,
+  department_evaluation: EvaluationEntity,
+) => {
+  const department_mark_level =
+    department_evaluation?.department_mark_level ??
+    adviser_evaluation?.adviser_mark_level ??
+    class_evaluation?.class_mark_level ??
+    student_evaluation?.personal_mark_level ??
+    null;
+  const adviser_mark_level =
+    adviser_evaluation?.adviser_mark_level ??
+    class_evaluation?.class_mark_level ??
+    student_evaluation?.personal_mark_level ??
+    null;
+  const class_mark_level =
+    class_evaluation?.class_mark_level ??
+    student_evaluation?.personal_mark_level ??
+    null;
+  const personal_mark_level = student_evaluation?.personal_mark_level ?? 0;
+  return {
+    department_mark_level,
+    adviser_mark_level,
+    class_mark_level,
+    personal_mark_level,
+  };
 };

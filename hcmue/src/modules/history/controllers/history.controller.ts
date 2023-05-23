@@ -307,8 +307,8 @@ export class HistoryController {
       if (sheet) {
         const evaluations = await this._historyService.getEvaluationBySheetId(
           sheet.id,
-          sheet.role,
         );
+
         if (sheet.sort_order > 1) {
           const previous_sheet = await this._historyService.getPreviousSheet(
             sheet.sheet_id,
@@ -319,15 +319,16 @@ export class HistoryController {
             const previous_evaluations =
               await this._historyService.getEvaluationBySheetId(
                 previous_sheet.id,
-                previous_sheet.role,
               );
 
             const current_evaluation = await generateEvaluationsArray(
               evaluations,
+              sheet.role,
             );
 
             const previous_evaluation = await generateEvaluationsArray(
               previous_evaluations,
+              previous_sheet.role,
             );
 
             const different_evaluation = getDifferentObjects(
@@ -340,6 +341,7 @@ export class HistoryController {
               return await generateEvaluationsResponse(
                 evaluations,
                 different_evaluation,
+                sheet.role,
                 req,
               );
               //#endregion
@@ -349,7 +351,12 @@ export class HistoryController {
 
         if (evaluations && evaluations.length > 0) {
           //#region Generate response
-          return await generateEvaluationsResponse(evaluations, null, req);
+          return await generateEvaluationsResponse(
+            evaluations,
+            null,
+            sheet.role,
+            req,
+          );
           //#endregion
         }
       }

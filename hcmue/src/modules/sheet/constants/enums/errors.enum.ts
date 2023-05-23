@@ -33,6 +33,8 @@ export enum ErrorMessage {
   OPERATOR_EVALUATION_ERROR = 'Cập nhật điểm thất bại.',
   OPERATOR_SHEET_ERROR = 'Cập nhật phiếu thất bại.',
 
+  HAS_SHEET_SUCCESS_OR_NOT_GARDED_ERROR = 'Bạn không được phép chọn phiếu đã [hoàn thành] hoặc [không xếp loại].',
+
   CLASS_ROLE_INVALID_ERROR = 'Bạn không thể xem [danh sách phiếu] của lớp khác (name: %s).',
   DEPARTMENT_ROLE_INVALID_ERROR = 'Bạn không thể xem [danh sách phiếu] của khoa khác (name: %s).',
   STUDENT_ROLE_INVALID_ERROR = 'Bạn không thể xem [danh sách phiếu] của sinh viên khác (name: %s).',

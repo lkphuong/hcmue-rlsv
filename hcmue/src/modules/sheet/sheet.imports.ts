@@ -9,6 +9,7 @@ import { EvaluationModule } from '../evaluation/evaluation.module';
 import { FileModule } from '../file/file.module';
 import { FormModule } from '../form/form.module';
 import { HeaderModule } from '../header/header.module';
+import { HistoryModule } from '../history/history.module';
 import { ItemModule } from '../item/item.module';
 import { OtherModule } from '../other/other.module';
 import { LevelModule } from '../level/level.module';
@@ -35,6 +36,7 @@ export const modules = [
   OtherModule,
   LevelModule,
   LogModule,
+  HistoryModule,
   OptionModule,
   SemesterModule,
   SharedModule,

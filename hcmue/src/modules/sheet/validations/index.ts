@@ -569,7 +569,7 @@ export const validateStatusApproval = async (
   if (
     (sheet.status > SheetStatus.WAITING_ADVISER &&
       sheet.status !== SheetStatus.NOT_GRADED) ||
-    (sheet.sum_of_class_marks && sheet.status === SheetStatus.NOT_GRADED)
+    (sheet.sum_of_adviser_marks && sheet.status === SheetStatus.NOT_GRADED)
   ) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.NO_MATCHING,

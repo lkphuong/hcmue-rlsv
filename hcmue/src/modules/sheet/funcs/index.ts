@@ -14,7 +14,6 @@ import {
 } from '../utils';
 import {
   validateMark,
-  validateUpdateEvaluationMaxFile,
   validateTime,
   validateCreateEvaluationMaxFile,
   validateRequiredOption,
@@ -60,6 +59,7 @@ import { UnknownException } from '../../../exceptions/UnknownException';
 
 import { HttpResponse } from '../../../interfaces/http-response.interface';
 import { SheetDetailsResponse } from '../interfaces/sheet_response.interface';
+import { JwtPayload } from '../../auth/interfaces/payloads/jwt-payload.interface';
 
 import { SheetCategory } from '../constants/enums/categories.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
@@ -154,6 +154,20 @@ export const generatePersonalMarks = async (
         );
       }
       //#endregion
+      //#endregion
+
+      //#region insert history
+      if (evaluations) {
+        const { user_id } = req.user as JwtPayload;
+        await sheet_service.insertHistory(
+          sheet.id,
+          EvaluationCategory.STUDENT,
+          user_id,
+          RoleCode.STUDENT,
+          query_runner?.manager,
+        );
+      }
+
       //#endregion
 
       //#region Generate response
@@ -275,6 +289,19 @@ export const generateClassMarks = async (
       //#endregion
       //#endregion
 
+      //#region insert history
+      if (evaluations) {
+        const { user_id, role } = req.user as JwtPayload;
+        await sheet_service.insertHistory(
+          sheet.id,
+          EvaluationCategory.CLASS,
+          user_id,
+          role,
+          query_runner?.manager,
+        );
+      }
+      //#endregion
+
       //#region Generate response
       return await generateSuccessResponse(
         result,
@@ -385,6 +412,19 @@ export const generateAdviserMarks = async (
         );
       }
       //#endregion
+      //#endregion
+
+      //#region insert history
+      if (evaluations) {
+        const { user_id, role } = req.user as JwtPayload;
+        await sheet_service.insertHistory(
+          sheet.id,
+          EvaluationCategory.ADVISER,
+          user_id,
+          role,
+          query_runner?.manager,
+        );
+      }
       //#endregion
 
       //#region Generate response
@@ -500,6 +540,19 @@ export const generateDepartmentMarks = async (
       //#endregion
       //#endregion
 
+      //#region insert history
+      if (evaluations) {
+        const { user_id, role } = req.user as JwtPayload;
+        await sheet_service.insertHistory(
+          sheet.id,
+          EvaluationCategory.DEPARTMENT,
+          user_id,
+          role,
+          query_runner?.manager,
+        );
+      }
+      //#endregion
+
       //#region Generate response
       return await generateSuccessResponse(
         result,
@@ -545,10 +598,28 @@ export const generateUngradeSheet = async (
   req: Request,
 ) => {
   //#region Ungrade (không xếp loại sinh viên)
-  const result = await sheet_service.ungraded(sheet.id, request_code);
+  const result = await sheet_service.ungraded(sheet, role_id, request_code);
+
+  //#region insert history
+  if (sheet_service) {
+    const { user_id, role } = req.user as JwtPayload;
+    await sheet_service.insertHistory(
+      sheet.id,
+      generateCategoryByRole(role_id),
+      user_id,
+      role,
+    );
+  }
+  //#endregion
   if (result) {
     //#region Generate response
-    return await generateSuccessResponse(sheet, role_id, null, null, req);
+    return await generateSuccessResponse(
+      sheet,
+      role_id,
+      sheet_service,
+      null,
+      req,
+    );
     //#endregion
   } else {
     //#region throw HandlerException
@@ -609,8 +680,10 @@ export const generateUpdateStudentEvaluation = async (
         const item = items.find((e) => e.id == j.item_id);
         if (item) {
           //#region Validate option
-          const valid_option = validateRequiredOption(item, j.option_id, req);
-          if (valid_option instanceof HttpException) return valid_option;
+          if (j.personal_mark_level) {
+            const valid_option = validateRequiredOption(item, j.option_id, req);
+            if (valid_option instanceof HttpException) return valid_option;
+          }
           //#endregion
 
           //#region Get option
@@ -956,10 +1029,7 @@ export const generateUpdateClassEvaluation = async (
   }
 
   //#region delete
-  await evaluation_service.deleteEvaluation(
-    sheet_id,
-    EvaluationCategory.ADVISER,
-  );
+  await evaluation_service.deleteEvaluation(sheet_id, EvaluationCategory.CLASS);
   //#endregion
 
   //#region Update evaluation
@@ -1449,4 +1519,20 @@ export const getLevelBySortOrder = async (
   }
   return new_level;
   //#endregion
+};
+
+export const generateCategoryByRole = (role: number) => {
+  switch (role) {
+    case RoleCode.ADMIN:
+    case RoleCode.DEPARTMENT:
+      return EvaluationCategory.DEPARTMENT;
+    case RoleCode.MONITOR:
+    case RoleCode.SECRETARY:
+    case RoleCode.CHAIRMAN:
+      return EvaluationCategory.CLASS;
+    case RoleCode.ADVISER:
+      return EvaluationCategory.ADVISER;
+    case RoleCode.STUDENT:
+      return EvaluationCategory.STUDENT;
+  }
 };

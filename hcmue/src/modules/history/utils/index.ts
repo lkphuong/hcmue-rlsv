@@ -15,6 +15,8 @@ import {
 
 import { EvaluationHistoryResponse, SheetHistoryResponse } from '../interfaces';
 import { EvaluationHistoryEntity } from '../../../entities/evaluation_history.entity';
+import { RoleCode } from '../../../constants/enums/role_enum';
+import { EvaluationCategory } from '../../sheet/constants/enums/evaluation_catogory.enum';
 
 export const generateSheet = async (
   sheet: SheetHistoryEntity,
@@ -50,6 +52,7 @@ export const generateSheetPagination = (
 export const generateEvaluationsResponse = async (
   evaluations: EvaluationHistoryEntity[],
   different_evaluation: EvaluationHistoryResponse[],
+  role: number,
   req: Request,
 ) => {
   console.log('----------------------------------------------------------');
@@ -58,6 +61,7 @@ export const generateEvaluationsResponse = async (
   const payload = await generateEvaluationsHistoryArray(
     evaluations,
     different_evaluation,
+    role,
   );
 
   return {
@@ -70,17 +74,21 @@ export const generateEvaluationsResponse = async (
 
 export const generateEvaluationsArray = (
   evaluations: EvaluationHistoryEntity[],
+  role_id: number,
 ) => {
+  const catogory = generateCategoryByRole(role_id);
   const payload: EvaluationHistoryResponse[] = [];
   for (const i of evaluations) {
-    payload.push({
-      id: i.id,
-      item_id: i.item.id,
-      personal_mark_level: i?.personal_mark_level ?? 0,
-      class_mark_level: i?.class_mark_level ?? 0,
-      adviser_mark_level: i?.adviser_mark_level ?? 0,
-      department_mark_level: i?.department_mark_level ?? 0,
-    });
+    if (i.category == catogory) {
+      payload.push({
+        id: i.id,
+        item_id: i.item.id,
+        personal_mark_level: i?.personal_mark_level ?? 0,
+        class_mark_level: i?.class_mark_level ?? 0,
+        adviser_mark_level: i?.adviser_mark_level ?? 0,
+        department_mark_level: i?.department_mark_level ?? 0,
+      });
+    }
   }
 
   return payload;
@@ -92,21 +100,61 @@ export const getDifferentObjects = (
 ) => {
   const result: EvaluationHistoryResponse[] = [];
 
-  for (const obj1 of evaluation1) {
-    const matching_obj = evaluation2.find(
-      (obj2) => obj2.item_id === obj1.item_id,
-    );
+  if (evaluation2?.length && evaluation1?.length) {
+    for (const obj1 of evaluation1) {
+      const matching_obj = evaluation2.find(
+        (obj2) => obj2.item_id === obj1.item_id,
+      );
 
-    if (
-      matching_obj &&
-      (matching_obj.personal_mark_level !== obj1.personal_mark_level ||
-        matching_obj.class_mark_level !== obj1.class_mark_level ||
-        matching_obj.adviser_mark_level !== obj1.adviser_mark_level ||
-        matching_obj.department_mark_level !== obj1.department_mark_level)
-    ) {
-      result.push(matching_obj);
+      if (
+        matching_obj &&
+        (matching_obj.personal_mark_level !== obj1.personal_mark_level ||
+          matching_obj.class_mark_level !== obj1.class_mark_level ||
+          matching_obj.adviser_mark_level !== obj1.adviser_mark_level ||
+          matching_obj.department_mark_level !== obj1.department_mark_level)
+      ) {
+        result.push(matching_obj);
+      }
+    }
+  } else if (evaluation1?.length) {
+    for (const obj of evaluation1) {
+      if (
+        obj.adviser_mark_level ||
+        obj.personal_mark_level ||
+        obj.class_mark_level ||
+        obj.department_mark_level
+      ) {
+        result.push(obj);
+      }
+    }
+  } else {
+    for (const obj of evaluation2) {
+      if (
+        obj.adviser_mark_level ||
+        obj.personal_mark_level ||
+        obj.class_mark_level ||
+        obj.department_mark_level
+      ) {
+        result.push(obj);
+      }
     }
   }
 
   return result;
+};
+
+export const generateCategoryByRole = (role: number) => {
+  switch (role) {
+    case RoleCode.ADMIN:
+    case RoleCode.DEPARTMENT:
+      return EvaluationCategory.DEPARTMENT;
+    case RoleCode.MONITOR:
+    case RoleCode.SECRETARY:
+    case RoleCode.CHAIRMAN:
+      return EvaluationCategory.CLASS;
+    case RoleCode.ADVISER:
+      return EvaluationCategory.ADVISER;
+    case RoleCode.STUDENT:
+      return EvaluationCategory.STUDENT;
+  }
 };

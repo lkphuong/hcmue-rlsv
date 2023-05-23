@@ -20,6 +20,7 @@ import { ROLE_ALLOW_RETURN } from '../../sheet/constants';
 import { SheetStatus } from '../../sheet/constants/enums/status.enum';
 import { Role } from '../../auth/constants/enums/role.enum';
 import { EvaluationCategory } from '../../sheet/constants/enums/evaluation_catogory.enum';
+import { RoleCode } from '../../../constants/enums/role_enum';
 
 export const generateData2Object = async (
   sheet: SheetHistoryEntity | null,
@@ -165,36 +166,39 @@ export const generateData2Array = (
 
   for (const sheet of sheets) {
     if (sheet.role === Role.ADVISER) {
-      const adviser = advisers.find((e) => e.id == Number(sheet.created_by));
+      const adviser =
+        advisers?.find((e) => e.id == Number(sheet.created_by)) ?? null;
       if (adviser) {
         payload.push({
           id: sheet.id,
           fullname: adviser.fullname,
           role: sheet.role,
-          created_at: convertString2Date(adviser.created_at.toString()),
-          point: generatePoint(sheet),
+          created_at: adviser ? sheet.created_at : null,
+          point: generatePoint(sheet) ?? 0,
         });
       }
     } else if (sheet.role === Role.DEPARTMENT || sheet.role === Role.ADMIN) {
-      const other = others.find((e) => e.id == Number(sheet.created_by));
+      const other =
+        others?.find((e) => e.id == Number(sheet.created_by)) ?? null;
       if (other) {
         payload.push({
           id: sheet.id,
           fullname: other.username,
           role: sheet.role,
-          created_at: convertString2Date(other.created_at.toString()),
-          point: generatePoint(sheet),
+          created_at: other ? sheet.created_at : null,
+          point: generatePoint(sheet) ?? 0,
         });
       }
     } else {
-      const student = students.find((e) => e.id == Number(sheet.created_by));
+      const student =
+        students?.find((e) => e.id == Number(sheet.created_by)) ?? null;
       if (student) {
         payload.push({
           id: sheet.id,
           fullname: student.fullname,
           role: sheet.role,
-          created_at: convertString2Date(student.created_at.toString()),
-          point: generatePoint(sheet),
+          created_at: student ? sheet.created_at : null,
+          point: generatePoint(sheet) ?? 0,
         });
       }
     }
@@ -203,23 +207,85 @@ export const generateData2Array = (
   return payload;
 };
 
+// export const generateEvaluationsHistoryArray = async (
+//   evaluations: EvaluationHistoryEntity[] | null,
+//   different_evaluation: EvaluationHistoryResponse[],
+// ) => {
+//   if (evaluations) {
+//     const payload: EvaluationsResponse[] = [];
+//     const ids = evaluations.map((i) => {
+//       return i.item.id;
+//     });
+//     const results = removeDuplicates(ids);
+
+//     for (const i of results) {
+//       const class_evaluation = evaluations.find(
+//         (e) => e.category === EvaluationCategory.CLASS && e.item.id == i,
+//       );
+
+//       const adviser_evaluation = evaluations.find(
+//         (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
+//       );
+
+//       const department_evaluation = evaluations.find(
+//         (e) => e.category === EvaluationCategory.DEPARTMENT && e.item.id == i,
+//       );
+
+//       const student_evaluation = evaluations.find(
+//         (e) => e.category === EvaluationCategory.STUDENT && e.item.id == i,
+//       );
+
+//       const evaluation = evaluations.find((e) => e.item.id == i);
+
+//       if (evaluation) {
+//         const eva = different_evaluation?.find((e) => e.item_id == i) ?? false;
+//         const result: EvaluationsResponse = {
+//           id: department_evaluation?.id ?? 0,
+//           item: {
+//             id: i,
+//             content: evaluation.item.content,
+//           },
+//           options: evaluation.option
+//             ? {
+//                 id: evaluation.option.id,
+//                 content: evaluation.option.content,
+//               }
+//             : null,
+//           flag: eva ? true : false,
+//           personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
+//           class_mark_level: class_evaluation?.class_mark_level ?? 0,
+//           adviser_mark_level: adviser_evaluation?.adviser_mark_level ?? 0,
+//           department_mark_level:
+//             department_evaluation?.department_mark_level ?? 0,
+//         };
+//         payload.push(result);
+//       }
+//     }
+
+//     return payload;
+//   }
+
+//   return null;
+// };
+
 export const generateEvaluationsHistoryArray = async (
   evaluations: EvaluationHistoryEntity[] | null,
-  different_evaluation: EvaluationHistoryResponse[],
+  different_evaluation: EvaluationHistoryResponse[] | null,
+  role: number,
 ) => {
   if (evaluations) {
     const payload: EvaluationsResponse[] = [];
     const ids = evaluations.map((i) => {
       return i.item.id;
     });
-    const results = removeDuplicates(ids);
 
+    const results = removeDuplicates(ids);
     for (const i of results) {
       const class_evaluation = evaluations.find(
         (e) => e.category === EvaluationCategory.CLASS && e.item.id == i,
       );
 
-      const addviser_evaluation = evaluations.find(
+      const adviser_evaluation = evaluations.find(
         (e) => e.category == EvaluationCategory.ADVISER && e.item.id == i,
       );
 
@@ -234,27 +300,118 @@ export const generateEvaluationsHistoryArray = async (
       const evaluation = evaluations.find((e) => e.item.id == i);
 
       if (evaluation) {
+        const {
+          department_mark_level,
+          adviser_mark_level,
+          class_mark_level,
+          personal_mark_level,
+        } = generateMarkHistory(
+          student_evaluation,
+          class_evaluation,
+          adviser_evaluation,
+          department_evaluation,
+        );
+
         const eva = different_evaluation?.find((e) => e.item_id == i) ?? false;
-        const result: EvaluationsResponse = {
-          id: department_evaluation?.id ?? 0,
-          item: {
-            id: i,
-            content: evaluation.item.content,
-          },
-          options: evaluation.option
-            ? {
-                id: evaluation.option.id,
-                content: evaluation.option.content,
-              }
-            : null,
-          flag: eva ? true : false,
-          personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
-          class_mark_level: class_evaluation?.class_mark_level ?? 0,
-          adviser_mark_level: addviser_evaluation?.adviser_mark_level ?? 0,
-          department_mark_level:
-            department_evaluation?.department_mark_level ?? 0,
-        };
-        payload.push(result);
+
+        if (role === RoleCode.STUDENT) {
+          const result: EvaluationsResponse = {
+            id: department_evaluation?.id ?? 0,
+            item: {
+              id: i,
+              content: evaluation.item.content,
+            },
+            options: evaluation.option
+              ? {
+                  id: evaluation.option.id,
+                  content: evaluation.option.content,
+                }
+              : null,
+            flag: eva ? true : false,
+            personal_mark_level:
+              personal_mark_level ??
+              student_evaluation?.personal_mark_level ??
+              0,
+            class_mark_level: class_evaluation?.class_mark_level ?? 0,
+            adviser_mark_level: adviser_evaluation?.adviser_mark_level ?? 0,
+            department_mark_level:
+              department_evaluation?.department_mark_level ?? 0,
+          };
+          payload.push(result);
+        } else if (
+          role === RoleCode.CHAIRMAN ||
+          role === RoleCode.MONITOR ||
+          role === RoleCode.SECRETARY
+        ) {
+          const result: EvaluationsResponse = {
+            id: department_evaluation?.id ?? 0,
+            item: {
+              id: i,
+              content: evaluation.item.content,
+            },
+            options: evaluation.option
+              ? {
+                  id: evaluation.option.id,
+                  content: evaluation.option.content,
+                }
+              : null,
+            flag: eva ? true : false,
+            personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
+            class_mark_level:
+              class_mark_level ?? class_evaluation?.class_mark_level ?? 0,
+            adviser_mark_level: adviser_evaluation?.adviser_mark_level ?? 0,
+            department_mark_level:
+              department_evaluation?.department_mark_level ?? 0,
+          };
+          payload.push(result);
+        } else if (role === RoleCode.ADVISER) {
+          const result: EvaluationsResponse = {
+            id: department_evaluation?.id ?? 0,
+            item: {
+              id: i,
+              content: evaluation.item.content,
+            },
+            options: evaluation.option
+              ? {
+                  id: evaluation.option.id,
+                  content: evaluation.option.content,
+                }
+              : null,
+            flag: eva ? true : false,
+            personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
+            class_mark_level: class_evaluation?.class_mark_level ?? 0,
+            adviser_mark_level:
+              adviser_mark_level ?? adviser_evaluation?.adviser_mark_level ?? 0,
+            department_mark_level:
+              department_evaluation?.department_mark_level ?? 0,
+          };
+          payload.push(result);
+        } else if (role === RoleCode.DEPARTMENT || role === RoleCode.ADMIN) {
+          const result: EvaluationsResponse = {
+            id: department_evaluation?.id ?? 0,
+            item: {
+              id: i,
+              content: evaluation.item.content,
+            },
+            options: evaluation.option
+              ? {
+                  id: evaluation.option.id,
+                  content: evaluation.option.content,
+                }
+              : null,
+            flag: eva ? true : false,
+            personal_mark_level: student_evaluation?.personal_mark_level ?? 0,
+            class_mark_level: class_evaluation?.class_mark_level ?? 0,
+            adviser_mark_level: adviser_evaluation?.adviser_mark_level
+              ? adviser_evaluation.adviser_mark_level
+              : adviser_mark_level,
+            department_mark_level:
+              department_mark_level ??
+              department_evaluation?.department_mark_level ??
+              0,
+          };
+          payload.push(result);
+        }
       }
     }
 
@@ -276,4 +433,34 @@ export const generatePoint = (sheet_history: SheetHistoryEntity) => {
     default:
       return sheet_history.sum_of_class_marks;
   }
+};
+
+export const generateMarkHistory = (
+  student_evaluation: EvaluationHistoryEntity,
+  class_evaluation: EvaluationHistoryEntity,
+  adviser_evaluation: EvaluationHistoryEntity,
+  department_evaluation: EvaluationHistoryEntity,
+) => {
+  const department_mark_level =
+    department_evaluation?.department_mark_level ??
+    adviser_evaluation?.adviser_mark_level ??
+    class_evaluation?.class_mark_level ??
+    student_evaluation?.personal_mark_level ??
+    0;
+  const adviser_mark_level =
+    adviser_evaluation?.adviser_mark_level ??
+    class_evaluation?.class_mark_level ??
+    student_evaluation?.personal_mark_level ??
+    0;
+  const class_mark_level =
+    class_evaluation?.class_mark_level ??
+    student_evaluation?.personal_mark_level ??
+    0;
+  const personal_mark_level = student_evaluation?.personal_mark_level ?? 0;
+  return {
+    department_mark_level,
+    adviser_mark_level,
+    class_mark_level,
+    personal_mark_level,
+  };
 };

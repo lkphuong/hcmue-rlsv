@@ -1373,7 +1373,7 @@ export class AuthController {
         case LoginType.ADVISER:
           let adviser = await this._adviserService.getAdviserById(id);
           if (adviser) {
-            adviser.password = md5(adviser.phone_number);
+            adviser.password = md5(adviser.email);
             adviser.updated_at = new Date();
             adviser.updated_by = 'system';
 

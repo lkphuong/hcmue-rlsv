@@ -23,6 +23,7 @@ import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { ReportResponse } from '../interfaces/sheet_response.interface';
 import { ReportCountSheetResponse } from '../interfaces/report_response.interface';
+import { SheetCategory } from '../constants/enums/categories.enum';
 
 @Injectable()
 export class SheetService {
@@ -47,13 +48,14 @@ export class SheetService {
         .where('sheet.academic_id = :academic_id', { academic_id })
         .andWhere('sheet.semester_id = :semester_id', { semester_id })
         .andWhere('sheet.deleted = :deleted', { deleted: false })
-        .andWhere('sheet.department_id = :department_id', { department_id })
-        .andWhere('sheet.status = :status', {
-          status:
-            role == RoleCode.ADVISER
-              ? SheetStatus.WAITING_ADVISER
-              : SheetStatus.WAITING_DEPARTMENT,
-        });
+        .andWhere('sheet.department_id = :department_id', { department_id });
+
+      // .andWhere('sheet.status = :status', {
+      //   status:
+      //     role == RoleCode.ADVISER
+      //       ? SheetStatus.WAITING_ADVISER
+      //       : SheetStatus.WAITING_DEPARTMENT,
+      // });
 
       if (class_id && class_id !== 0) {
         conditions = conditions.andWhere('sheet.class_id = :class_id', {
@@ -141,6 +143,27 @@ export class SheetService {
         Levels.ERROR,
         Methods.SELECT,
         'SheetService.getSheets()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async getSheet(sheet_id: number): Promise<SheetEntity> {
+    try {
+      const conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .where('sheet.id = :sheet_id', { sheet_id })
+        .andWhere('sheet.deleted = false');
+
+      const sheet = await conditions.getOne();
+
+      return sheet || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.getSheet()',
         e,
       );
       return null;
@@ -956,6 +979,38 @@ export class SheetService {
     }
   }
 
+  async countSheetSuccessAndNotGraded(ids: number[]): Promise<number> {
+    try {
+      const conditions = this._sheetRepository
+        .createQueryBuilder('sheet')
+        .select('COUNT(sheet.id)', 'count')
+        .whereInIds(ids)
+        .andWhere('sheet.deleted = :deleted', { deleted: false })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('sheet.status =:status_not_graded', {
+              status_not_graded: SheetStatus.NOT_GRADED,
+            });
+            qb.orWhere('sheet.status =:status_success', {
+              status_success: SheetStatus.SUCCESS,
+            });
+          }),
+        );
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'SheetService.countSheetSuccessAndNotGraded()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async update(
     sheet: SheetEntity,
     manager?: EntityManager,
@@ -979,7 +1034,8 @@ export class SheetService {
   }
 
   async ungraded(
-    sheet_id: number,
+    sheet: SheetEntity,
+    role_id: number,
     request_code: string,
     manager?: EntityManager,
   ): Promise<boolean | null> {
@@ -988,17 +1044,23 @@ export class SheetService {
         manager = this._dataSource.manager;
       }
 
-      const result = await manager.update(
-        SheetEntity,
-        { id: sheet_id },
-        {
-          status: SheetStatus.NOT_GRADED,
-          graded: 0,
-          level: null,
-          updated_at: new Date(),
-          updated_by: request_code,
-        },
-      );
+      const data = {
+        status: SheetStatus.NOT_GRADED,
+        graded: 0,
+        level: null,
+        updated_at: new Date(),
+        updated_by: request_code,
+        sum_of_class_marks: sheet.sum_of_class_marks,
+        sum_of_adviser_marks: sheet.sum_of_adviser_marks,
+      };
+
+      if (role_id === RoleCode.ADVISER) {
+        data.sum_of_adviser_marks = 0;
+      } else {
+        data.sum_of_class_marks = 0;
+      }
+
+      const result = await manager.update(SheetEntity, { id: sheet.id }, data);
 
       return result.affected > 0;
     } catch (e) {

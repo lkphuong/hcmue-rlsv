@@ -286,11 +286,7 @@ export class UserService {
         );
       }
 
-      const users = await conditions
-        .orderBy('user.created_at', 'DESC')
-        .skip(offset)
-        .take(length)
-        .getMany();
+      const users = await conditions.skip(offset).take(length).getMany();
 
       return users || null;
     } catch (e) {
@@ -583,14 +579,14 @@ export class UserService {
           'user.academic',
           AcademicYearEntity,
           'academic',
-          `user.academic_id = academic_id AND 
+          `user.academic_id = academic.id AND 
         academic.deleted = 0`,
         )
         .innerJoinAndMapOne(
           'user.semester',
           SemesterEntity,
           'semester',
-          `semester.academic_id = academic_id AND
+          `semester.id = user.semester_id AND
          semester.deleted = 0`,
         )
         .innerJoinAndMapOne(
@@ -610,9 +606,7 @@ export class UserService {
         .where(`user.id IN (${user_ids.toString()})`)
         .andWhere('user.deleted = :deleted', { deleted: 0 });
 
-      const users = await conditions
-        .orderBy('user.created_at', 'DESC')
-        .getMany();
+      const users = await conditions.getMany();
 
       return users || null;
     } catch (e) {

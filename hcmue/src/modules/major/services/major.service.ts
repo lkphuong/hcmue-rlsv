@@ -27,9 +27,7 @@ export class MajorService {
         .select('major.id AS id, major.name AS name')
         .where('major.deleted = :deleted', { deleted: 0 });
 
-      const majors = await conditions
-        .orderBy('major.created_at', 'DESC')
-        .getRawMany<MajorResponse>();
+      const majors = await conditions.getRawMany<MajorResponse>();
 
       return majors || null;
     } catch (e) {

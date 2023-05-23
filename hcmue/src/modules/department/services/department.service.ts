@@ -93,11 +93,7 @@ export class DepartmentService {
         conditions = conditions.andWhere(`department.name LIKE '%${input}%'`);
       }
 
-      const departments = await conditions
-        .orderBy('department.created_at', 'DESC')
-        .skip(offset)
-        .take(length)
-        .getMany();
+      const departments = await conditions.skip(offset).take(length).getMany();
 
       return departments || null;
     } catch (e) {

@@ -47,9 +47,7 @@ export class ClassService {
         .createQueryBuilder('class')
         .where(`class.id IN (${ids.toString()})`);
 
-      const classes = await conditions
-        .orderBy('class.created_at', 'DESC')
-        .getMany();
+      const classes = await conditions.getMany();
       return classes || null;
     } catch (e) {
       this._logger.writeLog(
@@ -76,7 +74,7 @@ export class ClassService {
         conditions = conditions.andWhere('class.id = :class_id', { class_id });
       }
 
-      const classes = await conditions.orderBy('class.id', 'DESC').getMany();
+      const classes = await conditions.getMany();
 
       return classes || null;
     } catch (e) {
@@ -108,11 +106,7 @@ export class ClassService {
 
       console.log(offset, length);
 
-      const classes = await conditions
-        .orderBy('class.created_at', 'DESC')
-        .skip(offset)
-        .take(length)
-        .getMany();
+      const classes = await conditions.skip(offset).take(length).getMany();
 
       return classes || null;
     } catch (e) {

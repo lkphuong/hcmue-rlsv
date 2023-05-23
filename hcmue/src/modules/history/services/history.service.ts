@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Brackets, DataSource, Repository } from 'typeorm';
+import { Brackets, DataSource, EntityManager, Repository } from 'typeorm';
 
 import { SheetHistoryEntity } from '../../../entities/sheet_history.entity';
 
@@ -18,7 +18,6 @@ import { TitleEntity } from '../../../entities/title.entity';
 import { ItemEntity } from '../../../entities/item.entity';
 import { OptionEntity } from '../../../entities/option.entity';
 import { EvaluationHistoryEntity } from '../../../entities/evaluation_history.entity';
-import { generateCategoryByRole } from '../../sheet/utils';
 
 @Injectable()
 export class HistoryService {
@@ -219,7 +218,6 @@ export class HistoryService {
 
   async getEvaluationBySheetId(
     sheet_id: number,
-    role: number,
   ): Promise<EvaluationHistoryEntity[] | null> {
     try {
       const conditions = this._evaluationService
@@ -232,9 +230,6 @@ export class HistoryService {
           'evaluation.option_id = option.id AND option.delete_flag = 0',
         )
         .where('sheet.id = :sheet_id', { sheet_id })
-        .andWhere('evaluation.category = :category', {
-          category: generateCategoryByRole(role),
-        })
         .andWhere('sheet.deleted = :deleted', { deleted: false })
         .andWhere('item.deleted = :deleted', { deleted: false });
 
@@ -245,6 +240,33 @@ export class HistoryService {
         Levels.ERROR,
         Methods.SELECT,
         'EvaluationService.getEvaluationBySheetId()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async multipleInsertSheetHistory(
+    sheet_ids: number[],
+    author: number,
+    role: number,
+    manager?: EntityManager,
+  ) {
+    try {
+      if (!manager) {
+        manager = this._dataSource.manager;
+      }
+
+      const results = await manager.query(
+        `CALL sp_multiple_insert_history ('${sheet_ids.toString()}', ${author}, ${role})`,
+      );
+
+      return results[0][0].success ?? 0;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'HistoryService.multipleInsertSheetHistory()',
         e,
       );
       return null;

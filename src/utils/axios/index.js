@@ -17,8 +17,8 @@ import { isSuccess } from '_func/';
 import { post } from './request';
 
 const apiInstance = axios.create({
-	baseURL: process.env.REACT_APP_API_URL,
-	// baseURL: 'http://192.168.1.100:3000/api',
+	// baseURL: process.env.REACT_APP_API_URL,
+	baseURL: 'http://192.168.1.100:3000/api',
 	// timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 

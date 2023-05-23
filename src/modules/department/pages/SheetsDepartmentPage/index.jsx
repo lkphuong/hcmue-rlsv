@@ -181,6 +181,7 @@ const SheetsDepartmentPage = () => {
 				semester_id={Number(semester?.id)}
 				department_id={department_id}
 				saveFilter={saveFilter}
+				class_id={class_id}
 			/>
 
 			<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />

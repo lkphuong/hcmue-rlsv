@@ -65,3 +65,11 @@ input:-webkit-autofill:active {
 	background: rgb(175, 175, 175);
 	opacity: 1;
 }
+
+.fullscreen-enabled {
+	background: white;
+	overflow: auto;
+	& > div {
+		background: inherit;
+	}
+}

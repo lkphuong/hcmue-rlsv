@@ -42,9 +42,9 @@ const CurrentSheetPage = () => {
 	//#endregion
 
 	//#region Event
-	const getData = async () => {
+	const getData = async (params) => {
 		setLoading(true);
-		const _filter = cleanObjValue(filter);
+		const _filter = cleanObjValue(params);
 
 		const res = await getClassSheets(class_id[0], _filter);
 
@@ -59,7 +59,11 @@ const CurrentSheetPage = () => {
 	//#endregion
 
 	useEffect(() => {
-		if (filter?.department_id && filter?.semester_id && filter?.academic_id) getData();
+		const params = { ...filter };
+		params.semester_id = semester_id;
+		params.academic_id = academic_id;
+
+		if (params?.department_id && params?.semester_id && params?.academic_id) getData(params);
 	}, [filter, department_id, semester_id, academic_id]);
 
 	useEffect(() => {

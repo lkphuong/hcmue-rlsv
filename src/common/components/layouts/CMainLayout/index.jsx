@@ -20,7 +20,6 @@ import { SuspenseLoading } from '_others/';
 import CHeader from './CHeader';
 import CSidebar from './CSidebar';
 import { CTimeline } from './CTimeline';
-import { FullScreen, useFullScreenHandle } from 'react-full-screen';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 	({ theme, open }) => ({
@@ -70,7 +69,6 @@ const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 export const CMainLayout = () => {
 	//#region Data
 	const theme = useTheme();
-	const handle = useFullScreenHandle();
 	const matchDownMd = useMediaQuery(theme.breakpoints.down('lg'));
 
 	const isLogined = useSelector((state) => state.auth.isLogined);
@@ -120,37 +118,34 @@ export const CMainLayout = () => {
 
 	//#region Render
 	return isLogined ? (
-		<FullScreen handle={handle}>
-			<Box sx={{ display: 'flex' }}>
-				<CssBaseline />
+		<Box sx={{ display: 'flex' }}>
+			<CssBaseline />
 
-				<AppBar
-					enableColorOnDark
-					position='fixed'
-					color='inherit'
-					elevation={0}
-					sx={{
-						bgcolor: theme.palette.background.default,
-						transition: leftDrawerOpened ? theme.transitions.create('width') : 'none',
-					}}
-				>
-					<Toolbar sx={{ justifyContent: 'space-between' }}>
-						<CHeader handleLeftDrawerToggle={handleLeftDrawerToggle} />
-					</Toolbar>
-				</AppBar>
+			<AppBar
+				enableColorOnDark
+				position='fixed'
+				color='inherit'
+				elevation={0}
+				sx={{
+					bgcolor: theme.palette.background.default,
+					transition: leftDrawerOpened ? theme.transitions.create('width') : 'none',
+				}}
+			>
+				<Toolbar sx={{ justifyContent: 'space-between' }}>
+					<CHeader handleLeftDrawerToggle={handleLeftDrawerToggle} />
+				</Toolbar>
+			</AppBar>
 
-				<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
+			<CSidebar drawerOpen={leftDrawerOpened} drawerToggle={handleLeftDrawerToggle} />
 
-				<Main theme={theme} open={leftDrawerOpened} style={{ position: 'relative' }}>
-					{/* <button onClick={handle.enter}>Enter fullscreen</button> */}
-					<CTimeline />
+			<Main theme={theme} open={leftDrawerOpened} style={{ position: 'relative' }}>
+				<CTimeline />
 
-					<Suspense fallback={<SuspenseLoading />}>
-						<Outlet />
-					</Suspense>
-				</Main>
-			</Box>
-		</FullScreen>
+				<Suspense fallback={<SuspenseLoading />}>
+					<Outlet />
+				</Suspense>
+			</Main>
+		</Box>
 	) : (
 		<Navigate to={ROUTES.LOGIN} replace={true} />
 	);

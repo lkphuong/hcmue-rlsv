@@ -9,7 +9,7 @@ import { validationSchemaResetPassword } from '_modules/auth/form';
 
 import { CInput } from '_controls/';
 
-import logo from '_assets/images/logo.png';
+import logo from '_assets/images/new-logo.png';
 
 import { alert } from '_func/alert';
 import { isSuccess } from '_func/';
@@ -69,7 +69,7 @@ const ResetPasswordPage = () => {
 					<Typography
 						fontWeight={700}
 						textAlign='center'
-						color='#2A61A2'
+						color='#CF373D'
 						fontSize='1.25rem'
 						lineHeight={1.6}
 					>
@@ -77,7 +77,7 @@ const ResetPasswordPage = () => {
 					</Typography>
 					<Typography
 						textAlign='center'
-						color='#2A61A2'
+						color='#CF373D'
 						fontSize='1.2rem'
 						lineHeight={1.6}
 						mb={1.4}

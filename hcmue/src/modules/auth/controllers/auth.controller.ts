@@ -732,10 +732,10 @@ export class AuthController {
 
             //#region Generate response
             return returnObjects<ProfileResponse>({
-              user_id: session.user_id,
-              username: session.username,
-              fullname: session.fullname,
-              class_id: [session.class],
+              user_id: user.id,
+              username: user.std_code,
+              fullname: user.fullname,
+              class_id: [user.class_id],
               major: major,
               avatar: user?.avatar,
               classes: $class

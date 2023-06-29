@@ -79,11 +79,11 @@ const ListStudentSheetsPage = () => {
 		});
 	}, [data]);
 
-	useEffect(() => {
-		if (semesters?.length) {
-			setFilter((prev) => ({ ...prev, semester_id: Number(semesters[0]?.id) || null }));
-		}
-	}, [semesters]);
+	// useEffect(() => {
+	// 	if (semesters?.length) {
+	// 		setFilter((prev) => ({ ...prev, semester_id: Number(semesters[0]?.id) || null }));
+	// 	}
+	// }, [semesters]);
 
 	useEffect(() => {
 		if (filter?.academic_id) getSemestersData();

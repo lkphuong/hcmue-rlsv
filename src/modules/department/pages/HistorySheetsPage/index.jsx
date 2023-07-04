@@ -52,6 +52,7 @@ const HistorySheetsPage = () => {
 		const res = await getDepartmentHistorySheets(_filter);
 
 		if (isSuccess(res)) setData(res.data);
+		else setData(undefined);
 	};
 
 	const onPageChange = (event, newPage) => setFilter((prev) => ({ ...prev, page: newPage }));

@@ -41,6 +41,7 @@ const SheetsManagementPage = () => {
 		const res = await getAdminSheets(_filter);
 
 		if (isSuccess(res)) setData(res.data);
+		else setData(undefined);
 
 		setLoading(false);
 	};
@@ -97,11 +98,13 @@ const SheetsManagementPage = () => {
 						textAlign='center'
 						mb={4}
 					>
-						{`${data?.data?.semester?.name} (${formatTimeSemester(
-							data?.data?.semester?.start
-						)} - ${formatTimeSemester(data?.data?.semester?.end)}) - Năm học ${
-							data?.data?.academic?.name
-						}`}
+						{listData?.length > 0
+							? `${data?.data?.semester?.name} (${formatTimeSemester(
+									data?.data?.semester?.start
+							  )} - ${formatTimeSemester(data?.data?.semester?.end)}) - Năm học ${
+									data?.data?.academic?.name
+							  }`
+							: 'Hiện tại: Không có phiếu cần đánh giá / Biểu mẫu đang phát hành'}
 					</Typography>
 
 					<ListDepartments data={listData} onSetCurrent={handleSetCurrent} />

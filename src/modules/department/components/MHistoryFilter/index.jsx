@@ -8,7 +8,7 @@ export const MHistoryFilter = ({ filter, academic_years, semesters, onFilterChan
 
 	//#region Event
 	const handleDepartmentChange = (key) => (value) =>
-		onFilterChange((prev) => ({ ...prev, [key]: value?.id, page: 1, pages: 0 }));
+		onFilterChange((prev) => ({ ...prev, [key]: Number(value?.id), page: 1, pages: 0 }));
 	//#endregion
 
 	//#region Render

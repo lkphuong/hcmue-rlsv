@@ -505,6 +505,12 @@ export class UserService {
           'class',
           `class.id = user.class_id AND class.delete_flag = 0`,
         )
+        .innerJoinAndMapOne(
+          'user.major',
+          MajorEntity,
+          'major',
+          'major.id = user.major_id AND major.delete_flag = 0',
+        )
         .where('user.std_code = :std_code', { std_code })
         .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: 0 });

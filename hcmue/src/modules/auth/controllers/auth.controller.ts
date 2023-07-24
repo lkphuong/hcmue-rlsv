@@ -725,18 +725,16 @@ export class AuthController {
               ? await this._classService.getClassById(session.class)
               : null;
 
-            const [major, user] = await Promise.all([
-              this._majorService.getMajorByUser(session.user_id),
-              this._userService.getUserByCode(session.username),
-            ]);
-
+            const user = await this._userService.getUserByCode(
+              session.username,
+            );
             //#region Generate response
             return returnObjects<ProfileResponse>({
               user_id: user.id,
               username: user.std_code,
               fullname: user.fullname,
               class_id: [user.class_id],
-              major: major,
+              major: user?.major?.name,
               avatar: user?.avatar,
               classes: $class
                 ? [

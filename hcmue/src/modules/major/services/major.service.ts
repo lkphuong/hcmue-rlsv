@@ -41,33 +41,6 @@ export class MajorService {
     }
   }
 
-  async getMajorByUser(user_id: number): Promise<string> {
-    try {
-      const manager = this._dataSource.manager;
-
-      const results = await manager.query(
-        `
-        SELECT majors.name
-        FROM 
-          users JOIN majors ON users.major_id = majors.id
-        WHERE 
-          users.id = ${user_id}
-        LIMIT 1
-        `,
-      );
-
-      return results[0]?.name || null;
-    } catch (e) {
-      this._logger.writeLog(
-        Levels.ERROR,
-        Methods.SELECT,
-        'AdviserService.getMajorByUser()',
-        e,
-      );
-      return null;
-    }
-  }
-
   async bulkAdd(
     majors: MajorEntity[],
     manager?: EntityManager,

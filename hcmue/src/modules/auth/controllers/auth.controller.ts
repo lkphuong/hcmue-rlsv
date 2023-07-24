@@ -728,6 +728,7 @@ export class AuthController {
             const user = await this._userService.getUserByCode(
               session.username,
             );
+
             //#region Generate response
             return returnObjects<ProfileResponse>({
               user_id: user.id,
@@ -745,7 +746,7 @@ export class AuthController {
                     },
                   ]
                 : null,
-              department_id: session.department,
+              department_id: user.department_id,
               role: role,
             });
             //#endregion

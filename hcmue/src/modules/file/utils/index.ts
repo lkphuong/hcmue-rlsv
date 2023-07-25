@@ -39,11 +39,11 @@ export const generateUploadFileSuccessResponse = async (
 
 export const generateUploadFileFailedResponse = async (
   original_name: string,
-  query_runner: QueryRunner,
+  query_runner: QueryRunner | null,
   req: Request,
 ) => {
   // Rollback transaction
-  await query_runner.rollbackTransaction();
+  // await query_runner.rollbackTransaction();
 
   return new HandlerException(
     SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,

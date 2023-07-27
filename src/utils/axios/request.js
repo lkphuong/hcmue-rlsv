@@ -1,4 +1,4 @@
-import apiInstance from '.';
+import apiInstance, { globalConfig } from '.';
 
 export const controller = null;
 
@@ -12,6 +12,7 @@ export const get = async (url, options = {}) => {
 	try {
 		return await apiInstance.get(url, {
 			...options,
+			...globalConfig,
 			// signal: controller.signal,
 		});
 	} catch (error) {
@@ -29,6 +30,7 @@ export const post = async (url, body, options = {}) => {
 	try {
 		return await apiInstance.post(url, body, {
 			...options,
+			...globalConfig,
 			// signal: controller.signal,
 		});
 	} catch (error) {
@@ -46,6 +48,7 @@ export const put = async (url, body, options = {}) => {
 	try {
 		return await apiInstance.put(url, body, {
 			...options,
+			...globalConfig,
 			// signal: controller.signal,
 		});
 	} catch (error) {
@@ -63,6 +66,7 @@ export const remove = async (url, options = {}) => {
 	try {
 		return await apiInstance.delete(url, {
 			...options,
+			...globalConfig,
 			// signal: controller.signal,
 		});
 	} catch (error) {

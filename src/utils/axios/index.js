@@ -18,11 +18,16 @@ import { post } from './request';
 
 const apiInstance = axios.create({
 	baseURL: process.env.REACT_APP_API_URL,
-	// baseURL: 'http://192.168.1.100:3000/api',
+	// baseURL: 'http://192.168.5.10:3000/api',
 	// timeout: process.env.REACT_APP_API_TIMEOUT,
 });
 
 let isRefetching = false;
+
+export const globalConfig = {
+	retry: 5,
+	retryDelay: 2000,
+};
 
 const _queue = [];
 
@@ -100,6 +105,27 @@ apiInstance.interceptors.response.use(
 				...error.response.data,
 				status: error.response.status,
 			});
+		}
+
+		if (error?.response?.status === 429) {
+			const { config } = error;
+
+			if (!config || !config.retry) {
+				return Promise.reject({
+					...error,
+					message: 'Thao tác không thành công, vui lòng thử lại!',
+				});
+			}
+
+			config.retry -= 1;
+
+			const delayRetryRequest = new Promise((resolve) => {
+				setTimeout(() => {
+					resolve();
+				}, config.retryDelay || 1000);
+			});
+
+			return delayRetryRequest.then(() => apiInstance(config));
 		}
 
 		return Promise.reject({

@@ -55,7 +55,7 @@ const FormCreatePage = () => {
 	const _step = useSelector((state) => state.form.step, shallowEqual);
 	const status = useSelector((state) => state.form.status, shallowEqual);
 	const form_id = useSelector((state) => state.form.form_id, shallowEqual);
-	console.log(status);
+
 	const [step, setStep] = useState(_step || 0);
 
 	const navigate = useNavigate();

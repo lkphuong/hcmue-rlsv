@@ -12,6 +12,7 @@ import {
   Param,
   HttpCode,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Request } from 'express';
@@ -131,6 +132,7 @@ import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { UnknownException } from '../../../exceptions/UnknownException';
 import { SheetLevel } from '../constants/enums/level.enum';
 import { SheetStatus } from '../constants/enums/status.enum';
+import { RateLimitInterceptor } from '../../../exceptions/limit-rate-exception';
 
 @Controller('sheets')
 export class SheetController {
@@ -1740,6 +1742,7 @@ export class SheetController {
   @Post('department/:department_id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(RateLimitInterceptor)
   @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async getClassesByDepartment(
@@ -1836,6 +1839,7 @@ export class SheetController {
    */
   @Put('student/:id')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(RateLimitInterceptor)
   @Roles(Role.STUDENT, Role.MONITOR, Role.CHAIRMAN, Role.SECRETARY)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkStudent(
@@ -1929,6 +1933,7 @@ export class SheetController {
    */
   @Put('class/:id')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(RateLimitInterceptor)
   // @Roles(Role.MONITOR, Role.SECRETARY, Role.CHAIRMAN)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkClass(
@@ -2029,6 +2034,7 @@ export class SheetController {
    */
   @Put('adviser/:id')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(RateLimitInterceptor)
   @Roles(Role.ADMIN, Role.DEPARTMENT, Role.ADVISER)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkAdviser(
@@ -2254,6 +2260,7 @@ export class SheetController {
    */
   @Put('department/:id')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(RateLimitInterceptor)
   @Roles(Role.ADMIN, Role.DEPARTMENT)
   @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
   async updateMarkDepartment(
@@ -2358,6 +2365,7 @@ export class SheetController {
    */
   @Put('weak/:id')
   @UseGuards(JwtAuthGuard)
+  @UseInterceptors(RateLimitInterceptor)
   @Roles(
     Role.CHAIRMAN,
     Role.SECRETARY,

@@ -103,21 +103,17 @@ export const unlinkFile = async (
   if (valid instanceof HttpException) throw valid;
   //#endregion
 
-  // Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
+  // // Make the QueryRunner
+  // const query_runner = data_source.createQueryRunner();
 
-  // Establish real database connection
-  await query_runner.connect();
+  // // Establish real database connection
+  // await query_runner.connect();
 
   try {
     // Start transaction
-    await query_runner.startTransaction();
+    // await query_runner.startTransaction();
 
-    const success = await file_service.unlink(
-      file.id,
-      request_code,
-      query_runner.manager,
-    );
+    const success = await file_service.unlink(file.id, request_code, null);
 
     if (success) {
       //#region Unlink file
@@ -125,20 +121,20 @@ export const unlinkFile = async (
       //#endregion
 
       //#region Generate response
-      return await generateUploadFileSuccessResponse(req, file, query_runner);
+      return await generateUploadFileSuccessResponse(req, file, null);
       //#endregion
     } else {
       //#region throw HandlerException
       return await generateUploadFileFailedResponse(
         file.originalName,
-        query_runner,
+        null,
         req,
       );
       //#endregion
     }
   } catch (err) {
     // Rollback transaction
-    await query_runner.rollbackTransaction();
+    //await query_runner.rollbackTransaction();
 
     console.log('------------------------------------------------------');
     console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -153,6 +149,6 @@ export const unlinkFile = async (
     }
   } finally {
     // Release transaction
-    await query_runner.release();
+    //await query_runner.release();
   }
 };

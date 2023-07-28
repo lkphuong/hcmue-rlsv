@@ -40,6 +40,7 @@ import {
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { validateFile, validateFileId, validateFileSize } from '../validations';
+import { FileRateLimitInterceptor } from '../interceptor/limit-rate-exception';
 
 @Controller('files')
 export class FilesController {
@@ -60,6 +61,7 @@ export class FilesController {
    * @page Files page
    */
   @Post('upload')
+  @UseInterceptors(FileRateLimitInterceptor)
   @UseInterceptors(FileInterceptor('file'))
   async uploadFiles(
     @UploadedFile() file: Express.Multer.File,

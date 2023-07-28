@@ -15,14 +15,14 @@ import { ErrorMessage } from '../constants/enums/errors.enum';
 export const generateUploadFileSuccessResponse = async (
   req: Request,
   file: FileEntity | null,
-  query_runner: QueryRunner,
+  query_runner?: QueryRunner,
 ) => {
   console.log('----------------------------------------------------------');
   console.log(req.method + ' - ' + req.url);
   console.log('data: ', file);
 
   // Commit transaction
-  await query_runner.commitTransaction();
+  // await query_runner.commitTransaction();
 
   return {
     data: {
@@ -42,7 +42,7 @@ export const generateUploadFileFailedResponse = async (
   query_runner: QueryRunner | null,
   req: Request,
 ) => {
-  // Rollback transaction
+  //Rollback transaction
   // await query_runner.rollbackTransaction();
 
   return new HandlerException(

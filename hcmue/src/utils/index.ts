@@ -13,6 +13,7 @@ import { HttpResponse } from '../interfaces/http-response.interface';
 import { UPLOAD_DEST } from '../constants';
 import { ConfigurationService } from '../modules/shared/services/configuration/configuration.service';
 import { LogService } from '../modules/log/services/log.service';
+
 import { Configuration } from '../modules/shared/constants/configuration.enum';
 import { Levels } from '../constants/enums/level.enum';
 
@@ -28,6 +29,36 @@ export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
       'uploads/(.*)',
     )
     .forRoutes({ path: '*', method: RequestMethod.ALL });
+
+  consumer.apply().forRoutes({
+    path: 'api/sheets/student/*',
+    method: RequestMethod.PUT,
+  });
+
+  consumer.apply().forRoutes({
+    path: 'api/sheets/class/*',
+    method: RequestMethod.PUT,
+  });
+
+  consumer.apply().forRoutes({
+    path: 'api/sheets/adviser/*',
+    method: RequestMethod.PUT,
+  });
+
+  consumer.apply().forRoutes({
+    path: 'api/sheets/department/*',
+    method: RequestMethod.PUT,
+  });
+
+  consumer.apply().forRoutes({
+    path: 'api/sheets/weak/*',
+    method: RequestMethod.PUT,
+  });
+
+  consumer.apply().forRoutes({
+    path: 'api/files/upload',
+    method: RequestMethod.POST,
+  });
 };
 
 export const convertString2Date = (raw: string) => {

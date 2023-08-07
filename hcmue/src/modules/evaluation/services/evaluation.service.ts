@@ -174,6 +174,20 @@ export class EvaluationService {
     }
   }
 
+  async bulkInsert(evaluations: EvaluationEntity[]) {
+    try {
+      await this._dataSource.manager.insert(EvaluationEntity, evaluations);
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.INSERT,
+        'EvaluationService.bulkAdd()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async bulkApprove(
     sheet_ids: number[],
     role: number,

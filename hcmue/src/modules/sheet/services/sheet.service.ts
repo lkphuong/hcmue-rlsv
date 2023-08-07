@@ -555,7 +555,7 @@ export class SheetService {
           'department',
           `department.id = sheet.department_id AND department.deleted = 0`,
         )
-        .leftJoin(
+        .innerJoin(
           StatusEntity,
           'status',
           `status.id = user.status_id AND status.deleted = 0`,

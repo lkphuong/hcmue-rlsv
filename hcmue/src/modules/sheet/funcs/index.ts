@@ -103,13 +103,13 @@ export const generatePersonalMarks = async (
   //#endregion
   //#endregion
 
-  // Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
-  await query_runner.connect();
+  // // Make the QueryRunner
+  // const query_runner = data_source.createQueryRunner();
+  // await query_runner.connect();
 
   try {
-    // Start transaction
-    await query_runner.startTransaction();
+    // // Start transaction
+    // await query_runner.startTransaction();
 
     //#region Update sheet
     const result = await generateUpdateSheet(
@@ -122,7 +122,7 @@ export const generatePersonalMarks = async (
       header_service,
       level_service,
       sheet_service,
-      query_runner,
+      null,
       req,
     );
     //#endregion
@@ -140,7 +140,7 @@ export const generatePersonalMarks = async (
         header_service,
         item_service,
         option_service,
-        query_runner,
+        null,
         req,
       );
 
@@ -164,7 +164,7 @@ export const generatePersonalMarks = async (
           EvaluationCategory.STUDENT,
           user_id,
           RoleCode.STUDENT,
-          query_runner?.manager,
+          null,
         );
       }
 
@@ -175,7 +175,7 @@ export const generatePersonalMarks = async (
         sheet,
         role_id,
         sheet_service,
-        query_runner,
+        null,
         req,
       );
       //#endregion
@@ -187,7 +187,7 @@ export const generatePersonalMarks = async (
   } catch (err) {
     console.log('err: ', err);
     // Rollback transaction
-    await query_runner.rollbackTransaction();
+    //await query_runner.rollbackTransaction();
 
     console.log('--------------------------------------------------------');
     console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -204,7 +204,7 @@ export const generatePersonalMarks = async (
     }
   } finally {
     // Release transaction
-    await query_runner.release();
+    //await query_runner.release();
   }
 };
 
@@ -239,12 +239,12 @@ export const generateClassMarks = async (
   //#endregion
 
   // Make the QueryRunner
-  const query_runner = data_source.createQueryRunner();
-  await query_runner.connect();
+  // const query_runner = data_source.createQueryRunner();
+  // await query_runner.connect();
 
   try {
     // Start transaction
-    await query_runner.startTransaction();
+    // await query_runner.startTransaction();
 
     //#region Update sheet
     const result = await generateUpdateSheet(
@@ -257,7 +257,7 @@ export const generateClassMarks = async (
       header_service,
       level_service,
       sheet_service,
-      query_runner,
+      null,
       req,
     );
     //#endregion
@@ -273,7 +273,7 @@ export const generateClassMarks = async (
         header_service,
         item_service,
         option_service,
-        query_runner,
+        null,
         req,
       );
 
@@ -297,7 +297,7 @@ export const generateClassMarks = async (
           EvaluationCategory.CLASS,
           user_id,
           role,
-          query_runner?.manager,
+          null,
         );
       }
       //#endregion
@@ -307,7 +307,7 @@ export const generateClassMarks = async (
         result,
         role_id,
         sheet_service,
-        query_runner,
+        null,
         req,
       );
       //#endregion
@@ -318,7 +318,7 @@ export const generateClassMarks = async (
     }
   } catch (err) {
     // Rollback transaction
-    await query_runner.rollbackTransaction();
+    // await query_runner.rollbackTransaction();
 
     console.log('--------------------------------------------------------');
     console.log(req.method + ' - ' + req.url + ': ' + err.message);
@@ -335,7 +335,7 @@ export const generateClassMarks = async (
     }
   } finally {
     // Release transaction
-    await query_runner.release();
+    // await query_runner.release();
   }
 };
 
@@ -879,9 +879,9 @@ export const generateUpdateStudentEvaluation = async (
   }
 
   //#region delete file
-  await file_service.delete(sheet_id, query_runner.manager);
+  await file_service.delete(sheet_id, null);
   //#endregion
-  files = await file_service.bulkUpdate(files, query_runner.manager);
+  files = await file_service.bulkUpdate(files, null);
   if (files) {
     //#region delete
 
@@ -892,7 +892,7 @@ export const generateUpdateStudentEvaluation = async (
     //#endregion
 
     //#region Update evaluation
-    await query_runner.manager.insert(EvaluationEntity, evaluations);
+    await evaluation_service.bulkInsert(evaluations);
     //#endregion
 
     return evaluations;
@@ -1033,7 +1033,7 @@ export const generateUpdateClassEvaluation = async (
   //#endregion
 
   //#region Update evaluation
-  await query_runner.manager.insert(EvaluationEntity, evaluations);
+  await evaluation_service.bulkInsert(evaluations);
   //#endregion
 
   return evaluations;
@@ -1424,7 +1424,7 @@ export const generateUpdateSheet = async (
   sheet.updated_at = new Date();
   sheet.updated_by = request_code;
 
-  sheet = await sheet_service.update(sheet, query_runner.manager);
+  sheet = await sheet_service.update(sheet, null);
   return sheet;
 };
 

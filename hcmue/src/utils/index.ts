@@ -55,10 +55,10 @@ export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
     method: RequestMethod.PUT,
   });
 
-  consumer.apply().forRoutes({
-    path: 'api/files/upload',
-    method: RequestMethod.POST,
-  });
+  // consumer.apply().forRoutes({
+  //   path: 'api/files/upload',
+  //   method: RequestMethod.POST,
+  // });
 };
 
 export const convertString2Date = (raw: string) => {

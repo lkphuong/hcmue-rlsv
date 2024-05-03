@@ -64,7 +64,16 @@ export const arrayObjectDifference = (
   array2: any[],
   key: string,
 ) => {
-  return array2.filter((x) => array1.every((y) => !y[key].includes(x[key])));
+  //return array2.filter((x) => array1.every((y) => !y[key].includes(x[key])));
+  const result = [];
+  for (const i of array2) {
+    const tmp = array1.find((x) => x[key] == i[key]);
+    if (tmp === undefined) {
+      result.push(i);
+    }
+  }
+
+  return result;
 };
 
 /**

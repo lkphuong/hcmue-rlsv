@@ -660,19 +660,20 @@ export const generateCreateUser = async (
     item.semester_id = semester_id;
     item.std_code = i[0];
     item.email = i[4];
-    item.status_id = i[1]
-      ? statuses.find((status) => status.name == i[1]).id
-      : null;
+    item.status_id =
+      (i[1] ? statuses.find((status) => status.name == i[1])?.id : null) ??
+      null;
     item.fullname = i[2];
     item.password = md5(i[3]);
     item.birthday = i[3];
-    item.class_id = i[8]
-      ? classes.find(($class) => $class.code == i[8]).id
-      : null;
-    item.department_id = i[6]
-      ? departments.find((department) => department.name == i[6]).id
-      : null;
-    item.major_id = i[7] ? majors.find((major) => major.name == i[7]).id : null;
+    item.class_id =
+      (i[8] ? classes.find(($class) => $class.code == i[8])?.id : null) ?? null;
+    item.department_id =
+      (i[6]
+        ? departments.find((department) => department.name == i[6])?.id
+        : null) ?? null;
+    item.major_id =
+      (i[7] ? majors.find((major) => major.name == i[7])?.id : null) ?? null;
     item.avatar = i[10] ?? null;
     add_users.push(item);
     counter++;

@@ -259,7 +259,7 @@ export const generateCacheDepartmentsResponse = async (
         );
         //#region Get num_of_std by department
         const num_of_std =
-          count_sheets.find((e) => e.department_id == key).count ?? 0;
+          count_sheets.find((e) => e.department_id == key)?.count ?? 0;
         //#endregion
 
         //#region Push data to department response
@@ -417,7 +417,7 @@ export const generateGlobalLevelResponse = (
   const level_id = cache_class.level ? cache_class.level.id.toString() : '0';
   const index = items.findIndex((item) => item.id.toString() === level_id);
   if (index !== -1) {
-    items[index].count = items[index].count + cache_class.amount;
+    items[index].count = (items[index]?.count ?? 0) + cache_class.amount;
   }
   return items;
 };

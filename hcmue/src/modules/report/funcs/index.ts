@@ -730,6 +730,132 @@ export const exportExcelTemplateDepartment = async (
   }
 };
 
+// export const exportExcelTemplateAdmin = async (
+//   params: ExportReportsDto,
+//   academic_year: AcademicYearEntity,
+//   department: DepartmentEntity,
+//   semester: SemesterEntity,
+//   cache_classes: CacheClassEntity[],
+//   levels: LevelEntity[],
+//   department_service: DepartmentService,
+//   sheet_service: SheetService,
+//   cache_class_service: CacheClassService,
+//   req: Request,
+// ) => {
+//   try {
+//     const { academic_id, semester_id, department_id } = params;
+//     const [payload, sheets] = await Promise.all([
+//       generateCacheDepartmentsResponse(
+//         academic_year,
+//         department,
+//         semester,
+//         academic_id,
+//         semester_id,
+//         cache_classes,
+//         levels,
+//         department_service,
+//         sheet_service,
+//         cache_class_service,
+//       ),
+//       sheet_service.getSheetsReport(academic_id, semester_id, department_id),
+//     ]);
+//     if (payload) {
+//       const workbook = new exceljs.Workbook();
+//       await workbook.xlsx.readFile(PATH_FILE_EXCEL.TEMPLATE_3A);
+
+//       const worksheet = workbook.getWorksheet('Sheet1');
+//       //#region insert table ranking
+//       const ranking_length = payload.sum_of_levels.length;
+//       const { sum_of_std_in_departments } = payload;
+//       //#region Insert total student
+//       worksheet.getCell('E13').value = sum_of_std_in_departments + ' SV';
+//       //#endregion
+//       for (let i = ranking_length - 1; i >= 0; i--) {
+//         const { name, count } = payload.sum_of_levels[i];
+//         const rowValues = [];
+//         rowValues[4] = name;
+//         rowValues[5] = count;
+//         rowValues[6] =
+//           ((count / sum_of_std_in_departments) * 100).toFixed(2) + '%';
+//         worksheet.insertRow(15, rowValues);
+
+//         //#region border table raking
+//         const ranking_rows = ['D15', 'E15', 'F15'];
+//         for (let i = 0; i < 3; i++) {
+//           worksheet.getCell(`${ranking_rows[i]}`).border = {
+//             top: { style: 'thin' },
+//             left: { style: 'thin' },
+//             bottom: { style: 'thin' },
+//             right: { style: 'thin' },
+//           };
+//         }
+//         //#endregion
+//       }
+//       //#endregion
+
+//       let rows = [],
+//         pos = 12;
+
+//       const lenth = sheets.length,
+//         chuck = 500;
+//       for (let i = 0; i < lenth; i++) {
+//         const row_values = [];
+//         row_values[2] = i + 1;
+//         row_values[3] = sheets[i].std_code;
+//         row_values[4] = sheets[i].fullname;
+//         row_values[5] = sheets[i].birthday;
+//         row_values[6] = sheets[i].class;
+//         row_values[7] = sheets[i].department;
+//         row_values[8] = sheets[i].sum_of_department_marks;
+//         row_values[9] =
+//           sheets[i]?.graded == 0
+//             ? 'Không xếp loại'
+//             : sheets[i]?.level
+//             ? sheets[i]?.level
+//             : '';
+//         row_values[10] = sheets[i].flag == 2 ? sheets[i].status : '';
+//         rows.push(row_values);
+
+//         if (rows.length === chuck) {
+//           worksheet.insertRows(pos, rows, 'i');
+//           rows = [];
+//           pos += chuck;
+//         }
+//       }
+
+//       // console.log('sheets: ', sheets.length);
+
+//       worksheet.insertRows(pos, rows, 'i');
+
+//       await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A);
+
+//       return true;
+//     } else {
+//       //#region throw HandlerException
+//       throw new HandlerException(
+//         DATABASE_EXIT_CODE.NO_CONTENT,
+//         req.method,
+//         req.url,
+//         ErrorMessage.EXPORT_FILE_OPERATOR,
+//         HttpStatus.EXPECTATION_FAILED,
+//       );
+//       //#endregion
+//     }
+//   } catch (err) {
+//     console.log('err: ', err);
+//     if (err instanceof HttpException) return err;
+//     else {
+//       //#region throw HandlerException
+//       return new HandlerException(
+//         SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+//         req.method,
+//         req.url,
+//       );
+//       //#endregion
+//     }
+//   }
+// };
+
 export const exportExcelTemplateAdmin = async (
   params: ExportReportsDto,
   academic_year: AcademicYearEntity,
@@ -744,59 +870,25 @@ export const exportExcelTemplateAdmin = async (
 ) => {
   try {
     const { academic_id, semester_id, department_id } = params;
-    const payload = await generateCacheDepartmentsResponse(
-      academic_year,
-      department,
-      semester,
+
+    const sheets = await sheet_service.getSheetsReport(
       academic_id,
       semester_id,
-      cache_classes,
-      levels,
-      department_service,
-      sheet_service,
-      cache_class_service,
+      department_id,
     );
-    if (payload) {
-      const workbook = new exceljs.Workbook();
-      await workbook.xlsx.readFile(PATH_FILE_EXCEL.TEMPLATE_3A);
 
-      const worksheet = workbook.getWorksheet('Sheet1');
-      //#region insert table ranking
-      const ranking_length = payload.sum_of_levels.length;
-      const { sum_of_std_in_departments } = payload;
-      //#region Insert total student
-      worksheet.getCell('E13').value = sum_of_std_in_departments + ' SV';
-      //#endregion
-      for (let i = ranking_length - 1; i >= 0; i--) {
-        const { name, count } = payload.sum_of_levels[i];
-        const rowValues = [];
-        rowValues[4] = name;
-        rowValues[5] = count;
-        rowValues[6] =
-          ((count / sum_of_std_in_departments) * 100).toFixed(2) + '%';
-        worksheet.insertRow(15, rowValues);
+    const length = sheets.length,
+      chunk = 500;
 
-        //#region border table raking
-        const ranking_rows = ['D15', 'E15', 'F15'];
-        for (let i = 0; i < 3; i++) {
-          worksheet.getCell(`${ranking_rows[i]}`).border = {
-            top: { style: 'thin' },
-            left: { style: 'thin' },
-            bottom: { style: 'thin' },
-            right: { style: 'thin' },
-          };
-        }
-        //#endregion
-      }
-      //#endregion
-      const sheets = await sheet_service.getSheetsReport(
-        academic_id,
-        semester_id,
-        department_id,
-      );
-      const rows = [];
-      const lenth = sheets.length;
-      for (let i = 0; i < lenth; i++) {
+    if (length) {
+      const workbook = new exceljs.stream.xlsx.WorkbookWriter({
+        filename: PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A,
+        useStyles: true,
+        useSharedStrings: true,
+      });
+      const worksheet = workbook.addWorksheet('Sheet1');
+
+      for (let i = 0; i < length; i++) {
         const row_values = [];
         row_values[2] = i + 1;
         row_values[3] = sheets[i].std_code;
@@ -812,17 +904,17 @@ export const exportExcelTemplateAdmin = async (
             ? sheets[i]?.level
             : '';
         row_values[10] = sheets[i].flag == 2 ? sheets[i].status : '';
-        rows.push(row_values);
+        worksheet.addRow(row_values).commit();
       }
 
-      console.log('sheets: ', sheets.length);
+      // console.log('sheets: ', sheets.length);
 
-      worksheet.insertRows(12, rows, 'i');
-
-      await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A);
-
+      await workbook.commit();
       return true;
-    } else {
+    }
+
+    //await workbook.xlsx.writeFile(PATH_FILE_EXCEL.OUTPUT_TEMPLATE_3A);
+    else {
       //#region throw HandlerException
       throw new HandlerException(
         DATABASE_EXIT_CODE.NO_CONTENT,

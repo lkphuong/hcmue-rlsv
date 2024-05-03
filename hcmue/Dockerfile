@@ -3,7 +3,7 @@ FROM node:16.15-alpine3.14 AS build
 COPY . /src
 WORKDIR /src
 
-RUN yarn & yarn cache clean
+# RUN yarn & yarn cache clean
 
 FROM node:16.15.0-alpine3.14
 COPY --from=build /src/package.json /opt/app/package.json
@@ -60,7 +60,7 @@ ENV URL_EXPORT_TEMPLATE_3: 'http://hcmue.vtcode.vn:9093/export/template3',
 
 EXPOSE 3000
 
-RUN npm i npm -g
+# RUN npm i npm -g
 RUN npm i pm2 -g
 
 ENTRYPOINT ["pm2-runtime", "dist/src/main.js"]

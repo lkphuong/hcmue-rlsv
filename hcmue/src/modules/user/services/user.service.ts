@@ -189,13 +189,6 @@ export class UserService {
           `user.academic_id = user.academic_id AND 
           academic.deleted = 0`,
         )
-        .innerJoinAndMapOne(
-          'user.semester',
-          SemesterEntity,
-          'semester',
-          `semester.academic_id = user.academic_id AND
-           semester.deleted = 0`,
-        )
         .leftJoinAndMapOne(
           'user.department',
           DepartmentEntity,
@@ -245,8 +238,8 @@ export class UserService {
           `major.id = user.major_id AND 
           major.deleted = 0`,
         )
-        .where('semester.id = :semester_id', { semester_id })
-        .andWhere('academic.id = :academic_id', { academic_id })
+        .where('user.semester_id = :semester_id', { semester_id })
+        .andWhere('user.academic_id = :academic_id', { academic_id })
         .andWhere('user.active = :active', { active: true })
         .andWhere('user.deleted = :deleted', { deleted: false });
 

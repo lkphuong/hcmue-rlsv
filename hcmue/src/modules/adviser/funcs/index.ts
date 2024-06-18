@@ -65,7 +65,7 @@ export const generateImportAdviser = async (
   req: Request,
 ) => {
   //#region Get params
-  const { academic_id, file_id } = params;
+  const { academic_id, file_id, semester_id } = params;
   //#endregion
 
   //#region Validation
@@ -127,6 +127,7 @@ export const generateImportAdviser = async (
       //#region Create Adviser
       const advisers = await generateCreateAdviser(
         academic_id,
+        semester_id,
         data.advisers,
         data_query.departments,
         adviser_service,
@@ -253,6 +254,7 @@ export const readDataFromFile = async (path: string) => {
 
 export const generateCreateAdviser = async (
   academic_id: number,
+  semester_id: number,
   data: ExcelAdviserResponse[],
   departments: DepartmentResponse[],
   adviser_service: AdviserService,
@@ -262,6 +264,7 @@ export const generateCreateAdviser = async (
   for await (const i of data) {
     const item = new AdviserEntity();
     item.academic_id = academic_id;
+    item.semester_id = semester_id;
     item.email = i.email;
     item.code = i.code;
     item.degree = i.degree;

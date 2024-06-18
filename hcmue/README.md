@@ -56,9 +56,3 @@
 - sp_generate_options (clone options from source_form to target_form)
 
 - sp_multiple_approval (cập nhật điểm đánh giá của lớp (hoặc sinh viên) qua điểm đánh giá của khoa cùng lúc nhiều phiếu (chỉ áp dụng đối với tài khoản của khoa))
-
-# docker build --no-cache -t hoanglong1011/hcmue:1.1 -t hoanglong1011/hcmue:latest .
-
-# docker push hoanglong1011/hcmue:1.1
-
-# docker push hoanglong1011/hcmue:latest

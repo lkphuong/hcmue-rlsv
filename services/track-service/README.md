@@ -1,5 +1,0 @@
-# docker build --no-cache -t hoanglong1011/hcmue-tracking:1.1 -t hoanglong1011/hcmue-tracking:latest .
-
-# docker push hoanglong1011/hcmue-tracking:1.1
-
-# docker push hoanglong1011/hcmue-tracking:latest

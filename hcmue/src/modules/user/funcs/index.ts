@@ -16,7 +16,7 @@ import {
 import {
   arrayDifference,
   arrayDuplicate,
-  arrayObjectDifference,
+  arrayObjectDuplicate,
   generateImportSuccessResponse,
 } from '../utils';
 import { generateBaseResponse, generateClassResponse } from '../transforms';
@@ -134,13 +134,7 @@ export const generateImportUsers = async (
     await query_runner.startTransaction();
 
     //#region Get data
-    const data_query = await generateData(
-      class_service,
-      department_service,
-      k_service,
-      major_service,
-      status_service,
-    );
+    const data_query = await generateData(status_service);
 
     //#endregion
 
@@ -163,30 +157,17 @@ export const generateImportUsers = async (
 
     //#region compare two array
     //#region comapre class
-    const class_difference = arrayObjectDifference(
-      data_query.classes,
-      data.classes,
-      'code',
-    );
+    const class_difference = data.classes;
     //#endregion
 
     //#region compare department
-    const array_department =
-      data_query.departments && data_query.departments.length > 0
-        ? data_query.departments.map((i) => {
-            return i.name;
-          })
-        : [];
-    const department_difference = arrayDifference(
-      array_department,
-      data.departments,
-    );
+    const department_difference = Array.from(new Set(data.departments));
     //#endregion
 
     //#region compare status
     const array_status =
-      data_query.statuses && data_query.statuses.length > 0
-        ? data_query.statuses.map((i) => {
+      data_query && data_query.length > 0
+        ? data_query.map((i) => {
             return i.name;
           })
         : [];
@@ -194,27 +175,18 @@ export const generateImportUsers = async (
     //#endregion
 
     //#region compare k
-    const array_k =
-      data_query.k && data_query.k.length > 0
-        ? data_query.k.map((i) => {
-            return i.name;
-          })
-        : [];
-    const k_difference = arrayDifference(array_k, data.k);
+
+    const k_difference = Array.from(new Set(data.k));
     //#endregion
 
     //#region compare major
-    const major_difference = arrayObjectDifference(
-      data_query.majors,
-      data.majors,
-      'name',
-    );
+    const major_difference = data.majors;
     //#endregion
 
     //#endregion
 
     //#region Create status
-    let new_cache_status: StatusResponse[] = [...data_query.statuses];
+    let new_cache_status: StatusResponse[] = [...data_query];
     if (status_difference) {
       const new_status = await generateCreateStatus(
         status_difference,
@@ -239,12 +211,12 @@ export const generateImportUsers = async (
 
     //#endregion
     //#region Create department
-    let new_cache_department: DepartmentResponse[] = [
-      ...data_query.departments,
-    ];
+    let new_cache_department: DepartmentResponse[] = [];
     if (department_difference && department_difference.length > 0) {
       const new_department = await generateCreateDepartment(
         department_difference,
+        academic_id,
+        semester_id,
         department_service,
         query_runner,
       );
@@ -259,7 +231,7 @@ export const generateImportUsers = async (
       } else {
         //#region transform data and new cache
         const result = generateBaseResponse(new_department);
-        new_cache_department = [...new_cache_department, ...result];
+        new_cache_department = [...result];
         //#endregion
       }
     }
@@ -267,11 +239,13 @@ export const generateImportUsers = async (
     //#endregion
 
     //#region Create major
-    let new_cache_major: MajorResponse[] = [...data_query.majors];
+    let new_cache_major: MajorResponse[] = [];
     if (major_difference && major_difference.length > 0) {
       const new_major = await generateCreateMajor(
         major_difference,
         new_cache_department,
+        academic_id,
+        semester_id,
         major_service,
         query_runner,
       );
@@ -286,7 +260,7 @@ export const generateImportUsers = async (
       } else {
         //#region transform data and new cache
         const result = generateBaseResponse(new_major);
-        new_cache_major = [...new_cache_major, ...result];
+        new_cache_major = [...result];
         //#endregion
       }
     }
@@ -294,10 +268,12 @@ export const generateImportUsers = async (
     //#endregion
 
     //#region Create k
-    let new_cache_k: KResponse[] = [...data_query.k];
+    let new_cache_k: KResponse[] = [];
     if (k_difference && k_difference.length > 0) {
       const new_k = await generateCreateK(
         k_difference,
+        academic_id,
+        semester_id,
         k_service,
         query_runner,
       );
@@ -312,7 +288,7 @@ export const generateImportUsers = async (
       } else {
         //#region transform data and new cache
         const result = generateBaseResponse(new_k);
-        new_cache_k = [...new_cache_k, ...result];
+        new_cache_k = [...result];
         //#endregion
       }
     }
@@ -320,12 +296,14 @@ export const generateImportUsers = async (
     //#endregion
 
     //#region Create class
-    let new_cache_class: ClassResponse[] = [...data_query.classes];
+    let new_cache_class: ClassResponse[] = [];
     if (class_difference && class_difference.length > 0) {
       const new_class = await generateCreateClass(
         class_difference,
         new_cache_department,
         new_cache_k,
+        academic_id,
+        semester_id,
         class_service,
         query_runner,
       );
@@ -340,7 +318,7 @@ export const generateImportUsers = async (
       } else {
         //#region transform data and new cache
         const result = generateClassResponse(new_class);
-        new_cache_class = [...new_cache_class, ...result];
+        new_cache_class = [...result];
         //#endregion
       }
     }
@@ -482,32 +460,16 @@ export const readDataFromFile = async (path: string) => {
   return result;
 };
 
-export const generateData = async (
-  class_service: ClassService,
-  department_service: DepartmentService,
-  k_service: KService,
-  major_service: MajorService,
-  status_service: StatusService,
-) => {
-  const [$class, departments, k, majors, statuses] = await Promise.all([
-    class_service.getClasses(),
-    department_service.getDepartments(),
-    k_service.getAll(),
-    major_service.getMajors(),
-    status_service.getStatuses(),
-  ]);
+export const generateData = async (status_service: StatusService) => {
+  const statuses = await status_service.getStatuses();
 
-  return {
-    classes: $class,
-    statuses: statuses,
-    departments: departments,
-    k: k,
-    majors: majors,
-  };
+  return statuses;
 };
 
 export const generateCreateK = async (
   data: string[],
+  academic_id: number,
+  semester_id: number,
   k_service: KService,
   query_runner: QueryRunner,
 ) => {
@@ -515,6 +477,8 @@ export const generateCreateK = async (
   for (const i of data) {
     const k = new KEntity();
     k.name = i;
+    k.academic_id = academic_id;
+    k.semester_id = semester_id;
     k.active = true;
     k.created_at = new Date();
     k.deleted = false;
@@ -530,6 +494,8 @@ export const generateCreateK = async (
 
 export const generateCreateDepartment = async (
   data: string[],
+  academic_id: number,
+  semester_id: number,
   department_service: DepartmentService,
   query_runner: QueryRunner,
 ) => {
@@ -538,6 +504,8 @@ export const generateCreateDepartment = async (
   for (const i of data) {
     const department = new DepartmentEntity();
     department.name = i;
+    department.academic_id = academic_id;
+    department.semester_id = semester_id;
     department.active = true;
     department.created_at = new Date();
     department.deleted = false;
@@ -558,6 +526,8 @@ export const generateCreateDepartment = async (
 export const generateCreateMajor = async (
   data: ExcelMajorResponse[],
   departments: DepartmentResponse[],
+  academic_id: number,
+  semester_id: number,
   major_service: MajorService,
   query_runner: QueryRunner,
 ) => {
@@ -569,6 +539,8 @@ export const generateCreateMajor = async (
     major.department_id = departments.find(
       (department) => department.name == i.department,
     ).id;
+    major.academic_id = academic_id;
+    major.semester_id = semester_id;
     major.active = true;
     major.created_at = new Date();
     major.deleted = false;
@@ -614,6 +586,8 @@ export const generateCreateClass = async (
   data: ExcelClassResponse[],
   departments: DepartmentResponse[],
   ks: KResponse[],
+  academic_id: number,
+  semester_id: number,
   class_service: ClassService,
   query_runner: QueryRunner,
 ) => {
@@ -626,6 +600,8 @@ export const generateCreateClass = async (
       (department) => department.name == i.department,
     ).id;
     $class.k = ks.find((k) => k.name == i.k).id;
+    $class.academic_id = academic_id;
+    $class.semester_id = semester_id;
     add_class.push($class);
   }
 

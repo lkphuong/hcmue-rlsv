@@ -96,3 +96,9 @@ export const arrayDuplicate = async (array: any[]) => {
     return array.indexOf(item) !== index;
   });
 };
+
+export const arrayObjectDuplicate = (array: any[], key: string) => {
+  return array.filter(
+    (item, index) => array.findIndex((x) => x[key] === item[key]) !== index,
+  );
+};

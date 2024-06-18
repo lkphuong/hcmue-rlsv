@@ -17,5 +17,17 @@ export class KEntity extends RootEntity {
   })
   name: string;
 
+  @Column('bigint', {
+    name: 'academic_id',
+    nullable: false,
+  })
+  academic_id: number;
+
+  @Column('bigint', {
+    name: 'semester_id',
+    nullable: false,
+  })
+  semester_id: number;
+
   classes: ClassEntity[] | null;
 }

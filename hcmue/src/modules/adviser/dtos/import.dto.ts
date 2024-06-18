@@ -20,6 +20,17 @@ export class ImportAdviserDto {
   @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>
+      generateValidationMessage(arg, 'Bạn vui lòng nhập [học kì].'),
+  })
+  @MinValidator(0, {
+    message: (arg) =>
+      generateValidationMessage(arg, 'Giá trị [học kì] không hợp lệ.'),
+  })
+  semester_id: number;
+
+  @Transform((params) => parseInt(params.value) ?? 0)
+  @IsNotEmpty({
+    message: (arg) =>
       generateValidationMessage(arg, 'Bạn vui lòng upload file [sinh viên].'),
   })
   @MinValidator(0, {

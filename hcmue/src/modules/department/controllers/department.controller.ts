@@ -26,11 +26,13 @@ import {
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { Levels } from '../../../constants/enums/level.enum';
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 
 @Controller('departments')
 export class DepartmentController {
   constructor(
     private readonly _departmentService: DepartmentService,
+    private readonly _academicYearService: AcademicYearService,
     private _logger: LogService,
   ) {
     // Due to transient scope, DepartmentController has its own unique instance of LogService,
@@ -57,7 +59,14 @@ export class DepartmentController {
 
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
-      const departments = await this._departmentService.getDepartments();
+      const defaultAcademicYear =
+        await this._academicYearService.getDefaultAcademicYear();
+
+      const departments = await this._departmentService.getDepartments(
+        null,
+        defaultAcademicYear.academic_id,
+        defaultAcademicYear.semester_id,
+      );
 
       if (departments && departments.length > 0) {
         return {

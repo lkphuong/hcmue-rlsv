@@ -70,7 +70,12 @@ export const generateCacheClassesResponse = async (
     //#region Generate response
 
     const [classes, count_sheets, count_sheet_not_graded] = await Promise.all([
-      class_service.getClassesByDepartmentId(department_id, class_id),
+      class_service.getClassesByDepartmentId(
+        department_id,
+        class_id,
+        academic_id,
+        semester_id,
+      ),
       sheet_service.reportCountSheet(
         academic_id,
         semester_id,
@@ -220,7 +225,7 @@ export const generateCacheDepartmentsResponse = async (
       count_sheets,
       count_sheet_not_graded,
     ] = await Promise.all([
-      department_service.getDepartments(dept_id),
+      department_service.getDepartments(dept_id, academic_id, semester_id),
       sheet_service.reportCountSheetAdmin(
         academic_id,
         semester_id,

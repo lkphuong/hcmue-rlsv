@@ -7,11 +7,13 @@ import { ClassEntity } from '../../entities/class.entity';
 
 import { ClassService } from './services/class.service';
 import { ClassController } from './controllers/class.controller';
+import { AcademicYearModule } from '../academic-year/academic_year.module';
 
 export const modules = [
   SharedModule,
   TypeOrmModule.forFeature([ClassEntity]),
   LogModule,
+  AcademicYearModule,
 ];
 
 export const controllers = [ClassController];

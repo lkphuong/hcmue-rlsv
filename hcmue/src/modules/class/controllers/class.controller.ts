@@ -35,10 +35,12 @@ import {
 } from '../../../constants/enums/error-code.enum';
 import { Configuration } from '../../shared/constants/configuration.enum';
 import { HttpResponse } from '../../../interfaces/http-response.interface';
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 @Controller('classes')
 export class ClassController {
   constructor(
     private readonly _classService: ClassService,
+    private readonly _academicYearService: AcademicYearService,
     private readonly _configurationService: ConfigurationService,
     private _logger: LogService,
   ) {
@@ -68,9 +70,15 @@ export class ClassController {
       console.log(req.method + ' - ' + req.url),
         this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
+      const defaultAcademicYear =
+        await this._academicYearService.getDefaultAcademicYear();
+
       //#region Get classes
       const classes = await this._classService.getClassesByDepartmentId(
         department_id,
+        null,
+        defaultAcademicYear?.academic_id,
+        defaultAcademicYear?.semester_id,
       );
 
       //#endregion

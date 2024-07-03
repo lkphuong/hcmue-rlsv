@@ -63,6 +63,8 @@ export class ClassService {
   async getClassesByDepartmentId(
     department_id: number,
     class_id?: number,
+    academic_id?: number,
+    semester_id?: number,
   ): Promise<ClassEntity[] | null> {
     try {
       let conditions = await this._classRepository
@@ -72,6 +74,18 @@ export class ClassService {
 
       if (class_id && class_id !== 0) {
         conditions = conditions.andWhere('class.id = :class_id', { class_id });
+      }
+
+      if (academic_id && academic_id !== 0) {
+        conditions = conditions.andWhere('class.academic_id = :academic_id', {
+          academic_id,
+        });
+      }
+
+      if (semester_id && semester_id !== 0) {
+        conditions = conditions.andWhere('class.semester_id = :semester_id', {
+          semester_id,
+        });
       }
 
       const classes = await conditions.getMany();

@@ -22,6 +22,8 @@ export class DepartmentService {
 
   async getDepartments(
     department_id?: number,
+    academic_id?: number,
+    semester_id?: number,
   ): Promise<DepartmentResponse[] | null> {
     try {
       const conditions = this._departmentRepository
@@ -32,6 +34,17 @@ export class DepartmentService {
       if (department_id) {
         conditions.andWhere('department.id = :department_id', {
           department_id,
+        });
+      }
+
+      if (academic_id) {
+        conditions.andWhere('department.academic_id = :academic_id', {
+          academic_id,
+        });
+      }
+      if (semester_id) {
+        conditions.andWhere('department.semester_id = :semester_id', {
+          semester_id,
         });
       }
 

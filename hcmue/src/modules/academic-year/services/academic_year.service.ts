@@ -8,6 +8,7 @@ import { LogService } from '../../log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { AcademicYearDefaultResponse } from '../interfaces/academic_year_response.interface';
 
 @Injectable()
 export class AcademicYearService {
@@ -143,6 +144,38 @@ export class AcademicYearService {
         Methods.SELECT,
         'AcademicYearService.getAcademicYearByName()',
         e,
+      );
+      return null;
+    }
+  }
+
+  async getDefaultAcademicYear() {
+    try {
+      const query = `
+        SELECT 
+            academic_id, semesters.id AS semester_id
+        FROM
+            academic_years
+                JOIN
+            semesters ON academic_years.id = semesters.academic_id
+        WHERE
+            academic_years.delete_flag = 0
+                AND semesters.delete_flag = 0
+        ORDER BY academic_years.id DESC , semesters.id DESC
+        LIMIT 1;
+      `;
+
+      const result = (await this._dataSourtce.query(
+        query,
+      )) as AcademicYearDefaultResponse;
+
+      return result[0] || null;
+    } catch (err) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AcademicYearService.getDefaultAcademicYear()',
+        err,
       );
       return null;
     }

@@ -8,11 +8,13 @@ import { DepartmentEntity } from '../../entities/department.entity';
 import { DepartmentController } from './controllers/department.controller';
 
 import { DepartmentService } from './services/department.service';
+import { AcademicYearModule } from '../academic-year/academic_year.module';
 
 export const modules = [
   SharedModule,
   TypeOrmModule.forFeature([DepartmentEntity]),
   LogModule,
+  AcademicYearModule,
 ];
 
 export const controllers = [DepartmentController];

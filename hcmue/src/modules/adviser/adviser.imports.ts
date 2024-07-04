@@ -17,13 +17,14 @@ import { AdviserController } from './controllers/adviser.controller';
 import { AdviserService } from './services/adviser/adviser.service';
 import { AdviserClassesService } from './services/adviser-classes/adviser_classes.service';
 import { GenerateAdviserUpdateListener } from './listeners/generate_update_password.listener';
+import { forwardRef } from '@nestjs/common';
 
 export const modules = [
   TypeOrmModule.forFeature([AdviserEntity, AdviserClassesEntity]),
   AcademicYearModule,
   ClassModule,
   DepartmentModule,
-  RoleModule,
+  forwardRef(() => RoleModule),
   FileModule,
   LogModule,
   SharedModule,

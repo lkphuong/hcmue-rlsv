@@ -107,6 +107,8 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { TimeDto } from '../dtos/time.dto';
+import { SheetService } from '../../sheet/services/sheet.service';
 
 @Controller('forms')
 export class FormController {
@@ -495,6 +497,117 @@ export class FormController {
         return await setFormStatus(
           request_code,
           FormStatus.PUBLISHED,
+          form,
+          this._formService,
+          req,
+        );
+        //#endregion
+      } else {
+        //#region throw HandlerException
+        throw new UnknownException(
+          id,
+          DATABASE_EXIT_CODE.UNKNOW_VALUE,
+          req.method,
+          req.url,
+          sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, id),
+        );
+        //#endregion
+      }
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  @Put('publish-now/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  @HttpCode(HttpStatus.OK)
+  async setPublishFormNow(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ id: id }),
+      );
+
+      //#region Validation
+      let valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Get form
+      const form = await this._formService.getFormById(id);
+
+      if (form) {
+        //#region Validate
+        //#region Validate form status
+        valid = validateFormPubishStatus(form, req);
+        if (valid instanceof HttpException) throw valid;
+        //#endregion
+
+        //#region Validate check if any form published in academic year and semester
+        valid = await isAnyPublished(
+          form.academic_year.id,
+          form.semester.id,
+          this._formService,
+          req,
+        );
+
+        if (valid instanceof HttpException) throw valid;
+        //#endregion
+
+        //#region Validate check any list of users belong to academic year and semester
+        valid = await isAnyListUsers(
+          form.academic_year.id,
+          form.semester.id,
+          this._userService,
+          req,
+        );
+        if (valid instanceof HttpException) throw valid;
+        //#endregion
+
+        //#endregion
+
+        //#region Validate time publish
+        const valid_time = validateTimePublish(form.start, req);
+        if (valid_time instanceof HttpException) throw valid_time;
+        //#endregion
+
+        //#region Get jwt payload
+        const { username: request_code } = req.user as JwtPayload;
+        //#endregion
+
+        await this._formService.generateSheets(
+          id,
+          form.academic_id,
+          form.semester_id,
+        );
+
+        //#region Set form status
+        return await setFormStatus(
+          request_code,
+          FormStatus.IN_PROGRESS,
           form,
           this._formService,
           req,
@@ -1451,6 +1564,69 @@ export class FormController {
       if (result instanceof HttpException) throw result;
       return result;
       //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  @Put('time/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async updateTime(
+    @Param('id') id: number,
+    @Body() params: TimeDto,
+    @Req() req: Request,
+  ) {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method +
+          ' - ' +
+          req.url +
+          ': ' +
+          JSON.stringify({ form_id: id, params }),
+      );
+
+      const { start, end } = params;
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ form_id: id, params }),
+      );
+
+      const valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+
+      const form = await this._formService.getFormById(id);
+
+      if (!form) {
+        throw new UnknownException(
+          id,
+          DATABASE_EXIT_CODE.UNKNOW_VALUE,
+          req.method,
+          req.url,
+          sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, id),
+        );
+      }
+
+      form.start = new Date(start);
+      form.end = new Date(end);
+
+      if (form instanceof HttpException) throw form;
+      else return form;
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);

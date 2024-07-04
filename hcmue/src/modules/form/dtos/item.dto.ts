@@ -14,7 +14,6 @@ import { IsBooleanValidator } from '../../../validators/boolean.validator';
 import { IsNumberValidator } from '../../../validators/number.validator';
 import { LengthValidator } from '../../../validators/length.validator';
 import { MinValidator } from '../../../validators/min.validator';
-import { NotEqualsValidator } from '../../../validators/not-equals.validator';
 
 export class OptionDto {
   @Transform((params) =>

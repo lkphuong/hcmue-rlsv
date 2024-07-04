@@ -23,7 +23,6 @@ import { SheetStatus } from '../constants/enums/status.enum';
 import { FormStatus } from '../../form/constants/enums/statuses.enum';
 import { ReportResponse } from '../interfaces/sheet_response.interface';
 import { ReportCountSheetResponse } from '../interfaces/report_response.interface';
-import { SheetCategory } from '../constants/enums/categories.enum';
 
 @Injectable()
 export class SheetService {

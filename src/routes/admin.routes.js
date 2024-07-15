@@ -30,6 +30,8 @@ const ListDepartmentAccountPage = lazy(() =>
 );
 const ConfigPage = lazy(() => import('_modules/config/pages/ConfigPage'));
 
+const ErrorsListPage = lazy(() => import('_modules/upload-errors/pages/ErrorsListPage'));
+
 export const ADMIN_ROUTES = [
 	{
 		path: ROUTES.ADMIN.FORMS,
@@ -148,6 +150,15 @@ export const ADMIN_ROUTES = [
 		element: (
 			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
 				<ClassReportPage />
+			</CPermission>
+		),
+	},
+	{
+		path: ROUTES.ADMIN.ERRORS_REPORT,
+		errorElement: <CErrorPage />,
+		element: (
+			<CPermission I={FUNCTION_KEY.READ} a={ENTITY_KEY.ADMIN.key}>
+				<ErrorsListPage />
 			</CPermission>
 		),
 	},

@@ -67,6 +67,7 @@ export const ROUTES = {
 		REPORT: '/admin/report',
 		REPORT_DEPARTMENT: '/admin/report/:department_id',
 		REPORT_CLASS: '/admin/report/:department_id/:class_id',
+		ERRORS_REPORT: '/admin/errors-report',
 
 		STUDENTS: '/admin/students',
 		ADVISERS: '/admin/advisers',

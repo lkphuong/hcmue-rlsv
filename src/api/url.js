@@ -95,6 +95,8 @@ export const USERS = {
 	GET_STUDENTS: '/users',
 
 	IMPORT_STUDENTS: '/users/import',
+
+	UPDATE_STATUS: '/users/import',
 };
 
 export const ROLES = {

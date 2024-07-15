@@ -341,6 +341,13 @@ export const NAVIGATIONS = {
 					path: '/admin/report',
 					entity: ENTITY_KEY.ADMIN.key,
 				},
+				{
+					id: 'errors-report',
+					title: 'Thống kê lỗi upload',
+					type: 'item',
+					path: '/admin/errors-report',
+					entity: ENTITY_KEY.ADMIN.key,
+				},
 			],
 		},
 		{

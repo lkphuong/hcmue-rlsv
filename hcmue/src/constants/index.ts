@@ -25,3 +25,12 @@ export const MAX_PRICE = 9999999999;
 export const TIME_REGEX = /^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$/;
 
 export const MAX_FILES = 5;
+
+export const DATABASE = {
+  MYSQL_TYPE: 'mysql',
+  MYSQL_HOST: '103.154.176.80',
+  MYSQL_PORT: 3306,
+  MYSQL_DATABASE_NAME: 'hcmue_rlsv',
+  MYSQL_USERNAME: 'uat',
+  MYSQL_PASSWORD: 'Uatvtcode@2022',
+};

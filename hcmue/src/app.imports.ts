@@ -29,8 +29,10 @@ import { UserModule } from './modules/user/user.module';
 
 import { ConfigurationService } from './modules/shared/services/configuration/configuration.service';
 import { HistoryModule } from './modules/history/history.module';
+import { ConfigModule } from '@nestjs/config';
 
 export const modules = [
+  ConfigModule.forRoot(),
   SharedModule,
   EventEmitterModule.forRoot(),
   JwtModule.registerAsync({

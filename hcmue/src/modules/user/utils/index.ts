@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { QueryRunner } from 'typeorm';
 
 import {
   convertObjectId2String,
@@ -9,7 +10,6 @@ import { generateUsersArray } from '../transforms';
 import { UserEntity } from '../../../entities/user.entity';
 
 import { UserResponse } from '../interfaces/users-response.interface';
-import { QueryRunner } from 'typeorm';
 
 export const generateUserIds = (users: any) => {
   return users.map((item) => {

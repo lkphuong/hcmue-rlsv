@@ -4,7 +4,9 @@ import {
   HttpCode,
   HttpException,
   HttpStatus,
+  Param,
   Post,
+  Put,
   Req,
   UseGuards,
   UsePipes,
@@ -52,6 +54,7 @@ import {
   DATABASE_EXIT_CODE,
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
+import { returnObjects } from '../../../utils';
 
 @Controller('users')
 export class UserController {
@@ -233,6 +236,37 @@ export class UserController {
       );
       if (data instanceof HttpException) throw data;
       return data;
+    } catch (err) {
+      console.log(err);
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
+  /*
+   */
+  @HttpCode(HttpStatus.OK)
+  @Put('status/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  async updateStatus(
+    @Param('id') id: number,
+    @Body('status') status: number,
+    @Req() req: Request,
+  ) {
+    try {
+      const result = await this._userService.updateStatus(id, status);
+
+      return returnObjects(result);
     } catch (err) {
       console.log(err);
       console.log('----------------------------------------------------------');

@@ -1,6 +1,7 @@
 import { HttpException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Request } from 'express';
+import * as mysql from 'mysql';
 
 import { removeFile } from '../../../utils';
 import {
@@ -19,7 +20,7 @@ import { FilesService } from '../services/files.service';
 import { LogService } from '../../log/services/log.service';
 import { UserService } from '../../user/services/user.service';
 
-import { UPLOAD_DEST } from '../../../constants';
+import { DATABASE, UPLOAD_DEST } from '../../../constants';
 
 import { SERVER_EXIT_CODE } from '../../../constants/enums/error-code.enum';
 
@@ -151,4 +152,37 @@ export const unlinkFile = async (
     // Release transaction
     //await query_runner.release();
   }
+};
+
+const connection = mysql.createConnection({
+  host: DATABASE.MYSQL_HOST,
+  port: DATABASE.MYSQL_PORT,
+  user: DATABASE.MYSQL_USERNAME,
+  password: DATABASE.MYSQL_PASSWORD,
+  database: DATABASE.MYSQL_DATABASE_NAME,
+});
+
+export const writeFileLog = async (
+  username: string,
+  message: string,
+  status: number,
+  info: any,
+) => {
+  return new Promise((resolve, reject) => {
+    const query =
+      'INSERT INTO file_logs (username, message, status, file_info) VALUES (?, ?, ?, ?)';
+    connection.query(
+      query,
+      [username, message, status, info],
+      (err, result) => {
+        if (err) {
+          console.error('Error inserting log', err);
+          reject(err);
+        } else {
+          console.log('Log inserted successfully', result);
+          resolve(result);
+        }
+      },
+    );
+  });
 };

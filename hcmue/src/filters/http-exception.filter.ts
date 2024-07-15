@@ -51,6 +51,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
       errors: Object.keys(data).length > 0 ? data : null,
     };
 
+    console.log(response);
+    console.log('error', req.user, req.url);
+
     this._logger.writeLog(
       Levels.ERROR,
       req.method,

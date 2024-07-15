@@ -14,6 +14,7 @@ import { FilesController } from './controllers/files.controller';
 import { FilesService } from './services/files.service';
 import { ConfigurationService } from '../shared/services/configuration/configuration.service';
 import { UserModule } from '../user/user.module';
+import { FileLogEntity } from '../../entities/file_logs.entity';
 
 export const modules = [
   SharedModule,
@@ -22,7 +23,7 @@ export const modules = [
     useFactory: multerFactory,
     inject: [ConfigurationService],
   }),
-  TypeOrmModule.forFeature([FileEntity]),
+  TypeOrmModule.forFeature([FileEntity, FileLogEntity]),
   LogModule,
   forwardRef(() => UserModule),
 ];

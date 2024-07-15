@@ -1,9 +1,12 @@
 import {
   Controller,
   Delete,
+  Get,
   HttpException,
+  HttpStatus,
   Param,
   Post,
+  Query,
   Req,
   UploadedFile,
   UseInterceptors,
@@ -16,8 +19,13 @@ import { Request } from 'express';
 
 import * as path from 'path';
 
-import { sprintf } from '../../../utils';
-import { unlinkFile, uploadFile } from '../funcs';
+import {
+  returnObjects,
+  returnObjectsWithLoadMore,
+  returnObjectsWithPaging,
+  sprintf,
+} from '../../../utils';
+import { unlinkFile, uploadFile, writeFileLog } from '../funcs';
 
 import { FileEntity } from '../../../entities/file.entity';
 
@@ -50,6 +58,35 @@ export class FilesController {
     private readonly _userService: UserService,
     private _logger: LogService,
   ) {}
+
+  @Get()
+  async getFileLogsPagination(
+    @Query('last_id') last_id: number,
+    @Req() req: Request,
+  ) {
+    try {
+      const file_logs = await this._fileService.getFileLogsPagination(last_id);
+
+      if (!file_logs?.length) {
+        throw new HandlerException(
+          DATABASE_EXIT_CODE.NO_CONTENT,
+          req.method,
+          req.url,
+          'Không có dữ liệu hiển thị.',
+          HttpStatus.NOT_FOUND,
+        );
+      }
+
+      return returnObjectsWithLoadMore(file_logs?.length > 0, file_logs);
+    } catch (error) {
+      throw new HandlerException(
+        SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+        req.method,
+        req.url,
+      );
+    }
+  }
+
   /**
    * @method POST
    * @url /api/files/upload
@@ -70,6 +107,8 @@ export class FilesController {
       >
     | HttpException
   > {
+    const { username: request_code } = req.user as JwtPayload;
+    const { originalname, filename, destination } = file;
     try {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + JSON.stringify(file));
@@ -96,9 +135,6 @@ export class FilesController {
       //#endregion
       //#endregion
 
-      const { username: request_code } = req.user as JwtPayload;
-
-      const { originalname, filename, destination } = file;
       const extension = path.parse(originalname).ext;
 
       //#region Upload document
@@ -113,6 +149,13 @@ export class FilesController {
         req,
       );
 
+      await writeFileLog(
+        request_code,
+        `Upload success file ${originalname}`,
+        1,
+        JSON.stringify(file),
+      );
+
       //#region Generate response
       if (document instanceof HttpException) throw document;
       else return document;
@@ -121,6 +164,13 @@ export class FilesController {
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      await writeFileLog(
+        request_code,
+        `Upload fail file ${originalname} error: ${err.message}`,
+        0,
+        JSON.stringify(file),
+      );
 
       if (err instanceof HttpException) throw err;
       else {

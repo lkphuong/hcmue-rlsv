@@ -639,6 +639,76 @@ export class FormController {
     }
   }
 
+  @Put('un-publish-now/:id')
+  @UseGuards(JwtAuthGuard)
+  @Roles(Role.ADMIN)
+  @UsePipes(new ValidationPipe({ whitelist: true, transform: true }))
+  @HttpCode(HttpStatus.OK)
+  async cancelPublishFormNow(
+    @Param('id') id: number,
+    @Req() req: Request,
+  ): Promise<HttpResponse<FormResponse> | HttpException> {
+    try {
+      console.log('----------------------------------------------------------');
+      console.log(
+        req.method + ' - ' + req.url + ': ' + JSON.stringify({ id: id }),
+      );
+
+      this._logger.writeLog(
+        Levels.LOG,
+        req.method,
+        req.url,
+        JSON.stringify({ id: id }),
+      );
+
+      //#region Validation
+      const valid = validateFormId(id, req);
+      if (valid instanceof HttpException) throw valid;
+      //#endregion
+
+      //#region Get form
+      const form = await this._formService.getFormById(id);
+
+      if (form) {
+        //#region Get jwt payload
+        const { username: request_code } = req.user as JwtPayload;
+        //#endregion
+
+        //#region Set form status
+        return await setFormStatus(
+          request_code,
+          FormStatus.DONE,
+          form,
+          this._formService,
+          req,
+        );
+        //#endregion
+      }
+
+      //#region throw HandlerException
+      throw new UnknownException(
+        id,
+        DATABASE_EXIT_CODE.UNKNOW_VALUE,
+        req.method,
+        req.url,
+        sprintf(ErrorMessage.FORM_NOT_FOUND_ERROR, id),
+      );
+      //#endregion
+    } catch (err) {
+      console.log('----------------------------------------------------------');
+      console.log(req.method + ' - ' + req.url + ': ' + err.message);
+
+      if (err instanceof HttpException) throw err;
+      else {
+        throw new HandlerException(
+          SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,
+          req.method,
+          req.url,
+        );
+      }
+    }
+  }
+
   /**
    * @method PUT
    * @url /api/forms/un-publish/:id

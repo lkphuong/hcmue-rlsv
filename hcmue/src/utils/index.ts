@@ -142,6 +142,24 @@ export const returnObjectsWithPaging = <T>(
   };
 };
 
+export const returnObjectsWithLoadMore = <T>(
+  has_more: boolean,
+  data: T | T[] | null,
+  errorCode?: number,
+  message?: string | null,
+  errors?: [{ [key: string]: string }] | null,
+) => {
+  return {
+    data: {
+      has_more,
+      data,
+    },
+    errorCode: data != null ? 0 : errorCode ?? 9001,
+    message: data !== null ? null : message,
+    errors: errors ?? null,
+  };
+};
+
 export const sprintf = (str, ...argv) =>
   !argv.length
     ? str

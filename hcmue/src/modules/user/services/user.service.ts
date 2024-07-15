@@ -760,4 +760,25 @@ export class UserService {
       return null;
     }
   }
+
+  async updateStatus(id: number, status: number) {
+    try {
+      const manager = this._dataSource.manager;
+      const result = await manager.update(
+        UserEntity,
+        { id },
+        { status_id: status },
+      );
+
+      return result.affected > 0;
+    } catch (err) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.UPDATE,
+        'UserService.updateStatus()',
+        err,
+      );
+      return false;
+    }
+  }
 }

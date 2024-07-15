@@ -8,6 +8,7 @@ import { DepartmentEntity } from './department.entity';
 import { EvaluationEntity } from './evaluation.entity';
 import { EvaluationHistoryEntity } from './evaluation_history.entity';
 import { FileEntity } from './file.entity';
+import { FileLogEntity } from './file_logs.entity';
 import { FormEntity } from './form.entity';
 import { HeaderEntity } from './header.entity';
 import { ItemEntity } from './item.entity';
@@ -54,6 +55,7 @@ const entities = [
   StatusEntity,
   TitleEntity,
   UserEntity,
+  FileLogEntity,
 ];
 
 export default entities;

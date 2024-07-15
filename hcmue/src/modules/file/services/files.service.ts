@@ -7,15 +7,43 @@ import { LogService } from '../../../modules/log/services/log.service';
 
 import { Levels } from '../../../constants/enums/level.enum';
 import { Methods } from '../../../constants/enums/method.enum';
+import { FileLogEntity } from '../../../entities/file_logs.entity';
 
 @Injectable()
 export class FilesService {
   constructor(
     @InjectRepository(FileEntity)
     private readonly _fileRepository: Repository<FileEntity>,
+    @InjectRepository(FileLogEntity)
+    private readonly _fileLogRepository: Repository<FileLogEntity>,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
+
+  async getFileLogsPagination(last_id?: number) {
+    try {
+      const conditions = this._fileLogRepository
+        .createQueryBuilder('file_log')
+        .where('file_log.status = :status', { status: 0 })
+        .orderBy('file_log.created_at', 'DESC')
+        .take(10);
+
+      if (last_id) {
+        conditions.andWhere('file_log.id < :last_id', { last_id });
+      }
+
+      const file_logs = await conditions.getMany();
+
+      return file_logs || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FilesService.getFileLogsPagination()',
+        e,
+      );
+    }
+  }
 
   async getFileById(id: number): Promise<FileEntity | null> {
     try {

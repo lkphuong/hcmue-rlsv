@@ -2,7 +2,6 @@ import { createContext, memo, useEffect, useMemo, useRef, useState } from 'react
 import { shallowEqual, useSelector } from 'react-redux';
 
 import { Box, Button, Stack } from '@mui/material';
-import { UploadFile } from '@mui/icons-material';
 
 import { CPagination, CSearch } from '_controls/';
 
@@ -17,6 +16,8 @@ import { isSuccess, isEmpty, cleanObjValue, checkValidFile } from '_func/';
 import { alert } from '_func/alert';
 
 import { EXCEL_FILE_TYPE } from '_constants/variables';
+
+import { ReactComponent as ExcelIcon } from '_assets/icons/excel.svg';
 
 export const ConfigRoleContext = createContext();
 
@@ -201,7 +202,7 @@ const ListStudentsPage = memo(() => {
 
 					<Button
 						variant='contained'
-						endIcon={<UploadFile />}
+						endIcon={<ExcelIcon />}
 						sx={{
 							backgroundColor: '#3EAE42',
 							color: 'white',

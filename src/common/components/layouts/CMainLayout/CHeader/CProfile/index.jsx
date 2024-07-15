@@ -17,7 +17,7 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import { Face4, Settings } from '@mui/icons-material';
+import { Face4, SentimentSatisfiedAlt, Settings } from '@mui/icons-material';
 
 import { tryLogout } from '_axios/';
 import { CStudentCard } from './CStudentCard';
@@ -130,9 +130,13 @@ const CProfile = () => {
 											<Typography
 												variant='h4'
 												mb={1}
+												display='flex'
+												alignItems='center'
+												gap={1}
 												sx={{ fontWeight: 400 }}
 											>
 												Xin chào
+												<SentimentSatisfiedAlt />
 											</Typography>
 											{[0, 1, 2, 3].includes(profile?.role) ? (
 												<CStudentCard profile={profile} />

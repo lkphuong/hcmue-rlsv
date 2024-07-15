@@ -8,6 +8,8 @@ import { ReactComponent as Add } from '_assets/icons/add.svg';
 import { ReactComponent as View } from '_assets/icons/view.svg';
 import { ReactComponent as Reset } from '_assets/icons/reset.svg';
 import { ReactComponent as Time } from '_assets/icons/time.svg';
+import { ReactComponent as UserEdit } from '_assets/icons/user-edit.svg';
+import { ReactComponent as Tick } from '_assets/icons/tick.svg';
 
 export const CEditIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={Edit} />;
@@ -39,4 +41,12 @@ export const CResetIcon = ({ ...props }) => {
 
 export const CTimeIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={Time} />;
+};
+
+export const CUserEditIcon = ({ ...props }) => {
+	return <SvgIcon {...props} component={UserEdit} />;
+};
+
+export const CTickIcon = ({ ...props }) => {
+	return <SvgIcon {...props} component={Tick} />;
 };

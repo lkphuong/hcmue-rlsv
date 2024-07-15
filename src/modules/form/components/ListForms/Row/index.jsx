@@ -15,7 +15,7 @@ import { isSuccess } from '_func/';
 
 import { cloneForm, deleteForm } from '_api/form.api';
 
-import { CDeleteIcon, CDuplicateIcon, CEditIcon } from '_others/';
+import { CDeleteIcon, CDuplicateIcon, CEditIcon, CTickIcon } from '_others/';
 
 //#region Array Status Chip
 const generalStyle = {
@@ -121,6 +121,26 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 			},
 		});
 	};
+
+	const onDone = (e) => {
+		e.stopPropagation();
+
+		alert.question({
+			text: 'Kết thúc phát hành cho biểu mẫu này?',
+			onConfirm: async () => {
+				const res = { data };
+				// const res = await cloneForm(data.id);
+
+				if (isSuccess(res)) {
+					refetch();
+
+					alert.success({ text: 'Đóng biểu mẫu thành công.' });
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+		});
+	};
 	//#endregion
 
 	//#region Render
@@ -133,6 +153,11 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center' width={120}>
 				<Stack direction='row' alignItems='center' justifyContent='space-between'>
+					<Tooltip title='Kết thúc phát hành phiếu'>
+						<IconButton onClick={onDone} disabled={data.status === 0}>
+							<CTickIcon />
+						</IconButton>
+					</Tooltip>
 					<Tooltip title='Tạo biểu mẫu mới dựa theo biểu mẫu này'>
 						<IconButton onClick={onClone}>
 							<CDuplicateIcon />

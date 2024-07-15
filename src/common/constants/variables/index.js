@@ -75,3 +75,13 @@ export const FILE_NAMES = {
 	CLASS_WORD: 'BIÊN BẢN HỌP LỚP.docx',
 	CLASS_EXCEL: 'BẢNG ĐÁNH GIÁ KẾT QUẢ RÈN LUYỆN SINH VIÊN CẤP LỚP.xlsx',
 };
+
+export const STUDENT_STATUS = [
+	//MOCKUP
+	{ id: 0, name: 'NGHỈ HỌC TẠM THỜI' },
+	{ id: 1, name: 'BUỘC THÔI HỌC' },
+	{ id: 2, name: 'CÒN HỌC' },
+	{ id: 3, name: 'THÔI HỌC' },
+	{ id: 4, name: 'CHUYỂN TRƯỜNG' },
+	{ id: 5, name: 'TỐT NGHIỆP' },
+];

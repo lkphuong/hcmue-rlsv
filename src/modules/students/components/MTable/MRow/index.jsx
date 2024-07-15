@@ -1,10 +1,18 @@
-import { useMemo, useRef } from 'react';
+import { useMemo, useRef, useState } from 'react';
 
-import { IconButton, Stack, TableCell, TableRow, Tooltip, Typography } from '@mui/material';
+import {
+	Collapse,
+	IconButton,
+	Stack,
+	TableCell,
+	TableRow,
+	Tooltip,
+	Typography,
+} from '@mui/material';
 
 import { ROLES } from '_constants/variables';
 
-import { CResetIcon, CSettingIcon } from '_others/';
+import { CResetIcon, CSettingIcon, CUserEditIcon } from '_others/';
 
 import { alert } from '_func/alert';
 import { isSuccess } from '_func/';
@@ -14,18 +22,24 @@ import { ERRORS } from '_constants/messages';
 import { restorePassword } from '_api/auth.api';
 
 import { MMenuRole } from '../../MMenuRole';
+import { MMenuStatus } from '../..';
 
 export const MRow = ({ data, index }) => {
 	//#region Data
 	const menuRef = useRef();
+	const statusRef = useRef();
 
 	const role = useMemo(() => {
 		return ROLES.find((e) => e.id === data.role).name || '';
 	}, [data.role]);
+
+	const [open, setOpen] = useState(false);
 	//#endregion
 
 	//#region Event
 	const onClick = (event) => menuRef.current.onMenu(event, Number(data?.role));
+
+	const onClickStatus = (event) => statusRef.current.onMenu(event, Number(data?.role));
 
 	const onReset = () =>
 		alert.question({
@@ -49,7 +63,32 @@ export const MRow = ({ data, index }) => {
 			<TableRow sx={{ '& .MuiTableCell-root': { fontSize: '12px!important' } }}>
 				<TableCell align='center'>{index + 1}</TableCell>
 				<TableCell align='center'>{data?.std_code}</TableCell>
-				<TableCell align='center'>{data?.status?.name}</TableCell>
+				<TableCell align='center' width={175}>
+					<Stack
+						direction='row'
+						spacing={1}
+						alignItems='center'
+						justifyContent='end'
+						onMouseEnter={() => setOpen(true)}
+						onMouseLeave={() => setOpen(false)}
+					>
+						<Typography whiteSpace='nowrap' fontSize={12}>
+							{data?.status?.name}
+						</Typography>
+						<Collapse orientation='horizontal' in={open}>
+							<Tooltip title='Đổi tình trạng học'>
+								<span>
+									<IconButton
+										disabled={!data?.status?.flag}
+										onClick={onClickStatus}
+									>
+										<CUserEditIcon />
+									</IconButton>
+								</span>
+							</Tooltip>
+						</Collapse>
+					</Stack>
+				</TableCell>
 				<TableCell align='left'>{data?.name}</TableCell>
 				<TableCell align='center'>{data?.birthday}</TableCell>
 				<TableCell align='center'>{data?.k?.name}</TableCell>
@@ -85,6 +124,13 @@ export const MRow = ({ data, index }) => {
 				department_id={Number(data?.department?.id)}
 				class_id={Number(data?.classes?.id)}
 				ref={menuRef}
+			/>
+
+			<MMenuStatus
+				id={data?.std_code}
+				department_id={Number(data?.department?.id)}
+				class_id={Number(data?.classes?.id)}
+				ref={statusRef}
 			/>
 		</>
 	);

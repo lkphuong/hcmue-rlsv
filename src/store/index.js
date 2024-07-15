@@ -9,6 +9,7 @@ import menuReducer from './slices/menu.slice';
 import formReducer from './slices/form.slice';
 import filterReducer from './slices/filter.slice';
 import currentInfoReducer from './slices/currentInfo.slice';
+import filtersReducers from '_slices/filters.slice';
 
 export const store = configureStore({
 	reducer: {
@@ -19,6 +20,7 @@ export const store = configureStore({
 		form: formReducer,
 		filter: filterReducer,
 		currentInfo: currentInfoReducer,
+		filters: filtersReducers,
 	},
 	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({

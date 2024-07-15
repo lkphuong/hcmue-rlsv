@@ -1,5 +1,5 @@
 import { createContext, memo, useEffect, useMemo, useRef, useState } from 'react';
-import { shallowEqual, useSelector } from 'react-redux';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Button, Stack } from '@mui/material';
 
@@ -18,15 +18,21 @@ import { alert } from '_func/alert';
 import { EXCEL_FILE_TYPE } from '_constants/variables';
 
 import { ReactComponent as ExcelIcon } from '_assets/icons/excel.svg';
+import { actions } from '_slices/filters.slice';
 
 export const ConfigRoleContext = createContext();
+
+const FILTERS_KEY = 'students-list';
 
 const ListStudentsPage = memo(() => {
 	//#region Data
 	const fileRef = useRef();
 
+	const dispatch = useDispatch();
+
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
+	const filters = useSelector((state) => state.filters.filters, shallowEqual);
 
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -45,6 +51,7 @@ const ListStudentsPage = memo(() => {
 		input: '',
 		page: 1,
 		pages: 0,
+		...(filters ? filters[FILTERS_KEY] : null),
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
@@ -60,6 +67,8 @@ const ListStudentsPage = memo(() => {
 
 		try {
 			const _filter = cleanObjValue(filter);
+
+			dispatch(actions.setFilters({ key: FILTERS_KEY, value: _filter }));
 
 			const res = await getStudentsRole(_filter);
 

@@ -3,7 +3,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 
 import { Box, Button, Stack } from '@mui/material';
 
-import { CPagination, CSearch } from '_controls/';
+import { CSearch } from '_controls/';
 
 import { MFilter, MTable } from '_modules/students/components';
 
@@ -212,14 +212,13 @@ const ListStudentsPage = memo(() => {
 				</Stack>
 
 				<Stack direction='column' justifyContent='space-between'>
-					<MTable data={dataTable} isLoading={isFetching} onFilterChange={setFilter} />
-
-					<CPagination
+					<MTable
+						data={dataTable}
+						isLoading={isFetching}
+						onFilterChange={setFilter}
 						page={paginate.page}
 						pages={paginate.pages}
-						onChange={onPageChange}
-						isLoading={isFetching}
-						isGoTo
+						onPageChange={onPageChange}
 					/>
 				</Stack>
 			</ConfigRoleContext.Provider>

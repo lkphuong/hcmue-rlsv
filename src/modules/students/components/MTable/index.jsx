@@ -10,7 +10,7 @@ import { MStatusCell } from './MStatusCell';
 import { MRoleCell } from './MRoleCell';
 import { MResetCell } from './MResetCell';
 
-export const MTable = ({ data, isLoading, onFilterChange }) => {
+export const MTable = ({ data, isLoading, onFilterChange, page, pages, onPageChange }) => {
 	//#region Data
 	const statusRef = useRef();
 	//#endregion
@@ -84,7 +84,13 @@ export const MTable = ({ data, isLoading, onFilterChange }) => {
 
 	return (
 		<>
-			<CTable loading={isLoading} headers={headers} data={data} />
+			<CTable
+				loading={isLoading}
+				headers={headers}
+				data={data}
+				showIndexCol={false}
+				pagination={{ page, pages, onPageChange }}
+			/>
 
 			<MStatus ref={statusRef} onFilterChange={onFilterChange} />
 		</>

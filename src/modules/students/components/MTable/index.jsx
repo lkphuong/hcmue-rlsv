@@ -23,7 +23,7 @@ export const MTable = ({ data, isLoading, onFilterChange }) => {
 			<Table stickyHeader>
 				<TableHead>
 					<TableRow>
-						<TableCell align='center'>STT</TableCell>
+						{/* <TableCell align='center'>STT</TableCell> */}
 						<TableCell align='center'>MSSV</TableCell>
 						<TableCell align='center' sx={{ whiteSpace: 'nowrap' }}>
 							<Button endIcon={<FilterAlt />} onClick={toggle} size='small' sx={{ color: 'white' }}>
@@ -31,7 +31,9 @@ export const MTable = ({ data, isLoading, onFilterChange }) => {
 							</Button>
 						</TableCell>
 						<TableCell align='left'>Họ và tên</TableCell>
-						<TableCell align='center'>Ngày sinh</TableCell>
+						<TableCell align='center' style={{ whiteSpace: 'nowrap' }}>
+							Ngày sinh
+						</TableCell>
 						<TableCell align='center'>Khóa học</TableCell>
 						<TableCell align='center'>Khoa</TableCell>
 						<TableCell align='center'>Ngành học</TableCell>

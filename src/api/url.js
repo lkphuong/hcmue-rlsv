@@ -95,8 +95,6 @@ export const USERS = {
 	GET_STUDENTS: '/users',
 
 	IMPORT_STUDENTS: '/users/import',
-
-	UPDATE_STATUS: '/users/import',
 };
 
 export const ROLES = {
@@ -145,6 +143,8 @@ export const ADVISER = {
 
 export const STATUSES = {
 	GET_STUDENT_STATUSES: '/statuses',
+
+	UPDATE_STATUS: '/users/status',
 };
 
 export const TIMELINE = {

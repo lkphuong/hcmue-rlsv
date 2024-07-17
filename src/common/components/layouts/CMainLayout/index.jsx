@@ -20,6 +20,7 @@ import { SuspenseLoading } from '_others/';
 import CHeader from './CHeader';
 import CSidebar from './CSidebar';
 import { CTimeline } from './CTimeline';
+import { getStatuses } from '_api/statuses.api';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 	({ theme, open }) => ({
@@ -101,6 +102,17 @@ export const CMainLayout = () => {
 				}));
 
 				dispatch(optionsAction.setDepartments(departments));
+			}
+
+			const resStatus = await getStatuses();
+
+			if (isSuccess(resStatus)) {
+				const statuses = resStatus.data.map((e) => ({
+					...e,
+					id: parseInt(e.id),
+				}));
+
+				dispatch(optionsAction.setStatuses(statuses));
 			}
 		} catch (error) {
 			throw error;

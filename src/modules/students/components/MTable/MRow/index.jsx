@@ -39,7 +39,7 @@ export const MRow = ({ data, index }) => {
 	//#region Event
 	const onClick = (event) => menuRef.current.onMenu(event, Number(data?.role));
 
-	const onClickStatus = (event) => statusRef.current.onMenu(event, Number(data?.role));
+	const onClickStatus = (event) => statusRef.current.onMenu(event, Number(data?.status?.id));
 
 	const onReset = () =>
 		alert.question({
@@ -48,8 +48,7 @@ export const MRow = ({ data, index }) => {
 
 				const res = await restorePassword(data?.id, { type: 1 });
 
-				if (isSuccess(res))
-					alert.success({ text: 'Reset mật khẩu cho sinh viên thành công.' });
+				if (isSuccess(res)) alert.success({ text: 'Reset mật khẩu cho sinh viên thành công.' });
 				else alert.fail({ text: res?.message || ERRORS.FAIL });
 			},
 			title: 'Reset mật khẩu',
@@ -61,7 +60,7 @@ export const MRow = ({ data, index }) => {
 	return (
 		<>
 			<TableRow sx={{ '& .MuiTableCell-root': { fontSize: '12px!important' } }}>
-				<TableCell align='center'>{index + 1}</TableCell>
+				{/* <TableCell align='center'>{index + 1}</TableCell> */}
 				<TableCell align='center'>{data?.std_code}</TableCell>
 				<TableCell align='center' width={175}>
 					<Stack
@@ -78,10 +77,7 @@ export const MRow = ({ data, index }) => {
 						<Collapse orientation='horizontal' in={open}>
 							<Tooltip title='Đổi tình trạng học'>
 								<span>
-									<IconButton
-										disabled={!data?.status?.flag}
-										onClick={onClickStatus}
-									>
+									<IconButton onClick={onClickStatus}>
 										<CUserEditIcon />
 									</IconButton>
 								</span>
@@ -119,18 +115,13 @@ export const MRow = ({ data, index }) => {
 				</TableCell>
 			</TableRow>
 
+			<MMenuStatus id={data?.id} ref={statusRef} />
+
 			<MMenuRole
 				id={data?.std_code}
 				department_id={Number(data?.department?.id)}
 				class_id={Number(data?.classes?.id)}
 				ref={menuRef}
-			/>
-
-			<MMenuStatus
-				id={data?.std_code}
-				department_id={Number(data?.department?.id)}
-				class_id={Number(data?.classes?.id)}
-				ref={statusRef}
 			/>
 		</>
 	);

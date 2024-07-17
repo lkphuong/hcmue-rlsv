@@ -1,10 +1,8 @@
-import { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import { forwardRef, useImperativeHandle, useState } from 'react';
 
 import { FormControlLabel, Menu, Radio, RadioGroup } from '@mui/material';
 
-import { isSuccess } from '_func/';
-
-import { getStatuses } from '_api/statuses.api';
+import { shallowEqual, useSelector } from 'react-redux';
 
 import './index.scss';
 
@@ -15,7 +13,7 @@ export const MStatus = forwardRef(({ onFilterChange }, ref) => {
 
 	const [value, setValue] = useState('');
 
-	const [statuses, setStatuses] = useState([]);
+	const statuses = useSelector((state) => state.options?.statuses, shallowEqual);
 	//#endregion
 
 	//#region EventPhúc
@@ -24,12 +22,6 @@ export const MStatus = forwardRef(({ onFilterChange }, ref) => {
 	};
 
 	const turnOffMenu = () => setAnchorEl(null);
-
-	const getStatus = async () => {
-		const res = await getStatuses();
-
-		if (isSuccess(res)) setStatuses(res.data);
-	};
 
 	const onStatusChange = (event) => {
 		const { value } = event.target;
@@ -41,10 +33,6 @@ export const MStatus = forwardRef(({ onFilterChange }, ref) => {
 		turnOffMenu();
 	};
 	//#endregion
-
-	useEffect(() => {
-		getStatus();
-	}, []);
 
 	useImperativeHandle(ref, () => ({
 		onMenu: (event) => turnOnMenu(event),

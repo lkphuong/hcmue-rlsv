@@ -66,7 +66,6 @@ const ListStudentsPage = memo(() => {
 	});
 
 	const dataTable = useMemo(() => data?.data || [], [data]);
-	console.log('🚀 ~ ListStudentsPage ~ dataTable:', dataTable);
 	//endregion
 
 	//#region Event
@@ -167,7 +166,7 @@ const ListStudentsPage = memo(() => {
 	//#region Render
 	return (
 		<Box>
-			<ConfigRoleContext.Provider value={{ refetch }}>
+			<ConfigRoleContext.Provider value={{ getData: refetch }}>
 				<MFilter
 					filter={filter}
 					onFilterChange={setFilter}

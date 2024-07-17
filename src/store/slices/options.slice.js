@@ -6,6 +6,7 @@ import storage from 'redux-persist/lib/storage';
 const initialState = {
 	academic_years: [],
 	departments: [],
+	statuses: [],
 };
 
 export const optionsSlice = createSlice({
@@ -18,6 +19,9 @@ export const optionsSlice = createSlice({
 		setDepartments: (state, action) => {
 			state.departments = action.payload;
 		},
+		setStatuses: (state, action) => {
+			state.statuses = action.payload;
+		},
 	},
 });
 
@@ -27,7 +31,7 @@ const persistConfig = {
 	key: 'options',
 	version: 1,
 	storage,
-	whitelist: ['academic_years', 'departments'],
+	whitelist: ['academic_years', 'departments', 'statuses'],
 };
 
 export default persistReducer(persistConfig, optionsSlice.reducer);

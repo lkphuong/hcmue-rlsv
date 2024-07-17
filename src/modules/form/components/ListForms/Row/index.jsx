@@ -154,9 +154,11 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 			<TableCell align='center' width={120}>
 				<Stack direction='row' alignItems='center' justifyContent='space-between'>
 					<Tooltip title='Kết thúc phát hành phiếu'>
-						<IconButton onClick={onDone} disabled={data.status === 0}>
-							<CTickIcon />
-						</IconButton>
+						<span>
+							<IconButton onClick={onDone} disabled={data.status === 0}>
+								<CTickIcon />
+							</IconButton>
+						</span>
 					</Tooltip>
 					<Tooltip title='Tạo biểu mẫu mới dựa theo biểu mẫu này'>
 						<IconButton onClick={onClone}>
@@ -166,11 +168,7 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 					<IconButton onClick={onEdit} disabled={data.status === 2 || data.status === 3}>
 						<CEditIcon />
 					</IconButton>
-					<Tooltip
-						title={
-							data.status !== 0 ? 'Chỉ có thể xóa biểu mẫu ở trạng thái nháp.' : ''
-						}
-					>
+					<Tooltip title={data.status !== 0 ? 'Chỉ có thể xóa biểu mẫu ở trạng thái nháp.' : ''}>
 						<span>
 							<IconButton onClick={onDelete} disabled={data.status !== 0}>
 								<CDeleteIcon />

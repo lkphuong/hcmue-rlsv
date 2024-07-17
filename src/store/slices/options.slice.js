@@ -16,11 +16,11 @@ export const optionsSlice = createSlice({
 		setAcademicYears: (state, action) => {
 			state.academic_years = action.payload;
 		},
-		setDepartments: (state, action) => {
-			state.departments = action.payload;
-		},
-		setStatuses: (state, action) => {
-			state.statuses = action.payload;
+		setOptions: (state, action) => {
+			const options = action.payload;
+			Object.keys(options).forEach((key) => {
+				state[key] = options[key];
+			});
 		},
 	},
 });

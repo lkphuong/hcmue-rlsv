@@ -11,8 +11,6 @@ import { actions as optionsAction } from '_slices/options.slice';
 
 import { getAcademicYears, getAllDepartments } from '_api/options.api';
 
-import { isSuccess } from '_func/';
-
 import { ROUTES } from '_constants/routes';
 
 import { SuspenseLoading } from '_others/';
@@ -21,6 +19,7 @@ import CHeader from './CHeader';
 import CSidebar from './CSidebar';
 import { CTimeline } from './CTimeline';
 import { getStatuses } from '_api/statuses.api';
+import { useQueries } from '@tanstack/react-query';
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
 	({ theme, open }) => ({
@@ -76,53 +75,40 @@ export const CMainLayout = () => {
 	const leftDrawerOpened = useSelector((state) => state.menu.opened);
 
 	const dispatch = useDispatch();
+
+	const { data, pending } = useQueries({
+		queries: [
+			{ queryKey: ['academic_years'], queryFn: () => getAcademicYears() },
+			{ queryKey: ['departments'], queryFn: () => getAllDepartments() },
+			{ queryKey: ['statuses'], queryFn: () => getStatuses() },
+		],
+		combine: (results) => {
+			return {
+				data: results.map((result) => ({
+					...result.data,
+					data: result.data?.data?.map((e) => ({ ...e, id: parseInt(e.id) })),
+				})),
+				pending: results.some((result) => result.isPending),
+			};
+		},
+	});
 	//#endregion
 
 	//#region Event
 	const handleLeftDrawerToggle = () => {
 		dispatch(actions.setMenu(!leftDrawerOpened));
 	};
-
-	const initGetData = async () => {
-		try {
-			const resAcademic = await getAcademicYears();
-
-			if (isSuccess(resAcademic)) {
-				const academics = resAcademic.data.map((e) => ({ ...e, id: parseInt(e.id) }));
-
-				dispatch(optionsAction.setAcademicYears(academics));
-			}
-
-			const resDepartment = await getAllDepartments();
-
-			if (isSuccess(resDepartment)) {
-				const departments = resDepartment.data.map((e) => ({
-					...e,
-					id: parseInt(e.id),
-				}));
-
-				dispatch(optionsAction.setDepartments(departments));
-			}
-
-			const resStatus = await getStatuses();
-
-			if (isSuccess(resStatus)) {
-				const statuses = resStatus.data.map((e) => ({
-					...e,
-					id: parseInt(e.id),
-				}));
-
-				dispatch(optionsAction.setStatuses(statuses));
-			}
-		} catch (error) {
-			throw error;
-		}
-	};
 	//#endregion
 
 	useEffect(() => {
-		initGetData();
-	}, []);
+		if (!pending) {
+			const academic_years = data?.[0]?.data ?? [];
+			const departments = data?.[1]?.data ?? [];
+			const statuses = data?.[2]?.data ?? [];
+
+			dispatch(optionsAction.setOptions({ academic_years, departments, statuses }));
+		}
+	}, [data, pending]);
 
 	useEffect(() => {
 		dispatch(actions.setMenu(!matchDownMd));

@@ -27,6 +27,8 @@ import { SuspenseLoading } from '_others/';
 import theme from '_theme';
 
 import '_styles/index.scss';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { client } from '_utils/query';
 
 dayjs.extend(isBetween);
 dayjs.extend(utc);
@@ -69,9 +71,11 @@ function App() {
 			<ThemeProvider theme={theme()}>
 				<LocalizationProvider dateAdapter={AdapterDayjs}>
 					<AbilityContext.Provider value={ability}>
-						<div className='App'>
-							<RouterProvider router={router} />
-						</div>
+						<QueryClientProvider client={client}>
+							<div className='App'>
+								<RouterProvider router={router} />
+							</div>
+						</QueryClientProvider>
 					</AbilityContext.Provider>
 				</LocalizationProvider>
 			</ThemeProvider>

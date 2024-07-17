@@ -19,10 +19,11 @@ import { EXCEL_FILE_TYPE } from '_constants/variables';
 
 import { ReactComponent as ExcelIcon } from '_assets/icons/excel.svg';
 import { actions } from '_slices/filters.slice';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 export const ConfigRoleContext = createContext();
 
-const FILTERS_KEY = 'students-list';
+const KEY = 'students-list';
 
 const ListStudentsPage = memo(() => {
 	//#region Data
@@ -33,10 +34,6 @@ const ListStudentsPage = memo(() => {
 	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const filters = useSelector((state) => state.filters.filters, shallowEqual);
-
-	const [isLoading, setIsLoading] = useState(false);
-
-	const [data, setData] = useState();
 
 	const [classes, setClasses] = useState([]);
 
@@ -51,37 +48,28 @@ const ListStudentsPage = memo(() => {
 		input: '',
 		page: 1,
 		pages: 0,
-		...(filters ? filters[FILTERS_KEY] : null),
+		...(filters ? filters[KEY] : null),
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
 
+	const { data, refetch, isFetching } = useQuery({
+		queryKey: [KEY, filter],
+		queryFn: () => {
+			const _filter = cleanObjValue(filter);
+			dispatch(actions.setFilters({ key: KEY, value: _filter }));
+			return getStudentsRole(_filter);
+		},
+		select: (response) => response?.data,
+		placeholderData: keepPreviousData,
+		enabled: !!(filter?.academic_id && filter?.semester_id),
+	});
+
 	const dataTable = useMemo(() => data?.data || [], [data]);
+	console.log('🚀 ~ ListStudentsPage ~ dataTable:', dataTable);
 	//endregion
 
 	//#region Event
-	const getData = async () => {
-		if (!filter?.academic_id || !filter?.semester_id) return;
-
-		setIsLoading(true);
-
-		try {
-			const _filter = cleanObjValue(filter);
-
-			dispatch(actions.setFilters({ key: FILTERS_KEY, value: _filter }));
-
-			const res = await getStudentsRole(_filter);
-
-			if (isSuccess(res)) {
-				setData(res.data);
-			} else if (isEmpty(res)) setData(null);
-		} catch (error) {
-			throw error;
-		} finally {
-			setIsLoading(false);
-		}
-	};
-
 	const getClassData = async (department_id) => {
 		const res = await getClassesByDepartment(department_id);
 
@@ -117,8 +105,7 @@ const ListStudentsPage = memo(() => {
 				const isValid = checkValidFile(file);
 
 				if (isValid) {
-					if (file.type !== EXCEL_FILE_TYPE)
-						alert.fail({ text: 'Định dạng file phải là Excel.' });
+					if (file.type !== EXCEL_FILE_TYPE) alert.fail({ text: 'Định dạng file phải là Excel.' });
 					else {
 						const res = await uploadFile(file);
 
@@ -132,14 +119,12 @@ const ListStudentsPage = memo(() => {
 							const _res = await importUsers(body);
 
 							if (isSuccess(_res)) {
-								await getData();
+								await refetch();
 
 								alert.success({ text: 'Nhập dữ liệu thành công.' });
 							} else
 								alert.fail({
-									text:
-										_res?.message ||
-										'Import file không thành công. Thử lại sau.',
+									text: _res?.message || 'Import file không thành công. Thử lại sau.',
 								});
 						} else
 							alert.fail({
@@ -167,10 +152,6 @@ const ListStudentsPage = memo(() => {
 	}, [filter.academic_id]);
 
 	useEffect(() => {
-		getData();
-	}, [filter]);
-
-	useEffect(() => {
 		if (semesters?.length)
 			setFilter((prev) => ({ ...prev, semester_id: Number(semesters[0]?.id) }));
 	}, [semesters]);
@@ -186,7 +167,7 @@ const ListStudentsPage = memo(() => {
 	//#region Render
 	return (
 		<Box>
-			<ConfigRoleContext.Provider value={{ getData }}>
+			<ConfigRoleContext.Provider value={{ refetch }}>
 				<MFilter
 					filter={filter}
 					onFilterChange={setFilter}
@@ -232,13 +213,13 @@ const ListStudentsPage = memo(() => {
 				</Stack>
 
 				<Stack direction='column' justifyContent='space-between'>
-					<MTable data={dataTable} isLoading={isLoading} onFilterChange={setFilter} />
+					<MTable data={dataTable} isLoading={isFetching} onFilterChange={setFilter} />
 
 					<CPagination
 						page={paginate.page}
 						pages={paginate.pages}
 						onChange={onPageChange}
-						isLoading={isLoading}
+						isLoading={isFetching}
 						isGoTo
 					/>
 				</Stack>

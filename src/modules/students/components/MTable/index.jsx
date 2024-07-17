@@ -89,6 +89,7 @@ export const MTable = ({ data, isLoading, onFilterChange, page, pages, onPageCha
 				headers={headers}
 				data={data}
 				showIndexCol={false}
+				fontSizeBody={12}
 				pagination={{ page, pages, onPageChange }}
 			/>
 

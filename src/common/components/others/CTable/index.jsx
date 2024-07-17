@@ -27,6 +27,7 @@ export const CTable = ({
 	rowKey = 'id',
 	loading = false,
 	showIndexCol = true,
+	fontSizeBody = 14,
 	pagination = { page: 1, pages: 0, onPageChange: () => {} },
 }) => {
 	return (
@@ -76,7 +77,7 @@ export const CTable = ({
 										<TableCell
 											align={column.align ?? 'center'}
 											key={column.key + _index}
-											style={{ fontSize: '12px' }}
+											style={{ fontSize: fontSizeBody }}
 										>
 											{column?.cellRender
 												? column.cellRender(row?.[column.key], row, index)

@@ -1,4 +1,4 @@
-import { post } from '_axios/request';
+import { get, post } from '_axios/request';
 
 import { formatFileName } from '_func/';
 
@@ -18,4 +18,8 @@ export const uploadFile = (file) => {
 	}
 
 	return;
+};
+
+export const getFileReports = (params) => {
+	return get(FILES.GET_REPORTS, { params });
 };

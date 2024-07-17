@@ -126,6 +126,8 @@ export const LEVELS = {
 
 export const FILES = {
 	UPLOAD: '/files/upload',
+
+	GET_REPORTS: '/files',
 };
 
 export const OTHERS = {

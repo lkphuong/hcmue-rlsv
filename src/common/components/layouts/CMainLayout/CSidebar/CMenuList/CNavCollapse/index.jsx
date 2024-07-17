@@ -91,7 +91,7 @@ const CNavCollapse = ({ menu, level, index }) => {
 						pl: `${level * 24}px`,
 						'&:hover': {
 							backgroundColor: '#FFF2F2!important',
-							left: '3%',
+							transform: 'translateX(3%)',
 							'& .MuiListItemText-root h5,& .MuiListItemIcon-root,.MuiSvgIcon-root': {
 								color: '#CF373D!important',
 								fontWeight: 600,
@@ -107,8 +107,7 @@ const CNavCollapse = ({ menu, level, index }) => {
 					<ListItemText
 						primary={
 							<Typography variant='h5' color='inherit' sx={{ my: 'auto' }}>
-								{(menu.title === 'Lớp trưởng' && SPECIFIC_TITLE[role_id]) ||
-									menu.title}
+								{(menu.title === 'Lớp trưởng' && SPECIFIC_TITLE[role_id]) || menu.title}
 							</Typography>
 						}
 					/>

@@ -83,9 +83,10 @@ const CNavItem = ({ item, level, index }) => {
 					backgroundColor: level > 1 ? 'transparent !important' : 'inherit',
 					py: level > 1 ? 1 : 1.25,
 					pl: `${level * 24}px`,
+					transition: 'all 100ms linear',
 					'&:hover': {
 						backgroundColor: '#FFF2F2!important',
-						left: '3%',
+						transform: 'translateX(3%)',
 						'& .MuiListItemText-root p,& .MuiListItemIcon-root': {
 							color: '#CF373D!important',
 							fontWeight: 600,
@@ -95,15 +96,10 @@ const CNavItem = ({ item, level, index }) => {
 				selected={pathname.includes(item?.path)}
 				onClick={() => itemHandler(item.id)}
 			>
-				<ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>
-					{itemIcon}
-				</ListItemIcon>
+				<ListItemIcon sx={{ my: 'auto', minWidth: !item?.icon ? 18 : 36 }}>{itemIcon}</ListItemIcon>
 				<ListItemText
 					primary={
-						<Typography
-							variant={pathname.includes(item?.path) ? 'h5' : 'body1'}
-							color='inherit'
-						>
+						<Typography variant={pathname.includes(item?.path) ? 'h5' : 'body1'} color='inherit'>
 							{item.title}
 						</Typography>
 					}

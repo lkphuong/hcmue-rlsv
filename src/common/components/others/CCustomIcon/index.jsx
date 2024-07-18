@@ -10,6 +10,7 @@ import { ReactComponent as Reset } from '_assets/icons/reset.svg';
 import { ReactComponent as Time } from '_assets/icons/time.svg';
 import { ReactComponent as UserEdit } from '_assets/icons/user-edit.svg';
 import { ReactComponent as Tick } from '_assets/icons/tick.svg';
+import { ReactComponent as Chrome } from '_assets/icons/chrome.svg';
 
 export const CEditIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={Edit} />;
@@ -49,4 +50,8 @@ export const CUserEditIcon = ({ ...props }) => {
 
 export const CTickIcon = ({ ...props }) => {
 	return <SvgIcon {...props} component={Tick} />;
+};
+
+export const CChromeIcon = ({ ...props }) => {
+	return <SvgIcon {...props} component={Chrome} />;
 };

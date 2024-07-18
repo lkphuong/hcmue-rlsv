@@ -13,9 +13,9 @@ import { ERRORS } from '_constants/messages';
 import { alert } from '_func/alert';
 import { isSuccess } from '_func/';
 
-import { cloneForm, deleteForm } from '_api/form.api';
+import { cloneForm, deleteForm, publishFormNow, unpublishFormNow } from '_api/form.api';
 
-import { CDeleteIcon, CDuplicateIcon, CEditIcon, CTickIcon } from '_others/';
+import { CChromeIcon, CDeleteIcon, CDuplicateIcon, CEditIcon, CTickIcon } from '_others/';
 
 //#region Array Status Chip
 const generalStyle = {
@@ -122,14 +122,32 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 		});
 	};
 
-	const onDone = (e) => {
+	const onStartNow = (e) => {
+		e.stopPropagation();
+
+		alert.question({
+			text: 'Phát hành biểu mẫu này ngay lập tức?',
+			onConfirm: async () => {
+				const res = await publishFormNow(data.id);
+
+				if (isSuccess(res)) {
+					refetch();
+
+					alert.success({ text: 'Phát hành biểu mẫu thành công.' });
+				} else {
+					alert.fail({ text: res?.message || ERRORS.FAIL });
+				}
+			},
+		});
+	};
+
+	const onEndNow = (e) => {
 		e.stopPropagation();
 
 		alert.question({
 			text: 'Kết thúc phát hành cho biểu mẫu này?',
 			onConfirm: async () => {
-				const res = { data };
-				// const res = await cloneForm(data.id);
+				const res = await unpublishFormNow(data.id);
 
 				if (isSuccess(res)) {
 					refetch();
@@ -153,9 +171,16 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 			<TableCell align='center'>{status}</TableCell>
 			<TableCell align='center' width={120}>
 				<Stack direction='row' alignItems='center' justifyContent='space-between'>
-					<Tooltip title='Kết thúc phát hành phiếu'>
+					<Tooltip title='Phát hành sớm biểu mẫu'>
 						<span>
-							<IconButton onClick={onDone} disabled={data.status === 0}>
+							<IconButton onClick={onStartNow}>
+								<CChromeIcon />
+							</IconButton>
+						</span>
+					</Tooltip>
+					<Tooltip title='Kết thúc sớm biểu mẫu'>
+						<span>
+							<IconButton onClick={onEndNow}>
 								<CTickIcon />
 							</IconButton>
 						</span>
@@ -165,10 +190,18 @@ const Row = memo(({ data, index, refetch, saveFilter }) => {
 							<CDuplicateIcon />
 						</IconButton>
 					</Tooltip>
-					<IconButton onClick={onEdit} disabled={data.status === 2 || data.status === 3}>
-						<CEditIcon />
-					</IconButton>
-					<Tooltip title={data.status !== 0 ? 'Chỉ có thể xóa biểu mẫu ở trạng thái nháp.' : ''}>
+					<Tooltip title='Chỉnh sửa'>
+						<span>
+							<IconButton onClick={onEdit} disabled={data.status === 2 || data.status === 3}>
+								<CEditIcon />
+							</IconButton>
+						</span>
+					</Tooltip>
+					<Tooltip
+						title={
+							data.status !== 0 ? 'Chỉ có thể xóa biểu mẫu ở trạng thái nháp.' : 'Xóa biểu mẫu'
+						}
+					>
 						<span>
 							<IconButton onClick={onDelete} disabled={data.status !== 0}>
 								<CDeleteIcon />

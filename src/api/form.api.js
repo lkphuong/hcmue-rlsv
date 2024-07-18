@@ -85,3 +85,11 @@ export const unpublishForm = (id) => {
 export const cloneForm = (id) => {
 	return post(`${FORMS.CLONE}/${id}`);
 };
+
+export const publishFormNow = (id) => {
+	return put(`${FORMS.PUBLISH_NOW}/${id}`);
+};
+
+export const unpublishFormNow = (id) => {
+	return put(`${FORMS.UNPUBLISH_NOW}/${id}`);
+};

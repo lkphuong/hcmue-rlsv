@@ -74,6 +74,9 @@ export const FORMS = {
 	PUBLISH: '/forms/publish',
 	UNPUBLISH: '/forms/un-publish',
 	CLONE: '/forms/clone',
+
+	PUBLISH_NOW: '/forms/publish-now',
+	UNPUBLISH_NOW: '/forms/un-publish-now',
 };
 
 export const CLASSES = {

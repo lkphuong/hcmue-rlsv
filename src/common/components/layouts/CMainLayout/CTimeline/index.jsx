@@ -28,6 +28,13 @@ export const CTimeline = () => {
 					academic_id: Number(res?.data?.academic_id),
 				})
 			);
+		} else {
+			dispatch(
+				actions.setTimeId({
+					semester_id: null,
+					academic_id: null,
+				})
+			);
 		}
 	};
 	//#endregion

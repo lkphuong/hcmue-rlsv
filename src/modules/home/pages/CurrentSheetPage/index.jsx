@@ -23,7 +23,10 @@ const CurrentSheetPage = () => {
 	const [loading, setLoading] = useState(false);
 	const [data, setData] = useState();
 
-	const listData = useMemo(() => data?.data || [], [data]);
+	const listData = useMemo(
+		() => (!!(academic_id && semester_id) ? data?.data ?? [] : []),
+		[data, semester_id, academic_id]
+	);
 
 	const [filter, setFilter] = useState(
 		filters || {

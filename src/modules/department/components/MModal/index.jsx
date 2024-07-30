@@ -24,7 +24,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 	const resolver = useResolver(editData ? validationSchemaEdit : validationSchema);
 
 	const { control, handleSubmit, reset } = useForm({
-		defaultValues: { ...initialValues, department_id: departments[0].id },
+		defaultValues: { ...initialValues, department_id: departments[0]?.id || null },
 		mode: 'all',
 		shouldFocusError: true,
 
@@ -47,9 +47,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 			refetch();
 
 			alert.success({
-				text: editData
-					? 'Cập nhật tài khoản khoa thành công.'
-					: 'Thêm tài khoản khoa thành công.',
+				text: editData ? 'Cập nhật tài khoản khoa thành công.' : 'Thêm tài khoản khoa thành công.',
 			});
 
 			close();
@@ -95,10 +93,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 								<Controller
 									control={control}
 									name='department_id'
-									render={({
-										field: { value, ref, name, onChange },
-										fieldState: { error },
-									}) => (
+									render={({ field: { value, ref, name, onChange }, fieldState: { error } }) => (
 										<CAutocomplete
 											disableClearable
 											disabled={!!editData}
@@ -125,10 +120,7 @@ export const MModal = forwardRef(({ refetch, editData }, ref) => {
 								<Controller
 									control={control}
 									name='username'
-									render={({
-										field: { value, ref, name, onChange },
-										fieldState: { error },
-									}) => (
+									render={({ field: { value, ref, name, onChange }, fieldState: { error } }) => (
 										<CInput
 											name={name}
 											value={value}

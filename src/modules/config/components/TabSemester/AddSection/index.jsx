@@ -31,6 +31,8 @@ import dayjs from 'dayjs';
 const SEMESTERS_OPTIONS = [
 	{ id: 'Học kỳ I', name: 'Học kỳ I' },
 	{ id: 'Học kỳ II', name: 'Học kỳ II' },
+	{ id: 'Học kỳ II (2)', name: 'Học kỳ II (2)' },
+	{ id: 'Học kỳ bổ sung', name: 'Học kỳ bổ sung' },
 ];
 
 export const AddSection = ({ refetch }) => {
@@ -45,7 +47,8 @@ export const AddSection = ({ refetch }) => {
 		shouldFocusError: true,
 		resolver,
 	});
-	////#endregion
+	//#endregion
+
 	//#region Event
 	const onReset = () => reset({ ...initialValues, academic_id: academic_years[0]?.id || '' });
 
@@ -112,11 +115,7 @@ export const AddSection = ({ refetch }) => {
 													value={value}
 													options={SEMESTERS_OPTIONS}
 													renderOption={(props, option) => (
-														<Box
-															component='li'
-															{...props}
-															key={option.id}
-														>
+														<Box component='li' {...props} key={option.id}>
 															{option.name}
 														</Box>
 													)}
@@ -143,11 +142,7 @@ export const AddSection = ({ refetch }) => {
 													value={value}
 													options={academic_years}
 													renderOption={(props, option) => (
-														<Box
-															component='li'
-															{...props}
-															key={option.id}
-														>
+														<Box component='li' {...props} key={option.id}>
 															{option.name}
 														</Box>
 													)}

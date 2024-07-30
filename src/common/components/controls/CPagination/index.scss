@@ -1,0 +1,35 @@
+.MuiPagination-root.c-pagination {
+	margin: 15px 0;
+
+	ul.MuiPagination-ul {
+		justify-content: center;
+
+		.MuiPaginationItem-root {
+			background-color: white;
+			&.Mui-selected {
+				border-width: 2px;
+				font-weight: 700;
+			}
+		}
+	}
+}
+
+.c-pagination-goto {
+	.MuiOutlinedInput-root {
+		border-radius: inherit;
+		.MuiOutlinedInput-input {
+			padding: 6.5px 10px;
+			border-radius: inherit;
+			text-align: center;
+		}
+		.MuiOutlinedInput-notchedOutline {
+			border-radius: inherit;
+		}
+	}
+
+	input::-webkit-outer-spin-button,
+	input::-webkit-inner-spin-button {
+		-webkit-appearance: none;
+		margin: 0;
+	}
+}

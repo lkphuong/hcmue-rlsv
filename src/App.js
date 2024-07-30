@@ -1,0 +1,86 @@
+import { useEffect, useState } from 'react';
+
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+
+import { useSelector } from 'react-redux';
+
+import { StyledEngineProvider, ThemeProvider } from '@mui/material';
+
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
+
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+import { AbilityContext } from '_contexts';
+
+import ability from '_config/casl_ability';
+
+import { browserRouter } from '_routes/routes';
+
+import { getProfile, tryLogout } from '_axios/';
+
+import { SuspenseLoading } from '_others/';
+
+import theme from '_theme';
+
+import '_styles/index.scss';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { client } from '_utils/query';
+
+dayjs.extend(isBetween);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+const router = createBrowserRouter(browserRouter);
+
+function App() {
+	//#region Data
+	const [isLoading, setLoading] = useState(true);
+
+	const token = localStorage.getItem('access_token');
+
+	const { isLogined } = useSelector((state) => state.auth.isLogined);
+	//#endregion
+
+	useEffect(() => {
+		const init = async () => {
+			try {
+				if (token) {
+					await getProfile(token);
+				} else {
+					await tryLogout();
+				}
+			} catch (error) {
+				console.log(error);
+			} finally {
+				setLoading(false);
+			}
+		};
+
+		!isLogined && init();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isLogined]);
+
+	if (isLoading) return <SuspenseLoading />;
+
+	return (
+		<StyledEngineProvider injectFirst>
+			<ThemeProvider theme={theme()}>
+				<LocalizationProvider dateAdapter={AdapterDayjs}>
+					<AbilityContext.Provider value={ability}>
+						<QueryClientProvider client={client}>
+							<div className='App'>
+								<RouterProvider router={router} />
+							</div>
+						</QueryClientProvider>
+					</AbilityContext.Provider>
+				</LocalizationProvider>
+			</ThemeProvider>
+		</StyledEngineProvider>
+	);
+}
+
+export default App;

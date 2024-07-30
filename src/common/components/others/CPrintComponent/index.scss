@@ -1,0 +1,41 @@
+.print-source {
+	display: none;
+
+	* {
+		font-size: 18px;
+		color: #333333 !important;
+	}
+
+	section {
+		margin-bottom: 1rem;
+
+		&.form {
+			* {
+				font-size: 12px;
+			}
+		}
+
+		.sign {
+			* {
+				font-size: 14px;
+			}
+			.label {
+				font-size: 15px;
+			}
+		}
+	}
+}
+
+body > .print-source {
+	display: block;
+}
+
+@media print {
+	.print-source {
+		display: block;
+	}
+	@page {
+		margin-top: 16px;
+		margin-bottom: 16px;
+	}
+}

@@ -1,0 +1,11 @@
+.MuiGrid-root.grid-fake-table {
+	> .MuiGrid-item {
+		padding: 10px;
+	}
+}
+.MuiGrid-item.grid-fake-header {
+	background-color: #e5f2f7;
+	font-weight: 600;
+	padding-top: 8px;
+	padding-bottom: 8px;
+}

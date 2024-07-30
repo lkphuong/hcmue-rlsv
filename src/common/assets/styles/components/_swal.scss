@@ -1,0 +1,30 @@
+@import '../mixin';
+
+.swal2-container.my-swal {
+	z-index: 99999 !important;
+
+	.swal2-title {
+		line-height: 1.3 !important;
+		font-size: 1.5rem !important;
+	}
+
+	.swal2-html-container {
+		line-height: 22px;
+	}
+}
+
+@include xs {
+	.swal2-container.my-swal {
+		.swal2-popup {
+			width: 20em;
+		}
+	}
+}
+
+@include sm {
+	.swal2-container.my-swal {
+		.swal2-popup {
+			width: 30em;
+		}
+	}
+}

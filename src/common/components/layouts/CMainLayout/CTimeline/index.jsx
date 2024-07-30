@@ -1,0 +1,62 @@
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+
+import dayjs from 'dayjs';
+
+import { Alert } from '@mui/material';
+
+import { getCurrentTimeline } from '_api/timeline.api';
+
+import { isSuccess } from '_func/';
+import { actions } from '_slices/currentInfo.slice';
+
+export const CTimeline = () => {
+	//#region Data
+	const [timeline, setTimeline] = useState({ show: false, start: null, end: null });
+
+	const dispatch = useDispatch();
+	//#endregion
+
+	//#region Event
+	const getTimeline = async () => {
+		const res = await getCurrentTimeline();
+		if (isSuccess(res)) {
+			setTimeline({ show: true, ...res?.data });
+			dispatch(
+				actions.setTimeId({
+					semester_id: Number(res?.data?.semester_id),
+					academic_id: Number(res?.data?.academic_id),
+				})
+			);
+		} else {
+			dispatch(
+				actions.setTimeId({
+					semester_id: null,
+					academic_id: null,
+				})
+			);
+		}
+	};
+	//#endregion
+
+	useEffect(() => {
+		getTimeline();
+	}, []);
+
+	//#region Render
+	return (
+		timeline.show && (
+			<Alert
+				severity='info'
+				// onClose={() => setTimeline((prev) => ({ ...prev, show: false }))}
+				sx={{ fontSize: '14px', py: 0, mb: 1 }}
+			>
+				Thời gian chấm điểm rèn luyện —&nbsp;
+				<strong>{`Từ ngày ${dayjs(timeline.start).format('DD/MM/YYYY')} - đến ngày ${dayjs(
+					timeline.end
+				).format('DD/MM/YYYY')}`}</strong>
+			</Alert>
+		)
+	);
+	//#endregion
+};

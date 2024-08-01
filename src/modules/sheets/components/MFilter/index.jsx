@@ -1,14 +1,8 @@
 import { Box, Paper, Stack, Typography, Unstable_Grid2 as Grid } from '@mui/material';
 
-import { shallowEqual, useSelector } from 'react-redux';
-
 import { CAutocomplete } from '_controls/';
 
-export const MFilter = ({ filter, onFilterChange }) => {
-	//#region Data
-	const departments = useSelector((state) => state.options.departments, shallowEqual);
-	//#endregion
-
+export const MFilter = ({ departments, filter, onFilterChange }) => {
 	//#region Event
 	const handleDepartmentChange = (key) => (value) =>
 		onFilterChange((prev) => ({ ...prev, [key]: value?.id, page: 1, pages: 0 }));
@@ -29,7 +23,7 @@ export const MFilter = ({ filter, onFilterChange }) => {
 									<CAutocomplete
 										value={filter.department_id}
 										onChange={handleDepartmentChange('department_id')}
-										options={departments}
+										options={departments ?? []}
 										display='name'
 										placeholder='Tất cả'
 										renderOption={(props, option) => (

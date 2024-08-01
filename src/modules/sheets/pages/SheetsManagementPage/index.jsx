@@ -12,6 +12,8 @@ import { getAdminSheets } from '_api/sheets.api';
 import { isSuccess, cleanObjValue, formatTimeSemester } from '_func/';
 
 import { actions } from '_slices/currentInfo.slice';
+import { useQuery } from '@tanstack/react-query';
+import { getAllDepartments } from '_api/options.api';
 
 const SheetsManagementPage = () => {
 	//#region Data
@@ -25,6 +27,16 @@ const SheetsManagementPage = () => {
 		page: 1,
 		pages: 0,
 		department_id: '',
+	});
+
+	const { data: departments } = useQuery({
+		queryKey: ['departments', data?.data?.semester?.id, data?.data?.academic?.id],
+		queryFn: () =>
+			getAllDepartments({
+				semester_id: data?.data?.semester?.id,
+				academic_id: data?.data?.academic?.id,
+			}),
+		select: (response) => response?.data?.map((e) => ({ ...e, id: Number(e?.id) })),
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
@@ -73,7 +85,7 @@ const SheetsManagementPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<MFilter filter={filter} onFilterChange={setFilter} />
+			<MFilter filter={filter} onFilterChange={setFilter} departments={departments} />
 
 			{loading ? (
 				<>
@@ -91,13 +103,7 @@ const SheetsManagementPage = () => {
 				</>
 			) : (
 				<>
-					<Typography
-						fontWeight={700}
-						fontSize={25}
-						lineHeight='30px'
-						textAlign='center'
-						mb={4}
-					>
+					<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
 						{listData?.length > 0
 							? `${data?.data?.semester?.name} (${formatTimeSemester(
 									data?.data?.semester?.start
@@ -109,11 +115,7 @@ const SheetsManagementPage = () => {
 
 					<ListDepartments data={listData} onSetCurrent={handleSetCurrent} />
 
-					<CPagination
-						page={paginate.page}
-						pages={paginate.pages}
-						onChange={onPageChange}
-					/>
+					<CPagination page={paginate.page} pages={paginate.pages} onChange={onPageChange} />
 				</>
 			)}
 		</Box>

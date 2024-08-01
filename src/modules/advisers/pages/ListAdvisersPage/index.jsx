@@ -117,6 +117,7 @@ const ListAdvisersPage = memo(() => {
 						if (isSuccess(res)) {
 							const body = {
 								academic_id: filter?.academic_id,
+								semester_id: filter?.semester_id,
 								file_id: Number(res?.data?.id),
 							};
 

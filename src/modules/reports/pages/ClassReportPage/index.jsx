@@ -51,9 +51,11 @@ const ClassReportPage = () => {
 	return (
 		<Box>
 			<Typography textAlign='center' fontWeight={700} fontSize={25} lineHeight='30px'>
-				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
-					semester?.end
-				)}) - Năm học ${academic?.name}`}
+				{!!semester &&
+					!!academic &&
+					`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
+						semester?.end
+					)}) - Năm học ${academic?.name}`}
 			</Typography>
 
 			<Box my={1.5}>

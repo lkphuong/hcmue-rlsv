@@ -16,10 +16,7 @@ import { actions } from '_slices/filter.slice';
 
 const HistoryDepartmentPage = () => {
 	//#region Data
-	const { academic, semester, classData } = useSelector(
-		(state) => state.currentInfo,
-		shallowEqual
-	);
+	const { academic, semester, classData } = useSelector((state) => state.currentInfo, shallowEqual);
 	const { fullname: departmentName, department_id } = useSelector(
 		(state) => state.auth.profile,
 		shallowEqual
@@ -93,9 +90,11 @@ const HistoryDepartmentPage = () => {
 			<MDepartmentFilter filter={filter} onFilterChange={setFilter} />
 
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
-					semester?.end
-				)}) - Năm học ${academic?.name}`}
+				{!!semester &&
+					!!academic &&
+					`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
+						semester?.end
+					)}) - Năm học ${academic?.name}`}
 			</Typography>
 
 			<Box mb={1.5}>

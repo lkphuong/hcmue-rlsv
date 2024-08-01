@@ -16,10 +16,7 @@ const ReportClassPage = () => {
 	//#region Data
 	const printRef = useRef();
 
-	const { academic, semester, classData } = useSelector(
-		(state) => state.currentInfo,
-		shallowEqual
-	);
+	const { academic, semester, classData } = useSelector((state) => state.currentInfo, shallowEqual);
 	const { classes } = useSelector((state) => state.auth.profile, shallowEqual);
 
 	const { class_id } = useParams();
@@ -119,19 +116,16 @@ const ReportClassPage = () => {
 			<MClassFilter filter={filter} onFilterChange={setFilter} />
 
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				{`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
-					semester?.end
-				)}) - Năm học ${academic?.name}`}
+				{!!semester &&
+					!!academic &&
+					`${semester?.name} (${formatTimeSemester(semester?.start)}-${formatTimeSemester(
+						semester?.end
+					)}) - Năm học ${academic?.name}`}
 			</Typography>
 
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>
-					<Stack
-						direction='row'
-						p={1.5}
-						justifyContent='space-between'
-						alignItems='center'
-					>
+					<Stack direction='row' p={1.5} justifyContent='space-between' alignItems='center'>
 						<Typography fontSize={20} fontWeight={600}>
 							Thống kê của lớp {classData?.name} - {classData?.code}
 						</Typography>

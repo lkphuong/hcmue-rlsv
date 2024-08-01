@@ -49,16 +49,12 @@ const CurrentClassSheetsPage = () => {
 	//#region Render
 	return (
 		<Box>
-			<Typography
-				textAlign='center'
-				fontWeight={700}
-				fontSize={25}
-				lineHeight='30px'
-				mb={1.5}
-			>
-				{`${data?.semester?.name} (${formatTimeSemester(
-					data?.semester?.start
-				)}-${formatTimeSemester(data?.semester?.end)}) - Năm học ${data?.academic?.name}`}
+			<Typography textAlign='center' fontWeight={700} fontSize={25} lineHeight='30px' mb={1.5}>
+				{!!data?.semester &&
+					!!data?.academic &&
+					`${data?.semester?.name} (${formatTimeSemester(
+						data?.semester?.start
+					)}-${formatTimeSemester(data?.semester?.end)}) - Năm học ${data?.academic?.name}`}
 			</Typography>
 
 			<MCurrentTable data={listData} onSetCurrent={handleSetCurrent} />

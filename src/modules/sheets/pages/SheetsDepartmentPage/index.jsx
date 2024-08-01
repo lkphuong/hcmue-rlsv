@@ -75,8 +75,7 @@ const SheetsDepartmentPage = () => {
 		if (isSuccess(res)) {
 			setClasses(res.data);
 
-			!filter?.class_id &&
-				setFilter((prev) => ({ ...prev, class_id: Number(res.data[0]?.id) }));
+			!filter?.class_id && setFilter((prev) => ({ ...prev, class_id: Number(res.data[0]?.id) }));
 		}
 	};
 
@@ -106,9 +105,11 @@ const SheetsDepartmentPage = () => {
 			<MDepartmentFilter filter={filter} onFilterChange={setFilter} classes={classes} />
 
 			<Typography fontWeight={700} fontSize={25} lineHeight='30px' textAlign='center' mb={4}>
-				{`${semester?.name} (${formatTimeSemester(semester?.start)} - ${formatTimeSemester(
-					semester?.end
-				)}) - Năm học ${academic?.name}`}
+				{!!semester &&
+					!!academic &&
+					`${semester?.name} (${formatTimeSemester(semester?.start)} - ${formatTimeSemester(
+						semester?.end
+					)}) - Năm học ${academic?.name}`}
 			</Typography>
 			<Box mb={1.5}>
 				<Paper className='paper-wrapper'>

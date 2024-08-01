@@ -17,12 +17,13 @@ import { alert } from '_func/alert';
 import { EXCEL_FILE_TYPE } from '_constants/variables';
 
 import { ReactComponent as ExcelIcon } from '_assets/icons/excel.svg';
+import { useQuery } from '@tanstack/react-query';
+import { getAllDepartments, getSemestersByYear } from '_api/options.api';
 
 const ListAdvisersPage = memo(() => {
 	//#region Data
 	const fileRef = useRef();
 
-	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 
 	const [isLoading, setIsLoading] = useState(false);
@@ -33,11 +34,26 @@ const ListAdvisersPage = memo(() => {
 
 	const [filter, setFilter] = useState({
 		academic_id: academic_years[0].id,
+		semester_id: null,
 		department_id: null,
 		class_id: null,
 		input: '',
 		page: 1,
 		pages: 0,
+	});
+
+	const { data: departments } = useQuery({
+		queryKey: ['departments', filter?.semester_id, filter?.academic_id],
+		queryFn: () =>
+			getAllDepartments({ semester_id: filter?.semester_id, academic_id: filter?.academic_id }),
+		select: (response) => response?.data?.map((e) => ({ ...e, id: Number(e?.id) })),
+	});
+
+	const { data: semesters } = useQuery({
+		queryKey: ['semesters', filter?.academic_id],
+		queryFn: () => getSemestersByYear(filter?.academic_id),
+		enabled: !!filter?.academic_id,
+		select: (response) => response?.data,
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
@@ -94,8 +110,7 @@ const ListAdvisersPage = memo(() => {
 				const isValid = checkValidFile(file);
 
 				if (isValid) {
-					if (file.type !== EXCEL_FILE_TYPE)
-						alert.fail({ text: 'Định dạng file phải là Excel.' });
+					if (file.type !== EXCEL_FILE_TYPE) alert.fail({ text: 'Định dạng file phải là Excel.' });
 					else {
 						const res = await uploadFile(file);
 
@@ -133,6 +148,11 @@ const ListAdvisersPage = memo(() => {
 	}, [filter.department_id, filter.academic_id]);
 
 	useEffect(() => {
+		if (semesters?.length)
+			setFilter((prev) => ({ ...prev, semester_id: Number(semesters[0]?.id) }));
+	}, [semesters]);
+
+	useEffect(() => {
 		getData();
 	}, [filter]);
 
@@ -152,6 +172,7 @@ const ListAdvisersPage = memo(() => {
 				onFilterChange={setFilter}
 				departments={departments}
 				academic_years={academic_years}
+				semesters={semesters || []}
 				classes={classes}
 			/>
 
@@ -181,13 +202,7 @@ const ListAdvisersPage = memo(() => {
 				>
 					Import Excel
 				</Button>
-				<input
-					type='file'
-					hidden
-					ref={fileRef}
-					onChange={onUploadFile}
-					accept={EXCEL_FILE_TYPE}
-				/>
+				<input type='file' hidden ref={fileRef} onChange={onUploadFile} accept={EXCEL_FILE_TYPE} />
 			</Stack>
 
 			<Stack direction='column' justifyContent='space-between'>

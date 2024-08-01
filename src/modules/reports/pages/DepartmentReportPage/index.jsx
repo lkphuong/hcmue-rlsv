@@ -11,7 +11,7 @@ import { isSuccess, isEmpty, cleanObjValue } from '_func/';
 import { alert } from '_func/alert';
 
 import { adminExportExcel, adminExportWord, getReports } from '_api/reports.api';
-import { getSemestersByYear } from '_api/options.api';
+import { getAllDepartments, getSemestersByYear } from '_api/options.api';
 
 import { actions } from '_slices/currentInfo.slice';
 
@@ -19,12 +19,12 @@ import { CReportButton } from '_others/';
 
 import { ERRORS, SUCCESS } from '_constants/messages';
 import { FILE_NAMES } from '_constants/variables';
+import { useQuery } from '@tanstack/react-query';
 
 const DepartmentReportPage = () => {
 	//#region Data
 	// const printRef = useRef();
 
-	const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const { role_id, department_id } = useSelector((state) => state.auth.profile, shallowEqual);
 
@@ -42,10 +42,16 @@ const DepartmentReportPage = () => {
 		department_id: role_id === 5 ? department_id : null,
 	});
 
+	const { data: departments } = useQuery({
+		queryKey: ['departments', filter?.semester_id, filter?.academic_id],
+		queryFn: () =>
+			getAllDepartments({ semester_id: filter?.semester_id, academic_id: filter?.academic_id }),
+		select: (response) => response?.data?.map((e) => ({ ...e, id: Number(e?.id) })),
+	});
+
 	const departmentName = useMemo(
 		() =>
-			departments.find((e) => e.id.toString() === filter?.department_id?.toString())?.name ||
-			'',
+			departments?.find((e) => e.id.toString() === filter?.department_id?.toString())?.name || '',
 		[departments, filter.department_id]
 	);
 
@@ -103,8 +109,7 @@ const DepartmentReportPage = () => {
 		alert.loading();
 
 		try {
-			const res =
-				type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
+			const res = type === 'word' ? await adminExportWord(body) : await adminExportExcel(body);
 
 			if (isSuccess(res)) {
 				setNoti({
@@ -113,10 +118,7 @@ const DepartmentReportPage = () => {
 					message: type === 'word' ? SUCCESS.WORD : SUCCESS.EXCEL,
 				});
 
-				fileDownload(
-					res.data,
-					type === 'word' ? FILE_NAMES.ADMIN_WORD : FILE_NAMES.ADMIN_EXCEL
-				);
+				fileDownload(res.data, type === 'word' ? FILE_NAMES.ADMIN_WORD : FILE_NAMES.ADMIN_EXCEL);
 			} else
 				setNoti({
 					show: true,
@@ -160,12 +162,7 @@ const DepartmentReportPage = () => {
 
 			<Box my={1.5}>
 				<Paper className='paper-wrapper'>
-					<Stack
-						p={1.5}
-						direction='row'
-						justifyContent='space-between'
-						alignItems='center'
-					>
+					<Stack p={1.5} direction='row' justifyContent='space-between' alignItems='center'>
 						<Typography fontSize={20} fontWeight={600}>
 							{`Danh sách thống kê phiếu chấm điểm rèn luyện của ${
 								departmentName ? 'khoa ' + departmentName : 'tất cả các khoa'

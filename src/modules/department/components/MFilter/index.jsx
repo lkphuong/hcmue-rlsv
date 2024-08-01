@@ -1,19 +1,22 @@
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
-import { shallowEqual, useSelector } from 'react-redux';
-
 import { CAutocomplete } from '_controls/';
+import { useQuery } from '@tanstack/react-query';
+import { getAllDepartments } from '_api/options.api';
 
 export const MFilter = ({ filter, onFilterChange }) => {
 	//#region Data
-	const departments = useSelector((state) => state.options.departments, shallowEqual);
+	const { data: departments } = useQuery({
+		queryKey: ['departments', filter?.semester_id, filter?.academic_id],
+		queryFn: () =>
+			getAllDepartments({ semester_id: filter?.semester_id, academic_id: filter?.academic_id }),
+		select: (response) => response?.data?.map((e) => ({ ...e, id: Number(e?.id) })),
+	});
 	//#endregion
 
 	//#region Event
-
 	const handleChangeFilter = (key) => (value) =>
 		onFilterChange((prev) => ({ ...prev, [key]: parseInt(value?.id), page: 1, pages: 0 }));
-
 	//#endregion
 
 	//#region Render

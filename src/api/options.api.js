@@ -26,8 +26,8 @@ export const removeSemester = (id) => {
 	return remove(`${OPTIONS.DELETE_SEMESTERS}/${id}`);
 };
 
-export const getAllDepartments = () => {
-	return get(DEPARTMENTS.GET_ALL);
+export const getAllDepartments = (params) => {
+	return get(DEPARTMENTS.GET_ALL, { params });
 };
 
 export const getSemestersByYear = (academic_id) => {

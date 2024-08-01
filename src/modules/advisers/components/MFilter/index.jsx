@@ -2,7 +2,14 @@ import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
 
-export const MFilter = ({ filter, onFilterChange, classes, departments, academic_years }) => {
+export const MFilter = ({
+	filter,
+	onFilterChange,
+	classes,
+	departments,
+	academic_years,
+	semesters,
+}) => {
 	//#region Data
 	//#endregion
 
@@ -83,6 +90,28 @@ export const MFilter = ({ filter, onFilterChange, classes, departments, academic
 										renderOption={(props, option) => (
 											<Box component='li' {...props} key={option.id}>
 												{option.name}
+											</Box>
+										)}
+									/>
+								</Stack>
+							</Box>
+						</Grid>
+						<Grid item xs={12} md={6} lg={3}>
+							<Box p={2}>
+								<Stack>
+									<Typography fontWeight={500} fontSize={16} pl={1} mb={0.7}>
+										Học kỳ
+									</Typography>
+									<CAutocomplete
+										disableClearable
+										value={filter.semester_id}
+										onChange={handleChangeFilter('semester_id')}
+										options={semesters}
+										display='display'
+										placeholder='Tất cả'
+										renderOption={(props, option) => (
+											<Box component='li' {...props} key={option.id}>
+												{option.display}
 											</Box>
 										)}
 									/>

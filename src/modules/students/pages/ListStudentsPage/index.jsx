@@ -9,7 +9,7 @@ import { MFilter, MTable } from '_modules/students/components';
 
 import { getClassesByDepartment } from '_api/classes.api';
 import { getStudentsRole, importUsers } from '_api/user.api';
-import { getSemestersByYear } from '_api/options.api';
+import { getAllDepartments, getSemestersByYear } from '_api/options.api';
 import { uploadFile } from '_api/files.api';
 
 import { isSuccess, isEmpty, cleanObjValue, checkValidFile } from '_func/';
@@ -31,7 +31,7 @@ const ListStudentsPage = memo(() => {
 
 	const dispatch = useDispatch();
 
-	const departments = useSelector((state) => state.options.departments, shallowEqual);
+	// const departments = useSelector((state) => state.options.departments, shallowEqual);
 	const academic_years = useSelector((state) => state.options.academic_years, shallowEqual);
 	const filters = useSelector((state) => state.filters.filters, shallowEqual);
 
@@ -52,6 +52,13 @@ const ListStudentsPage = memo(() => {
 	});
 
 	const [paginate, setPaginate] = useState({ page: 1, pages: 0 });
+
+	const { data: departments } = useQuery({
+		queryKey: ['departments', filter?.semester_id, filter?.academic_id],
+		queryFn: () =>
+			getAllDepartments({ semester_id: filter?.semester_id, academic_id: filter?.academic_id }),
+		select: (response) => response?.data?.map((e) => ({ ...e, id: Number(e?.id) })),
+	});
 
 	const { data, refetch, isFetching } = useQuery({
 		queryKey: [KEY, filter],

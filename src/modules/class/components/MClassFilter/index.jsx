@@ -1,16 +1,21 @@
 import { useMemo } from 'react';
 
-import { shallowEqual, useSelector } from 'react-redux';
-
 import { useLocation } from 'react-router-dom';
 
 import { Box, Grid, Paper, Stack, Typography } from '@mui/material';
 
 import { CAutocomplete } from '_controls/';
+import { useQuery } from '@tanstack/react-query';
+import { getAllDepartments } from '_api/options.api';
 
 export const MClassFilter = ({ filter, onFilterChange, semesters, academic_years }) => {
 	//#region Data
-	const departments = useSelector((state) => state.options.departments, shallowEqual);
+	const { data: departments } = useQuery({
+		queryKey: ['departments', filter?.semester_id, filter?.academic_id],
+		queryFn: () =>
+			getAllDepartments({ semester_id: filter?.semester_id, academic_id: filter?.academic_id }),
+		select: (response) => response?.data?.map((e) => ({ ...e, id: Number(e?.id) })),
+	});
 
 	const { pathname } = useLocation();
 
@@ -32,7 +37,7 @@ export const MClassFilter = ({ filter, onFilterChange, semesters, academic_years
 					page: 1,
 			  }));
 	};
-	//#endregion1
+	//#endregion
 
 	//#region Render
 	return (

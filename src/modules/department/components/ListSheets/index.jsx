@@ -105,11 +105,10 @@ export const ListSheets = ({
 							{!(isHistory || isReport) && (
 								<TableCell width={50} align='center'>
 									<Checkbox
-										indeterminate={
-											(isSelected && !isSelectedAll) || except?.length > 0
-										}
+										indeterminate={(isSelected && !isSelectedAll) || except?.length > 0}
 										onChange={onSelect(-1)}
 										checked={isSelectedAll || isSelected}
+										sx={{ '&.Mui-checked': { color: '#ffffff' } }}
 									/>
 								</TableCell>
 							)}
@@ -151,12 +150,7 @@ export const ListSheets = ({
 						) : (
 							<TableRow>
 								<TableCell colSpan='100%'>
-									<Box
-										minHeight={300}
-										display='flex'
-										justifyContent='center'
-										alignItems='center'
-									>
+									<Box minHeight={300} display='flex' justifyContent='center' alignItems='center'>
 										Không có dữ liệu hiển thị
 									</Box>
 								</TableCell>

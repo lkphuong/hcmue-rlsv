@@ -18,12 +18,14 @@ import { AdviserService } from './services/adviser/adviser.service';
 import { AdviserClassesService } from './services/adviser-classes/adviser_classes.service';
 import { GenerateAdviserUpdateListener } from './listeners/generate_update_password.listener';
 import { forwardRef } from '@nestjs/common';
+import { SemesterModule } from '../semester/semester.module';
 
 export const modules = [
   TypeOrmModule.forFeature([AdviserEntity, AdviserClassesEntity]),
   AcademicYearModule,
+  SemesterModule,
   ClassModule,
-  DepartmentModule,
+  forwardRef(() => DepartmentModule),
   forwardRef(() => RoleModule),
   FileModule,
   LogModule,

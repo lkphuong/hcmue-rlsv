@@ -1535,7 +1535,7 @@ export class SheetController {
 
       //#region Get params
       const { page, department_id } = params;
-      let { pages } = params;
+      // let { pages } = params;
 
       const itemsPerPage = parseInt(
         this._configurationService.get(Configuration.ITEMS_PER_PAGE),
@@ -1546,22 +1546,25 @@ export class SheetController {
       const form = await this._formService.getFormInProgress();
       //#endregion
       if (form) {
-        if (pages === 0) {
-          //#region get pages
-          const count = await this._departmentService.count(department_id);
+        // if (pages === 0) {
+        //   //#region get pages
+        //   const count = await this._departmentService.count(department_id);
 
-          if (count > 0) pages = Math.ceil(count / itemsPerPage);
-          //#endregion
-        }
+        //   if (count > 0) pages = Math.ceil(count / itemsPerPage);
+        //   //#endregion
+        // }
 
         const departments = await this._departmentService.getDepartmentPaging(
           (page - 1) * itemsPerPage,
           itemsPerPage,
           department_id,
+          null,
+          form.academic_year.id,
+          form.semester.id,
         );
         if (departments && departments.length > 0) {
           return await generateDepartmentStatusResponse(
-            pages,
+            3,
             page,
             form.academic_year,
             form.semester,

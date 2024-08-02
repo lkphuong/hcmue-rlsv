@@ -19,12 +19,7 @@ import { Request } from 'express';
 
 import * as path from 'path';
 
-import {
-  returnObjects,
-  returnObjectsWithLoadMore,
-  returnObjectsWithPaging,
-  sprintf,
-} from '../../../utils';
+import { returnObjectsWithPaging, sprintf } from '../../../utils';
 import { unlinkFile, uploadFile, writeFileLog } from '../funcs';
 
 import { FileEntity } from '../../../entities/file.entity';
@@ -61,11 +56,15 @@ export class FilesController {
 
   @Get()
   async getFileLogsPagination(
-    @Query('last_id') last_id: number,
+    @Query('page') offset: number,
     @Req() req: Request,
   ) {
     try {
-      const file_logs = await this._fileService.getFileLogsPagination(last_id);
+      offset = offset ? parseInt(offset.toString()) - 1 : 1;
+
+      const count = await this._fileService.count();
+
+      const file_logs = await this._fileService.getFileLogsPagination(offset);
 
       if (!file_logs?.length) {
         throw new HandlerException(
@@ -77,7 +76,9 @@ export class FilesController {
         );
       }
 
-      return returnObjectsWithLoadMore(file_logs?.length > 0, file_logs);
+      const pages = Math.ceil(count / 10);
+
+      return returnObjectsWithPaging(pages, offset + 1, file_logs);
     } catch (error) {
       throw new HandlerException(
         SERVER_EXIT_CODE.INTERNAL_SERVER_ERROR,

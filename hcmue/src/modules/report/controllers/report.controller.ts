@@ -1090,6 +1090,15 @@ export class ReportController {
       );
       //#endregion
 
+      //#region get advicers
+      const advisers = await this._adviserService.getAdviserByDepartmentId(
+        department_id,
+        academic_id,
+        semester_id,
+      );
+
+      //#endregion
+
       if (cache_classes && cache_classes.length > 0) {
         const result = await exportExcelTemplateDepartment(
           params,
@@ -1097,6 +1106,7 @@ export class ReportController {
           department,
           semester,
           cache_classes,
+          advisers,
           levels,
           this._classService,
           this._sheetService,

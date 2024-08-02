@@ -589,8 +589,8 @@ export class FormController {
         //#endregion
 
         //#region Validate time publish
-        const valid_time = validateTimePublish(form.start, req);
-        if (valid_time instanceof HttpException) throw valid_time;
+        // const valid_time = validateTimePublish(form.start, req);
+        //if (valid_time instanceof HttpException) throw valid_time;
         //#endregion
 
         //#region Get jwt payload

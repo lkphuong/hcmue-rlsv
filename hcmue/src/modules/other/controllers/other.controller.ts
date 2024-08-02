@@ -62,6 +62,7 @@ import { Role } from '../../auth/constants/enums/role.enum';
 import { JwtAuthGuard } from '../../auth/guards/jwt.guard';
 import { sprintf } from '../../../utils';
 import { UnknownException } from '../../../exceptions/UnknownException';
+import { AcademicYearService } from '../../academic-year/services/academic_year.service';
 
 @Controller('others')
 export class OtherController {
@@ -71,6 +72,7 @@ export class OtherController {
     private readonly _otherService: OtherService,
     private readonly _roleUserService: RoleUsersService,
     private readonly _roleService: RoleService,
+    private readonly _academicYearService: AcademicYearService,
     private readonly _dataSource: DataSource,
     private _logger: LogService,
   ) {}
@@ -169,18 +171,21 @@ export class OtherController {
 
       //#region Get params
       const { department_id, page, input } = params;
-      let { pages } = params;
+
       const itemsPerPage = parseInt(
         this._configurationService.get(Configuration.ITEMS_PER_PAGE),
       );
       //#endregion
 
-      if (pages === 0) {
-        //#region Get pages
-        const count = await this._departmentService.count(department_id, input);
-        if (count > 0) pages = Math.ceil(count / itemsPerPage);
-        //#endregion
-      }
+      // if (pages === 0) {
+      //   //#region Get pages
+      //   const count = await this._departmentService.count(department_id, input);
+      //   if (count > 0) pages = Math.ceil(count / itemsPerPage);
+      //   //#endregion
+      // }
+
+      const defaultAcademicYear =
+        await this._academicYearService.getDefaultAcademicYear();
 
       //#region get department
       const departments = await this._departmentService.getDepartmentPaging(
@@ -188,12 +193,15 @@ export class OtherController {
         itemsPerPage,
         department_id,
         input,
+        defaultAcademicYear.academic_id,
+        defaultAcademicYear.semester_id,
       );
+
       //#endregion
 
       if (departments && departments.length > 0) {
         return await generateDepartmentsResponse(
-          pages,
+          3,
           page,
           departments,
           this._otherService,

@@ -48,6 +48,7 @@ import {
   SERVER_EXIT_CODE,
 } from '../../../constants/enums/error-code.enum';
 import { ErrorMessage } from '../constants/enums/errors.enum';
+import { SemesterService } from '../../semester/services/semester.service';
 
 @Controller('advisers')
 export class AdviserController {
@@ -55,6 +56,7 @@ export class AdviserController {
     private readonly _academicYearService: AcademicYearService,
     private readonly _adviserClassService: AdviserClassesService,
     private readonly _adviserService: AdviserService,
+    private readonly _semesterService: SemesterService,
     private readonly _classService: ClassService,
     private readonly _configurationService: ConfigurationService,
     private readonly _departmentService: DepartmentService,
@@ -95,7 +97,8 @@ export class AdviserController {
       this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
       //#region Get params
-      const { academic_id, class_id, department_id, input, page } = params;
+      const { academic_id, class_id, department_id, input, page, semester_id } =
+        params;
       let { pages } = params;
 
       const itemsPerPage = parseInt(
@@ -110,6 +113,7 @@ export class AdviserController {
           class_id,
           department_id,
           input,
+          semester_id,
         );
         if (count > 0) pages = Math.ceil(count / itemsPerPage);
       }
@@ -123,6 +127,7 @@ export class AdviserController {
         class_id,
         department_id,
         input,
+        semester_id,
       );
       //#endregion
 
@@ -184,6 +189,8 @@ export class AdviserController {
           JSON.stringify({ params: params }),
       );
 
+      console.log('param: ', params);
+
       this._logger.writeLog(
         Levels.LOG,
         req.method,
@@ -199,6 +206,7 @@ export class AdviserController {
         this._academicYearService,
         this._adviserClassService,
         this._adviserService,
+        this._semesterService,
         this._classService,
         this._departmentService,
         this._fileService,

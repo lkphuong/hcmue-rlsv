@@ -617,6 +617,7 @@ export const exportExcelTemplateDepartment = async (
   department: DepartmentEntity,
   semester: SemesterEntity,
   cache_classes: CacheClassEntity[],
+  advicers: { fullname: string; class_id: number }[],
   levels: LevelEntity[],
   class_service: ClassService,
   sheet_service: SheetService,
@@ -681,6 +682,7 @@ export const exportExcelTemplateDepartment = async (
       const rows = [];
       const length = sheets.length;
       for (let i = 0; i < length; i++) {
+        const adviser = advicers.find((e) => e.class_id == sheets[i].class_id);
         const row_values = [];
         row_values[1] = i + 1;
         row_values[2] = sheets[i].std_code;
@@ -697,7 +699,8 @@ export const exportExcelTemplateDepartment = async (
             : sheets[i]?.level
             ? sheets[i]?.level
             : '';
-        row_values[11] = sheets[i].flag == 2 ? sheets[i].status : '';
+        row_values[11] = adviser?.fullname ?? '';
+        row_values[12] = sheets[i].flag == 2 ? sheets[i].status : '';
         rows.push(row_values);
       }
       worksheet.insertRows(12, rows, 'i');

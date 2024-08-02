@@ -27,7 +27,9 @@ export const applyMiddlewares = (consumer: MiddlewareConsumer) => {
       { path: '/api/auth/reset-password', method: RequestMethod.POST },
       { path: '/api/auth/reset-password', method: RequestMethod.GET },
       'uploads/(.*)',
+      { path: 'socket.io/(.*)', method: RequestMethod.ALL },
     )
+
     .forRoutes({ path: '*', method: RequestMethod.ALL });
 
   consumer.apply().forRoutes({

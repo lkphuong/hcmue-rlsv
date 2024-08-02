@@ -48,6 +48,7 @@ import {
 import { ErrorMessage } from '../constants/enums/errors.enum';
 import { RoleCode } from '../../../constants/enums/role_enum';
 import { EventKey } from '../../shared/constants/event-key.enum';
+import { SemesterService } from '../../semester/services/semester.service';
 
 export const generateImportAdviser = async (
   params: ImportAdviserDto,
@@ -55,6 +56,7 @@ export const generateImportAdviser = async (
   academic_year_serivce: AcademicYearService,
   adviser_classes_service: AdviserClassesService,
   adviser_service: AdviserService,
+  semester_service: SemesterService,
   class_service: ClassService,
   department_service: DepartmentService,
   file_service: FilesService,
@@ -97,7 +99,12 @@ export const generateImportAdviser = async (
     await query_runner.startTransaction();
 
     //#region Get data
-    const data_query = await generateData(class_service, department_service);
+    const data_query = await generateData(
+      class_service,
+      department_service,
+      academic_id,
+      semester_id,
+    );
     //#endregion
 
     //#region read file excel
@@ -125,6 +132,7 @@ export const generateImportAdviser = async (
       //#endregion
 
       //#region Create Adviser
+
       const advisers = await generateCreateAdviser(
         academic_id,
         semester_id,
@@ -145,28 +153,27 @@ export const generateImportAdviser = async (
         );
 
         if (adviser_classes) {
-          const role_users = await generateCreateroleUser(
+          await generateCreateroleUser(
             role_adviser,
             data.advisers,
             role_user_service,
             query_runner,
           );
-          if (role_users) {
-            //#region response
-            return await generateImportSuccessResponse(query_runner, req);
-            //#endregions
-          }
         }
       }
-      //#endregion
-      throw new HandlerException(
-        DATABASE_EXIT_CODE.OPERATOR_ERROR,
-        req.method,
-        req.url,
-        ErrorMessage.ADVISER_OPERATOR_ERROR,
-        HttpStatus.EXPECTATION_FAILED,
-      );
+
+      //#region response
+      return await generateImportSuccessResponse(query_runner, req);
+      //#endregions
     }
+    //#endregion
+    throw new HandlerException(
+      DATABASE_EXIT_CODE.OPERATOR_ERROR,
+      req.method,
+      req.url,
+      ErrorMessage.ADVISER_OPERATOR_ERROR,
+      HttpStatus.EXPECTATION_FAILED,
+    );
   } catch (err) {
     // Rollback transaction
     await query_runner.rollbackTransaction();
@@ -203,9 +210,15 @@ export const generateImportAdviser = async (
 export const generateData = async (
   class_service: ClassService,
   department_service: DepartmentService,
+  academic_id: number,
+  semester_id: number,
 ) => {
-  const $class = await class_service.getClasses();
-  const departments = await department_service.getDepartments();
+  const $class = await class_service.getClasses(academic_id, semester_id);
+  const departments = await department_service.getDepartments(
+    null,
+    academic_id,
+    semester_id,
+  );
 
   return {
     classes: $class,

@@ -21,7 +21,7 @@ export const modules = [
   TypeOrmModule.forFeature([RoleEntity, RoleUsersEntity]),
   LogModule,
   ClassModule,
-  DepartmentModule,
+  forwardRef(() => DepartmentModule),
   forwardRef(() => UserModule),
 ];
 

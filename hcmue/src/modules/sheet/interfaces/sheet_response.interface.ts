@@ -53,6 +53,7 @@ export interface ReportResponse extends MarkResponse {
   fullname: string;
   birthday: string;
   class: string;
+  class_id: number;
   department: string;
   sum_of_personal_marks: number;
   sum_of_class_marks: number;

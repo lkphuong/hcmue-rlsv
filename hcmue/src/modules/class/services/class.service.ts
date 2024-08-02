@@ -20,12 +20,27 @@ export class ClassService {
     private _logger: LogService,
   ) {}
 
-  async getClasses(): Promise<ClassResponse[] | null> {
+  async getClasses(
+    academic_id?: number,
+    semester_id?: number,
+  ): Promise<ClassResponse[] | null> {
     try {
       const conditions = this._classRepository
         .createQueryBuilder('class')
         .select('class.id AS id, class.code AS code')
         .where('class.deleted = :deleted', { deleted: false });
+
+      if (academic_id) {
+        conditions.andWhere('class.academic_id = :academic_id', {
+          academic_id,
+        });
+      }
+
+      if (semester_id) {
+        conditions.andWhere('class.semester_id = :semester_id', {
+          semester_id,
+        });
+      }
 
       const classes = await conditions.getRawMany<ClassResponse>();
 

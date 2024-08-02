@@ -20,26 +20,44 @@ export class FilesService {
     private _logger: LogService,
   ) {}
 
-  async getFileLogsPagination(last_id?: number) {
+  async getFileLogsPagination(offset?: number) {
     try {
       const conditions = this._fileLogRepository
         .createQueryBuilder('file_log')
         .where('file_log.status = :status', { status: 0 })
         .orderBy('file_log.created_at', 'DESC')
+        .skip(offset * 10)
         .take(10);
-
-      if (last_id) {
-        conditions.andWhere('file_log.id < :last_id', { last_id });
-      }
 
       const file_logs = await conditions.getMany();
 
       return file_logs || null;
     } catch (e) {
+      console.log(e);
       this._logger.writeLog(
         Levels.ERROR,
         Methods.SELECT,
         'FilesService.getFileLogsPagination()',
+        e,
+      );
+    }
+  }
+
+  async count() {
+    try {
+      const conditions = this._fileLogRepository
+        .createQueryBuilder('file')
+        .select('COUNT(file.id)', 'count')
+        .where('file.deleted = :deleted', { deleted: false });
+
+      const { count } = await conditions.getRawOne();
+
+      return count || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'FilesService.count()',
         e,
       );
     }

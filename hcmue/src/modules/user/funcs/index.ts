@@ -501,6 +501,13 @@ export const generateCreateDepartment = async (
 ) => {
   const add_department: DepartmentEntity[] = [];
 
+  //#region delete old department
+  await department_service.deleteByAcademicIdAndSemesterId(
+    academic_id,
+    semester_id,
+  );
+  //#endregion
+
   for (const i of data) {
     const department = new DepartmentEntity();
     department.name = i;

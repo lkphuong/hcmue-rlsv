@@ -10,10 +10,12 @@ import { RoleModule } from '../role/role.module';
 import { OtherController } from './controllers/other.controller';
 
 import { OtherService } from './services/other.service';
+import { AcademicYearModule } from '../academic-year/academic_year.module';
 
 export const modules = [
   LogModule,
   DepartmentModule,
+  AcademicYearModule,
   TypeOrmModule.forFeature([OtherEntity]),
   forwardRef(() => RoleModule),
 ];

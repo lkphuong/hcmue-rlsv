@@ -29,6 +29,7 @@ export class AdviserService {
     class_id: number,
     department_id: number,
     input?: string,
+    semester_id?: number,
   ): Promise<AdviserEntity[] | null> {
     try {
       let conditions = this._adviserRepository
@@ -84,6 +85,12 @@ export class AdviserService {
         conditions = conditions.andWhere(`adviser.fullname LIKE '%${input}%'`);
       }
 
+      if (semester_id && semester_id !== 0) {
+        conditions = conditions.andWhere('adviser.semester_id = :semester_id', {
+          semester_id,
+        });
+      }
+
       const advisers = await conditions
         .orderBy('adviser.created_at', 'DESC')
         .skip(offset)
@@ -103,11 +110,52 @@ export class AdviserService {
     }
   }
 
+  async getAdviserByDepartmentId(
+    department_id: number,
+    academic_id: number,
+    semester_id: number,
+  ) {
+    try {
+      const query = `
+          SELECT
+            a.fullname,
+            ac.class_id
+          FROM
+            advisers a
+            JOIN adviser_classes ac ON a.id = ac.adviser_id
+          WHERE
+            a.delete_flag = 0
+            AND ac.delete_flag = 0
+            AND a.academic_id = ${academic_id}
+            AND a.semester_id = ${semester_id}
+            AND a.department_id = ${department_id}
+      `;
+
+      console.log(query);
+
+      const advisers = (await this._dataSource.manager.query(query)) as {
+        fullname: string;
+        class_id: number;
+      }[];
+
+      return advisers || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.SELECT,
+        'AdviserService.getAdviserByDepartmentId()',
+        e,
+      );
+      return null;
+    }
+  }
+
   async count(
     academic_id: number,
     class_id: number,
     department_id: number,
     input?: string,
+    semester_id?: number,
   ): Promise<number> {
     try {
       const conditions = this._adviserRepository
@@ -153,6 +201,12 @@ export class AdviserService {
 
       if (input) {
         conditions.andWhere(`adviser.fullname LIKE '%${input}%'`);
+      }
+
+      if (semester_id && semester_id !== 0) {
+        conditions.andWhere('adviser.semester_id = :semester_id', {
+          semester_id,
+        });
       }
 
       const { count } = await conditions.getRawOne();
@@ -363,7 +417,11 @@ export class AdviserService {
     }
   }
 
-  async bulkUnlink(academic_id: number, manager?: EntityManager) {
+  async bulkUnlink(
+    academic_id: number,
+    manager?: EntityManager,
+    semester_id?: number,
+  ): Promise<boolean | null> {
     try {
       if (!manager) {
         manager = this._dataSource.manager;
@@ -372,10 +430,16 @@ export class AdviserService {
         AdviserEntity,
         {
           academic_id: academic_id,
+          semester_id: semester_id,
           active: 1,
           deleted: false,
         },
-        { updated_at: new Date(), updated_by: 'system', active: false },
+        {
+          updated_at: new Date(),
+          updated_by: 'system',
+          active: false,
+          deleted: true,
+        },
       );
       return results.affected > 0;
     } catch (e) {

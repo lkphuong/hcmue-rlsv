@@ -38,6 +38,9 @@ export class GetAdviserDto {
   academic_id: number;
 
   @IsOptional()
+  semester_id: number;
+
+  @IsOptional()
   @Transform((params) => parseInt(params.value) ?? 0)
   @IsNotEmpty({
     message: (arg) =>

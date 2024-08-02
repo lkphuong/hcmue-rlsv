@@ -48,6 +48,13 @@ export class DepartmentService {
         });
       }
 
+      console.log(
+        'conditions: ',
+        conditions.getQuery(),
+        academic_id,
+        semester_id,
+      );
+
       const departments = await conditions.getRawMany<DepartmentResponse>();
 
       return departments || null;
@@ -90,6 +97,8 @@ export class DepartmentService {
     length: number,
     department_id?: number,
     input?: string,
+    academic_id?: number,
+    semester_id?: number,
   ): Promise<DepartmentEntity[] | null> {
     try {
       let conditions = this._departmentRepository
@@ -104,6 +113,20 @@ export class DepartmentService {
 
       if (input) {
         conditions = conditions.andWhere(`department.name LIKE '%${input}%'`);
+      }
+
+      if (academic_id) {
+        conditions = conditions.andWhere(
+          'department.academic_id = :academic_id',
+          { academic_id },
+        );
+      }
+
+      if (semester_id) {
+        conditions = conditions.andWhere(
+          'department.semester_id = :semester_id',
+          { semester_id },
+        );
       }
 
       const departments = await conditions.skip(offset).take(length).getMany();
@@ -190,6 +213,27 @@ export class DepartmentService {
         Levels.ERROR,
         Methods.INSERT,
         'DepartmentService.bulkAdd()',
+        e,
+      );
+      return null;
+    }
+  }
+
+  async deleteByAcademicIdAndSemesterId(
+    academic_id: number,
+    semester_id: number,
+  ) {
+    try {
+      const query = `UPDATE departments SET delete_flag = 1 WHERE academic_id = ${academic_id} AND semester_id = ${semester_id}`;
+
+      const result = await this._dataSource.query(query);
+
+      return result || null;
+    } catch (e) {
+      this._logger.writeLog(
+        Levels.ERROR,
+        Methods.DELETE,
+        'DepartmentService.deleteByAcademicIdAndSemesterId()',
         e,
       );
       return null;

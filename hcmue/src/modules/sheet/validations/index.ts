@@ -546,11 +546,12 @@ export const validateUser = async (
 };
 
 export const validateTime = async (form: FormEntity, req: Request) => {
-  const current = new Date();
-  const start = new Date(form.start);
-  const end = new Date(form.end);
-  const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
-  if (current < start || current > deadline || form.status == FormStatus.DONE) {
+  // const current = new Date();
+  // const start = new Date(form.start);
+  // const end = new Date(form.end);
+  // const deadline = new Date(end.setDate(new Date(end).getDate() + 1));
+  // if (current < start || current > deadline || form.status == FormStatus.DONE) {
+  if (form.status == FormStatus.DONE) {
     return new HandlerException(
       VALIDATION_EXIT_CODE.NO_MATCHING,
       req.method,

@@ -70,15 +70,10 @@ export class ClassController {
       console.log(req.method + ' - ' + req.url),
         this._logger.writeLog(Levels.LOG, req.method, req.url, null);
 
-      const defaultAcademicYear =
-        await this._academicYearService.getDefaultAcademicYear();
-
       //#region Get classes
       const classes = await this._classService.getClassesByDepartmentId(
         department_id,
         null,
-        defaultAcademicYear?.academic_id,
-        defaultAcademicYear?.semester_id,
       );
 
       //#endregion

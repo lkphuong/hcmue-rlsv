@@ -34,7 +34,7 @@ export const Row = ({ data, index, saveFilter }) => {
 			<TableCell align='left'>{data?.fullname}</TableCell>
 			<TableCell align='center'>{role}</TableCell>
 			<TableCell align='center'>
-				{dayjs(data?.created_at).utc().format('DD/MM/YYYY HH:mm:ss')}
+				{dayjs(data?.created_at).utc().subtract(7, 'hours').format('DD/MM/YYYY HH:mm:ss')}
 			</TableCell>
 			<TableCell align='center'>{data?.point}</TableCell>
 			<TableCell align='center'>

@@ -4,6 +4,7 @@ import { restorePassword } from '_api/auth.api';
 import { ERRORS } from '_constants/messages';
 import { isSuccess } from '_func/index';
 import { CResetIcon } from '_others/';
+import { alert } from '_func/alert';
 
 export const MResetCell = ({ data }) => {
 	//#region Event

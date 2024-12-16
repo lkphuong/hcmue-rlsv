@@ -50,7 +50,6 @@ import {
   validateClass,
   validateDepartment,
   validateDepartmentId,
-  validateOthersDepartment,
   validateSemester,
   validateSheet,
   validateSheetId,
@@ -2171,14 +2170,14 @@ export class SheetController {
       //#endregion
 
       //#region Validation
-      const valid = await validateOthersDepartment(
-        role,
-        department_id,
-        user_id,
-        this._otherService,
-        req,
-      );
-      if (valid instanceof HttpException) throw valid;
+      // const valid = await validateOthersDepartment(
+      //   role,
+      //   department_id,
+      //   user_id,
+      //   this._otherService,
+      //   req,
+      // );
+      // if (valid instanceof HttpException) throw valid;
       //#endregion
 
       if (all) {
@@ -2189,10 +2188,29 @@ export class SheetController {
           role,
           class_id,
         );
-        include_ids = results.map((e) => Number(e.id));
+
+        include_ids = results.map((e) => {
+          if (e) return e.id;
+        });
       }
 
-      include_ids = include_ids.filter((item) => !except_ids.includes(item));
+      // include_ids = include_ids.filter((item) => !except_ids.includes(item));
+
+      const tmp = [];
+      for (let i = 0; i < include_ids.length; i++) {
+        let flag = false;
+        for (let j = 0; j < except_ids.length; j++) {
+          if (include_ids[i] == except_ids[j]) {
+            flag = true;
+            break;
+          }
+        }
+        if (!flag) {
+          tmp.push(include_ids[i]);
+        }
+      }
+
+      include_ids = tmp;
 
       //#region validate sheet success and not graded
       const count_sheet =
@@ -2241,6 +2259,7 @@ export class SheetController {
     } catch (err) {
       console.log('----------------------------------------------------------');
       console.log(req.method + ' - ' + req.url + ': ' + err.message);
+      console.log('error: ', err);
 
       if (err instanceof HttpException) throw err;
       else {

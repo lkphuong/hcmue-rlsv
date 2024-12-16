@@ -1,7 +1,7 @@
 import { HttpException } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { Request } from 'express';
-import * as mysql from 'mysql';
+import * as mysql from 'mysql2';
 
 import { removeFile } from '../../../utils';
 import {

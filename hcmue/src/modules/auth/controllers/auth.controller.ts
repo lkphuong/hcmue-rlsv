@@ -86,7 +86,6 @@ export class AuthController {
     private readonly _adviserService: AdviserService,
     private readonly _adviserClassService: AdviserClassesService,
     private readonly _classService: ClassService,
-    private readonly _majorService: MajorService,
     private readonly _otherService: OtherService,
     private readonly _userService: UserService,
     private readonly _configurationService: ConfigurationService,
@@ -248,6 +247,7 @@ export class AuthController {
 
               //#region Generate session
               let session = await this._authService.contains(username);
+
               if (!session) {
                 session = await this._authService.add(
                   other.id,
@@ -696,6 +696,11 @@ export class AuthController {
             request_code,
           );
           if (other_session) {
+            const newDepartment =
+              await this._otherService.getNewDepartmentOfOther(
+                other_session?.department_id,
+              );
+
             //#region Generate response
             return returnObjects<ProfileResponse>({
               user_id: other_session.id,
@@ -703,7 +708,8 @@ export class AuthController {
               fullname: other_session?.department?.name ?? null,
               class_id: null,
               classes: null,
-              department_id: other_session.department_id ?? null,
+              department_id:
+                newDepartment?.id ?? other_session.department_id ?? null,
               role: role,
             });
             //#endregion

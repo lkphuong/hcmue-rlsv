@@ -63,7 +63,6 @@ export class SheetService {
       }
 
       const sheet_ids = await conditions.getRawMany();
-
       return sheet_ids || null;
     } catch (e) {
       this._logger.writeLog(
@@ -997,6 +996,9 @@ export class SheetService {
         );
 
       const { count } = await conditions.getRawOne();
+
+      console.log('count: ', count);
+      console.log('ids: ', ids);
 
       return count || null;
     } catch (e) {

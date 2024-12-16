@@ -151,6 +151,20 @@ export class OtherService {
     }
   }
 
+  async getNewDepartmentOfOther(department_id: number) {
+    try {
+      const query = `select id from departments where name = (select name from departments where id = ${department_id}) order by id desc`;
+
+      const result = await this._dataSource.query(query);
+
+      console.log('result: ', result);
+
+      return result[0];
+    } catch (error) {
+      return null;
+    }
+  }
+
   async add(
     other: OtherEntity,
     manager?: EntityManager,

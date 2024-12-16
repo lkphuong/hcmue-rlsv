@@ -1,0 +1,153 @@
+version: '3.1'
+services:
+  export-service:
+    container_name: hcmue-export-service
+    image: phuonglk/hcmue-export-service:1.1 
+    environment:
+      - RESOURCE_FOLDER=./resources/  
+    ports:
+      - "4022:4001"
+    volumes:
+      - ./logs:/opt/app/logs      
+      - ./static/resources:/opt/app/resources
+    restart: 'always'
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      rollback_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: pause
+        order: stop-first
+      update_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: rollback
+        order: stop-first
+
+  schedule:
+    container_name: hcmue-schedule-service
+    image: phuonglk/hcmue-schedule:1.1
+    environment:
+      - NODE_ENV=development      
+      - MYSQL_HOST=host.docker.internal
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE_NAME=drl
+      - MYSQL_USERNAME=drl
+      - MYSQL_PASSWORD=drl@2023
+      
+      - MONGODB_URL=mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product
+      
+      - MONGODB_HOST=103.154.176.80
+      - MONGODB_PORT=27072
+      - MONGODB_USERNAME=adminYouth
+      - MONGODB_PASSWORD=adminYouth2022
+      - MOGODB_DATABASE_NAME=youth-app-product
+      
+      - ITEMS_PER_PAGE=10
+      
+      - GENERATE_CREATE_SHEETS_CRON_JOB_TIME=0 */5 * * * *
+      - UPDATE_STATUS_SHEETS_CRON_JOB_TIME=0 */5 * * * *
+      - UNLINK_FILES_CRON_JOB_TIME=0 0 0 1 1 *
+      - UPDATE_STATUS_FORMS_CRON_JOB_TIME=0 0 1 * * *
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/opt/app/logs
+    restart: 'always'
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      rollback_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: pause
+        order: stop-first
+      update_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: rollback
+        order: stop-first
+
+  hcmue:
+    # container_name: hcmue-service
+    image: phuonglk/hcmue:2.1
+    environment:
+      - NODE_ENV=development
+      - MYSQL_HOST=host.docker.internal
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE_NAME=drl
+      - MYSQL_USERNAME=drl
+      - MYSQL_PASSWORD=drl@2023
+
+      - STATIC_PATH=../../../static
+
+      - MONGODB_URL=mongodb://adminYouth:adminYouth2022@103.154.176.80:27072/youth-app-product?authMechanism=DEFAULT&authSource=youth-app-product
+
+      - MONGODB_HOST=103.154.176.80
+      - MONGODB_PORT=27072
+      - MONGODB_USERNAME=adminYouth
+      - MONGODB_PASSWORD=adminYouth2022
+      - MOGODB_DATABASE_NAME=youth-app-product
+
+      - RESOURCE_FOLDER=./static/resources/
+
+      - EMAIL_USERNAME=hopthusinhvien@hcmue.edu.vn
+      - EMAIL_PASSWORD=nbjnkclaystlvkje
+
+      - FORGOT_PASSWORD_URL=https://drl.hcmue.edu.vn/reset-password/?token=
+      - FORGOT_PASSWORD_TOKEN_EXPIRESIN=600s
+
+      - EXPORT_SERVICE_URL=export-service
+      - EXPORT_SERVICE_PORT=3001
+
+      - URL_EXPORT_TEMPLATE_1=export/template1
+      - URL_EXPORT_TEMPLATE_2=export/template2
+      - URL_EXPORT_TEMPLATE_3=export/template3   
+    ports:
+      - "4021:4000"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./logs:/opt/app/logs
+      - ./static:/opt/app/static
+    restart: 'always'
+    deploy:
+      mode: replicated
+      replicas: 1
+      endpoint_mode: vip
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      rollback_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: pause
+        order: stop-first
+      update_config:
+        parallelism: 2
+        delay: 10s
+        failure_action: rollback
+        order: stop-first
+    depends_on:
+      - export-service
+    links:
+      - export-service
+
+networks:
+  net-hcmue:
+    driver: bridge
